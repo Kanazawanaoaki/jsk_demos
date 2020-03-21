@@ -1,0 +1,17 @@
+<launch>
+  <node name="hsi_filter_brown_test" pkg="nodelet" type="nodelet"
+    args="standalone jsk_pcl/HSIColorFilter"
+    output="screen">
+    <remap from="~input" to="/kinect_head/depth_registered/points" />
+    <rosparam>
+      use_indices: false
+      keep_organized: false
+    </rosparam>
+    <param name="h_limit_max" value="200" />
+    <param name="h_limit_min" value="0" />
+    <param name="s_limit_max" value="205" />
+    <param name="s_limit_min" value="0" />
+    <param name="i_limit_max" value="200" />
+    <param name="i_limit_min" value="0" />
+  </node>
+</launch>

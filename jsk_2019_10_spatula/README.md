@@ -33,7 +33,7 @@ To use the PR2 cake demo multiple nodes have to be run
 ### 2) use lisp programm
 - open pr2_interface.l
 - run (exec-anne-1st-part)
-- in case the vision fails, 
+- in case the vision fails,
     - run (speak-en "I am sorry I was not able to find the microwave can you give me a second try with a fresh start")
     - use playstation controller to reposition PR2 in a good start position
     - run (send *pmi* :go-to-microwave-accurately)
@@ -43,7 +43,7 @@ To use the PR2 cake demo multiple nodes have to be run
 - run analyze_effort.py (this node publishes the force)
 - calculate jacobian whenever arm moves for left and right hand as done in (get-jacobi-l-world) and (get-jacobi-r-world)
 - publish jacobian in lisp code as done in  (publish-jacobi arm) in scrape_bowl.l
-- Force.msg and Jacobian.msg are necessary to use this 
+- Force.msg and Jacobian.msg are necessary to use this
 
 
 
@@ -65,7 +65,7 @@ The goal is to find out how accurate the effort data from PR2 is
   The effort of the right hand from version 1 is compared to the effort of the right arm version 2.
   The effort of the left hand version one is compared to the effort of the left arm version 3.
   This comparison is used to see if contact can be detected in the effort signals.
-  
+
 - the data can then be extracted split and plot with the python file. To do so:
   1. download the bagfiles from the following link: https://drive.google.com/drive/folders/1gq6TnKa5HTYQjAxiZ2W5w2jUel8rgWeL
   2. change the absolute path to the bagfiles in the python file manually
@@ -78,4 +78,3 @@ The goal is to find out how accurate the effort data from PR2 is
       - the experiment without bowl is plot in green
 - the data can also be lowpass filtered if wished, eg. add the argument *cutoff_f = 10* when calling plot_data inside the main() to apply a low pass filter with a cutoff frequency of 10Hz, you can also define the *order* (default is 6) and the sampling rate *fs* (default is 100.3)
 - the lowpass filtered data can be plot together with the not fltered data to experiment with different cutoff frequencies
-      

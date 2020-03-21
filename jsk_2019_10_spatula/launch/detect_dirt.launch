@@ -7,7 +7,7 @@
 
 
     <node name="boxfilter_pre" pkg="nodelet" type="nodelet"
-      args="load jsk_pcl/AttentionClipper $(arg manager)" output="screen">
+      args="standalone jsk_pcl/AttentionClipper" output="screen">
       <remap from="~input/points" to="/passthrough_points/output"/>
       <rosparam>
         use_multiple_attention: false
@@ -21,7 +21,7 @@
     </node>
 
     <node name="ExtractIndices" pkg="nodelet" type="nodelet"
-      args="load jsk_pcl/ExtractIndices $(arg manager)" output="screen">
+      args="standalone jsk_pcl/ExtractIndices" output="screen">
       <remap from="~input" to="/passthrough_points/output"/>
       <remap from="~indices" to="/pcl_nodelet/boxfilter_pre/output/point_indices"/>
       <rosparam>
@@ -33,7 +33,7 @@
     </node>
 
     <node name="hsi_filter_white" pkg="nodelet" type="nodelet"
-      args="load jsk_pcl/HSIColorFilter $(arg manager)" 
+      args="standalone jsk_pcl/HSIColorFilter"
       output="screen">
       <remap from="~input" to="/pcl_nodelet/point_cloud_sequence_merged" />
       <rosparam>
@@ -49,19 +49,25 @@
     </node>
 
     <node name="hsi_filter_brown" pkg="nodelet" type="nodelet"
-      args="load jsk_pcl/HSIColorFilter $(arg manager)" 
+      args="standalone jsk_pcl/HSIColorFilter"
       output="screen">
       <remap from="~input" to="/pcl_nodelet/point_cloud_sequence_merged" />
       <rosparam>
         use_indices: false
         keep_organized: false
       </rosparam>
-      <param name="h_limit_max" value="18" />
+      <!-- <param name="h_limit_max" value="18" />
       <param name="h_limit_min" value="0" />
       <param name="s_limit_max" value="205" />
       <param name="s_limit_min" value="77" />
       <param name="i_limit_max" value="31" />
-      <param name="i_limit_min" value="15" />
+      <param name="i_limit_min" value="15" /> -->
+      <param name="h_limit_max" value="200" />
+      <param name="h_limit_min" value="0" />
+      <param name="s_limit_max" value="200" />
+      <param name="s_limit_min" value="0" />
+      <param name="i_limit_max" value="200" />
+      <param name="i_limit_min" value="0" />
     </node>
 
     <node name="LabelDirt" pkg="jsk_2019_10_spatula" type="detect_dirt.py">

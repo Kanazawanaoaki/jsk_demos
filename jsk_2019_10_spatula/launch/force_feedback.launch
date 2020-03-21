@@ -1,0 +1,10 @@
+<launch>
+  <group ns="force_nodes">
+    <node name="AnalyzeEffort" pkg="jsk_2019_10_spatula" type="analyze_effort.py" />
+    <node name="CompareForce" pkg="jsk_2019_10_spatula" type="compare_force.py">
+      <rosparam subst_value ="true">
+        json_path: "$(find jsk_2019_10_spatula)/python/force.json"
+      </rosparam>
+    </node>
+  </group>
+</launch>

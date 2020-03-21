@@ -6,7 +6,9 @@ from std_msgs.msg import String, Float64
 import json
 import matplotlib.pyplot as plt
 
-path_json = "force.json"
+import os
+import rospkg
+
 resample = True
 offline = False
 debug = False
@@ -29,10 +31,15 @@ def main():
 		rospy.Subscriber("semantic_annotation", String, Compare.callback_annotation)
 		rospy.spin()
 
-class CompareForce:
+class CompareForce(object):
 
 	def __init__(self):
-		print "init compare force"
+		rospy.loginfo("init compare force")
+		pack = rospkg.RosPack()
+		json_path = os.path.join(
+			pack.get_path('jsk_2019_10_spatula'), "python/force.json")
+		self.json_path = rospy.get_param('~json_path', json_path)
+
 		#######################
 		###general parameter###
 		#######################
@@ -94,7 +101,7 @@ class CompareForce:
 			self.save_down["mean"] = []
 			self.save_down["all"] = []
 			self.save_actual = []
-		self.read_json(path_json)
+		self.read_json(self.json_path)
 
 
 	def callback_force(self,msg):
