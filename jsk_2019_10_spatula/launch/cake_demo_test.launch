@@ -1,0 +1,6 @@
+<launch>
+  <include file="$(find jsk_2019_10_spatula)/launch/reproduce_pc.launch" />
+  <!-- <include file="$(find jsk_2019_10_spatula)/launch/passthrough.launch" /> -->
+  <include file="$(find jsk_2019_10_spatula)/launch/detect_dirt_test.launch" />
+  <include file="$(find jsk_2019_10_spatula)/launch/force_feedback.launch" />
+</launch>
