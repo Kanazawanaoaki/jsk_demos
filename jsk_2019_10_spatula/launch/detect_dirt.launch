@@ -62,12 +62,18 @@
       <param name="s_limit_min" value="77" />
       <param name="i_limit_max" value="31" />
       <param name="i_limit_min" value="15" /> -->
-      <param name="h_limit_max" value="200" />
+      <!-- <param name="h_limit_max" value="200" />
       <param name="h_limit_min" value="0" />
       <param name="s_limit_max" value="200" />
       <param name="s_limit_min" value="0" />
       <param name="i_limit_max" value="200" />
-      <param name="i_limit_min" value="0" />
+      <param name="i_limit_min" value="0" /> -->
+      <param name="h_limit_max" value="19" />
+      <param name="h_limit_min" value="-8" />
+      <param name="s_limit_max" value="40" />
+      <param name="s_limit_min" value="0" />
+      <param name="i_limit_max" value="162" />
+      <param name="i_limit_min" value="109" />
     </node>
 
     <node name="LabelDirt" pkg="jsk_2019_10_spatula" type="detect_dirt.py">
