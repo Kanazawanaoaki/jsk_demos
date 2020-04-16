@@ -106,7 +106,7 @@ class AnalyzeEffort():
                     self.publish_force()
                 else:
                     self.force_calculated_left = True
-            
+
     def publish_force(self):
         force = Force()
         force.larm = self.force["larm"]
@@ -133,7 +133,7 @@ class AnalyzeEffort():
                     self.publish_force()
                 else:
                     self.force_calculated_right = True
-            
+
 
 
     def callback_torso_controller(self,msg):
