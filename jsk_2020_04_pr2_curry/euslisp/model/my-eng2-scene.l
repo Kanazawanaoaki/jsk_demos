@@ -420,7 +420,7 @@
 ;; kitchenware coords
 (setq *pot-coords* (make-coords :pos (float-vector 450 8100 30840) :rpy (float-vector 0 0 0)))
 (setq *mcup-coords* (make-coords :pos (float-vector 200 8300 30840) :rpy (float-vector -1.571 0 0)))
-(setq *cutting-board-coords* (make-coords :pos (float-vector 500 8500 30840) :rpy (float-vector 0 0 0)))
+(setq *cutting-board-coords* (make-coords :pos (float-vector 500 8420 30840) :rpy (float-vector 0 0 0)))
 ;; ボウルとかも追加する？
 
 
