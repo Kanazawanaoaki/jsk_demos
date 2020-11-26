@@ -23,7 +23,7 @@
   ;; (setq *bowl-2-set-coords* (make-coords :pos (float-vector 584.588 8546.67 30885.165) :rpy (float-vector -2.389 0.788 1.578)))
   ;; (setq *bowl-2-set-larm-coords* (make-coords :pos (float-vector 550.911 8425.179 30885.843) :rpy (float-vector 2.561 1.128 2.104)))
   (setq *bowl-2-set-coords* (make-coords :pos (float-vector 558.94 8455.526 30890.992) :rpy (float-vector -2.649 1.102 1.301)))
-  (setq *bowl-2-set-larm-coords* (make-coords :pos (float-vector 550.455 8389.4 30870.472) :rpy (float-vector 3.006 0.965 -1.5)))
+  (setq *bowl-2-set-larm-coords* (make-coords :pos (float-vector 550.455 8389.4 30870.472) :rpy (float-vector 3.006 0.965 1.642)))
   
   (setq *bowl-3-coords* (make-coords :pos (float-vector 672 7632 30873) :rpy (float-vector -2.152 1.02 1.606)))
   (setq *bowl-4-coords* (make-coords :pos (float-vector 567 7824 30920) :rpy (float-vector -2.624 1.195 2.113)))
@@ -187,7 +187,7 @@
   (send *pr2* :larm :inverse-kinematics
   	(send *arrow* :copy-worldcoords)
   	:rotation-axis t
-  	:debug-view t)
+  	:debug-view nil)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)

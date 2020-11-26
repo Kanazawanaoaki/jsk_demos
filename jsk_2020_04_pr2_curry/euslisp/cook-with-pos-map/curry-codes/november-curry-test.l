@@ -135,8 +135,8 @@
   ;; ヘラとおたまを置く 
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
-  (set-spatula-1)
-  (set-ladle-1)
+  (now-set-spatula-1)
+  (now-set-ladle-1)
   
   (warn "玉ねぎをセットして　please run (curry-4) ~%")
   )
@@ -267,3 +267,4 @@
   (spatula-mix-loop :times times)
   (avoid-rarm-spatula)  
   )
+

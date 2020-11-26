@@ -285,7 +285,7 @@
 		:debug-view nil)
 	  (setq av (send *pr2* :angle-vector))
 	  (setq avs (append avs (list av)))
-	  (setq tms (append tms (list 300)))
+	  (setq tms (append tms (list 200)))
 	  ))
     (dotimes (i (/ (* deg -1) 10))
       (send *arrow* :rotate (deg2rad -10) :x)
@@ -295,7 +295,7 @@
 	    :debug-view nil)
       (setq av (send *pr2* :angle-vector))
       (setq avs (append avs (list av)))
-      (setq tms (append tms (list 300)))
+      (setq tms (append tms (list 200)))
       )
     )
     
@@ -994,4 +994,13 @@
   (release-pot-from-below)
   )
 
+
+(defun now-knob (&rest args &key (deg -70) &allow-other-keys)
+  ;;つまみが出ている状態で調節する
+  (push-knob) ;;つまみを押してonにする
+  (grasp-knob) ;;つまみを掴む
+  (rotate-knob :deg 30) ;;時計回りにdeg度つまみを回す
+  (rotate-knob :deg deg) ;;時計回りにdeg度つまみを回す
+  (release-knob) ;;つまみを離す
+  )
 
