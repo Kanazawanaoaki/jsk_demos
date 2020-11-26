@@ -285,7 +285,7 @@
 		:debug-view nil)
 	  (setq av (send *pr2* :angle-vector))
 	  (setq avs (append avs (list av)))
-	  (setq tms (append tms (list 600)))
+	  (setq tms (append tms (list 300)))
 	  ))
     (dotimes (i (/ (* deg -1) 10))
       (send *arrow* :rotate (deg2rad -10) :x)
@@ -295,7 +295,7 @@
 	    :debug-view nil)
       (setq av (send *pr2* :angle-vector))
       (setq avs (append avs (list av)))
-      (setq tms (append tms (list 600)))
+      (setq tms (append tms (list 300)))
       )
     )
     
