@@ -700,6 +700,162 @@
   )
 
 
+;; ih-with-rec codes
+(defun ih-with-rec-init ()
+  ;; point-pose-extractor
+  (require :detection-interface "package://jsk_perception/euslisp/detection_interface.l")
+  (defparameter *detection-topic* "/ObjectDetection")
+
+  (setq local-cds (make-coords :pos (float-vector 527.349 424.972 760.996) :rpy (float-vector 3.129 0.857 -0.026)))
+  (setq *s-panel* (make-cube 150 230 10))
+  (send *s-panel* :move-to *pr2* :world)
+  (send *s-panel* :transform (send local-cds :copy-worldcoords))
+  (send *s-panel* :newcoords (make-coords :pos (send (send *s-panel* :copy-worldcoords) :worldpos)))
+  (send *s-panel* :rotate (deg2rad 90) :y)
+  (send *s-panel* :translate #f(75 115 0))
+
+  (objects (list *pr2* *scene* *spatula* *ladle* *pot* *s-panel*))
+  (warn "please run (ih-recognition) ~%")
+  )
+
+(defun ih-recognition ()
+  (set-pose-3)
+  (setq s-pos (float-vector 0 0 0))
+  (dotimes (i 10)
+    (setq local-cds (check-detection :type "microwave" :speak-name "denshirenji" :timeout 10 :speak nil))
+    (send *s-panel* :move-to *pr2* :world)
+    (send *s-panel* :transform (send local-cds :copy-worldcoords))
+    (setq s-pos (v+ s-pos (send *s-panel* :pos)))
+    )
+  (send *s-panel* :newcoords (make-coords :pos (scale 0.1 s-pos)))
+  (send *s-panel* :rotate (deg2rad 90) :y)
+  (send *s-panel* :translate #f(75 115 0))
+  
+  (warn "please run (on-stove-with-rec) ~%")
+  )
+
+(defun on-stove-with-rec ()
+  (send *ri* :start-grasp :larm :wait t)
+
+  ;; スイッチの位置
+  (setq s-pos (send (send *s-panel* :copy-worldcoords) :worldpos))
+  (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 47) 30750) :rpy (float-vector -3.047 -0.011 1.512)))
+  (send *arrow* :translate #f(130 0 0) :world)
+
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view t)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (push-stove-button)
+
+  (setq s-pos (send (send *s-panel* :copy-worldcoords) :worldpos))
+  (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 47) 30750) :rpy (float-vector -3.047 -0.011 1.512)))
+  (send *arrow* :translate #f(130 0 0) :world)
+
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view t)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (warn "please run (push-knob-with-rec) ~%")
+  )
+
+(defun off-stove-with-rec ()
+  (send *ri* :start-grasp :larm :wait t)
+  
+  ;; スイッチの位置
+  (setq s-pos (send (send *s-panel* :copy-worldcoords) :worldpos))
+  (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 37) 30750) :rpy (float-vector -3.047 -0.011 1.512)))
+  (send *arrow* :translate #f(120 0 0) :world)
+
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view t)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (push-stove-button)
+
+  (setq s-pos (send (send *s-panel* :copy-worldcoords) :worldpos))
+  (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 37) 30750) :rpy (float-vector -3.047 -0.011 1.512)))
+  (send *arrow* :translate #f(130 0 0) :world)
+
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view t)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun push-knob-with-rec ()
+  (send *ri* :start-grasp :larm :wait t)
+
+  (setq s-pos (send (send *s-panel* :copy-worldcoords) :worldpos))
+  (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 30) 715) :rpy (float-vector -3.047 -0.011 1.512)))
+  (send *arrow* :translate #f(130 0 0) :world)
+
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view t)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (push-stove-button)
+  
+  (setq s-pos (send (send *s-panel* :copy-worldcoords) :worldpos))
+  (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 30) 715) :rpy (float-vector -3.047 -0.011 1.512)))
+  (send *arrow* :translate #f(130 0 0) :world)
+
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view t)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  )
+
+(defun grasp-knob-with-rec ()
+  (send *ri* :move-gripper :larm 0.08)
+  
+  (setq s-pos (send (send *s-panel* :copy-worldcoords) :worldpos))
+  (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 30) 715) :rpy (float-vector -3.047 -0.011 1.512)))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 680 (+ (elt s-pos 1) 30) 715) :rpy (float-vector -3.047 -0.011 1.512)))
+  (send *arrow* :rotate (deg2rad 90) :x)
+  (send *arrow* :translate #f(130 0 0) :world)
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view t)
+  (send *ri* :angle-vector (send *pr2* :angle-vector))
+  (send *ri* :wait-interpolation)
+  
+  (push-stove-button)
+  
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate #f(10 0 0) :world)
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view t)
+  (send *ri* :angle-vector (send *pr2* :angle-vector))
+  (send *ri* :wait-interpolation)
+  
+  (send *ri* :start-grasp :larm :wait t :gain 100)
+
+  (warn "please run (rotate-knob) ~%")
+  )
+
+
 
 ;; now funcs
 (defun ih-test ()
@@ -713,6 +869,24 @@
 
   (push-knob) ;;つまみを押す
   (off-stove) ;;電源を切る
+  (set-pose-3)
+  )
+
+
+(defun ih-test-with-rec ()
+  (set-pose-3)
+  (ih-with-rec-init)
+  (ih-recognition)
+  
+  (on-stove-with-rec) ;;電源を入れる
+  (push-knob-with-rec) ;;つまみを押す
+
+  (grasp-knob-with-rec) ;;つまみを掴む
+  (rotate-knob :deg 30) ;;時計回りに30度つまみを回す
+  (release-knob) ;;つまみを離す
+
+  (push-knob-with-rec) ;;つまみを押す
+  (off-stove-with-rec) ;;電源を切る
   (set-pose-3)
   )
 

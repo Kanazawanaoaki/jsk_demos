@@ -266,8 +266,8 @@
 (defun grasp-knob ()
   (send *ri* :stop-grasp :larm :wait t)
   
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 30) 715) :rpy (float-vector -3.047 -0.011 1.512)))
   (setq s-pos (send (send *s-panel* :copy-worldcoords) :worldpos))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 30) 715) :rpy (float-vector -3.047 -0.011 1.512)))
   (send *arrow* :newcoords (make-coords :pos (float-vector 680 (+ (elt s-pos 1) 30) 715) :rpy (float-vector -3.047 -0.011 1.512)))
   (send *arrow* :rotate (deg2rad 90) :x)
   (send *arrow* :translate #f(130 0 0) :world)
