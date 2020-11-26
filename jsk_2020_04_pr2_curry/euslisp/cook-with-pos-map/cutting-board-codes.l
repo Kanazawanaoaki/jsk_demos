@@ -2,9 +2,6 @@
   ;; init
   (load "move-to-kitchen-with-map.l")
   
-  (objects (list *pr2* *scene*))
-  (update-view)
-  
   ;; set global num
   (setq *s-time* 3)
 
@@ -14,6 +11,8 @@
   (setq *grasp-larm-coords* (make-coords :pos (float-vector 679.695 8281.493 30832.711) :rpy (float-vector 1.882 0.065 1.548)))  
   
   (move-to-kitchen-irt)
+  (objects (list *pr2* *scene*))
+  (update-view)  
   )
 
 (cutting-board-init)

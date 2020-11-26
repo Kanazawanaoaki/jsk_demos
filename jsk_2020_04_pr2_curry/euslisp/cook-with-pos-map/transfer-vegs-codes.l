@@ -1,59 +1,29 @@
-(defun init ()
-  (load "../../model/my-room73b2-scene.l")
-  (setq *room* (room73b2))
-
-  (load "models/room73b2-kitchen-object.l")
-  (setq *kitchen* (room73b2-kitchen))
-  (send *kitchen* :transform (make-coords :pos (float-vector 305.0 2175.0 20.0) :rot #2f((1.0 2.449294e-16 0.0) (-2.449294e-16 1.0 0.0) (0.0 0.0 1.0))))
-
-  (load "package://pr2eus/pr2-interface.l")
-  (pr2-init)
-  ;; (pr2)
-
-  ;; set まな板
-  (load "../../model/cutting-board.l")
-  (setq *cutting-board* (cutting-board))
-  (send *cutting-board* :transform (make-coords :pos (float-vector 500.0 2000.0 840.0) :rot #2f((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0))))
+(defun transfer-vegs-init ()
+  ;; init
+  (load "move-to-kitchen-with-map.l")
   
-  ;; set objects
-  (load "../../model/peeler.l")
-  ;; (load "../../model/my-knife.l")
-  (load "../../model/knife-new-attention.l")
-  (load "models/arrow-object.l")
-  (setq *arrow* (arrow))
-
-  ;; set spots
-  (setq *cook-spot* (send *room73b2* :spot "cook-spot"))
-  (setq *sink-spot* (make-coords :pos #f(1055 2600 0) :rpy #f(3.14 0 0))) 
-  (setq *kitchen-spot* (send *room73b2* :spot "kitchen-spot"))
-
-
-  ;; キッチンの場所まで移動 (初期値)
-  (defun move-to-kitchen-irt ()
-    (send *pr2* :move-to *kitchen-spot* :world)
-    )
+  ;; set cutting board
+  (load "package://jsk_2020_04_pr2_curry/euslisp/model/cutting-board.l")
+  (setq *cutting-board* (cutting-board))
+  (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
+  
+  ;; set global num
+  (setq *s-time* 3)
+  
+  ;; def global-coords
+  (setq *micro-cup-put-coords* (make-coords :pos (float-vector 300 8550 31030) :rot #2f((0.0 -1.0 0.0) (1.0 0.0 0.0) (0.0 0.0 1.0)))) ;; 300も良さげではあった．
+  (setq *bowl-1-put-coords* (make-coords :pos (float-vector 328 8433 30997) :rpy #f(2.837 0.793 -1.721)))
+  (setq *bowl-2-put-coords* (make-coords :pos (float-vector 323 8631 30960) :rpy #f(2.697 0.249 3.102)))
+  
   (move-to-kitchen-irt)
-  (send *pr2* :reset-manip-pose)
-  (send *pr2* :torso_lift_joint :joint-angle 325)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-  (objects (list *pr2* *cutting-board*))
-
-  ;; def global values
-  (setq s-time 3)
-
-  ;; def global coords
-  (setq *micro-cup-put-coords* (make-coords :pos (float-vector 300 2050 1030) :rot #2f((0.0 -1.0 0.0) (1.0 0.0 0.0) (0.0 0.0 1.0)))) ;; 300も良さげではあった．
-  (setq *bowl-1-put-coords* (make-coords :pos (float-vector 328 1933 997) :rpy #f(2.837 0.793 -1.721)))
-  (setq *bowl-2-put-coords* (make-coords :pos (float-vector 323 2131 960) :rpy #f(2.697 0.249 3.102)))
-    
-  (setq width 160)
-  (setq length 40)
-  (setq height 40)
+  (objects (list *pr2* *scene* *cutting-board*))
+  (update-view)  
   )
 
-(init)
+(transfer-vegs-init)
+
+(warn "If you use real robot, run (update-pos) ~%")
+(warn "please run (now-transfer) or (now-transfer-bowl-1) ~%")
 
 
 ;; トピックなどを定義
@@ -115,6 +85,73 @@
 (setq *first-flag* t)
 (setq *fail-flag* nil)
 
+
+;; def util-funcs
+(defun reset-larm ()
+  ;; 少し上にして水平に
+  (setq *angle-vector-1* #f(325.0 19.8423 -8.21823 103.656 -49.9233 -17.8074 -61.6826 -444.344 -75.9572 52.4233 -108.235 -109.764 -0.12391 -9.4595 8.93627 0.0 50.0))
+  (send *pr2* :angle-vector *angle-vector-1*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  ;; 手前にする
+  (setq *angle-vector-2* #f(325.0 41.6856 -14.6471 88.8332 -81.5531 -11.5752 -49.6524 -454.261 -75.9572 52.4233 -108.235 -109.764 -0.12391 -9.4595 8.93627 0.0 50.0))
+  (send *pr2* :angle-vector *angle-vector-2*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (setq *angle-vector-3* #f(325.0 44.2075 -13.6922 86.5799 -85.3975 -9.44283 -48.0339 -455.926 -75.9572 52.4233 -108.235 -109.764 -0.12391 -9.4595 8.93627 0.0 50.0))
+  (send *pr2* :angle-vector *angle-vector-3*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+
+  (setq *angle-vector-4* #f(325.0 75.9096 52.2991 108.325 -109.775 -0.931123 -9.46065 -403.181 -75.9572 52.4233 -108.235 -109.764 -0.12391 -9.4595 8.93627 0.0 50.0))
+  (send *pr2* :angle-vector *angle-vector-4*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  )
+
+
+(defun avoid-larm ()
+  ;; 少し上にして水平に
+  (setq *lav1* #f(3.90826 -19.7839 166.352 -51.2831 -79.3544 -82.7576 -59.6161))
+  (send *pr2* :larm :angle-vector *lav1*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)  
+  
+  ;; 手前にする
+  (setq *lav2* #f(45.918 -19.9401 104.684 -121.15 -182.857 -72.0687 66.4371))
+  (send *pr2* :larm :angle-vector *lav2*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)  
+
+  (warn "please run (recognition) ~%")
+  )
+
+(defun return-larm ()
+  ;; 左手を少し上に
+  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 150) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view t)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (avoid-larm)
+  )
+
+
+;; transfer funcs
 (defun recognition ()
   (setq found-obj nil)
   (setq cnt 0)
@@ -162,7 +199,7 @@
   (send *tar* :newcoords (send obj-coord :copy-worldcoords))
   (send *tar* :rotate (deg2rad 180) :x)
   
-  (objects (list *tar* *pr2* *cutting-board* *kitchen*))
+  (objects (list *tar* *pr2* *cutting-board* *scene*))
   (send *irtviewer* :look-all
 	(geo::make-bounding-box 
 	 (flatten (send-all (send *pr2* :bodies) :vertices))))
@@ -170,6 +207,8 @@
   
   (warn "please run (grasp-target) or (now-devel) ~%")
   )
+
+
 
 (defun grasp-target ()
   (if *first-flag*
@@ -252,7 +291,6 @@
   (send *ri* :wait-interpolation)
 
   ;; 位置に．
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 300.0 2050.0 1030) :rot #2f((0.0 -1.0 0.0) (1.0 0.0 0.0) (0.0 0.0 1.0)))) ;; 300も良さげではあった．
   (send *arrow* :newcoords (send *micro-cup-put-coords* :copy-worldcoords))
   
   (send *arrow* :translate #f(0 0 30) :world)
@@ -397,82 +435,7 @@
   )
 
 
-(defun reset-larm ()
-  ;; 少し上にして水平に
-  (setq *angle-vector-1* #f(325.0 19.8423 -8.21823 103.656 -49.9233 -17.8074 -61.6826 -444.344 -75.9572 52.4233 -108.235 -109.764 -0.12391 -9.4595 8.93627 0.0 50.0))
-  (send *pr2* :angle-vector *angle-vector-1*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-  ;; 手前にする
-  (setq *angle-vector-2* #f(325.0 41.6856 -14.6471 88.8332 -81.5531 -11.5752 -49.6524 -454.261 -75.9572 52.4233 -108.235 -109.764 -0.12391 -9.4595 8.93627 0.0 50.0))
-  (send *pr2* :angle-vector *angle-vector-2*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-  (setq *angle-vector-3* #f(325.0 44.2075 -13.6922 86.5799 -85.3975 -9.44283 -48.0339 -455.926 -75.9572 52.4233 -108.235 -109.764 -0.12391 -9.4595 8.93627 0.0 50.0))
-  (send *pr2* :angle-vector *angle-vector-3*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-
-  (setq *angle-vector-4* #f(325.0 75.9096 52.2991 108.325 -109.775 -0.931123 -9.46065 -403.181 -75.9572 52.4233 -108.235 -109.764 -0.12391 -9.4595 8.93627 0.0 50.0))
-  (send *pr2* :angle-vector *angle-vector-4*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-  )
-
-
-(defun avoid-larm ()
-  ;; 少し上にして水平に
-  (setq *lav1* #f(3.90826 -19.7839 166.352 -51.2831 -79.3544 -82.7576 -59.6161))
-  (send *pr2* :larm :angle-vector *lav1*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)  
-  
-  ;; 手前にする
-  (setq *lav2* #f(45.918 -19.9401 104.684 -121.15 -182.857 -72.0687 66.4371))
-  (send *pr2* :larm :angle-vector *lav2*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)  
-
-  (warn "please run (recognition) ~%")
-  )
-
-(defun return-larm ()
-  ;; 左手を少し上に
-  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate #f(0 0 150) :world)
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view t)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-  (avoid-larm)
-  )
-
-
-
-(defun transfer-all ()
-  (recognition)
-  (until *end-flag*
-	 (grasp-target)
-	 (put-target)
-	 (avoid-larm)
-	 (recognition)
-	 )
-  )
-
-
+;; now funcs
 (defun now-transfer ()
   (setq *end-flag* nil)
   (recognition)
@@ -524,37 +487,5 @@
 	     (return-larm)
 	     (recognition))
 	   )
-	 )
-  )
-
-
-
-(defun now-devel ()
-  (recognition)
-  (grasp-target)
-  (put-target)
-  (avoid-larm)
-  (recognition)
-  )
-
-
-(defun now-test ()
-  (recognition)
-  (until *end-flag*
-	 (grasp-target)
-	 (put-target)
-	 (avoid-larm)
-	 (recognition)
-	 )
-  )
-
-
-(defun exec-all ()
-  (recognition)
-  (until *end-flag*
-	 (grasp-target)
-	 (put-target)
-	 (avoid-larm)
-	 (recognition)
 	 )
   )
