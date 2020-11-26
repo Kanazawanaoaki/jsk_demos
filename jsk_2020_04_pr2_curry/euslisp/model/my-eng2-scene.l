@@ -445,22 +445,7 @@
 (setq *ih-switch-off-coords* (make-coords :pos (float-vector 680 8161 30750) :rpy (float-vector -3.047 -0.011 1.512)))
 (setq *ih-knob-coords* (make-coords :pos (float-vector 680 8154 30715) :rpy (float-vector -3.047 -0.011 1.512)))
 
+;; (setq *ih-switch-on-coords* (make-coords :pos (float-vector 680 8165 30755) :rpy (float-vector -3.047 -0.011 1.512)))
+;; (setq *ih-switch-off-coords* (make-coords :pos (float-vector 680 8155 30755) :rpy (float-vector -3.047 -0.011 1.512)))
+;; (setq *ih-knob-coords* (make-coords :pos (float-vector 680 8150 30715) :rpy (float-vector -3.047 -0.011 1.512)))
 
-;; example
-;; (load "package://pr2eus/pr2-interface.l")
-;; (ros::roseus "eng8_navigation")
-;; (defvar *tfl* (instance ros::transform-listener :init))
-;; (setq *ri* (instance pr2-interface :init))
-;; (objects (list (setq *eng8-scene* (make-eng8-scene))))
-;; (move-to (car (send *eng8-scene* :spot "/eng8/6f/room602-front")))
-;;
-;; debug
-#|
-(defun move-to-test (&optional (spot "/eng8/6f/room602-base"))
-  (load "eng8-map-scene.l")
-  (objects (list (setq *eng8-scene*  (make-eng8-scene))))
-  (send *irtviewer* :look-all (make-cube 1000 1000 10000))
-  (send (car (send *eng8-scene* :object spot)) :draw-on :flush t :size 1000 :color #f(1 0 0))
-  (move-to (car (send *eng8-scene* :object spot)))
-  )
-|#

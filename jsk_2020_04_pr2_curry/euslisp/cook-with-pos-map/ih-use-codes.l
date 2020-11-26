@@ -162,7 +162,7 @@
 
   ;; スイッチの位置
   (send *arrow* :newcoords (send *ih-switch-on-coords* :copy-worldcoords))
-  (send *arrow* :translate #f(130 0 0) :world)
+  (send *arrow* :translate #f(100 0 0) :world)
 
   (send *pr2* :larm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
@@ -174,7 +174,7 @@
   (push-stove-button)
 
   (send *arrow* :newcoords (send *ih-switch-on-coords* :copy-worldcoords))
-  (send *arrow* :translate #f(130 0 0) :world)
+  (send *arrow* :translate #f(100 0 0) :world)
   
   (send *pr2* :larm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
@@ -189,7 +189,7 @@
   (send *ri* :start-grasp :larm :wait t)
 
   (send *arrow* :newcoords (send *ih-switch-off-coords* :copy-worldcoords))
-  (send *arrow* :translate #f(130 0 0) :world)
+  (send *arrow* :translate #f(100 0 0) :world)
 
   (send *pr2* :larm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
@@ -201,7 +201,7 @@
   (push-stove-button)
 
   (send *arrow* :newcoords (send *ih-switch-off-coords* :copy-worldcoords))
-  (send *arrow* :translate #f(130 0 0) :world)
+  (send *arrow* :translate #f(100 0 0) :world)
   
   (send *pr2* :larm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
@@ -216,7 +216,7 @@
   (send *ri* :start-grasp :larm :wait t)
 
   (send *arrow* :newcoords (send *ih-knob-coords* :copy-worldcoords))
-  (send *arrow* :translate #f(130 0 0) :world)
+  (send *arrow* :translate #f(100 0 0) :world)
 
   (send *pr2* :larm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
@@ -228,7 +228,7 @@
   (push-stove-button)
   
   (send *arrow* :newcoords (send *ih-knob-coords* :copy-worldcoords))
-  (send *arrow* :translate #f(130 0 0) :world)
+  (send *arrow* :translate #f(100 0 0) :world)
 
   (send *pr2* :larm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
@@ -244,7 +244,7 @@
   
   (send *arrow* :newcoords (send *ih-knob-coords* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad 90) :x)
-  (send *arrow* :translate #f(130 0 0) :world)
+  (send *arrow* :translate #f(100 0 0) :world)
   (send *pr2* :larm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
 	:rotation-axis t
@@ -319,7 +319,7 @@
 
   (send *arrow* :newcoords (send *ih-knob-coords* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad 90) :x)
-  (send *arrow* :translate #f(130 0 0) :world)
+  (send *arrow* :translate #f(100 0 0) :world)
   (send *pr2* :larm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
 	:rotation-axis t
@@ -715,6 +715,7 @@
   (send *s-panel* :translate #f(75 115 0))
 
   (objects (list *pr2* *scene* *spatula* *ladle* *pot* *s-panel*))
+  (update-view)
   (warn "please run (ih-recognition) ~%")
   )
 
@@ -736,25 +737,25 @@
 
 (defun on-stove-with-rec ()
   (send *ri* :start-grasp :larm :wait t)
-
+  
   ;; スイッチの位置
   (setq s-pos (send (send *s-panel* :copy-worldcoords) :worldpos))
   (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 47) 30750) :rpy (float-vector -3.047 -0.011 1.512)))
   (send *arrow* :translate #f(130 0 0) :world)
-
+  
   (send *pr2* :larm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
 	:rotation-axis t
 	:debug-view t)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   (push-stove-button)
-
+  
   (setq s-pos (send (send *s-panel* :copy-worldcoords) :worldpos))
   (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 47) 30750) :rpy (float-vector -3.047 -0.011 1.512)))
   (send *arrow* :translate #f(130 0 0) :world)
-
+  
   (send *pr2* :larm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
 	:rotation-axis t
@@ -772,7 +773,7 @@
   (setq s-pos (send (send *s-panel* :copy-worldcoords) :worldpos))
   (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 37) 30750) :rpy (float-vector -3.047 -0.011 1.512)))
   (send *arrow* :translate #f(120 0 0) :world)
-
+  
   (send *pr2* :larm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
 	:rotation-axis t
@@ -798,20 +799,20 @@
   (send *ri* :start-grasp :larm :wait t)
 
   (setq s-pos (send (send *s-panel* :copy-worldcoords) :worldpos))
-  (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 30) 715) :rpy (float-vector -3.047 -0.011 1.512)))
+  (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 30) 30715) :rpy (float-vector -3.047 -0.011 1.512)))
   (send *arrow* :translate #f(130 0 0) :world)
-
+  
   (send *pr2* :larm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
 	:rotation-axis t
 	:debug-view t)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   (push-stove-button)
   
   (setq s-pos (send (send *s-panel* :copy-worldcoords) :worldpos))
-  (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 30) 715) :rpy (float-vector -3.047 -0.011 1.512)))
+  (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 30) 30715) :rpy (float-vector -3.047 -0.011 1.512)))
   (send *arrow* :translate #f(130 0 0) :world)
 
   (send *pr2* :larm :inverse-kinematics
@@ -827,8 +828,7 @@
   (send *ri* :move-gripper :larm 0.08)
   
   (setq s-pos (send (send *s-panel* :copy-worldcoords) :worldpos))
-  (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 30) 715) :rpy (float-vector -3.047 -0.011 1.512)))
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 680 (+ (elt s-pos 1) 30) 715) :rpy (float-vector -3.047 -0.011 1.512)))
+  (send *arrow* :newcoords (make-coords :pos (float-vector (elt s-pos 0) (+ (elt s-pos 1) 30) 30715) :rpy (float-vector -3.047 -0.011 1.512)))
   (send *arrow* :rotate (deg2rad 90) :x)
   (send *arrow* :translate #f(130 0 0) :world)
   (send *pr2* :larm :inverse-kinematics
