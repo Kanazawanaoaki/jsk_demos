@@ -169,10 +169,10 @@
   ;; (update-pos)
   ;; (push-knob)
   
-  ;; ボウル３を鍋に移す ヘラは掴んでいる前提
+  ;; ボウル４を鍋に移す ヘラは掴んでいる前提
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
   (update-pos)
-  (now-transfer-3) ;; ヘラは掴んでいる前提
+  (now-transfer-4) ;; ヘラは掴んでいる前提
   
   ;; コンロ操作をする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
@@ -221,12 +221,12 @@
   ;; (update-pos)
   ;; (push-knob)
 
-  ;; ボウル４を鍋に移す 途中でおたまからヘラに持ち替える
+  ;; ボウル３を鍋に移す 途中でおたまからヘラに持ち替える
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
   (update-pos)
-  (put-lalde-1)
+  (put-ladle-1)
   (grasp-spatula)
-  (now-transfer-4)
+  (now-transfer-3)
   (put-spatula-1)
 
   ;; おたまを掴む，コンロ操作，おたまで混ぜる．
@@ -269,3 +269,17 @@
   (avoid-rarm-spatula)  
   )
 
+
+(defun tmp-func () ;; 人参の下ごしらえ  
+  ;; コンロ操作をする 電源を入れるところから
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
+  (update-pos)
+  (now-start-ih :deg -10)
+  
+  ;; かき混ぜる　ヘラは掴んでいる前提
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
+  (update-pos)
+  (now-spatula-mix-loop :times 10)
+  
+  (warn " 加熱準備の準備（棚を開けられたら無くせる）をして please run (curry-3) ~%")
+  )

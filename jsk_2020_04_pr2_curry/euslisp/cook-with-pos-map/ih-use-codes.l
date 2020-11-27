@@ -22,8 +22,13 @@
 
 
 (defun set-pose-3 ()
-  (send *pr2* :reset-manip-pose)
-  (send *pr2* :torso_lift_joint :joint-angle 325)
+  ;; (send *pr2* :reset-manip-pose)
+  ;; (send *pr2* :torso_lift_joint :joint-angle 325)
+  ;; (send *pr2* :larm :angle-vector #f(117.007 48.3805 113.439 -103.326 38.7107 -5.72958 14.4628))
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  ;; (send *ri* :wait-interpolation)  
+
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
   (send *pr2* :larm :angle-vector #f(117.007 48.3805 113.439 -103.326 38.7107 -5.72958 14.4628))
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)  
@@ -894,6 +899,7 @@
 (defun now-start-ih (&rest args &key (deg -10) &allow-other-keys)
   (set-pose-3)
   (push-knob)
+  (grasp-knob)
   (rotate-knob :deg 30)
   (rotate-knob :deg deg)
   (release-knob)
