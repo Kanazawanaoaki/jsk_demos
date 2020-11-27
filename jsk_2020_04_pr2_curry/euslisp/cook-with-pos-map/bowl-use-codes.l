@@ -697,17 +697,6 @@
 
 
 ;; spatula funcs
-;; (defun set-spatula ()
-;;   (setq *spatula* (spatula))
-  
-;;   (send *spatula* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-;;   (send *spatula* :rotate (deg2rad 90) :x)
-;;   (send (send *pr2* :rarm :end-coords) :assoc *spatula*)
-  
-;;   (objects (list *pr2* *scene* *spatula*))
-;;   (update-view)
-;;   )
-
 (defun squeeze-test-set ()
   (send *ri* :start-grasp :rarm :gain 30 :wait t)
   
