@@ -196,7 +196,7 @@
   (send *ri* :wait-interpolation)
 
   ;;少し前に
-  (send *arrow* :newcoords (make-coords :pos (flaot-vector 600 8739 31167) :rpy (float-vector -1.571 1.047 1.571)))
+  (send *arrow* :newcoords (make-coords :pos (float-vector 600 8739 31167) :rpy (float-vector -1.571 1.047 1.571)))
   (send *pr2* :rarm :inverse-kinematics
   	(send *arrow* :copy-worldcoords)
   	:rotation-axis t
