@@ -152,7 +152,7 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
   (update-pos)
   (now-on-stove)
-  (now-start-ih)
+  (now-start-ih :deg -10)
   
   ;; かき混ぜる　ヘラは掴んでいる前提
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
@@ -177,7 +177,7 @@
   ;; コンロ操作をする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
   (update-pos)
-  (now-start-ih)
+  (now-start-ih :deg -10)
   
   ;; かき混ぜる ヘラは掴んでいる前提
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
@@ -208,7 +208,7 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
   (update-pos)
   (grasp-ladle) ;; おたまを掴む 
-  (now-start-ih) ;; コンロ操作
+  (now-start-ih :deg -30) ;; コンロ操作
   ;; (now-ladle-mix) ;; おたまで混ぜる
   (now-ladle-mix-loop :times 10) ;; おたまで10回混ぜる
   
@@ -221,9 +221,10 @@
   ;; (update-pos)
   ;; (push-knob)
 
-  ;; ボウル４を鍋に移す ヘラは途中で掴む
+  ;; ボウル４を鍋に移す 途中でおたまからヘラに持ち替える
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
   (update-pos)
+  (put-lalde-1)
   (grasp-spatula)
   (now-transfer-4)
   (put-spatula-1)
@@ -232,7 +233,7 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
   (update-pos)
   (grasp-ladle) ;; おたまを掴む 
-  (now-start-ih) ;; コンロ操作
+  (now-start-ih :deg -50) ;; コンロ操作
   ;; (now-ladle-mix) ;; おたまで混ぜる
   (now-ladle-mix-loop :times 10) ;; おたまで10回混ぜる
   

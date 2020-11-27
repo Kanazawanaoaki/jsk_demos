@@ -19,6 +19,11 @@
   (setq *arrow* (arrow))
   
   (objects (list *scene* *pr2*))
+
+  ;; set global variables
+  (setq *s-time* 3)
+  (setq *debug-flag* nil)
+  
   )
 
 (defun update-view ()
@@ -153,9 +158,3 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   )
-
-;; (defun up-rarm ()
-;;   )
-
-;; (defun up-larm ()
-;;   )

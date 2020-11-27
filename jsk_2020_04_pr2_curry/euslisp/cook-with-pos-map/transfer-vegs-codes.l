@@ -7,9 +7,6 @@
   (setq *cutting-board* (cutting-board))
   (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
   
-  ;; set global num
-  (setq *s-time* 3)
-  
   ;; def global-coords
   (setq *micro-cup-put-coords* (make-coords :pos (float-vector 300 8550 31030) :rot #2f((0.0 -1.0 0.0) (1.0 0.0 0.0) (0.0 0.0 1.0)))) ;; 300も良さげではあった．
   (setq *bowl-1-put-coords* (make-coords :pos (float-vector 328 8433 30997) :rpy #f(2.837 0.793 -1.721)))
