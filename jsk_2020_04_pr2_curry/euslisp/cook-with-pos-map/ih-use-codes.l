@@ -526,6 +526,62 @@
   (warn "please run (mix-with-spatula) again or (wait-pose-spatula) ~%")
   )
 
+(defun rotate-mix-with-spatula ()
+  ;; 最初の位置
+  (send *arrow* :newcoords (make-coords :pos (float-vector 427.739 8071.081 30846.132) :rpy (float-vector -2.267 0.887 0.091)))
+  (send *pr2* :rarm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+  	:move-target (car (send *spatula* :attention))
+  	:rotation-axis t
+  	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  ;; 回転させる
+  (setq *cds0* (make-cascoords :pos (float-vector 468 8090 30850))) ;;中心の座標
+  (setq *cds1* (make-cascoords :pos (float-vector 468 8090 30850))) ;;回転の初期位置
+  (setq *rpy1* (float-vector -2.267 0.887 0.091)) ;;回転中の目標姿勢
+  (send *cds0* :assoc *cds1*)
+  
+  (dotimes (i 12)
+    (send *cds0* :rotate (deg2rad 30) :z :world)
+    (send *arrow* :newcoords (make-coords :pos (send (send *cds1* :copy-worldcoords) :worlpos) :rpy *rpy1*))
+    (send *pr2* :rarm :inverse-kinematics
+	  (send *arrow* :copy-worldcoords)
+	  :move-target (car (send *spatula* :attention))
+	  :rotation-axis t
+	  :debug-view *debug-flag*)
+    (send *viewer* :draw-objects)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+    (send *ri* :wait-interpolation)
+    )
+  
+  
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 509.423 8110.011 30860.304) :rpy (float-vector -2.038 1.081 0.261)))
+  ;; (send *pr2* :rarm :inverse-kinematics
+  ;; 	(send *arrow* :copy-worldcoords)
+  ;; 	:move-target (car (send *spatula* :attention))
+  ;; 	:rotation-axis t
+  ;; 	:debug-view *debug-flag*)
+  ;; (send *viewer* :draw-objects)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  ;; (send *ri* :wait-interpolation)
+  
+  (send *arrow* :newcoords (make-coords :pos (float-vector 486.298 8083.5 30893.89) :rpy (float-vector -1.987 0.871 0.095)))
+  (send *pr2* :rarm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+  	:move-target (car (send *spatula* :attention))
+  	:rotation-axis t
+  	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (warn "please run (mix-with-spatula) again or (wait-pose-spatula) ~%")
+  )
+
+
 (defun wait-pose-spatula ()
   (send *arrow* :newcoords (make-coords :pos (float-vector 471 8170 31070) :rpy (float-vector -1.603 0.03 -0.018))) ;; wait-pose
   (send *pr2* :rarm :inverse-kinematics
