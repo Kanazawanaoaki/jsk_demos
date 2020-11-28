@@ -1,7 +1,8 @@
 (defun sato-init ()
-  (require :pr2-microwave-interface "package://microwave_pr2_201710/euslisp/lib/pr2-microwave-interface.l")
-
-  (setq *pmi* (instance pr2-microwave-interface :init))
+  ;; (require :pr2-microwave-interface "package://microwave_pr2_201710/euslisp/lib/pr2-microwave-interface.l")
+  (require :pr2-microwave-interface "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/lib-microwave/my-pr2-microwave-interface.l")
+  
+  (unless (boundp '*pmi*) (setq *pmi* (instance pr2-microwave-interface :init)))
   (send *pmi* :kanazawa-pose)
   
   (warn "please run (recieve-sato) or (tmp-test) ~%")
@@ -29,21 +30,12 @@
   (send *pmi* :open-microwave)
   (send *pmi* :kanazawa-put-object)
   (send *pmi* :close-microwave)
-
-  ;; push button
-  (send *ri* :start-grasp :rarm :wait t)
-  (send *pmi* :push-button (float-vector -70 -380 85))
-  (send *pmi* :push-button (float-vector -70 -400 100))
-  (send *pmi* :push-button (float-vector -70 -400 100))
-  (send *pmi* :push-button (float-vector -60 -410 175))
-  (send *pr2* :reset-pose)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)           
-  (send *ri* :wait-interpolation)    
   
-  ;; (send *pmi* :push-500w-button)
-  ;; (send *pmi* :push-1min-button)
-  ;; (send *pmi* :push-1min-button)
-  ;; (send *pmi* :push-start-button)
+  ;; push button
+  (send *pmi* :push-500w-button)
+  (send *pmi* :push-1min-button)
+  (send *pmi* :push-1min-button)
+  (send *pmi* :push-start-button)
   
   ;; wait for heating
   (unix::sleep (* 2 60))
