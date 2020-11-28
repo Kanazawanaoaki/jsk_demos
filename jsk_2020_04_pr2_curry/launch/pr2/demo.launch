@@ -1,11 +1,23 @@
 <launch>
   <arg name="ROSBAG" default="false" />
+  <arg name="FULL" default="false" />
+
+  <arg name="ONLY_RVIZ" value="false" if="$(arg FULL)" />
+  <arg name="ONLY_RVIZ" value="true" unless="$(arg FULL)" />
   
-  <include file="$(find jsk_2020_04_pr2_curry)/launch/pr2/cutting_board_top_pr2_test.launch">
-    <arg name="rosbag" value="$(arg ROSBAG)"/>
-  </include>
+  <group if="$(arg FULL)">
+    <include file="$(find jsk_2020_04_pr2_curry)/launch/pr2/cutting_board_top_pr2_test.launch">
+      <arg name="rosbag" value="$(arg ROSBAG)"/>
+    </include>
+  </group>
   
-  <include file="$(find jsk_2020_04_pr2_curry)/launch/pr2/right_virtual_force_publisher.launch"/>
+  <group if="$(arg ONLY_RVIZ)">
+    <include file="$(find jsk_2020_04_pr2_curry)/launch/pr2/rviz_cutting_board_top_pr2_test.launch"/>
+  </group>
+ 
   
-  <include file="$(find jsk_2020_04_pr2_curry)/launch/pr2/endcoords_rarm_publisher.launch"/>
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/pr2/dual_arm_wrench_and_pose.launch"/>
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/sift/detect_microwave.launch"/>
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/data_collection_prosilica.launch"/>
+  
 </launch>
