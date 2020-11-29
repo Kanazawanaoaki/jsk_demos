@@ -695,6 +695,56 @@
   (warn "please run (mix-with-ladle) again or (wait-pose-ladle) ~%")
   )
 
+(defun rotate-mix-with-ladle ()
+  ;; 最初の位置
+  (send *arrow* :newcoords (make-coords :pos (float-vector 417.495 8067.248 30861.184) :rpy (float-vector 1.772 1.446 1.068)))
+  (send *pr2* :rarm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+  	:move-target (elt (send *ladle* :attention) 1)
+  	:rotation-axis t
+  	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  ;; 回転させる
+  (setq *cds0* (make-cascoords :pos (float-vector 468 8090 30850))) ;;中心の座標
+  (setq *cds1* (make-cascoords :pos (float-vector 420 8070 30860))) ;;回転の初期位置
+  (setq *rpy1* (float-vector 1.772 1.446 1.068)) ;;回転中の目標姿勢
+  (send *cds0* :assoc *cds1*)
+  
+  (setq avs (list))
+  (setq tms (list))
+  
+  (dotimes (i 12)
+    (send *cds0* :rotate (deg2rad 30) :z :world)
+    (send *arrow* :newcoords (make-coords :pos (send (send *cds1* :copy-worldcoords) :worlpos) :rpy *rpy1*))
+    (send *pr2* :rarm :inverse-kinematics
+	  (send *arrow* :copy-worldcoords)
+	  :move-target (elt (send *ladle* :attention) 1)
+	  :rotation-axis t
+	  :debug-view *debug-flag*)
+    (setq av (send *pr2* :angle-vector))
+    (setq avs (append avs (list av)))
+    (setq tms (append tms (list 400)))
+    )
+  
+  (send *ri* :angle-vector-sequence avs tms)
+  (send *ri* :wait-interpolation)
+  
+  (send *arrow* :newcoords (make-coords :pos (float-vector 485.52 8113.658 30870.807) :rpy (float-vector 0.77 1.155 -0.115)))
+  (send *pr2* :rarm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+  	:move-target (elt (send *ladle* :attention) 1)
+  	:rotation-axis t
+  	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  
+  (warn "please run (mix-with-ladle) again or (wait-pose-ladle) ~%")
+  )
+
 (defun wait-pose-ladle ()
   (send *arrow* :newcoords (make-coords :pos (float-vector 471 8170 31070) :rpy (float-vector -1.603 0.0 3.14))) ;; wait-pose
   (send *pr2* :rarm :inverse-kinematics
