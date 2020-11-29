@@ -896,7 +896,8 @@
   )
 
 (defun peel-test-3 ()
-  (peel-test)
+  (peel-test4)
+  (rossrv-test)
   (warn "please run  (set-carrot-4) ~%")  
   )
 
