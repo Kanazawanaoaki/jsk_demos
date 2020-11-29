@@ -537,6 +537,9 @@
   (setq *cds1* (make-cascoords :pos (float-vector 468 8090 30850))) ;;回転の初期位置
   (setq *rpy1* (float-vector -2.267 0.887 0.091)) ;;回転中の目標姿勢
   (send *cds0* :assoc *cds1*)
+
+  (setq avs (list))
+  (setq tms (list))
   
   (dotimes (i 12)
     (send *cds0* :rotate (deg2rad 30) :z :world)
@@ -546,21 +549,13 @@
 	  :move-target (car (send *spatula* :attention))
 	  :rotation-axis t
 	  :debug-view *debug-flag*)
-    (send *viewer* :draw-objects)
-    (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-    (send *ri* :wait-interpolation)
+    (setq av (send *pr2* :angle-vector))
+    (setq avs (append avs (list av)))
+    (setq tms (append tms (list 400)))
     )
   
-  
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 509.423 8110.011 30860.304) :rpy (float-vector -2.038 1.081 0.261)))
-  ;; (send *pr2* :rarm :inverse-kinematics
-  ;; 	(send *arrow* :copy-worldcoords)
-  ;; 	:move-target (car (send *spatula* :attention))
-  ;; 	:rotation-axis t
-  ;; 	:debug-view *debug-flag*)
-  ;; (send *viewer* :draw-objects)
-  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  ;; (send *ri* :wait-interpolation)
+  (send *ri* :angle-vector-sequence avs tms)
+  (send *ri* :wait-interpolation)
   
   (send *arrow* :newcoords (make-coords :pos (float-vector 486.298 8083.5 30893.89) :rpy (float-vector -1.987 0.871 0.095)))
   (send *pr2* :rarm :inverse-kinematics
@@ -722,7 +717,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   (send *arrow* :newcoords (make-coords :pos (float-vector 550 8250 31180) :rpy (float-vector -1.603 0.0 3.14)))
   (send *pr2* :rarm :inverse-kinematics
   	(send *arrow* :copy-worldcoords)
@@ -732,7 +727,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   (send *arrow* :newcoords (make-coords :pos (float-vector 600 8600 31144) :rpy (float-vector -3.048 -0.062 -1.634)))
   (send *pr2* :rarm :inverse-kinematics
   	(send *arrow* :copy-worldcoords)
@@ -741,11 +736,12 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
-  (setq *rav4* #f(18.8064 33.5484 -40.2593 -96.8315 131.512 -69.7679 -135.891))
-  (send *pr2* :rarm :angle-vector *rav4*)
+  
+  (setq *rav0* #f(-20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
+  (send *pr2* :rarm :angle-vector *rav0*)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
+
   
   (warn "please run (after-transfer) ~%")
   )
