@@ -534,22 +534,74 @@
   )
 
 (defun recieve-pot ()
-  (send *arrow* :newcoords (send (send *pot* :handle-handle0) :copy-worldcoords))
-  (send *arrow* :translate #f(100 0 100) :world)
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :larm :angle-vector #f(117.007 48.3805 113.439 -103.326 38.7107 -5.72958 14.4628))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
   
-  ()
+  ;; potを置く位置
+  (if (not (eql (send *pot* :parent) nil))
+      (send (send *pot* :parent) :dissoc *pot*))
+  (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *pot* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate #f(100 0 100) :world)  
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  ;; potを受け取る
+  (send *ri* :stop-grasp :larm :wait t)
+  (send *ri* :speak-jp "鍋を握らせて下さい")
+  (unix:sleep *s-time*)
+  (send *ri* :start-grasp :larm :wait t)
   
   (warn "please run (put-pot) ~%")  
   )
 
 (defun put-pot ()
+  ;; potを置く位置
+  (if (not (eql (send *pot* :parent) nil))
+      (send (send *pot* :parent) :dissoc *pot*))
+  (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *pot* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate #f(100 0 100) :world)  
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
 
+  (send *arrow* :translate #f(-100 0 -100) :world)  
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *ri* :stop-grasp :larm :wait t)
+
+  (send *arrow* :newcoords (send *pot-larm-from-below* :copy-worldcoords))
+  (send *arrow* :translate #f(100 0 -100) :world)
+  (send *pr2* :larm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+  	:rotation-axis t
+  	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
   )
 
 ;; transfer funcs
 (defun transfer-to-pot ()
   (send *arrow* :newcoords (make-coords :pos (float-vector 550.911 8325.179 31085.843) :rpy (float-vector 2.561 1.128 2.104))) ;; for eng2 model
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 550.911 1825.179 1085.843) :rpy (float-vector 2.561 1.128 2.104)))
   (send *pr2* :larm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
 	:rotation-axis t
@@ -926,7 +978,7 @@
   )
 
 (defun put-mcup ()
-  ;; mcupの位置を置く位置
+  ;; mcupを置く位置
   (if (not (eql (send *mcup* :parent) nil))
       (send (send *mcup* :parent) :dissoc *mcup*))
   (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
@@ -1024,7 +1076,9 @@
   (send *ri* :speak-jp "軽量カップを握らせて下さい")
   (unix:sleep *s-time*)
   (send *ri* :start-grasp :larm :wait t)
-
+  
+  (set-mcup)
+  
   (warn "please run (put-mcup) ~%")
   )
 
@@ -1185,3 +1239,14 @@
   (reset-larm)
   )
 
+
+(defun mcup-test ()
+  (send *arrow* :newcoords (make-coords :pos (float-vector 638.218 7734.676 30900.889) :rpy (float-vector  -2.511 0.686 0.013)))
+  (send *pr2* :larm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+  	:rotation-axis t
+  	:debug-view nil)
+  (send *viewer* :draw-objects)
+
+  (set-mcup)
+  )
