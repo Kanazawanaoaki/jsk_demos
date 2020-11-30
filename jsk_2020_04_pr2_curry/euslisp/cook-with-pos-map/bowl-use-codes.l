@@ -2,15 +2,18 @@
   ;; init
   (load "tool-use-codes.l")
 
-  ;; spatula on the cutting board
-  (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords))
-
-  ;; set measuring-cup
+  ;; set objects
+  (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; spatula on the cutting board
+  
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/measuring-cup-73b2.l")
   (setq *mcup* (measuring-cup-73b2))
   (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
   
-  (objects (list *pr2* *scene* *spatula* *mcup* *ladle*))
+  (load "package://jsk_2020_04_pr2_curry/euslisp/model/cooking-pot-73b2.l")
+  (setq *pot* (cooking-pot))
+  (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+  
+  (objects (list *pr2* *scene* *spatula* *mcup* *ladle* *pot*))
   (update-view)
   
   ;; def bowl grasp coords
@@ -121,12 +124,12 @@
   (send *ri* :wait-interpolation)
 
   ;;少し前に
-  (send *arrow* :newcoords (make-coords :pos (float-vector 600 8361 31167) :rpy (float-vector 1.571 1.047 1.571)))
-  
-  (send *pr2* :larm :inverse-kinematics
-  	(send *arrow* :copy-worldcoords)
-  	:rotation-axis t
-  	:debug-view *debug-flag*)
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 600 8361 31167) :rpy (float-vector 1.571 1.047 1.571)))
+  ;; (send *pr2* :larm :inverse-kinematics
+  ;; 	(send *arrow* :copy-worldcoords)
+  ;; 	:rotation-axis t
+  ;; 	:debug-view *debug-flag*)
+  (send *pr2* :larm :angle-vector #f(30.046 -16.1647 77.4608 -67.7082 57.0472 -86.8259 -43.9204))
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -196,11 +199,12 @@
   (send *ri* :wait-interpolation)
 
   ;;少し前に
-  (send *arrow* :newcoords (make-coords :pos (float-vector 600 8739 31167) :rpy (float-vector -1.571 1.047 1.571)))
-  (send *pr2* :rarm :inverse-kinematics
-  	(send *arrow* :copy-worldcoords)
-  	:rotation-axis t
-  	:debug-view *debug-flag*)
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 600 8739 31167) :rpy (float-vector -1.571 1.047 1.571)))
+  ;; (send *pr2* :rarm :inverse-kinematics
+  ;; 	(send *arrow* :copy-worldcoords)
+  ;; 	:rotation-axis t
+  ;; 	:debug-view *debug-flag*)
+  (send *pr2* :rarm :angle-vector #f(-37.8868 -20.239 -85.7141 -64.0592 312.721 -87.1625 -148.994))
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -492,9 +496,8 @@
   (send *pr2* :rarm :move-end-pos (float-vector 100 0 0) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
-
+  
   ;; ボウル２を置く位置 set
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 584.588 2046.672 885.165) :rpy (float-vector -2.389 0.788 1.578)))
   (send *arrow* :newcoords (send *bowl-2-set-coords* :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
   
@@ -505,7 +508,6 @@
 (defun grasp-bowl-2-set ()
   ;; ボウル２の位置 set
   (setq *target* (make-coords))
-  ;; (send *target* :newcoords (make-coords :pos (float-vector 550.911 1925.179 885.843) :rpy (float-vector 2.561 1.128 2.104)))
   (send *target* :newcoords (send *bowl-2-set-larm-coords* :copy-worldcoords))
   
   (grasp-bowl-larm)
@@ -515,22 +517,33 @@
 
 (defun put-bowl-2-set ()
   ;; ボウル２の位置 set
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 550.911 1925.179 885.843) :rpy (float-vector 2.561 1.128 2.104)))
   (send *arrow* :newcoords (send *bowl-2-set-larm-coords* :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
-
+  
   (put-bowl-larm)
   )
 
 (defun grasp-bowl-1 ()
   ;; ボウル１の位置
   (setq *target* (make-coords))
-  ;; (send *target* :newcoords (make-coords :pos (float-vector 362 1946 880) :rpy (float-vector 2.766 0.889 1.742)))  
   (send *target* :newcoords (send *bowl-1-coords* :copy-worldcoords))
   
   (grasp-bowl-larm)
 
   (warn "please run (transfer-to-pot) ~%")  
+  )
+
+(defun recieve-pot ()
+  (send *arrow* :newcoords (send (send *pot* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate #f(100 0 100) :world)
+  
+  ()
+  
+  (warn "please run (put-pot) ~%")  
+  )
+
+(defun put-pot ()
+
   )
 
 ;; transfer funcs

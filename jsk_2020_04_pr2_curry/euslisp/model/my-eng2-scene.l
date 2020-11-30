@@ -418,7 +418,7 @@
 
 
 ;; kitchenware coords
-(setq *pot-coords* (make-coords :pos (float-vector 450 8100 30840) :rpy (float-vector 0 0 0)))
+(setq *pot-coords* (make-coords :pos (float-vector 450 8100 30840) :rpy (float-vector 3.142 0 0)))
 (setq *mcup-coords* (make-coords :pos (float-vector 200 8300 30840) :rpy (float-vector -1.571 0 0)))
 (setq *cutting-board-coords* (make-coords :pos (float-vector 500 8420 30840) :rpy (float-vector 0 0 0)))
 ;; ボウルとかも追加する？
@@ -437,15 +437,7 @@
 (setq *fauset-coords* (make-coords :pos (float-vector 350 9157 30850) :rpy (float-vector 3.14 0 0)))
 
 ;; コンロ
-;; (setq *ih-switch-on-coords* (make-coords :pos (float-vector 680 8181 30750) :rpy (float-vector -3.047 -0.011 1.512)))
-;; (setq *ih-switch-off-coords* (make-coords :pos (float-vector 680 8171 30750) :rpy (float-vector -3.047 -0.011 1.512)))
-;; (setq *ih-knob-coords* (make-coords :pos (float-vector 680 8164 30715) :rpy (float-vector -3.047 -0.011 1.512)))
-
 (setq *ih-switch-on-coords* (make-coords :pos (float-vector 680 8171 30750) :rpy (float-vector -3.047 -0.011 1.512)))
 (setq *ih-switch-off-coords* (make-coords :pos (float-vector 680 8161 30750) :rpy (float-vector -3.047 -0.011 1.512)))
 (setq *ih-knob-coords* (make-coords :pos (float-vector 680 8154 30715) :rpy (float-vector -3.047 -0.011 1.512)))
-
-;; (setq *ih-switch-on-coords* (make-coords :pos (float-vector 680 8165 30755) :rpy (float-vector -3.047 -0.011 1.512)))
-;; (setq *ih-switch-off-coords* (make-coords :pos (float-vector 680 8155 30755) :rpy (float-vector -3.047 -0.011 1.512)))
-;; (setq *ih-knob-coords* (make-coords :pos (float-vector 680 8150 30715) :rpy (float-vector -3.047 -0.011 1.512)))
 

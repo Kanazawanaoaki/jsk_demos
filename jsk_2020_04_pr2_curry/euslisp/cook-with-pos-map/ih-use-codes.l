@@ -2,7 +2,7 @@
   ;; init
   (load "tool-use-codes.l")
 
-  ;; set pot
+  ;; set objects
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/cooking-pot-73b2.l")
   (setq *pot* (cooking-pot))
   (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
