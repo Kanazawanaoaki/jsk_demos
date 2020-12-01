@@ -548,6 +548,16 @@
   (warn "please run (transfer-to-pot) ~%")  
   )
 
+(defun grasp-bowl-2-set-rarm ()
+  ;; ボウル２の位置 set
+  (setq *target* (make-coords))
+  (send *target* :newcoords (send *bowl-2-grasp-set-coords* :copy-worldcoords))
+  
+  (grasp-bowl-rarm)
+  
+  (warn "please run (put-bowl-2) ~%")  
+  )
+
 (defun recieve-pot ()
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
   (send *pr2* :larm :angle-vector #f(117.007 48.3805 113.439 -103.326 38.7107 -5.72958 14.4628))
@@ -1254,6 +1264,22 @@
   
   (warn "please run (transfer-bowl-2-to-pot) ~%")  
   )
+
+(defun grasp-bowl-2-set-rarm-model () ;;右腕
+  ;; ボウル２の位置 set
+  (if (not (eql (send *bowl-2* :parent) nil))
+      (send (send *bowl-2* :parent) :dissoc *bowl-2*))
+  (send *bowl-2* :newcoords (send *bowl-2-set-coords* :copy-worldcoords))
+  (setq *target* (make-coords))
+  (send *target* :newcoords (send (send *bowl-2* :handle-handle0) :copy-worldcoords))
+  
+  (grasp-bowl-rarm)
+
+  (set-bowl-2-model-rarm)
+  
+  (warn "please run (put-bowl-2-model) ~%")  
+  )
+
 
 (defun put-bowl-2-set-model ()
   ;; ボウル２の位置 set
