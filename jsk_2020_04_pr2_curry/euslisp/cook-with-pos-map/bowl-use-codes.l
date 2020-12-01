@@ -1,7 +1,7 @@
 (defun bowl-init ()
   ;; init
   (load "tool-use-codes.l")
-
+  
   ;; set objects
   (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; spatula on the cutting board
   
@@ -45,6 +45,7 @@
   )
 
 (bowl-init)
+
 
 ;; add for sense rec
 (setq *x-thre* -10)
@@ -738,7 +739,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
-  (warn "please run (after-transfer-left) ~%")  
+  (warn "please run (after-transfer-left) ~%")
   )
 
 (defun after-transfer-left ()
@@ -788,7 +789,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
-  (send *arrow* :newcoords (make-coords :pos (float-vector 500 8200 31090) :rpy (float-vector -1.603 0.03 -0.018)))
+  (send *arrow* :newcoords (make-coords :pos (float-vector 500 8200 31080) :rpy (float-vector -1.603 0.03 -0.018)))
   (send *pr2* :rarm :inverse-kinematics
   	(send *arrow* :copy-worldcoords)
   	:move-target (car (send *spatula* :attention))
@@ -799,7 +800,7 @@
   (send *ri* :wait-interpolation)
 
   (send *arrow* :newcoords (make-coords :pos (send (send (send *pr2* :larm :end-coords) :copy-worldcoords) :worldpos)))
-  (send *arrow* :translate #f(0 70 -50) :world)
+  (send *arrow* :translate #f(0 70 -60) :world)
   (send *arrow* :rotate (deg2rad -90) :z)
   (send *pr2* :rarm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
@@ -825,10 +826,10 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   (setq avs (list))
   (setq tms (list))
-
+  
   (dotimes (i 15)
     (send *arrow* :translate (float-vector 0 -10 0) :world)
     (send *pr2* :rarm :inverse-kinematics
@@ -861,33 +862,14 @@
   (ros::unsubscribe "/right_endeffector/wrench")
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
   (send *arrow* :newcoords (send (elt (send *spatula* :attention) 1) :copy-worldcoords))
-
+  
   (setq avs (list))
   (setq tms (list))
-  
-  (send *arrow* :translate #f(0 0 -60) :world)
-  (send *arrow* :rotate (deg2rad 10) :y)
-  (send *pr2* :rarm :inverse-kinematics
-  	(send *arrow* :copy-worldcoords)
-  	:move-target (elt (send *spatula* :attention) 1) ;;(car (send *spatula* :attention))
-  	:rotation-axis t
-  	:debug-view nil)
-  (setq av (send *pr2* :angle-vector))
-  (setq avs (append avs (list av)))
-  (setq tms (append tms (list 800)))
-  
-  (send *arrow* :translate #f(0 50 -40) :world)
-  (send *arrow* :rotate (deg2rad 10) :y)
-  (send *pr2* :rarm :inverse-kinematics
-  	(send *arrow* :copy-worldcoords)
-  	:move-target (elt (send *spatula* :attention) 1) ;;(car (send *spatula* :attention))
-  	:rotation-axis t
-  	:debug-view nil)
-  (setq av (send *pr2* :angle-vector))
-  (setq avs (append avs (list av)))
-  (setq tms (append tms (list 800)))
 
-  (send *arrow* :translate #f(0 40 -30) :world)
+  ;; tmp 
+  (setq height (- (elt (send (send *arrow* :copy-worldcoords) :worldpos) 2) 30960))
+  
+  (send *arrow* :translate (float-vector 0 0 (* height -0.5)) :world)
   (send *arrow* :rotate (deg2rad 10) :y)
   (send *pr2* :rarm :inverse-kinematics
   	(send *arrow* :copy-worldcoords)
@@ -897,6 +879,61 @@
   (setq av (send *pr2* :angle-vector))
   (setq avs (append avs (list av)))
   (setq tms (append tms (list 800)))
+  
+  (send *arrow* :translate (float-vector 0 40 (* height -0.3)) :world)
+  (send *arrow* :rotate (deg2rad 10) :y)
+  (send *pr2* :rarm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+  	:move-target (elt (send *spatula* :attention) 1) ;;(car (send *spatula* :attention))
+  	:rotation-axis t
+  	:debug-view nil)
+  (setq av (send *pr2* :angle-vector))
+  (setq avs (append avs (list av)))
+  (setq tms (append tms (list 800)))
+  
+  (send *arrow* :translate (float-vector 0 40 (* height -0.3)) :world)
+  (send *arrow* :rotate (deg2rad 10) :y)
+  (send *pr2* :rarm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+  	:move-target (elt (send *spatula* :attention) 1) ;;(car (send *spatula* :attention))
+  	:rotation-axis t
+  	:debug-view nil)
+  (setq av (send *pr2* :angle-vector))
+  (setq avs (append avs (list av)))
+  (setq tms (append tms (list 800)))
+    
+  ;; (send *arrow* :translate #f(0 0 -60) :world)
+  ;; (send *arrow* :rotate (deg2rad 10) :y)
+  ;; (send *pr2* :rarm :inverse-kinematics
+  ;; 	(send *arrow* :copy-worldcoords)
+  ;; 	:move-target (elt (send *spatula* :attention) 1) ;;(car (send *spatula* :attention))
+  ;; 	:rotation-axis t
+  ;; 	:debug-view nil)
+  ;; (setq av (send *pr2* :angle-vector))
+  ;; (setq avs (append avs (list av)))
+  ;; (setq tms (append tms (list 800)))
+  
+  ;; (send *arrow* :translate #f(0 50 -40) :world)
+  ;; (send *arrow* :rotate (deg2rad 10) :y)
+  ;; (send *pr2* :rarm :inverse-kinematics
+  ;; 	(send *arrow* :copy-worldcoords)
+  ;; 	:move-target (elt (send *spatula* :attention) 1) ;;(car (send *spatula* :attention))
+  ;; 	:rotation-axis t
+  ;; 	:debug-view nil)
+  ;; (setq av (send *pr2* :angle-vector))
+  ;; (setq avs (append avs (list av)))
+  ;; (setq tms (append tms (list 800)))
+
+  ;; (send *arrow* :translate #f(0 40 -30) :world)
+  ;; (send *arrow* :rotate (deg2rad 10) :y)
+  ;; (send *pr2* :rarm :inverse-kinematics
+  ;; 	(send *arrow* :copy-worldcoords)
+  ;; 	:move-target (elt (send *spatula* :attention) 1) ;;(car (send *spatula* :attention))
+  ;; 	:rotation-axis t
+  ;; 	:debug-view nil)
+  ;; (setq av (send *pr2* :angle-vector))
+  ;; (setq avs (append avs (list av)))
+  ;; (setq tms (append tms (list 800)))
 
   (send *ri* :angle-vector-sequence avs tms)
   (send *ri* :wait-interpolation)
@@ -924,6 +961,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   )
+
 
 (defun avoid-rarm ()
   (send *arrow* :newcoords (make-coords :pos (float-vector 471 8105 31070) :rpy (float-vector -1.603 0.03 -0.018)))
@@ -1132,7 +1170,7 @@
   
   (set-bowl-1-model)
   
-  (warn "please run (transfer-to-pot) ~%")  
+  (warn "please run (transfer-bowl-1-to-pot) ~%")  
   )
 
 (defun set-bowl-2-model ()
@@ -1183,7 +1221,7 @@
   
   (set-bowl-2-model-rarm)
   
-  (warn "please run (transfer-to-pot) ~%")  
+  (warn "please run (move-bowl-2-set-model) ~%")  
   )
 
 (defun move-bowl-2-set-model ()
@@ -1212,7 +1250,9 @@
   
   (grasp-bowl-larm)
 
-  (warn "please run (transfer-to-pot) ~%")  
+  (set-bowl-2-model)
+  
+  (warn "please run (transfer-bowl-2-to-pot) ~%")  
   )
 
 (defun put-bowl-2-set-model ()
@@ -1226,12 +1266,218 @@
   (put-bowl-larm)
   )
 
-
-(defun switch-test-tmp ()
-  (grasp-bowl-2-model)
-  (move-bowl-2-set-model)
-  (reset-rarm)
+(defun set-bowl-3-model ()
+  (if (not (eql (send *bowl-3* :parent) nil))
+      (send (send *bowl-3* :parent) :dissoc *bowl-3*))
+  (let (local-cds)
+    (setq local-cds (make-cascoords))
+    (send local-cds :newcoords (send (send *bowl-3* :handle-handle0) :copy-worldcoords))
+    (send local-cds :assoc *bowl-3*)
+    (send local-cds :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+    (send local-cds :dissoc *bowl-3*)
+    )
+  (send *viewer* :draw-objects)
+  (send (send *pr2* :larm :end-coords) :assoc *bowl-3*)
   )
+
+(defun put-bowl-3-model ()
+  (setq *larm1* (float-vector 42.6232 6.188 43.7963 -57.5889 111.452 -100.941 -32.9738))
+  (send *pr2* :larm :angle-vector *larm1*)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  ;; ボウル３を置く位置
+  (if (not (eql (send *bowl-3* :parent) nil))
+      (send (send *bowl-3* :parent) :dissoc *bowl-3*))
+  (send *bowl-3* :newcoords (send *bowl-3-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *bowl-3* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 200) :world)
+
+  (put-bowl-larm)  
+  )
+
+(defun grasp-bowl-3-model ()
+  ;; ボウル３の位置
+  (setq *target* (make-coords))
+  (send *target* :newcoords (send (send *bowl-3* :handle-handle0) :copy-worldcoords))
+  
+  (grasp-bowl-larm)
+
+  (set-bowl-3-model)
+  
+  (warn "please run (transfer-bowl-3-to-pot) ~%")  
+  )
+
+(defun set-bowl-4-model ()
+  (if (not (eql (send *bowl-4* :parent) nil))
+      (send (send *bowl-4* :parent) :dissoc *bowl-4*))
+  (let (local-cds)
+    (setq local-cds (make-cascoords))
+    (send local-cds :newcoords (send (send *bowl-4* :handle-handle0) :copy-worldcoords))
+    (send local-cds :assoc *bowl-4*)
+    (send local-cds :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+    (send local-cds :dissoc *bowl-4*)
+    )
+  (send *viewer* :draw-objects)
+  (send (send *pr2* :larm :end-coords) :assoc *bowl-4*)
+  )
+
+(defun put-bowl-4-model ()
+  (setq *larm1* (float-vector 42.6232 6.188 43.7963 -57.5889 111.452 -100.941 -32.9738))
+  (send *pr2* :larm :angle-vector *larm1*)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  ;; ボウル４を置く位置
+  (if (not (eql (send *bowl-4* :parent) nil))
+      (send (send *bowl-4* :parent) :dissoc *bowl-4*))
+  (send *bowl-4* :newcoords (send *bowl-4-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *bowl-4* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 200) :world)
+  
+  (put-bowl-larm)  
+  )
+
+(defun grasp-bowl-4-model ()
+  ;; ボウル４の位置
+  (setq *target* (make-coords))
+  (send *target* :newcoords (send (send *bowl-4* :handle-handle0) :copy-worldcoords))
+  
+  (grasp-bowl-larm)
+  
+  (set-bowl-4-model)
+  
+  (warn "please run (transfer-bowl-4-to-pot) ~%")  
+  )
+
+
+(defun transfer-to-pot-set ()
+  (send *arrow* :newcoords (make-coords :pos (float-vector 550.911 8325.179 31085.843) :rpy (float-vector 2.561 1.128 2.104))) ;; for eng2 model
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (send *pr2* :larm :move-end-pos (float-vector 0 -100 0) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :move-end-pos (float-vector 0 -100 0) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :move-end-pos (float-vector 0 -100 0) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun transfer-to-pot-left-set ()
+  (send *arrow* :newcoords (make-coords :pos (float-vector 609.875 7802.164 31145.744) :rpy (float-vector 2.719 0.798 1.816))) ;; for eng2 model
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (send *pr2* :larm :move-end-pos (float-vector -100 100 0) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
+  )
+
+
+(defun transfer-bowl-1-to-pot ()
+  (set-bowl-1-model)
+  
+  (transfer-to-pot-set)
+  
+  ;; 注ぐ位置
+  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
+  (send *arrow* :translate #f(0 -50 120) :world)
+  (send *arrow* :rotate (deg2rad -90) :z :world)
+  
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:move-target (send *bowl-1* :attention-attention0)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (warn "please run (after-transfer) ~%")  
+  )
+
+(defun transfer-bowl-2-to-pot ()
+  (set-bowl-2-model)
+  
+  (transfer-to-pot-set)
+  
+  ;; 注ぐ位置
+  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
+  (send *arrow* :translate #f(0 -50 120) :world)
+  (send *arrow* :rotate (deg2rad -90) :z :world)
+  
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:move-target (send *bowl-2* :attention-attention0)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (warn "please run (after-transfer) ~%")  
+  )
+
+(defun transfer-bowl-3-to-pot ()
+  (set-bowl-3-model)
+  
+  (transfer-to-pot-left-set)
+  
+  ;; 注ぐ位置
+  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
+  (send *arrow* :translate #f(0 -50 120) :world)
+  (send *arrow* :rotate (deg2rad -90) :z :world)
+  
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:move-target (send *bowl-3* :attention-attention0)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (warn "please run (after-transfer-left) ~%")
+  )
+
+(defun transfer-bowl-4-to-pot ()
+  (set-bowl-4-model)
+  
+  (transfer-to-pot-left-set)
+  
+  ;; 注ぐ位置
+  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
+  (send *arrow* :translate #f(0 -50 120) :world)
+  (send *arrow* :rotate (deg2rad -90) :z :world)
+  
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:move-target (send *bowl-4* :attention-attention0)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (warn "please run (after-transfer-left) ~%")
+  )
+
 
 
 ;; now funcs
@@ -1365,7 +1611,7 @@
   (set-pose)
   (grasp-mcup)
   (carry-mcup-pose)
-
+  
   (warn "please go to sink spot ~%")
   )
 
@@ -1378,16 +1624,112 @@
   )
 
 
+;; ボウル２をセット
+(defun now-set-2-model ()
+  (recieve-bowl-2)
+  (put-bowl-2-model)
+  (reset-rarm)
+  )
 
-(defun now-devel ()
-  (set-pose)
-  (grasp-mcup)
-  (carry-mcup-pose)
+;; ボウル１をセット
+(defun now-set-1-model ()
+  (recieve-bowl-1)
+  (put-bowl-1-model)
+  (reset-larm)
+  )
 
-  (transfer-mcup)
-  (after-mcup)
-  (put-mcup)
+(defun now-set-3-model ()
+  (recieve-bowl-3)
+  (put-bowl-3-model)
+  (reset-larm)
+  )
 
+(defun now-set-4-model ()
+  (recieve-bowl-4)
+  (put-bowl-4-model)
+  (reset-larm)
+  )
+
+;; ボウル１〜４をセット
+(defun now-set-all-model ()
+  (now-set-1-model)
+  (now-set-2-model)
+  (now-set-3-model)
+  (now-set-4-model)
+  )
+
+
+;; ボウル２をまな板上に
+(defun switch-bowl-2-model ()
+  (grasp-bowl-2-model)
+  (move-bowl-2-set-model)
+  (reset-rarm)
+  )
+
+(defun now-transfer-left ()
+  (transfer-to-pot-left)
+  
+  (set-spatula) ;; ヘラは掴んでいる想定で行う
+  (squeeze-test-set)
+  (squeeze-test)
+  (avoid-rarm)
+  
+  (after-transfer-left)
+  )
+
+(defun now-transfer-1-model ()
+  (grasp-bowl-1-model)
+  
+  (transfer-bowl-1-to-pot)
+  (set-spatula) ;; ヘラは掴んでいる想定で行う
+  (squeeze-test-set)
+  (squeeze-test)
+  (avoid-rarm)
+  
+  (after-transfer)
+  (put-bowl-1-model)
+  (reset-larm)
+  )
+
+(defun now-transfer-2-model ()
+  (grasp-bowl-2-set-model)
+  
+  (transfer-bowl-2-to-pot)
+  (set-spatula) ;; ヘラは掴んでいる想定で行う
+  (squeeze-test-set)
+  (squeeze-test)
+  (avoid-rarm)
+  
+  (after-transfer)
+  (put-bowl-2-set-model)
+  (reset-larm)
+  )
+
+(defun now-transfer-3-model ()
+  (grasp-bowl-3-model)
+
+  (transfer-bowl-3-to-pot)
+  (set-spatula) ;; ヘラは掴んでいる想定で行う
+  (squeeze-test-set)
+  (squeeze-test)
+  (avoid-rarm)
+  
+  (after-transfer-left)
+  (put-bowl-3-model)
+  (reset-larm)
+  )
+
+(defun now-transfer-4-model ()
+  (grasp-bowl-4-model)
+  
+  (transfer-bowl-4-to-pot)
+  (set-spatula) ;; ヘラは掴んでいる想定で行う
+  (squeeze-test-set)
+  (squeeze-test)
+  (avoid-rarm)
+  
+  (after-transfer-left)
+  (put-bowl-4-model)
   (reset-larm)
   )
 
