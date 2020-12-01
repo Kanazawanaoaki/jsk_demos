@@ -534,7 +534,8 @@
   
   ;; 回転させる
   (setq *cds0* (make-cascoords :pos (float-vector 468 8090 30850))) ;;中心の座標
-  (setq *cds1* (make-cascoords :pos (float-vector 468 8090 30850))) ;;回転の初期位置
+  ;; (setq *cds1* (make-cascoords :pos (float-vector 468 8090 30850))) ;;回転の初期位置
+  (setq *cds1* (make-cascoords :pos (send (send (send *pot* :attention-attention0) :copy-worldcoords) :worldpos))) ;;回転の初期位置
   (setq *rpy1* (float-vector -2.267 0.887 0.091)) ;;回転中の目標姿勢
   (send *cds0* :assoc *cds1*)
 
@@ -709,7 +710,8 @@
   
   ;; 回転させる
   (setq *cds0* (make-cascoords :pos (float-vector 468 8090 30850))) ;;中心の座標
-  (setq *cds1* (make-cascoords :pos (float-vector 420 8070 30860))) ;;回転の初期位置
+  ;; (setq *cds1* (make-cascoords :pos (float-vector 468 8090 30850))) ;;回転の初期位置
+  (setq *cds1* (make-cascoords :pos (send (send (send *pot* :attention-attention0) :copy-worldcoords) :worldpos))) ;;回転の初期位置
   (setq *rpy1* (float-vector 1.772 1.446 1.068)) ;;回転中の目標姿勢
   (send *cds0* :assoc *cds1*)
   
