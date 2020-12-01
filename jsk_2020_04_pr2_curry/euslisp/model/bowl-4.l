@@ -1,7 +1,9 @@
 (defclass bowl-4-object
   :super cascaded-link
   :slots (
-         ))
+	  handle0
+	  attention0
+	  ))
 
 (defmethod bowl-4-object
   (:init
@@ -39,9 +41,15 @@
      ;; definition of end-coords
 
      ;; definition of joint
-
+     
      ;; definition of :handle
-
+     (setq handle0 (make-cascoords :pos (float-vector 100 0 80) :rpy #f(-3.141 1.047 1.571) :name "handle0"))
+     (send link1 :assoc handle0)
+     
+     ;; definition of :attention
+     (setq attention0 (make-cascoords :pos (float-vector -105 0 85) :rpy (float-vector 3.142 -1.571  0) :name "attention0"))
+     (send link1 :assoc attention0)
+     
      ;; init-ending 
      (setq links (list link1))
      (send self :init-ending)
@@ -50,6 +58,10 @@
 
      self))
 
+  (:handle (&rest args) (forward-message-to-all (list handle0) args))
+  (:handle-handle0 (&rest args) (forward-message-to handle0 args))
+  (:attention (&rest args) (forward-message-to-all (list attention0) args))
+  (:attention-attention0 (&rest args) (forward-message-to-all attention0 args))
   )
 
 (defun bowl-4 (&rest args) (instance* bowl-4-object :init args))

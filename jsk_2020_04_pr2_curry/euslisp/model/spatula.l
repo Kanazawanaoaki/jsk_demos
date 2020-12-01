@@ -52,7 +52,7 @@
 
      self))
 
-  (:handle (&rest args) (forward-message-to-all (list  handle0) args))
+  (:handle (&rest args) (forward-message-to-all (list handle0) args))
   (:handle-handle0 (&rest args) (forward-message-to handle0 args))
   (:attention (&rest args) (forward-message-to-all (list attention0 attention1) args))
   (:attention-attention0 (&rest args) (forward-message-to-all attention0 args))

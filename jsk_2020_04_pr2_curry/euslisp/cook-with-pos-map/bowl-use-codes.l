@@ -33,35 +33,18 @@
   (update-view)
   
   ;; def bowl grasp coords
-  (setq *bowl-1-coords* (make-coords :pos (float-vector 383 8425 30889) :rpy (float-vector 2.892 1.01 1.404))) 
-  (setq *bowl-2-coords* (make-coords :pos (float-vector 344 8616 30880) :rpy (float-vector 3.016 0.995 1.718)))
-  (setq *bowl-2-set-coords* (make-coords :pos (float-vector 558.94 8455.526 30890.992) :rpy (float-vector -2.649 1.102 1.301)))
-  (setq *bowl-2-set-larm-coords* (make-coords :pos (float-vector 550.455 8389.4 30870.472) :rpy (float-vector 3.006 0.965 1.642)))
+  (setq *bowl-1-grasp-coords* (make-coords :pos (float-vector 383 8425 30889) :rpy (float-vector 2.892 1.01 1.404))) 
+  (setq *bowl-2-grasp-coords* (make-coords :pos (float-vector 344 8616 30880) :rpy (float-vector 3.016 0.995 1.718)))
+  (setq *bowl-2-grasp-set-coords* (make-coords :pos (float-vector 558.94 8455.526 30890.992) :rpy (float-vector -2.649 1.102 1.301)))
+  (setq *bowl-2-grasp-set-larm-coords* (make-coords :pos (float-vector 550.455 8389.4 30870.472) :rpy (float-vector 3.006 0.965 1.642)))
   
-  (setq *bowl-3-coords* (make-coords :pos (float-vector 672 7632 30873) :rpy (float-vector -2.152 1.02 1.606)))
-  (setq *bowl-4-coords* (make-coords :pos (float-vector 567 7824 30920) :rpy (float-vector -2.624 1.195 2.113)))
+  (setq *bowl-3-grasp-coords* (make-coords :pos (float-vector 672 7632 30873) :rpy (float-vector -2.152 1.02 1.606)))
+  (setq *bowl-4-grasp-coords* (make-coords :pos (float-vector 567 7824 30920) :rpy (float-vector -2.624 1.195 2.113)))
   
   (move-to-kitchen-irt)
   )
 
 (bowl-init)
-
-(defun set-arrow-test ()
-  (setq *arrow1* (arrow))
-  (setq *arrow2* (arrow))
-  (setq *arrow3* (arrow))
-  (setq *arrow4* (arrow))
-
-  (send *arrow1* :newcoords (send *bowl-1-coords* :copy-worldcoords))
-  (send *arrow2* :newcoords (send *bowl-2-coords* :copy-worldcoords))
-  (send *arrow3* :newcoords (send *bowl-3-coords* :copy-worldcoords)) 
-  (send *arrow4* :newcoords (send *bowl-4-coords* :copy-worldcoords))
-  
-  (objects (list *pr2* *scene* *spatula* *mcup* *ladle* *pot* *bowl-1* *bowl-2* *bowl-3* *bowl-4* *arrow1* *arrow2* *arrow3* *arrow4*))
-  (update-view)
-  )
-
-
 
 ;; add for sense rec
 (setq *x-thre* -10)
@@ -418,7 +401,7 @@
 (defun put-bowl-1 ()
   ;; ボウル１を置く位置
   ;; (send *arrow* :newcoords (make-coords :pos (float-vector 362 1946 880) :rpy (float-vector 2.766 0.889 1.742)))  ;;
-  (send *arrow* :newcoords (send *bowl-1-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send *bowl-1-grasp-coords* :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
 
   (put-bowl-larm)
@@ -438,7 +421,7 @@
 (defun put-bowl-2 ()
   ;; ボウル２を置く位置
   ;; (send *arrow* :newcoords (make-coords :pos (float-vector 344 2116 880) :rpy (float-vector 3.016 0.995 1.718)))
-  (send *arrow* :newcoords (send *bowl-2-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send *bowl-2-grasp-coords* :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
 
   (put-bowl-rarm)  
@@ -475,7 +458,7 @@
   (send *ri* :wait-interpolation)
 
   ;; ボウル３を置く位置
-  (send *arrow* :newcoords (send *bowl-3-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send *bowl-3-grasp-coords* :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
 
   (put-bowl-larm)  
@@ -488,7 +471,7 @@
   (send *ri* :wait-interpolation)
 
   ;; ボウル４を置く位置
-  (send *arrow* :newcoords (send *bowl-4-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send *bowl-4-grasp-coords* :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
 
   (put-bowl-larm)  
@@ -497,7 +480,7 @@
 (defun grasp-bowl-3 ()
   ;; ボウル１の位置
   (setq *target* (make-coords))
-  (send *target* :newcoords (send *bowl-3-coords* :copy-worldcoords))
+  (send *target* :newcoords (send *bowl-3-grasp-coords* :copy-worldcoords))
   
   (grasp-bowl-larm)
 
@@ -507,7 +490,7 @@
 (defun grasp-bowl-4 ()
   ;; ボウル１の位置
   (setq *target* (make-coords))
-  (send *target* :newcoords (send *bowl-4-coords* :copy-worldcoords))
+  (send *target* :newcoords (send *bowl-4-grasp-coords* :copy-worldcoords))
   
   (grasp-bowl-larm)
 
@@ -518,7 +501,7 @@
 (defun grasp-bowl-2 ()
   ;; ボウル２の位置
   (setq *target* (make-coords))
-  (send *target* :newcoords (send *bowl-2-coords* :copy-worldcoords))
+  (send *target* :newcoords (send *bowl-2-grasp-coords* :copy-worldcoords))
   
   (grasp-bowl-rarm)
   
@@ -531,7 +514,7 @@
   (send *ri* :wait-interpolation)
   
   ;; ボウル２を置く位置 set
-  (send *arrow* :newcoords (send *bowl-2-set-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send *bowl-2-grasp-set-coords* :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
   
   (put-bowl-rarm)  
@@ -541,7 +524,7 @@
 (defun grasp-bowl-2-set ()
   ;; ボウル２の位置 set
   (setq *target* (make-coords))
-  (send *target* :newcoords (send *bowl-2-set-larm-coords* :copy-worldcoords))
+  (send *target* :newcoords (send *bowl-2-grasp-set-larm-coords* :copy-worldcoords))
   
   (grasp-bowl-larm)
 
@@ -550,7 +533,7 @@
 
 (defun put-bowl-2-set ()
   ;; ボウル２の位置 set
-  (send *arrow* :newcoords (send *bowl-2-set-larm-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send *bowl-2-grasp-set-larm-coords* :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
   
   (put-bowl-larm)
@@ -559,7 +542,7 @@
 (defun grasp-bowl-1 ()
   ;; ボウル１の位置
   (setq *target* (make-coords))
-  (send *target* :newcoords (send *bowl-1-coords* :copy-worldcoords))
+  (send *target* :newcoords (send *bowl-1-grasp-coords* :copy-worldcoords))
   
   (grasp-bowl-larm)
 
