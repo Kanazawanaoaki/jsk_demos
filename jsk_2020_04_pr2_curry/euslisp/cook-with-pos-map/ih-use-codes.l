@@ -769,6 +769,11 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
+
+  ;; 雫を落とす動作
+  ;; WIP !!!!!
+  
+  ;;
   
   (send *arrow* :newcoords (make-coords :pos (float-vector 550 8250 31180) :rpy (float-vector -1.603 0.0 3.14)))
   (send *pr2* :rarm :inverse-kinematics

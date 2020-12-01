@@ -6,7 +6,7 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/cutting-board.l")
   (setq *cutting-board* (cutting-board))
   (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
-
+  
   ;; set global variables
   (setq adj 0)
   (setq adj2 0)
