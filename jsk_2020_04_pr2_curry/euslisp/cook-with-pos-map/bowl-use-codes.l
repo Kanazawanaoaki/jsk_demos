@@ -105,7 +105,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   ;; 手前にする
   (setq *lav2* (float-vector 41.8129 -20.2467 85.9536 -82.3235 -13.8272 -47.9804 -0.0))
   (send *pr2* :larm :angle-vector *lav2*)
@@ -400,7 +400,6 @@
 
 (defun put-bowl-1 ()
   ;; ボウル１を置く位置
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 362 1946 880) :rpy (float-vector 2.766 0.889 1.742)))  ;;
   (send *arrow* :newcoords (send *bowl-1-grasp-coords* :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
 
@@ -420,7 +419,6 @@
 
 (defun put-bowl-2 ()
   ;; ボウル２を置く位置
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 344 2116 880) :rpy (float-vector 3.016 0.995 1.718)))
   (send *arrow* :newcoords (send *bowl-2-grasp-coords* :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
 
@@ -505,10 +503,10 @@
   
   (grasp-bowl-rarm)
   
-  (warn "please run (set-bowl-2) ~%")
+  (warn "please run (move-bowl-2-set) ~%")
   )
 
-(defun set-bowl-2 ()
+(defun move-bowl-2-set ()
   (send *pr2* :rarm :move-end-pos (float-vector 100 0 0) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
@@ -994,7 +992,7 @@
   )
 
 (defun put-mcup ()
-  ;; mcupを置く位置
+  ;; mcupaを置く位置
   (if (not (eql (send *mcup* :parent) nil))
       (send (send *mcup* :parent) :dissoc *mcup*))
   (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
@@ -1098,6 +1096,124 @@
   (warn "please run (put-mcup) ~%")
   )
 
+
+;; set for tmp
+;; bowl model codes
+(defun set-bowl-1-model ()
+  (if (not (eql (send *bowl-1* :parent) nil))
+      (send (send *bowl-1* :parent) :dissoc *bowl-1*))
+  (let (local-cds)
+    (setq local-cds (make-cascoords))
+    (send local-cds :newcoords (send (send *bowl-1* :handle-handle0) :copy-worldcoords))
+    (send local-cds :assoc *bowl-1*)
+    (send local-cds :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+    (send local-cds :dissoc *bowl-1*)
+    )
+  (send *viewer* :draw-objects)
+  (send (send *pr2* :larm :end-coords) :assoc *bowl-1*)
+  )
+
+(defun put-bowl-1-model ()
+  ;; ボウル１を置く位置
+  (if (not (eql (send *bowl-1* :parent) nil))
+      (send (send *bowl-1* :parent) :dissoc *bowl-1*))
+  (send *bowl-1* :newcoords (send *bowl-1-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *bowl-1* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 200) :world)
+  
+  (put-bowl-larm)
+  )
+
+(defun grasp-bowl-1-model ()
+  (setq *target* (make-coords))
+  (send *target* :newcoords (send (send *bowl-1* :handle-handle0) :copy-worldcoords))
+  
+  (grasp-bowl-larm)
+  
+  (set-bowl-1-model)
+  
+  (warn "please run (transfer-to-pot) ~%")  
+  )
+
+(defun set-bowl-2-model ()
+  (if (not (eql (send *bowl-2* :parent) nil))
+      (send (send *bowl-2* :parent) :dissoc *bowl-2*))
+  (let (local-cds)
+    (setq local-cds (make-cascoords))
+    (send local-cds :newcoords (send (send *bowl-2* :handle-handle0) :copy-worldcoords))
+    (send local-cds :assoc *bowl-2*)
+    (send local-cds :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+    (send local-cds :dissoc *bowl-2*)
+    )
+  (send *viewer* :draw-objects)
+  (send (send *pr2* :larm :end-coords) :assoc *bowl-2*)
+  )
+
+(defun put-bowl-2-model ()
+  ;; ボウル２を置く位置
+  (if (not (eql (send *bowl-2* :parent) nil))
+      (send (send *bowl-2* :parent) :dissoc *bowl-2*))
+  (send *bowl-2* :newcoords (send *bowl-2-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *bowl-2* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 200) :world)
+  
+  (put-bowl-rarm)  
+  )
+
+(defun grasp-bowl-2-model () ;;右腕
+  ;; ボウル２の位置
+  (setq *target* (make-coords))
+  (send *target* :newcoords (send (send *bowl-2* :handle-handle0) :copy-worldcoords))
+  
+  (grasp-bowl-rarm)
+  
+  (set-bowl-2-model)
+  
+  (warn "please run (transfer-to-pot) ~%")  
+  )
+
+(defun move-bowl-2-set ()
+  (send *pr2* :rarm :move-end-pos (float-vector 100 0 0) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  
+  ;; ボウル２を置く位置 set
+  (if (not (eql (send *bowl-2* :parent) nil))
+      (send (send *bowl-2* :parent) :dissoc *bowl-2*))
+  (send *bowl-2* :newcoords (send *bowl-2-set-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *bowl-2* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 200) :world)
+  
+  (put-bowl-rarm)  
+  )
+
+
+(defun grasp-bowl-2-set-model () ;;左腕
+  ;; ボウル２の位置 set
+  (if (not (eql (send *bowl-2* :parent) nil))
+      (send (send *bowl-2* :parent) :dissoc *bowl-2*))
+  (send *bowl-2* :newcoords (send *bowl-2-set-coords* :copy-worldcoords))
+  (setq *target* (make-coords))
+  (send *target* :newcoords (send (send *bowl-2* :handle-handle0) :copy-worldcoords))
+  
+  (grasp-bowl-larm)
+
+  (warn "please run (transfer-to-pot) ~%")  
+  )
+
+(defun put-bowl-2-set-model ()
+  ;; ボウル２の位置 set
+  (if (not (eql (send *bowl-2* :parent) nil))
+      (send (send *bowl-2* :parent) :dissoc *bowl-2*))
+  (send *bowl-2* :newcoords (send *bowl-2-set-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *bowl-2* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 200) :world)
+  
+  (put-bowl-larm)
+  )
+
+
+
 ;; now funcs
 ;; ボウル２をセット
 (defun now-set-2 ()
@@ -1137,7 +1253,7 @@
 ;; ボウル２をまな板上に
 (defun switch-bowl-2 ()
   (grasp-bowl-2)
-  (set-bowl-2)
+  (move-bowl-2-set)
   (reset-rarm)
   )
 
@@ -1255,14 +1371,3 @@
   (reset-larm)
   )
 
-
-(defun mcup-test ()
-  (send *arrow* :newcoords (make-coords :pos (float-vector 638.218 7734.676 30900.889) :rpy (float-vector  -2.511 0.686 0.013)))
-  (send *pr2* :larm :inverse-kinematics
-  	(send *arrow* :copy-worldcoords)
-  	:rotation-axis t
-  	:debug-view nil)
-  (send *viewer* :draw-objects)
-
-  (set-mcup)
-  )
