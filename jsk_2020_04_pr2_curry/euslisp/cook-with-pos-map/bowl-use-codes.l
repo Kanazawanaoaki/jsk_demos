@@ -1149,6 +1149,20 @@
   (send (send *pr2* :larm :end-coords) :assoc *bowl-2*)
   )
 
+(defun set-bowl-2-model-rarm ()
+  (if (not (eql (send *bowl-2* :parent) nil))
+      (send (send *bowl-2* :parent) :dissoc *bowl-2*))
+  (let (local-cds)
+    (setq local-cds (make-cascoords))
+    (send local-cds :newcoords (send (send *bowl-2* :handle-handle0) :copy-worldcoords))
+    (send local-cds :assoc *bowl-2*)
+    (send local-cds :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+    (send local-cds :dissoc *bowl-2*)
+    )
+  (send *viewer* :draw-objects)
+  (send (send *pr2* :rarm :end-coords) :assoc *bowl-2*)
+  )
+
 (defun put-bowl-2-model ()
   ;; ボウル２を置く位置
   (if (not (eql (send *bowl-2* :parent) nil))
@@ -1167,12 +1181,12 @@
   
   (grasp-bowl-rarm)
   
-  (set-bowl-2-model)
+  (set-bowl-2-model-rarm)
   
   (warn "please run (transfer-to-pot) ~%")  
   )
 
-(defun move-bowl-2-set ()
+(defun move-bowl-2-set-model ()
   (send *pr2* :rarm :move-end-pos (float-vector 100 0 0) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
@@ -1212,6 +1226,12 @@
   (put-bowl-larm)
   )
 
+
+(defun switch-test-tmp ()
+  (grasp-bowl-2-model)
+  (move-bowl-2-set-model)
+  (reset-rarm)
+  )
 
 
 ;; now funcs
