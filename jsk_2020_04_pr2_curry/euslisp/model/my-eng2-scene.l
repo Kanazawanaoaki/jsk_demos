@@ -410,7 +410,6 @@
 (setq *knife-coords* (make-coords :pos (float-vector 580 8715 30857) :rpy (float-vector 3.14 0.073 1.498))) ;; 包丁
 (setq *peeler-coords* (make-coords :pos (float-vector 580 8815 30870) :rpy (float-vector 3.14 0.049 1.51))) ;; ピーラー
 (setq *potato-peeler-coords* (make-coords :pos (float-vector 580 8915 30865) :rpy (float-vector 3.14 0.013 1.545))) ;; じゃがいもピーラー
-
 (setq *spatula-coords-0* (make-coords :pos (float-vector 340 8739 31433) :rpy (float-vector -3.14 -0.008 1.529))) ;; ヘラ，棚の中
 (setq *spatula-coords-1* (make-coords :pos (float-vector 592 8549 30872) :rpy (float-vector 3.084 -0.042 1.542))) ;; ヘラ，平置き
 (setq *ladle-coords-0* (make-coords :pos (float-vector 346 8637 31449) :rpy (float-vector -3.14 -0.008 1.529))) ;; おたま，棚の中
@@ -419,10 +418,8 @@
 
 ;; kitchenware coords
 (setq *pot-coords* (make-coords :pos (float-vector 450 8100 30840) :rpy (float-vector 3.142 0 0)))
-;; (setq *mcup-coords* (make-coords :pos (float-vector 200 8300 30840) :rpy (float-vector -1.571 0 0)))
 (setq *mcup-coords* (make-coords :pos (float-vector 555 7674 30850) :rpy (float-vector -0.948 0 0)))
-(setq *cutting-board-coords* (make-coords :pos (float-vector 500 8420 30840) :rpy (float-vector 0 0 0)))
-;; ボウルとかも追加する？
+(setq *cutting-board-coords* (make-coords :pos (float-vector 530 8420 30840) :rpy (float-vector 0 0 0)))
 (setq *bowl-1-coords* (make-coords :pos (float-vector 325 8460 30840) :rpy (float-vector -0.175 0 0)))
 (setq *bowl-2-coords* (make-coords :pos (float-vector 295 8645 30840) :rpy (float-vector -0.349 0 0)))
 (setq *bowl-2-set-coords* (make-coords :pos (float-vector 510 8430 30840) :rpy (float-vector 0 0 0)))

@@ -1040,7 +1040,7 @@
   )
 
 (defun put-mcup ()
-  ;; mcupaを置く位置
+  ;; mcupを置く位置
   (if (not (eql (send *mcup* :parent) nil))
       (send (send *mcup* :parent) :dissoc *mcup*))
   (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
