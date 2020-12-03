@@ -458,7 +458,7 @@
 
 (defun peel-test-1 ()
   (peel-test)
-  (rossrv-test)
+  ;; (rossrv-test)
   (warn "please run  (set-potato-1) ~%")  
   )
 
@@ -990,11 +990,12 @@
 
 ;; now funcs
 (defun now-devel ()
-  ;; (set-potato-peel :w *width* :l *length* :h *height*)
+  (set-potato-peel)
   (grasp-potato-peel)
+  (set-peeler)
   (set-potato-1)
-  (grasp-peeler)
-  (peel-test)
+  (set-potato-1-2)
+  (peel-test-1)
   (set-potato-2)
   (peel-test-2)
   (set-potato-3)

@@ -976,7 +976,7 @@
   (send p4 :dissoc p8)
   (send p8 :translate #f(0 0 -100) :world)  
 
-  (objects (list *potato* *pr2* *cutting-board* *kitchen*))
+  (objects (list *potato* *pr2* *cutting-board* *scene*))
   (send *irtviewer* :look-all
 	(geo::make-bounding-box 
 	 (flatten (send-all (send *pr2* :bodies) :vertices))))

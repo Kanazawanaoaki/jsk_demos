@@ -154,7 +154,7 @@
   (send *knife* :rotate (deg2rad 90) :x)
   (send *pr2* :rarm :end-coords :assoc *knife*)
 
-  (objects (list *kitchen* *pr2* *cutting-board* *potato* *knife*))
+  (objects (list *scene* *pr2* *cutting-board* *potato* *knife*))
   (send *irtviewer* :look-all
 	(geo::make-bounding-box 
 	 (flatten (send-all (send *pr2* :bodies) :vertices))))
@@ -176,7 +176,7 @@
   (send *knife* :rotate (deg2rad 90) :x)
   (send *pr2* :rarm :end-coords :assoc *knife*)
 
-  (objects (list *kitchen* *pr2* *cutting-board* *potato* *knife*))
+  (objects (list *scene* *pr2* *cutting-board* *potato* *knife*))
   (send *irtviewer* :look-all
 	(geo::make-bounding-box 
 	 (flatten (send-all (send *pr2* :bodies) :vertices))))
@@ -879,7 +879,7 @@
   ;; (send *potato* :rotate (deg2rad 180) :x)
   (send *potato* :cut)
 
-  (objects (list *potato* *pr2* *cutting-board* *kitchen*))
+  (objects (list *potato* *pr2* *cutting-board* *scene*))
   (send *irtviewer* :look-all
 	(geo::make-bounding-box 
 	 (flatten (send-all (send *pr2* :bodies) :vertices))))
