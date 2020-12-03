@@ -51,7 +51,7 @@
 
   ;; set potato
   (load "../../model/potato-new-type.l")
-
+  
   (setq width 90)
   (setq length 60)
   (setq height 60)
@@ -116,7 +116,7 @@
 (setq found-obj nil)
 (until found-obj
   (print 4)
-
+  
   (x::window-main-one) ;; IRT viewerの視点を変えられる。見にくければ変えよう
 
   (setq msg (one-shot-subscribe *topic-name* jsk_recognition_msgs::BoundingBoxArray))
