@@ -168,7 +168,7 @@
 
 ;; def util-funcs
 
-;; transfer funcs
+;; peel funcs
 (defun set-potato-peel (&rest args &key (w 90) (l 60) (h 60) &allow-other-keys)
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/potato-new-type.l")
   

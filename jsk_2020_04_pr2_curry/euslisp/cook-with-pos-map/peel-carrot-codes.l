@@ -131,7 +131,21 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
+  )
+
+(defun set-peeler ()
+  ;; ピーラーをセットする．
+  (setq *peeler* (peeler))
+  (send *peeler* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+  (send *peeler* :rotate (deg2rad 90) :x)
+  (send *pr2* :rarm :end-coords :assoc *peeler*)
+
+  (objects (list *carrot* *pr2* *cutting-board* *scene* *peeler*))
+  (send *irtviewer* :look-all
+	(geo::make-bounding-box 
+	 (flatten (send-all (send *pr2* :bodies) :vertices))))
   
+  (warn "please run (peel-test) ~%")
   )
 
 ;; (defun set-carrot-1 ()
