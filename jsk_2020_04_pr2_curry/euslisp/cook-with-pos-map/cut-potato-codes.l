@@ -1,4 +1,4 @@
-(defun cut-carrot-init ()
+(defun cut-potato-init ()
   ;; init
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   
@@ -17,7 +17,7 @@
   (update-view)  
   )
 
-(cut-carrot-init)
+(cut-potato-init)
 
 (warn "If you use real robot, run (update-pos) ~%")
 (warn "please run (now-transfer) or (now-transfer-bowl-1) ~%")
@@ -38,6 +38,7 @@
 ;; define cb
 (defun object-pose-cb (msg)
   (setq *msg* msg)
+  (setq *boxes* (send msg :boxes))
   (setq *bbox* (car (send msg :boxes)))
   ;; (print 1)
   (when msg
@@ -70,7 +71,73 @@
 		))
 	  (print (list 'found? found-obj obj-pos)))
 	obj-pos))))
-  
+
+(defun check-y-coords (bbox)
+  (let ((cam-coords nil))
+    (setq tm2 (send *l* :get-latest-common-time "base_footprint" "head_mount_kinect_rgb_optical_frame"))    
+    (setq *dim* (send bbox :dimensions))
+    (setq width (* (send *dim* :x) 1000))
+    (setq length (* (send *dim* :y) 1000))
+    (setq height (* (send *dim* :z) 1000))
+    (setq *pose* (send bbox :pose))
+    (setq cam->obj-coords (ros::tf-pose->coords *pose*))
+    (when (send *l* :wait-for-transform  "base_footprint" "head_mount_kinect_rgb_optical_frame" tm2 10)
+      (setq cam-coords (send (send *pr2* :copy-worldcoords) :transform 
+                             (send *l* :lookup-transform "base_footprint" "head_mount_kinect_rgb_optical_frame" tm2))))
+    (when cam-coords
+      (setq obj-coord (send cam-coords :transform cam->obj-coords))
+      (setq tmp (- (+ (elt (send obj-coord :pos) 2) (/ height 2)) (+ (elt (send *cutting-board* :worldpos) 2) 10)))
+      (send obj-coord :translate (float-vector 0 0 (- (/ height 2) (/ tmp 2))) :world)
+      (setq height tmp)
+      
+      (setq obj-pos (scale 0.001 (send obj-coord :worldpos)))
+      (setq found-obj t)
+
+      (if (> (elt obj-pos 1) *tmp*)
+          (progn
+            (setq *tmp* (elt obj-pos 1))
+            (setq *width* width)
+            (setq *length* length)
+            (setq *height* height)
+            (setq *obj-coord* obj-coord)
+            ))
+      
+      (print (list 'found? found-obj obj-pos)))
+    obj-pos))
+
+(defun check-y-coords-min (bbox)
+  (let ((cam-coords nil))
+    (setq tm2 (send *l* :get-latest-common-time "base_footprint" "head_mount_kinect_rgb_optical_frame"))    
+    (setq *dim* (send bbox :dimensions))
+    (setq width (* (send *dim* :x) 1000))
+    (setq length (* (send *dim* :y) 1000))
+    (setq height (* (send *dim* :z) 1000))
+    (setq *pose* (send bbox :pose))
+    (setq cam->obj-coords (ros::tf-pose->coords *pose*))
+    (when (send *l* :wait-for-transform  "base_footprint" "head_mount_kinect_rgb_optical_frame" tm2 10)
+      (setq cam-coords (send (send *pr2* :copy-worldcoords) :transform 
+                             (send *l* :lookup-transform "base_footprint" "head_mount_kinect_rgb_optical_frame" tm2))))
+    (when cam-coords
+      (setq obj-coord (send cam-coords :transform cam->obj-coords))
+      (setq tmp (- (+ (elt (send obj-coord :pos) 2) (/ height 2)) (+ (elt (send *cutting-board* :worldpos) 2) 10)))
+      (send obj-coord :translate (float-vector 0 0 (- (/ height 2) (/ tmp 2))) :world)
+      (setq height tmp)
+      
+      (setq obj-pos (scale 0.001 (send obj-coord :worldpos)))
+      (setq found-obj t)
+
+      (if (< (elt obj-pos 1) *tmp*)
+          (progn
+            (setq *tmp* (elt obj-pos 1))
+            (setq *width* width)
+            (setq *length* length)
+            (setq *height* height)
+            (setq *obj-coord* obj-coord)
+            ))
+      
+      (print (list 'found? found-obj obj-pos)))
+    obj-pos))
+
 ;; add for sense
 (ros::load-ros-manifest "geometry_msgs")
 (defun wrench-y-cb (msg)
@@ -158,46 +225,166 @@
 	     (return-from recognition)
 	     ))
 	 )
-
+  
   
   ;; modelを作る
-  (load "package://jsk_2020_04_pr2_curry/euslisp/model/carrot-test-new-type.l")
-  (setq *carrot* (carrot :w  *width* :l *length* :h *height*))
-  (send *carrot* :newcoords (send obj-coord :copy-worldcoords))
-  (send *carrot* :translate (float-vector (- (/ *width* 2) 20) 0 0))
-  (send *carrot* :rotate (deg2rad 180) :x)
-  (send *carrot* :cut)
-
-  (objects (list *carrot* *pr2* *cutting-board* *scene*))
+  (load "package://jsk_2020_04_pr2_curry/euslisp/model/potato-new-type.l")
+  (setq *potato* (potato :w  *width* :l *length* :h *height*))
+  (send *potato* :newcoords (send *obj-coord* :copy-worldcoords))
+  (send *potato* :rotate (deg2rad 180) :x)
+  (send *potato* :cut)
+  
+  (objects (list *potato* *pr2* *cutting-board* *scene*))
   (send *irtviewer* :look-all
 	(geo::make-bounding-box 
 	 (flatten (send-all (send *pr2* :bodies) :vertices))))
   (send *irtviewer* :draw-objects)
   
-  (warn "please run (grasp-carrot) or (now-devel) ~%")
+  (warn "please run (grasp-potato) or (now-devel) ~%")
   )
 
+(defun recognition-right ()
+  (setq found-obj nil)
+  (setq cnt 0)
+  (ros::unsubscribe *bbox-topic-name*)
+  (until found-obj
+	 (print 4)
+	 (x::window-main-one) ;; IRT viewerの視点を変えられる。見にくければ変えよう
+
+	 (setq msg (one-shot-subscribe *bbox-topic-name* jsk_recognition_msgs::BoundingBoxArray :timeout 2000))
+	 (when msg
+	   (object-pose-cb msg)
+
+	   ;; 中身が空なら抜ける
+	   (unless (send *msg* :boxes) 
+	     (progn
+	       (setq *end-flag* t)
+	       (return-from recognition)
+	       ))
+	   ;; 中身が0だったらカウントする
+	   (if (= *width* 0)
+	       (progn
+		 (setq cnt (+ cnt 1))
+		 ))
+	   ;; カウントが５以上になったら抜ける
+	   (if (>= cnt 5)
+	       (progn
+	       (setq *end-flag* t)
+	       (return-from recognition)
+	       ))
+	   )
+	 ;; メッセージが来ていなかったら抜ける
+	 (unless msg
+	   (progn
+	     (setq *end-flag* t)
+	     (return-from recognition)
+	     ))
+	 )
+  
+  ;; yが最大のboxを使ってモデルを作る．
+  (setq *tmp* 0)
+  (dolist (i *boxes*)
+    (check-y-coords i))
+  
+  ;; modelを作る
+  (load "package://jsk_2020_04_pr2_curry/euslisp/model/potato-box-model.l")
+  (setq *potato* (potato :w  *width* :l *length* :h *height*))
+  (send *potato* :newcoords (make-coords :pos (send *obj-coord* :worldpos)))
+  (send *potato* :rotate (deg2rad 90) :z :world)
+  ;; (send *potato* :rotate (deg2rad 180) :x)
+  (send *potato* :cut)
+  
+  (objects (list *potato* *pr2* *cutting-board* *scene*))
+  (send *irtviewer* :look-all
+	(geo::make-bounding-box 
+	 (flatten (send-all (send *pr2* :bodies) :vertices))))
+  (send *irtviewer* :draw-objects)
+  
+  (warn "please run (grasp-potato) or (now-devel) ~%")
+  )
+
+(defun recognition-left ()
+  (setq found-obj nil)
+  (setq cnt 0)
+  (ros::unsubscribe *bbox-topic-name*)
+  (until found-obj
+	 (print 4)
+	 (x::window-main-one) ;; IRT viewerの視点を変えられる。見にくければ変えよう
+
+	 (setq msg (one-shot-subscribe *bbox-topic-name* jsk_recognition_msgs::BoundingBoxArray :timeout 2000))
+	 (when msg
+	   (object-pose-cb msg)
+
+	   ;; 中身が空なら抜ける
+	   (unless (send *msg* :boxes) 
+	     (progn
+	       (setq *end-flag* t)
+	       (return-from recognition)
+	       ))
+	   ;; 中身が0だったらカウントする
+	   (if (= *width* 0)
+	       (progn
+		 (setq cnt (+ cnt 1))
+		 ))
+	   ;; カウントが５以上になったら抜ける
+	   (if (>= cnt 5)
+	       (progn
+	       (setq *end-flag* t)
+	       (return-from recognition)
+	       ))
+	   )
+	 ;; メッセージが来ていなかったら抜ける
+	 (unless msg
+	   (progn
+	     (setq *end-flag* t)
+	     (return-from recognition)
+	     ))
+	 )
+  
+  ;; yが最小のboxを使ってモデルを作る．
+  (setq *tmp* 1000000)
+  (dolist (i *boxes*)
+    (check-y-coords-min i))
+  
+  ;; modelを作る
+  (load "package://jsk_2020_04_pr2_curry/euslisp/model/potato-new-type.l")
+  (setq *potato* (potato :w  *width* :l *length* :h *height*))
+  (send *potato* :newcoords (send *obj-coord* :copy-worldcoords))
+  (send *potato* :rotate (deg2rad 90) :z :world)
+  ;; (send *potato* :rotate (deg2rad 180) :x)
+  (send *potato* :cut)
+  
+  (objects (list *potato* *pr2* *cutting-board* *scene*))
+  (send *irtviewer* :look-all
+	(geo::make-bounding-box 
+	 (flatten (send-all (send *pr2* :bodies) :vertices))))
+  (send *irtviewer* :draw-objects)
+  
+  (warn "please run (grasp-potato) or (now-devel) ~%")
+  )
+
+
 ;; cut funcs
-(defun set-carrot-cut (&rest args &key (w 160) (l 40) (h 40) &allow-other-keys)
+(defun set-potato-cut (&rest args &key (w 160) (l 40) (h 40) &allow-other-keys)
   
   (setq *width* w)
   (setq *length* l)
   (setq *height* h)
   
-  (setq *carrot* (carrot :w w :l l :h h))
-  (send *carrot* :transform (make-coords :pos (float-vector 500.0 8500.0 (+ 30850.0 (/ h 2))) :rot #2f((0.0 -1.0 0.0) (1.0 0.0 0.0) (0.0 0.0 1.0))))
-  (send *carrot* :cut)
+  (setq *potato* (potato :w w :l l :h h))
+  (send *potato* :transform (make-coords :pos (float-vector 500.0 8500.0 (+ 30850.0 (/ h 2))) :rot #2f((0.0 -1.0 0.0) (1.0 0.0 0.0) (0.0 0.0 1.0))))
+  (send *potato* :cut)
   
-  (objects (list *kitchen* *pr2* *cutting-board* *carrot*))
+  (objects (list *kitchen* *pr2* *cutting-board* *potato*))
   (send *irtviewer* :look-all
 	(geo::make-bounding-box 
 	 (flatten (send-all (send *pr2* :bodies) :vertices))))
   
-  (warn "please run (grasp-carrot) ~%")
+  (warn "please run (grasp-potato) ~%")
   )
 
 
-(defun grasp-carrot ()
+(defun grasp-potato ()
   ;;少し上に
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 250) :world)
@@ -221,14 +408,13 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
-  ;; 人参の掴む所に
-  (send *arrow* :newcoords (send *carrot* :copy-worldcoords))
-  ;; (send *arrow* :translate (float-vector (+ (/ *width* -2) 20) 0 0))
-  (send *arrow* :translate (float-vector (* (+ (/ *width* -2) 20) 2) 0 0))
+  ;; じゃがいもの掴む所に
+  (send *arrow* :newcoords (send *potato* :copy-worldcoords))
+  (send *arrow* :translate #f(0 -20 0) :world)
   (send *arrow* :rotate (deg2rad 70) :y)
-
-  ;; (send *arrow* :translate #f(-10 -20 -10) :world)
-
+  
+  (send *arrow* :translate #f(-10 -10 -5) :world)
+  
   ;;gripperを開く
   (send *ri* :stop-grasp :larm :wait t)
   (send *arrow* :translate #f(0 -100 100) :world)
@@ -260,14 +446,13 @@
 (defun set-knife-hor ()
   (setq *knife* (knife))
   (send *knife* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  
   (send *knife* :translate #f(20 0 0))
-  
   (send *knife* :rotate (deg2rad 90) :x)
   (send *pr2* :rarm :end-coords :assoc *knife*)
+
   (send *ri* :start-grasp :rarm :wait t :gain 100)
   
-  (objects (list *scene* *pr2* *cutting-board* *carrot* *knife*))
+  (objects (list *scene* *pr2* *cutting-board* *potato* *knife*))
   (send *irtviewer* :look-all
 	(geo::make-bounding-box 
 	 (flatten (send-all (send *pr2* :bodies) :vertices))))
@@ -294,10 +479,10 @@
   
   ;;調整
   (send *arrow* :translate (float-vector 0 adj 0))
-
+  
   ;; 少し上にするために
   (setq offset 10)
- 
+  
   (send *arrow* :translate (float-vector 0 0 offset))  
   (send *pr2* :rarm :inverse-kinematics
 	*arrow*
@@ -324,36 +509,35 @@
 
 (defun touch-test ()
   (setq interval 10)
-
+  
   (ros::unsubscribe "/right_endeffector/wrench")
   (setq *topic-name* "/right_endeffector/wrench")
   (setq *cb-flag* nil)
   ;; (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-y-cb)
   
   (until *cb-flag*
-    (print 4)
-    (send *arrow* :translate (float-vector 0 0 (* interval -1)))
-    (send *pr2* :rarm :inverse-kinematics
-  	  *arrow*
-  	  :move-target (car (send *knife* :attention))
-  	  :rotation-axis t
-  	  :debug-view t)
-    (send *viewer* :draw-objects)
-    (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
-    (send *ri* :wait-interpolation)
-
-    (setq msg (one-shot-subscribe *topic-name* geometry_msgs::WrenchStamped))
-    (wrench-y-cb msg)
+	 (print 4)
+	 (send *arrow* :translate (float-vector 0 0 (* interval -1)))
+	 (send *pr2* :rarm :inverse-kinematics
+	       *arrow*
+	       :move-target (car (send *knife* :attention))
+	       :rotation-axis t
+	       :debug-view t)
+	 (send *viewer* :draw-objects)
+	 (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+	 (send *ri* :wait-interpolation)
+	 
+	 (setq msg (one-shot-subscribe *topic-name* geometry_msgs::WrenchStamped))
+	 (wrench-y-cb msg)
     
-    ;; (ros::spin-once)
-    ;; (ros::sleep)
-    )
+	 ;; (ros::spin-once)
+	 ;; (ros::sleep)
+	 )
   
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-
+  
   
   (warn "you can retry (cut-test), (continue-cut 4) or you want to finish please run (finish-pose)  ~%")
-  ;; (warn "please run (slide-knife) ~%")
   (warn "please run (up-knife) ~%")
   )
 
@@ -377,7 +561,7 @@
           :debug-view nil)
 
     (setq av (send *pr2* :angle-vector))
-
+    
     (setq avs (append avs (list av)))
     (setq tms (append tms (list 600)))
     )
@@ -596,43 +780,9 @@
   (warn "please run (set-cut-1) or (cut-all)~%")  
   )
 
-
-(defun cut-all ()
-  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-  
-  ;; 薄切りする間隔
-  (setq tmp 15)
-  
-  (setq acc-y (elt (send (send (car (send *knife* :attention)) :copy-worldcoords) :worldpos) 1))
-  (setq now-y (elt (send (send *cut-point-1* :copy-worldcoords) :worldpos) 1))
-  (setq adj (- now-y acc-y))
-  
-  (setq l-y (+ (elt (send (send (send *pr2* :larm :end-coords) :copy-worldcoords) :worldpos) 1) 20))
-  (setq leng (- acc-y l-y))
-  
-  ;; (dotimes (i (- (round (/ leng tmp)) 1))
-  (dotimes (i (round (/ leng tmp)) )
-    (setq adj (+ adj tmp))
-    (cut-test)
-    )
-  )
-  
-
-(defun set-cut-1 ()
-  (setq acc-y (elt (send (send (car (send *knife* :attention)) :copy-worldcoords) :worldpos) 1))
-  (setq now-y (elt (send (send *cut-point-1* :copy-worldcoords) :worldpos) 1))
-  (setq adj (+ (- now-y acc-y) 15))
-  (warn "please run (cut-test) ~%")  
-  )
-
-(defun set-cut-2 ()
-  (setq adj (+ adj 10))
-  (warn "please run (cut-test) ~%")  
-  )
-
 (defun cut-test ()
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate #f(0 0 150) :world)
+  (send *arrow* :translate #f(0 0 100) :world)
   (send *pr2* :rarm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
 	:rotation-axis nil
@@ -640,20 +790,16 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
-
-  ;; 少し上に包丁を
-
+  
   (send *arrow* :newcoords (send *cut-point-1* :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 (* *height* 1)))
-
+  
   ;;調整
-  ;; (send *arrow* :translate #f(0 10 0))
   (send *arrow* :translate (float-vector 0 adj 0))
 
   ;; 少し上にするために
   (setq offset 50)
- 
+  
   (send *arrow* :translate (float-vector 0 0 offset))  
   (send *pr2* :rarm :inverse-kinematics
 	*arrow*
@@ -695,10 +841,6 @@
   	  :move-target (car (send *knife* :attention))
   	  :rotation-axis t
   	  :debug-view nil)
-    ;; (send *viewer* :draw-objects)
-    ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
-    ;; (send *ri* :wait-interpolation)
-
     (setq av (send *pr2* :angle-vector))
     (setq avs (append avs (list av)))
     (setq tms (append tms (list 600)))
@@ -709,10 +851,6 @@
   	  :move-target (car (send *knife* :attention))
   	  :rotation-axis t
   	  :debug-view nil)
-    ;; (send *viewer* :draw-objects)
-    ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
-    ;; (send *ri* :wait-interpolation)
-
     (setq av (send *pr2* :angle-vector))
     (setq avs (append avs (list av)))
     (setq tms (append tms (list 600)))
@@ -815,8 +953,8 @@
   )
 
 (defun reset-larm ()
-  ;; release carrot
-  (send *pr2* :larm :end-coords :dissoc *carrot*)
+  ;; release potato
+  (send *pr2* :larm :end-coords :dissoc *potato*)
   (send *ri* :stop-grasp :larm :wait t)
 
   ;; 左手を少し上に
@@ -854,9 +992,10 @@
   )
 
 
+
 (defun now-devel ()
-  (set-carrot)
-  (grasp-carrot)
+  (set-potato)
+  (grasp-potato)
   (set-knife-hor)
   (cut-test)
   (avoid-pose)
@@ -865,7 +1004,7 @@
 
 
 (defun now-test ()
-  (grasp-carrot)
+  (grasp-potato)
   (set-knife-hor)
   (send *ri* :start-grasp :rarm :gain 100)
   (touch-test-set)
@@ -877,19 +1016,18 @@
 
 
 (defun exec-all ()
-  (grasp-carrot)
+  (grasp-potato)
   (grasp-knife-hor)
   (cut-test)
   (finish-pose)
-  (put-carrot)
+  (put-potato)
   (reset-larm)
   (change-peeler)
   )
 
 (defun now-cut ()
-  (grasp-carrot)
+  (grasp-potato)
   (set-knife-hor)
-  ;; (send *ri* :start-grasp :rarm :gain 100)
   (touch-test-set)
   (touch-test)
   (up-knife)

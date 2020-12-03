@@ -22,8 +22,62 @@
 (warn "If you use real robot, run (update-pos) ~%")
 (warn "please run (now-transfer) or (now-transfer-bowl-1) ~%")
 
-;; add for sense
+;; add for rec
 (setq *y-thre* -10)
+
+(defun recognition ()
+  (setq found-obj nil)
+  (setq cnt 0)
+  (ros::unsubscribe *bbox-topic-name*)
+  (until found-obj
+	 (print 4)
+	 (x::window-main-one) ;; IRT viewerの視点を変えられる。見にくければ変えよう
+
+	 (setq msg (one-shot-subscribe *bbox-topic-name* jsk_recognition_msgs::BoundingBoxArray :timeout 2000))
+	 (when msg
+	   (object-pose-cb msg)
+
+	   ;; 中身が空なら抜ける
+	   (unless (send *msg* :boxes) 
+	     (progn
+	       (setq *end-flag* t)
+	       (return-from recognition)
+	       ))
+	   ;; 中身が0だったらカウントする
+	   (if (= *width* 0)
+	       (progn
+		 (setq cnt (+ cnt 1))
+		 ))
+	   ;; カウントが５以上になったら抜ける
+	   (if (>= cnt 5)
+	       (progn
+	       (setq *end-flag* t)
+	       (return-from recognition)
+	       ))
+	   )
+	 ;; メッセージが来ていなかったら抜ける
+	 (unless msg
+	   (progn
+	     (setq *end-flag* t)
+	     (return-from recognition)
+	     ))
+	 )
+
+  
+  ;; ikを解く
+  (load "package://jsk_2020_04_pr2_curry/euslisp/model/carrot-ellipsoid-model.l")
+  (setq *carrot* (carrot :w  *width* :l *length* :h *height*))
+  (send *carrot* :newcoords (send *obj-coord* :copy-worldcoords))
+  (send *carrot* :rotate (deg2rad 180) :x)
+  
+  (objects (list *potato* *pr2* *cutting-board* *scene*))
+  (send *irtviewer* :look-all
+	(geo::make-bounding-box 
+	 (flatten (send-all (send *pr2* :bodies) :vertices))))
+  (send *irtviewer* :draw-objects)
+  
+  (warn "please run (grasp-target) or (now-devel) ~%")
+  )
 
 ;; def util-funcs
 
