@@ -180,6 +180,8 @@
 ;; cut funcs
 (defun set-carrot-cut (&rest args &key (w 160) (l 40) (h 40) &allow-other-keys)
   
+  (load "package://jsk_2020_04_pr2_curry/euslisp/model/carrot-test-new-type.l")
+
   (setq *width* w)
   (setq *length* l)
   (setq *height* h)
