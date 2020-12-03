@@ -1,11 +1,10 @@
 (defun water-init ()
   ;; init
-  ;; (load "move-to-kitchen-with-map.l")
-  (load "bowl-use-codes.l")
-  
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
+
   ;; set global num
   (setq *s-time* 3)
-
+  
   (move-to-sink-irt)
   )
 

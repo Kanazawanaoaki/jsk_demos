@@ -1,6 +1,6 @@
 (defun bowl-init ()
   ;; init
-  (load "tool-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   
   ;; set objects
   (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; spatula on the cutting board

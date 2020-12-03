@@ -1,6 +1,6 @@
 (defun cutting-board-init ()
   ;; init
-  (load "move-to-kitchen-with-map.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/move-to-kitchen-with-map.l")
   
   ;; set objects
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/cutting-board.l")

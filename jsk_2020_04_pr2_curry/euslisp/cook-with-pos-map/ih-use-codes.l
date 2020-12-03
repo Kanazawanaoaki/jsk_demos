@@ -1,7 +1,7 @@
 (defun ih-init ()
   ;; init
-  (load "tool-use-codes.l")
-
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
+  
   ;; set objects
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/cooking-pot-73b2.l")
   (setq *pot* (cooking-pot))

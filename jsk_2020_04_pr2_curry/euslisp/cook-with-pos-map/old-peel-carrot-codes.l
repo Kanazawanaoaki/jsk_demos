@@ -1,6 +1,6 @@
 (defun peel-carrot-init ()
   ;; init
-  (load "tool-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   
   ;; set cutting board
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/cutting-board.l")
