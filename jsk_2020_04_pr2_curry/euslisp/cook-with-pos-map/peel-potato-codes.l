@@ -1235,7 +1235,7 @@
 
 (defun now-rotate ()
   (recognition)
-  (grasp-potato)
+  (grasp-potato-rotate)
   (rotate-potato)
   (reset-larm)
   )
