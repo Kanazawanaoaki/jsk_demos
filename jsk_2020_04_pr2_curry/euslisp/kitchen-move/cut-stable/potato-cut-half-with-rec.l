@@ -906,7 +906,7 @@
   (set-knife-hor)
   (cut-test)
   (avoid-pose)
-
+  
   (put-potato)
   (reset-larm)
   )

@@ -490,6 +490,52 @@
   (warn "please run (slide-knife) ~%")  
   )
 
+(defun slide-knife-set ()
+  (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 100) :world)
+  (send *pr2* :rarm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis nil
+	:debug-view t)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+
+  ;; 少し上に包丁を
+  (send *arrow* :newcoords (send *cut-point-1* :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 -40 40))
+  
+  ;;調整
+  (send *arrow* :translate (float-vector 0 adj 0))
+
+  ;; 少し上にするために
+  (setq offset 10)
+ 
+  (send *arrow* :translate (float-vector 0 0 offset))  
+  (send *pr2* :rarm :inverse-kinematics
+	*arrow*
+	:move-target (car (send *knife* :attention))
+	:rotation-axis t
+	:debug-view t)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+
+  (send *arrow* :translate (float-vector 0 0 (* offset -1)))  
+  (send *pr2* :rarm :inverse-kinematics
+	*arrow*
+	:move-target (car (send *knife* :attention))
+	:rotation-axis t
+	:debug-view t)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (warn "please run (slide-knife) or (slide-knife-4) ~%")
+  )
+
 (defun slide-knife ()
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
 
@@ -695,10 +741,6 @@
   	  :move-target (car (send *knife* :attention))
   	  :rotation-axis t
   	  :debug-view nil)
-    ;; (send *viewer* :draw-objects)
-    ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
-    ;; (send *ri* :wait-interpolation)
-
     (setq av (send *pr2* :angle-vector))
     (setq avs (append avs (list av)))
     (setq tms (append tms (list 600)))
@@ -709,10 +751,6 @@
   	  :move-target (car (send *knife* :attention))
   	  :rotation-axis t
   	  :debug-view nil)
-    ;; (send *viewer* :draw-objects)
-    ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
-    ;; (send *ri* :wait-interpolation)
-
     (setq av (send *pr2* :angle-vector))
     (setq avs (append avs (list av)))
     (setq tms (append tms (list 600)))
