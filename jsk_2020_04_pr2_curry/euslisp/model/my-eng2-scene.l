@@ -425,7 +425,7 @@
 (setq *bowl-2-set-coords* (make-coords :pos (float-vector 510 8430 30840) :rpy (float-vector 0 0 0)))
 (setq *bowl-3-coords* (make-coords :pos (float-vector 635 7585 30840) :rpy (float-vector 1.048 0 0)))
 (setq *bowl-4-coords* (make-coords :pos (float-vector 480 7845 30840) :rpy (float-vector -0.175 0 0)))
-
+(setq *rcup-coords* (make-coords :pos (float-vector 320 8525 30840)))
 
 ;; equipment coords
 ;; 棚
