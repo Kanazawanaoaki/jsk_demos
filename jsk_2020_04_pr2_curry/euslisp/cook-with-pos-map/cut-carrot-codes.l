@@ -190,7 +190,7 @@
   (send *carrot* :transform (make-coords :pos (float-vector 500.0 8500.0 (+ 30850.0 (/ h 2))) :rot #2f((0.0 -1.0 0.0) (1.0 0.0 0.0) (0.0 0.0 1.0))))
   (send *carrot* :cut)
   
-  (objects (list *kitchen* *pr2* *cutting-board* *carrot*))
+  (objects (list *scene* *pr2* *cutting-board* *carrot*))
   (send *irtviewer* :look-all
 	(geo::make-bounding-box 
 	 (flatten (send-all (send *pr2* :bodies) :vertices))))

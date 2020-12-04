@@ -180,7 +180,7 @@
   (send *ri* :clear-costmap)
   (send *ri* :go-pos-unsafe -0.2 0 0)
   (send *ri* :go-pos-unsafe 0 0 -90)
-
+  
   (send *pr2* :torso_lift_joint :joint-angle 100)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)

@@ -512,7 +512,24 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
   
-  (warn "please go to microwave spot! ~%")
+  (warn "please run (move-to-microwave) ~%")
+  )
+
+(defun move-to-microwave ()
+  ;; 電子レンジまで移動する
+  (send *ri* :clear-costmap)
+  (send *ri* :go-pos-unsafe -0.2 0 0)
+  (send *ri* :go-pos-unsafe 0 0 -90)
+
+  (send *pr2* :torso_lift_joint :joint-angle 100)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :angle-vector #f(100.161 75.0006 49.9994 109.993 -109.995 -19.9972 -10.0007 -9.99948 -40.1721 59.1602 -68.2551 -119.512 165.852 -64.9736 -220.86 -0.005299 51.906))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)  
+  
+  (send *ri* :move-to (make-coords :pos #f(1600 9300 351) :rpy (float-vector 0 0 0)) :frame-id "/map")
   )
 
 (defun recieve-rcup ()
@@ -642,14 +659,3 @@
 	 )
   )
 
-
-(defun tmp-test ()  
-  (send *arrow* :newcoords (make-coords :pos #f(297.74 8598.449 30922.737) :rpy #f(-3.097 0.222 -1.404)))
-  (send *pr2* :rarm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view t)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-  )

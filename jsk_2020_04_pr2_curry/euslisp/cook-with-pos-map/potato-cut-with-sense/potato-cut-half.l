@@ -12,7 +12,7 @@
   (setq adj2 5)
     
   (move-to-kitchen-irt)
-  (objects (list *pr2* *scene* *cutting-board*))
+  (objects (list pr2* *scene* *cutting-board*))
   (update-view)  
   )
 
@@ -943,8 +943,7 @@
   (setq *cube* (make-cube 10 50 50))
   (send *cube* :set-color :red)
   (send *cube* :locate #f(500 0 1000) :world)
-  (objects (list *cube* *pr2*))
-
+  
   (setq found-obj nil)
   (until found-obj
 	 (print 4)
