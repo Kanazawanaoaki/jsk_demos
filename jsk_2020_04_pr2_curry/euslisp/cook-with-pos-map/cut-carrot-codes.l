@@ -927,9 +927,9 @@
   )
 
 (defun now-cut ()
+  (recognition)
   (grasp-carrot)
   (set-knife-hor)
-  ;; (send *ri* :start-grasp :rarm :gain 100)
   (touch-test-set)
   (touch-test)
   (up-knife)
@@ -938,4 +938,3 @@
   (avoid-pose)
   (reset-larm)
   )
-
