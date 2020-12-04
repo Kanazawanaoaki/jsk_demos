@@ -613,7 +613,6 @@
 
   (send *ri* :stop-grasp :larm :wait t)
 
-  (send *arrow* :newcoords (send *pot-larm-from-below* :copy-worldcoords))
   (send *arrow* :translate #f(100 0 -100) :world)
   (send *pr2* :larm :inverse-kinematics
   	(send *arrow* :copy-worldcoords)
@@ -622,6 +621,16 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :angle-vector #f(117.007 48.3805 113.439 -103.326 38.7107 -5.72958 14.4628))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (setq *lav4* (float-vector 75.0 50.0 110.0 -110.0 -20.0 -10.0 -10.0))
+  (send *pr2* :larm :angle-vector *lav4*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)  
   )
 
 ;; transfer funcs
@@ -1759,3 +1768,7 @@
   (reset-larm)
   )
 
+(defun now-set-pot ()
+  (recieve-pot)
+  (put-pot)
+  )

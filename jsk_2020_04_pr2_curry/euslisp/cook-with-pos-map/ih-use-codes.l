@@ -533,23 +533,41 @@
   (send *ri* :wait-interpolation)
   
   ;; 回転させる
-  (setq *cds0* (make-cascoords :pos (float-vector 468 8090 30850))) ;;中心の座標
-  ;; (setq *cds1* (make-cascoords :pos (float-vector 468 8090 30850))) ;;回転の初期位置
-  (setq *cds1* (make-cascoords :pos (send (send (send *pot* :attention-attention0) :copy-worldcoords) :worldpos))) ;;回転の初期位置
+  (setq *cds0* (make-cascoords :pos (send (send (send *pot* :attention-attention0) :copy-worldcoords) :worldpos))) ;;中心の座標
+  (setq *cds1* (make-cascoords :pos (send (send (send *cds0* :copy-worldcoords) :translate #f(60 0 0) :world) :worldpos))) ;;回転の初期位置
+  
+  ;; (setq *cds0* (make-cascoords :pos (float-vector 468 8090 30850))) ;;中心の座標
+  ;; ;; (setq *cds1* (make-cascoords :pos (float-vector 468 8090 30850))) 
+  ;; (setq *cds1* (make-cascoords :pos (send (send (send *pot* :attention-attention0) :copy-worldcoords) :worldpos))) ;;回転の初期位置
+  
   (setq *rpy1* (float-vector -2.267 0.887 0.091)) ;;回転中の目標姿勢
+  
+  ;; (setq *rpy1* (float-vector -2.406 1.193 0.156)) ;;回転中の目標姿勢 ;;IK解けなかった．
+  
   (send *cds0* :assoc *cds1*)
-
+  
+  (send *cds0* :rotate (deg2rad 45) :z :world)
+  (send *arrow* :newcoords (make-coords :pos (send (send *cds1* :copy-worldcoords) :worldpos) :rpy *rpy1*))
+  (send *pr2* :rarm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:move-target (car (send *spatula* :attention))
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  
   (setq avs (list))
   (setq tms (list))
   
   (dotimes (i 12)
     (send *cds0* :rotate (deg2rad 30) :z :world)
-    (send *arrow* :newcoords (make-coords :pos (send (send *cds1* :copy-worldcoords) :worlpos) :rpy *rpy1*))
+    (send *arrow* :newcoords (make-coords :pos (send (send *cds1* :copy-worldcoords) :worldpos) :rpy *rpy1*))
     (send *pr2* :rarm :inverse-kinematics
 	  (send *arrow* :copy-worldcoords)
 	  :move-target (car (send *spatula* :attention))
 	  :rotation-axis t
 	  :debug-view *debug-flag*)
+    (send *viewer* :draw-objects)
     (setq av (send *pr2* :angle-vector))
     (setq avs (append avs (list av)))
     (setq tms (append tms (list 400)))
@@ -1110,3 +1128,13 @@
   (release-knob) ;;つまみを離す
   )
 
+
+(defun tmp-test ()
+  (set-spatula)
+  (mix-with-spatula-set)
+  (rotate-mix-with-spatula)
+  (mix-with-spatula)
+  (wait-pose-spatula)
+  (avoid-rarm-spatula)
+  (release-pot-from-below)
+  )
