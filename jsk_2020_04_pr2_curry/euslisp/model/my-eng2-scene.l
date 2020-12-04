@@ -403,7 +403,7 @@
 (setq *kitchen-spot* (make-coords :pos (float-vector 1200 8500 30000) :rpy (float-vector pi 0 0)))
 (setq *sink-spot* (make-coords :pos (float-vector 1100 9100 30000) :rpy (float-vector pi 0 0)))
 (setq *stove-spot* (make-coords :pos (float-vector 1400 8100 30000) :rpy (float-vector pi 0 0)))
-(setq *microwave-spot* (make-coords :pos (float-vector 1700 9400 30000) :rpy (float-vector pi 0 0)))
+(setq *microwave-spot* (make-coords :pos (float-vector 1600 9300 30000) :rpy (float-vector pi 0 0)))
 (setq *seasoning-spot* (make-coords :pos (float-vector 1700 8900 30000) :rpy (float-vector pi 0 0)))
 
 ;; tools coords
@@ -426,6 +426,11 @@
 (setq *bowl-3-coords* (make-coords :pos (float-vector 635 7585 30840) :rpy (float-vector 1.048 0 0)))
 (setq *bowl-4-coords* (make-coords :pos (float-vector 480 7845 30840) :rpy (float-vector -0.175 0 0)))
 (setq *rcup-coords* (make-coords :pos (float-vector 320 8525 30840)))
+
+
+(setq *solt-coords* (make-coords))
+(setq *dispenser* (make-coords))
+
 
 ;; equipment coords
 ;; 棚

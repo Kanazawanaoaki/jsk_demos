@@ -1,4 +1,4 @@
-(defun sato-init ()
+(defun microwave-init ()
   ;; (require :pr2-microwave-interface "package://microwave_pr2_201710/euslisp/lib/pr2-microwave-interface.l")
   (require :pr2-microwave-interface "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/lib-microwave/my-pr2-microwave-interface.l")
   
@@ -8,7 +8,7 @@
   (warn "please run (recieve-sato) or (tmp-test) ~%")
   )
 
-(sato-init)
+(microwave-init)
 
 (defun recieve-sato ()
   (send *ri* :stop-grasp :rarm :wait t)
