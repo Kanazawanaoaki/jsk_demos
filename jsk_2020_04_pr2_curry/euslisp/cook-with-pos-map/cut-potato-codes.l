@@ -957,7 +957,7 @@
   )
 
 
-(defun put-potato ()
+(defun put-potato-right-rotate ()
   (send *pr2* :larm :end-coords :assoc p1)
   
   ;; 上に上げる
@@ -970,9 +970,9 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   ;; 置く
-  (send *arrow* :move-to (make-coords :pos (float-vector 500.0 2050.0 850.0) :rot #2f((1.0 0.0 0.0) (0.0 0.0 -1.0) (0.0 1.0 0.0))) :world)
+  (send *arrow* :move-to (make-coords :pos (float-vector 500.0 8550.0 30850.0) :rot #2f((1.0 0.0 0.0) (0.0 0.0 -1.0) (0.0 1.0 0.0))) :world)
   (send *arrow* :rotate (deg2rad -90) :y :world)
 
   (send *arrow* :translate #f(0 0 80) :world)
@@ -1086,9 +1086,9 @@
   (send *ri* :wait-interpolation)
 
   ;; 置く
-  (send *arrow* :move-to (make-coords :pos (float-vector 500.0 8450.0 30850.0) :rot #2f((1.0 0.0 0.0) (0.0 0.0 -1.0) (0.0 1.0 0.0))) :world)
+  (send *arrow* :move-to (make-coords :pos (float-vector 500.0 8350.0 30850.0) :rot #2f((1.0 0.0 0.0) (0.0 0.0 -1.0) (0.0 1.0 0.0))) :world)
   (send *arrow* :rotate (deg2rad -90) :y :world)
-
+  
   (send *arrow* :translate #f(0 0 80) :world)
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
