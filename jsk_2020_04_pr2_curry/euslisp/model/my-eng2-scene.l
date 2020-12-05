@@ -421,7 +421,8 @@
 (setq *pot-coords* (make-coords :pos (float-vector 450 8050 30840) :rpy (float-vector 3.142 0 0)))
 
 (setq *mcup-coords* (make-coords :pos (float-vector 555 7674 30850) :rpy (float-vector -0.948 0 0)))
-(setq *cutting-board-coords* (make-coords :pos (float-vector 530 8420 30840) :rpy (float-vector 0 0 0)))
+;; (setq *cutting-board-coords* (make-coords :pos (float-vector 530 8420 30840) :rpy (float-vector 0 0 0)))
+(setq *cutting-board-coords* (make-coords :pos (float-vector 560 8420 30840) :rpy (float-vector 0 0 0)))
 (setq *bowl-1-coords* (make-coords :pos (float-vector 325 8460 30840) :rpy (float-vector -0.175 0 0)))
 (setq *bowl-2-coords* (make-coords :pos (float-vector 295 8645 30840) :rpy (float-vector -0.349 0 0)))
 (setq *bowl-2-set-coords* (make-coords :pos (float-vector 510 8430 30840) :rpy (float-vector 0 0 0)))

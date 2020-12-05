@@ -495,7 +495,6 @@
   (send *ri* :start-grasp :rarm :wait t)
   
   ;; slideを始める位置
-  ;; (send *arrow* :newcoords (make-coords :pos #f(458.91 8400.878 30861.651) :rpy #f(3.03 1.101 2.948)))
   (send *arrow* :newcoords (make-coords :pos #f(458.91 8400.878 30861.651) :rpy #f(-3.086 1.155 3.132)))
   (send *arrow* :translate #f(-10 0 100) :world)
   (send *pr2* :rarm :inverse-kinematics
