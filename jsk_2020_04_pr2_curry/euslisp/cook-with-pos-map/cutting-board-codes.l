@@ -24,17 +24,17 @@
 
 
 ;; add for sense
-(setq *x-thre* -15)
+(setq *x-thre* 15)
 
 (ros::roseus "board_rec_test" :anonymous t)
 (setq *topic-name* "/left_endeffector/wrench")
 (ros::load-ros-manifest "geometry_msgs")
 (setq *cb-flag* nil)
-(defun wrench-x-cb (msg)
+(defun wrench-z-cb (msg)
   (when msg
-    (let ((x nil))
-      (setq x (send msg :wrench :force :x))
-      (if (< x *x-thre*)
+    (let ((z nil))
+      (setq x (send msg :wrench :force :z))
+      (if (> z *z-thre*)
           (progn 
             (setq *cb-flag* t)
             (format t "OK!! x: ~A ~%" x)
@@ -521,9 +521,7 @@
       (send (send *cutting-board* :parent) :dissoc *cutting-board*))
   (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
   (send *cutting-board* :translate (float-vector 100 0 0))
-  ;; (send *arrow* :newcoords (make-coords :pos (send (send (send *cutting-board* :attention-attention1) :copy-worldcoords) :worldpos) :rpy (float-vector 2.244 -1.518 0.872)))
   (send *arrow* :newcoords (make-coords :pos (send (send (send *cutting-board* :attention-attention1) :copy-worldcoords) :worldpos) :rpy (float-vector 2.979 -0.869 0.177)))
-  ;; (send *arrow* :translate #f(0 0 30) :world)
   
   (send *arrow* :translate #f(50 -200 0) :world)
   
@@ -575,7 +573,7 @@
   (ros::unsubscribe "/left_endeffector/wrench")
   (setq *topic-name* "/left_endeffector/wrench")
   (setq *cb-flag* nil)
-  (ros::subscribe "/left_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-x-cb)
+  (ros::subscribe "/left_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-z-cb)
   
   (while (some #'identity (send *ri* :wait-interpolation nil 0.1))
     (when (progn
