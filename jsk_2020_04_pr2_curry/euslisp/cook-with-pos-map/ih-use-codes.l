@@ -12,6 +12,8 @@
   (setq *pot-larm-from-above* (make-coords :pos (float-vector 639 8109 30971) :rpy (float-vector -3.069 1.306 -0.087)))
   (setq *pot-larm-from-below* (make-coords :pos (float-vector 644 8104 30947) :rpy (float-vector 3.125 -0.909 3.119)))
 
+  (setq *ih-panel-coords* (make-coords :pos (float-vector 563 7940 30865) :rpy (float-vector  3.044 1.407 2.87)))
+  
   
   (move-to-kitchen-irt)
   (objects (list *pr2* *scene* *spatula* *ladle* *pot*))
@@ -437,10 +439,25 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   (reset-larm)
   )
 
+(defun look-at-pot ()
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :head :look-at (send (send (send *pot* :attention-attention0) :copy-worldcoords) :worldpos))
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun look-at-ih-panel ()
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :head :look-at (send (send *ih-panel-coords* :copy-worldcoords) :worldpos))
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+  )
 
 ;; tool funcs
 ;; spatula
@@ -535,13 +552,8 @@
   ;; 回転させる
   (setq *cds0* (make-cascoords :pos (send (send (send *pot* :attention-attention0) :copy-worldcoords) :worldpos))) ;;中心の座標
   (setq *cds1* (make-cascoords :pos (send (send (send *cds0* :copy-worldcoords) :translate #f(60 0 0) :world) :worldpos))) ;;回転の初期位置
-  
-  ;; (setq *cds0* (make-cascoords :pos (float-vector 468 8090 30850))) ;;中心の座標
-  ;; ;; (setq *cds1* (make-cascoords :pos (float-vector 468 8090 30850))) 
-  ;; (setq *cds1* (make-cascoords :pos (send (send (send *pot* :attention-attention0) :copy-worldcoords) :worldpos))) ;;回転の初期位置
-  
+
   (setq *rpy1* (float-vector -2.267 0.887 0.091)) ;;回転中の目標姿勢
-  
   ;; (setq *rpy1* (float-vector -2.406 1.193 0.156)) ;;回転中の目標姿勢 ;;IK解けなかった．
   
   (send *cds0* :assoc *cds1*)
@@ -973,7 +985,7 @@
   (send *ri* :wait-interpolation)
   
   (send *ri* :start-grasp :larm :wait t :gain 100)
-
+  
   (warn "please run (rotate-knob) ~%")
   )
 
@@ -984,16 +996,15 @@
   (set-pose-3)
   (on-stove) ;;電源を入れる
   (push-knob) ;;つまみを押す
-
+  
   (grasp-knob) ;;つまみを掴む
   (rotate-knob :deg 30) ;;時計回りに30度つまみを回す
   (release-knob) ;;つまみを離す
-
+  
   (push-knob) ;;つまみを押す
   (off-stove) ;;電源を切る
   (set-pose-3)
   )
-
 
 (defun ih-test-with-rec ()
   (set-pose-3)
@@ -1039,6 +1050,7 @@
 (defun spatula-mix-test ()
   ;; ヘラでかき混ぜる動作のテスト
   (grasp-pot-from-below)
+  (look-at-pot)
   (grasp-spatula)
   (mix-with-spatula-set)
   (mix-with-spatula)
@@ -1051,6 +1063,7 @@
   ;; おたまでかき混ぜる動作のテスト
   (grasp-ladle)
   (grasp-pot-from-below)
+  (look-at-pot)
   (mix-with-ladle-set)
   (mix-with-ladle)
   (wait-pose-ladle)
@@ -1062,6 +1075,7 @@
 (defun now-spatula-mix ()
   ;; ヘラでかき混ぜる動作 ヘラは掴んでいる前提
   (grasp-pot-from-below)
+  (look-at-pot)
   (set-spatula)
   (mix-with-spatula-set)
   (mix-with-spatula)
@@ -1074,6 +1088,7 @@
   ;; おたまでかき混ぜる動作 へらは掴んでいる前提
   (set-ladle)
   (grasp-pot-from-below)
+  (look-at-pot)
   (mix-with-ladle-set)
   (mix-with-ladle)
   (wait-pose-ladle)
@@ -1101,6 +1116,7 @@
 (defun now-spatula-mix-loop (&rest args &key (times 10) &allow-other-keys)
   ;; ヘラでtims回かき混ぜる動作 ヘラは掴んでいる前提
   (grasp-pot-from-below)
+  (look-at-pot)
   (set-spatula)
   (mix-with-spatula-set)
   (spatula-mix-loop :times times)
@@ -1112,6 +1128,7 @@
   ;; おたまでtims回かき混ぜる動作 へらは掴んでいる前提
   (set-ladle)
   (grasp-pot-from-below)
+  (look-at-pot)
   (mix-with-ladle-set)
   (ladle-mix-loop :times times)
   (avoid-rarm-ladle)
@@ -1121,6 +1138,7 @@
 
 (defun now-knob (&rest args &key (deg -70) &allow-other-keys)
   ;;つまみが出ている状態で調節する
+  (look-at-ih-panel)
   (push-knob) ;;つまみを押してonにする
   (grasp-knob) ;;つまみを掴む
   (rotate-knob :deg 30) ;;時計回りにdeg度つまみを回す
