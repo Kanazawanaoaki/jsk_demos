@@ -29,7 +29,11 @@
   (setq *bowl-4* (bowl-4))
   (send *bowl-4* :newcoords (send *bowl-4-coords* :copy-worldcoords))
   
-  (objects (list *pr2* *scene* *spatula* *mcup* *ladle* *pot* *bowl-1* *bowl-2* *bowl-3* *bowl-4*))
+  (load "package://jsk_2020_04_pr2_curry/euslisp/model/dispenser.l")
+  (setq *oil-dispenser* (dispenser))
+  (send *oil-dispenser* :newcoords (send *oil-dispenser-coords* :copy-worldcoords))
+  
+  (objects (list *pr2* *scene* *spatula* *mcup* *ladle* *pot* *bowl-1* *bowl-2* *bowl-3* *bowl-4* *oil-dispenser*))
   (update-view)
   
   ;; def bowl grasp coords
@@ -1154,7 +1158,31 @@
   )
 
 
-;; set for tmp
+;; oil-dispenser codes
+(defun set-oil-dispenser ()
+  (if (not (eql (send *oil-dispenser* :parent) nil))
+      (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
+  (let (local-cds)
+    (setq local-cds (make-cascoords))
+    (send local-cds :newcoords (send (send *oil-dispenser* :handle-handle0) :copy-worldcoords))
+    (send local-cds :assoc *oil-dispenser*)
+    (send local-cds :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+    (send local-cds :dissoc *oil-dispenser*)
+    )
+  (send *viewer* :draw-objects)
+  (send (send *pr2* :larm :end-coords) :assoc *oil-dispenser*)
+  )
+
+(defun recieve-oil-dispenser ()
+  )
+
+(defun put-oil-dispenser ()
+  )
+
+(defun grasp-oil-dispenser ()
+  )
+
+
 ;; bowl model codes
 (defun set-bowl-1-model ()
   (if (not (eql (send *bowl-1* :parent) nil))
@@ -1772,3 +1800,4 @@
   (recieve-pot)
   (put-pot)
   )
+

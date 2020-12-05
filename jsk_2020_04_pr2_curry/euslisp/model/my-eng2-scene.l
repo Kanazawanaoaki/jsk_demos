@@ -430,9 +430,9 @@
 (setq *bowl-4-coords* (make-coords :pos (float-vector 480 7845 30840) :rpy (float-vector -0.175 0 0)))
 (setq *rcup-coords* (make-coords :pos (float-vector 320 8525 30840)))
 
-
 (setq *solt-coords* (make-coords))
 (setq *dispenser* (make-coords))
+(setq *oil-dispenser* (make-coords :pos (float-vector 300 8280 30845) :rpy (float-vector 3.14 0.0 0.0)))
 
 
 ;; equipment coords
