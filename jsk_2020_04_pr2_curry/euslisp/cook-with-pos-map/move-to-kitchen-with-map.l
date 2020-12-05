@@ -2,6 +2,8 @@
 (require :eng2-scene "package://jsk_2020_04_pr2_curry/euslisp/model/my-eng2-scene.l")
 
 (defun init ()
+  ;; init
+  (load "package://jsk_2020_04_pr2_curry/euslisp/model/my-eng2-coords.l")
   
   ;; init ROS Node
   (ros::roseus "pr2-move-with-maps")

@@ -10,8 +10,10 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/dispenser.l")
   (setq *dispenser* (dispenser))
   (send *dispenser* :newcoords (send *dispenser-coords* :copy-worldcoords))
-  
+
   (move-to-seasoning-irt)
+  (objects (list *pr2* *scene* *solt* *dispenser*))
+  (update-view)
   )
 
 (water-init)
@@ -37,5 +39,4 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
   )
-
 

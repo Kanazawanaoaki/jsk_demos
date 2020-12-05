@@ -34,4 +34,5 @@
 
 
 ;; test ladle codes
+(set-ladle)
 
