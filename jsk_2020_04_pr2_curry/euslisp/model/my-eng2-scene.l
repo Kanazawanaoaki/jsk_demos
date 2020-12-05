@@ -441,7 +441,7 @@
 (setq *shelf-knob-opened-coords* (make-coords :pos (float-vector 629 8859 31445) :rpy (float-vector -1.636 -0.095 -3.091)))
 
 ;; (setq *shelf-door-coords* (make-coords :pos (float-vector 420 8855 31445) :rpy (float-vector 3.14 0 0)))
-(setq *shelf-door-coords* (make-coords :pos (float-vector 410 8845 31445) :rpy (float-vector 3.14 0 0)))
+(setq *shelf-door-coords* (make-coords :pos (float-vector 400 8845 31445) :rpy (float-vector 3.14 0 0)))
 
 ;; 水道
 (setq *fauset-lever-rarm-coords* (make-coords :pos (float-vector 223 9157 31014) :rpy (float-vector -2.478 0.08 -1.623))) ;; 水道のレバーを掴む座標

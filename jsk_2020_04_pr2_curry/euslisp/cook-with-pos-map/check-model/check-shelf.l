@@ -4,8 +4,20 @@
 (setq *shelf-door* (shelf-door))
 (send *shelf-door* :newcoords (send *shelf-door-coords* :copy-worldcoords))
 
+(load "models/arrow-object.l")
+(setq *arrow* (arrow))
+(setq *arrow1* (arrow))
+(setq *arrow2* (arrow))
+(setq *arrow3* (arrow))
+(setq *arrow4* (arrow))
 
-(objects (list *shelf-door*))
+(send *arrow1* :newcoords (make-coords :pos (float-vector 387.328 8543.632 31356.63) :rpy (float-vector 3.084 0.161 3.03)))
+(send *arrow2* :newcoords (make-coords :pos (float-vector 604.29 8661.698 31446.802) :rpy (float-vector -2.271 0.074 3.135)))
+(send *arrow3* :newcoords (make-coords :pos (float-vector 642.44 8841.814 31426.53) :rpy (float-vector -1.613 -0.108 -3.134)))
+(send *arrow4* :newcoords (make-coords :pos (float-vector 633.131 8900.09 31432.37) :rpy (float-vector 0.49 -1.566 1.207)))
+(send *arrow* :newcoords (send *arrow1* :copy-worldcoords))
+
+(objects (list *shelf-door* *arrow* *arrow1* *arrow2* *arrow3* *arrow4*))
 
 (warn "please run (open) or (close) ~%")
 
@@ -17,7 +29,7 @@
   (send *shelf-door* :angle-vector #f(90))
   (send *viewer* :draw-objects)
   (print (send *shelf-door* :handle))
-
+  
   (warn "please run (close) ~%")
   )
 
