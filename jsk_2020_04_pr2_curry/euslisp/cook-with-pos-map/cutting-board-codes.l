@@ -382,23 +382,20 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
-  ;;少し前に
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 600 8361 31167) :rpy (float-vector 0 0 0)))
-  ;; (send *arrow* :rotate (deg2rad 90) :z :world)
-  ;; (send *arrow* :rotate (deg2rad 90) :x)
-  ;; (send *pr2* :larm :inverse-kinematics
-  ;; 	(send *arrow* :copy-worldcoords)
-  ;; 	:rotation-axis t
-  ;; 	:debug-view *debug-flag*)
-  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  ;; (send *ri* :wait-interpolation)
+  ;; まな板を置く位置
+  (if (not (eql (send *cutting-board* :parent) nil))
+      (send (send *cutting-board* :parent) :dissoc *cutting-board*))
+  (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *cutting-board* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 100 50 200) :world)
   
-  ;; (setq *tmp* (send *pr2* :larm :angle-vector))
-  (send *pr2* :larm :angle-vector #f(37.5737 0.149787 80.0213 -71.1556 9.40728 -57.6544 -11.1345))
-  ;; (send *pr2* :larm :angle-vector #f(36.6648 -20.175 113.68 -74.3369 -35.515 -61.5521 -162.125))
+  (send *pr2* :larm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+  	:rotation-axis t
+  	:debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
+  (send *ri* :wait-interpolation)  
   
   (send *ri* :stop-grasp :larm :wait t)
   (send *ri* :speak-jp "まな板を握らせて下さい")
@@ -435,7 +432,7 @@
   (send *ri* :wait-interpolation)  
 
   ;; (send *arrow* :translate (float-vector 0 0 -100) :world)
-  (send *arrow* :translate (float-vector 0 0 -120) :world)
+  (send *arrow* :translate (float-vector 0 0 -115) :world)
   (send *pr2* :larm :inverse-kinematics
   	(send *arrow* :copy-worldcoords)
   	:rotation-axis t
