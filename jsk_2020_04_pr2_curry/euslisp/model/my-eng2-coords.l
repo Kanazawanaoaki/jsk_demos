@@ -31,7 +31,7 @@
 
 (setq *solt-coords* (make-coords :pos (float-vector 2150 8800 30900) :rpy (float-vector 0 0 0)))
 (setq *dispenser-coords* (make-coords :pos (float-vector 2150 8950 30900) :rpy (float-vector 0 0 0)))
-(setq *oil-dispenser* (make-coords :pos (float-vector 300 8280 30845) :rpy (float-vector 3.14 0.0 0.0)))
+(setq *oil-dispenser-coords* (make-coords :pos (float-vector 300 8280 30845) :rpy (float-vector 3.14 0.0 0.0)))
 
 
 ;; equipment coords

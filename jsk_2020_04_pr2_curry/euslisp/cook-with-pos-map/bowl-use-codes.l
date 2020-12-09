@@ -1174,12 +1174,58 @@
   )
 
 (defun recieve-oil-dispenser ()
+  ;;少し上に
+  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 250) :world)
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis nil
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  ;;少し前に
+  (send *arrow* :newcoords (make-coords :pos (float-vector 600 8361 31167) :rpy (float-vector 3.14 0 0)))
+  (send *pr2* :larm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+  	:rotation-axis t
+  	:debug-view *debug-flag*)
+  ;; (send *pr2* :larm :angle-vector #f(30.046 -16.1647 77.4608 -67.7082 57.0472 -86.8259 -43.9204))
+  (setq *tmp* (send *pr2* :larm :angle-vector))
+  
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  
+  (send *ri* :stop-grasp :larm :wait t)
+  (send *ri* :speak-jp "軽量カップを握らせて下さい")
+  (unix:sleep *s-time*)
+  (send *ri* :start-grasp :larm :wait t)
+
+  (set-oil-dispenser)  
   )
 
 (defun put-oil-dispenser ()
+  ;; oil-dispenserを置く位置
+  (if (not (eql (send *oil-dispenser* :parent) nil))
+      (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
+  (send *oil-dispenser* :newcoords (send *oil-dispenser-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *oil-dispenser* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 200) :world)
+  
+  (put-bowl-larm)
   )
 
 (defun grasp-oil-dispenser ()
+  ;; oil-dispenserの位置
+  (setq *target* (make-coords))
+  (send *target* :newcoords (send (send *oil-dispenser* :handle-handle0) :copy-worldcoords))
+  
+  (grasp-bowl-larm)
+  
+  (set-oil-dispenser)
   )
 
 
