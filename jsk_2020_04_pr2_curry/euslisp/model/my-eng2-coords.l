@@ -5,7 +5,7 @@
 (setq *microwave-spot* (make-coords :pos (float-vector 1600 9300 30000) :rpy (float-vector 0 0 0)))
 (setq *seasoning-spot* (make-coords :pos (float-vector 1700 8900 30000) :rpy (float-vector 0 0 0)))
 
-;; tools coords
+;; tool coords
 (setq *knife-coords* (make-coords :pos (float-vector 580 8715 30857) :rpy (float-vector 3.14 0.073 1.498))) ;; 包丁
 (setq *peeler-coords* (make-coords :pos (float-vector 580 8815 30870) :rpy (float-vector 3.14 0.049 1.51))) ;; ピーラー
 (setq *potato-peeler-coords* (make-coords :pos (float-vector 580 8915 30865) :rpy (float-vector 3.14 0.013 1.545))) ;; じゃがいもピーラー
@@ -19,7 +19,6 @@
 ;; (setq *pot-coords* (make-coords :pos (float-vector 450 8100 30840) :rpy (float-vector 3.142 0 0)))
 (setq *pot-coords* (make-coords :pos (float-vector 450 8050 30850) :rpy (float-vector 3.142 0 0)))
 
-(setq *mcup-coords* (make-coords :pos (float-vector 555 7674 30850) :rpy (float-vector -0.948 0 0)))
 ;; (setq *cutting-board-coords* (make-coords :pos (float-vector 530 8420 30840) :rpy (float-vector 0 0 0)))
 (setq *cutting-board-coords* (make-coords :pos (float-vector 560 8420 30840) :rpy (float-vector 0 0 0)))
 (setq *bowl-1-coords* (make-coords :pos (float-vector 325 8460 30840) :rpy (float-vector -0.175 0 0)))
@@ -27,11 +26,15 @@
 (setq *bowl-2-set-coords* (make-coords :pos (float-vector 510 8430 30840) :rpy (float-vector 0 0 0)))
 (setq *bowl-3-coords* (make-coords :pos (float-vector 635 7585 30840) :rpy (float-vector 1.048 0 0)))
 (setq *bowl-4-coords* (make-coords :pos (float-vector 480 7845 30840) :rpy (float-vector -0.175 0 0)))
-(setq *rcup-coords* (make-coords :pos (float-vector 320 8525 30840)))
 
-(setq *solt-coords* (make-coords :pos (float-vector 2150 8800 30900) :rpy (float-vector 0 0 0)))
-(setq *dispenser-coords* (make-coords :pos (float-vector 2150 8950 30900) :rpy (float-vector 0 0 0)))
+(setq *mcup-coords* (make-coords :pos (float-vector 555 7674 30850) :rpy (float-vector -0.948 0 0)))
+(setq *rcup-coords* (make-coords :pos (float-vector 320 8525 30840)))
 (setq *oil-dispenser-coords* (make-coords :pos (float-vector 300 8280 30845) :rpy (float-vector 3.14 0.0 0.0)))
+
+(setq *solt-coords* (make-coords :pos (float-vector 2500 8788 30910) :rpy (float-vector 0 0 0)))
+(setq *dispenser-coords* (make-coords :pos (float-vector 2500 8676 30900) :rpy (float-vector 0 0 0)))
+(setq *white-dish-coords* (make-coords :pos (float-vector 2523 9000 30870) :rpy (float-vector 0 0 0)))
+(setq *rcup-seasoning-coords* (make-coords :pos (float-vector 2500 8520 30900) :rpy (float-vector -3.14 0.0 0.0)))
 
 
 ;; equipment coords
