@@ -94,7 +94,7 @@
   ;; こことかも実はモデルをつくって開ける閉める動作にした方が良いのかな？という感じはする．
   ;; レバーを掴んでいる状態から
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate (float-vector 0 0 80) :world)
+  (send *arrow* :translate (float-vector 0 0 30) :world)
   (send *pr2* :rarm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
 	:rotation-axis nil
@@ -109,7 +109,7 @@
 
 (defun water-off ()
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate (float-vector 0 0 -80) :world)
+  (send *arrow* :translate (float-vector 0 0 -40) :world)
   (send *pr2* :rarm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
 	:rotation-axis nil
@@ -238,7 +238,7 @@
   
   (grasp-lever)
   (water-on)
-
+  
   ;; 本当はここで認識をする
   (water-off)
   (release-lever)
@@ -246,3 +246,14 @@
   (after-mcup-water)
   )
 
+(defun tmp-test ()
+  (set-pose)
+  
+  (grasp-lever)
+  (water-on)
+  
+  (unix:sleep 3)
+  
+  (water-off)
+  (release-lever)
+  )
