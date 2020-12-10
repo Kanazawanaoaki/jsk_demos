@@ -4,15 +4,12 @@
   
   ;; set objects
   (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; spatula on the cutting board
+  (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
   
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/measuring-cup-73b2.l")
   (setq *mcup* (measuring-cup-73b2))
   (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
-  
-  (load "package://jsk_2020_04_pr2_curry/euslisp/model/cooking-pot-73b2.l")
-  (setq *pot* (cooking-pot))
-  (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
-  
+    
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-1.l")
   (setq *bowl-1* (bowl-1))
   (send *bowl-1* :newcoords (send *bowl-1-coords* :copy-worldcoords))
@@ -152,8 +149,7 @@
   (send *pr2* :larm :angle-vector #f(30.046 -16.1647 77.4608 -67.7082 57.0472 -86.8259 -43.9204))
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-  
+  (send *ri* :wait-interpolation) 
   )
 
 (defun put-bowl-larm ()
@@ -1110,21 +1106,19 @@
   (send *ri* :wait-interpolation)
 
   ;;少し前に
-  (send *arrow* :newcoords (make-coords :pos (float-vector 600 8361 31167) :rpy (float-vector 3.14 0 0)))
-  (send *pr2* :larm :inverse-kinematics
-  	(send *arrow* :copy-worldcoords)
-  	:rotation-axis t
-  	:debug-view *debug-flag*)
-  ;; (send *pr2* :larm :angle-vector #f(30.046 -16.1647 77.4608 -67.7082 57.0472 -86.8259 -43.9204))
-  (setq *tmp* (send *pr2* :larm :angle-vector))
-  
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 600 8361 31167) :rpy (float-vector 3.14 0 0)))
+  ;; (send *pr2* :larm :inverse-kinematics
+  ;; 	(send *arrow* :copy-worldcoords)
+  ;; 	:rotation-axis t
+  ;; 	:debug-view *debug-flag*)
+  (send *pr2* :larm :angle-vector #f(25.9612 -20.2538 51.0301 -90.7875 148.483 -82.2836 126.197))  
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
   
   (send *ri* :stop-grasp :larm :wait t)
-  (send *ri* :speak-jp "軽量カップを握らせて下さい")
+  (send *ri* :speak-jp "ディスペンサーを握らせて下さい")
   (unix:sleep *s-time*)
   (send *ri* :start-grasp :larm :wait t)
 
@@ -1150,6 +1144,74 @@
   (grasp-bowl-larm)
   
   (set-oil-dispenser)
+
+  (warn "please run (add-oil-set) ~%")
+  )
+
+(defun add-oil-set ()
+  ;; dispenserを位置に
+  (send *pr2* :larm :move-end-pos #f(100 0 0) :world)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :move-end-pos #f(100 0 0) :world)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :move-end-pos #f(0 -100 0) :world)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 120) :world)
+  (send *arrow* :rotate (deg2rad -90) :x)
+  (send *arrow* :rotate (deg2rad -90) :y :world)
+  
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:move-target (send *oil-dispenser* :attention-attention0)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  ;;右腕をセットして置く
+  (before-recieve-rarm)
+  
+  ;; 右腕をセットする位置
+  (send *arrow* :newcoords (send (send *oil-dispenser* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 80) :world)
+  (send *arrow* :rotate (deg2rad 90) :z :world)
+
+  (send *arrow* :translate #f(0 100 80) :world)
+  (send *pr2* :rarm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (send *arrow* :translate #f(0 -100 -80) :world)
+  (send *pr2* :rarm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (warn "please run (add-oil) ~%")
+  )
+
+(defun add-oil ()
+  (send *ri* :move-gripper :larm 0.04)
+  
+  (unix:sleep *s-time*)
+
+  (send *ri* :stop-grasp :wait t)
+  
   )
 
 

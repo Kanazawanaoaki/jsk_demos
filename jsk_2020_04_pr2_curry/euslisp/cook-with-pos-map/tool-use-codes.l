@@ -14,7 +14,7 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/potato-peeler.l")
   (setq *potato-peeler* (peeler))
   (send *potato-peeler* :newcoords (send *potato-peeler-coords* :copy-worldcoords))
-
+  
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/spatula.l")
   (setq *spatula* (spatula))
   (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; tmp 本来は棚の中想定
