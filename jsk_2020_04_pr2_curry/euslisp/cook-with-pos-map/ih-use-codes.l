@@ -7,11 +7,12 @@
   (setq *pot* (cooking-pot))
   (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
   
-
+  
   ;; def global coords
   (setq *pot-larm-from-above* (make-coords :pos (float-vector 639 8109 30971) :rpy (float-vector -3.069 1.306 -0.087)))
   (setq *pot-larm-from-below* (make-coords :pos (float-vector 644 8104 30947) :rpy (float-vector 3.125 -0.909 3.119)))
-
+  
+  
   (setq *ih-panel-coords* (make-coords :pos (float-vector 563 7940 30865) :rpy (float-vector  3.044 1.407 2.87)))
   
   
@@ -443,6 +444,59 @@
   (reset-larm)
   )
 
+(defun grasp-pot-from-below-model ()
+  ;;腕を引いた姿勢
+  (setq *larm0* #f(117.007 48.3805 113.439 -103.326 38.7107 -5.72958 14.4628))
+  (send *pr2* :larm :angle-vector *larm0*)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)  
+  
+  ;; potを下から掴む座標
+  (send *arrow* :newcoords (send (send *pot* :handle-handle0) :copy-worldcoords))
+  
+  (send *arrow* :translate #f(60 0 -60) :world)
+  (send *pr2* :larm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+  	:rotation-axis t
+  	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *ri* :stop-grasp :larm :wait t)
+
+  (send *arrow* :translate #f(-60 0 60) :world)
+  (send *pr2* :larm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+  	:rotation-axis t
+  	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *ri* :start-grasp :larm :wait t)
+  )
+
+(defun release-pot-from-below-model ()
+  (send *ri* :stop-grasp :larm :wait t)
+
+  (send *arrow* :newcoords (send (send *pot* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate #f(100 0 -100) :world)
+  (send *pr2* :larm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+  	:rotation-axis t
+  	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  ;;腕を引いた姿勢
+  (setq *larm0* #f(117.007 48.3805 113.439 -103.326 38.7107 -5.72958 14.4628))
+  (send *pr2* :larm :angle-vector *larm0*)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)  
+  )
+
 (defun look-at-pot ()
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
   (send *pr2* :head :look-at (send (send (send *pot* :attention-attention0) :copy-worldcoords) :worldpos))
@@ -551,7 +605,7 @@
   
   ;; 回転させる
   (setq *cds0* (make-cascoords :pos (send (send (send *pot* :attention-attention0) :copy-worldcoords) :worldpos))) ;;中心の座標
-  (setq *cds1* (make-cascoords :pos (send (send (send *cds0* :copy-worldcoords) :translate #f(50 0 0) :world) :worldpos))) ;;回転の初期位置
+  (setq *cds1* (make-cascoords :pos (send (send (send *cds0* :copy-worldcoords) :translate #f(50 0 5) :world) :worldpos))) ;;回転の初期位置
   
   (setq *rpy1* (float-vector -2.267 0.887 0.091)) ;;回転中の目標姿勢
   ;; (setq *rpy1* (float-vector -2.406 1.193 0.156)) ;;回転中の目標姿勢 ;;IK解けなかった．

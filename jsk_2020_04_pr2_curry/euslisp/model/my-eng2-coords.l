@@ -17,7 +17,7 @@
 
 ;; kitchenware coords
 ;; (setq *pot-coords* (make-coords :pos (float-vector 450 8100 30840) :rpy (float-vector 3.142 0 0)))
-(setq *pot-coords* (make-coords :pos (float-vector 450 8050 30840) :rpy (float-vector 3.142 0 0)))
+(setq *pot-coords* (make-coords :pos (float-vector 450 8050 30850) :rpy (float-vector 3.142 0 0)))
 
 (setq *mcup-coords* (make-coords :pos (float-vector 555 7674 30850) :rpy (float-vector -0.948 0 0)))
 ;; (setq *cutting-board-coords* (make-coords :pos (float-vector 530 8420 30840) :rpy (float-vector 0 0 0)))

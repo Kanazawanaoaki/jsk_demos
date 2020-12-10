@@ -562,81 +562,6 @@
   (warn "please run (put-bowl-2) ~%")  
   )
 
-(defun recieve-pot ()
-  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-  (send *pr2* :larm :angle-vector #f(117.007 48.3805 113.439 -103.326 38.7107 -5.72958 14.4628))
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-  
-  ;; potを置く位置
-  (if (not (eql (send *pot* :parent) nil))
-      (send (send *pot* :parent) :dissoc *pot*))
-  (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
-  (send *arrow* :newcoords (send (send *pot* :handle-handle0) :copy-worldcoords))
-  (send *arrow* :translate #f(100 0 100) :world)  
-  (send *pr2* :larm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:rotation-axis t
-	:debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-  
-  ;; potを受け取る
-  (send *ri* :stop-grasp :larm :wait t)
-  (send *ri* :speak-jp "鍋を握らせて下さい")
-  (unix:sleep *s-time*)
-  (send *ri* :start-grasp :larm :wait t)
-  
-  (warn "please run (put-pot) ~%")  
-  )
-
-(defun put-pot ()
-  ;; potを置く位置
-  (if (not (eql (send *pot* :parent) nil))
-      (send (send *pot* :parent) :dissoc *pot*))
-  (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
-  (send *arrow* :newcoords (send (send *pot* :handle-handle0) :copy-worldcoords))
-  (send *arrow* :translate #f(100 0 100) :world)  
-  (send *pr2* :larm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:rotation-axis t
-	:debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  (send *ri* :wait-interpolation)
-
-  (send *arrow* :translate #f(-100 0 -100) :world)  
-  (send *pr2* :larm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:rotation-axis t
-	:debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  (send *ri* :wait-interpolation)
-
-  (send *ri* :stop-grasp :larm :wait t)
-
-  (send *arrow* :translate #f(100 0 -100) :world)
-  (send *pr2* :larm :inverse-kinematics
-  	(send *arrow* :copy-worldcoords)
-  	:rotation-axis t
-  	:debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-  (send *pr2* :larm :angle-vector #f(117.007 48.3805 113.439 -103.326 38.7107 -5.72958 14.4628))
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-  (setq *lav4* (float-vector 75.0 50.0 110.0 -110.0 -20.0 -10.0 -10.0))
-  (send *pr2* :larm :angle-vector *lav4*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)  
-  )
-
 ;; transfer funcs
 (defun transfer-to-pot ()
   (send *arrow* :newcoords (make-coords :pos (float-vector 550.911 8325.179 31085.843) :rpy (float-vector 2.561 1.128 2.104))) ;; for eng2 model
@@ -1841,9 +1766,3 @@
   (put-bowl-4-model)
   (reset-larm)
   )
-
-(defun now-set-pot ()
-  (recieve-pot)
-  (put-pot)
-  )
-

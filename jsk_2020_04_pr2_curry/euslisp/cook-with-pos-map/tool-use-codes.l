@@ -22,7 +22,11 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/ladle.l")
   (setq *ladle* (ladle))
   (send *ladle* :newcoords (send *ladle-coords-1* :copy-worldcoords)) ;; tmp 本来は棚の中想定
-
+  
+  (load "package://jsk_2020_04_pr2_curry/euslisp/model/cooking-pot-73b2.l")
+  (setq *pot* (cooking-pot))
+  (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+  
   ;; set equipment
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/shelf-door.l")
   (setq *shelf-door* (shelf-door))
@@ -1278,6 +1282,82 @@
   (send (send *pr2* :rarm :end-coords) :assoc *potato-peeler*)
   )
 
+;; pot codes
+(defun recieve-pot ()
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :larm :angle-vector #f(117.007 48.3805 113.439 -103.326 38.7107 -5.72958 14.4628))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  ;; potを置く位置
+  (if (not (eql (send *pot* :parent) nil))
+      (send (send *pot* :parent) :dissoc *pot*))
+  (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *pot* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate #f(100 0 100) :world)  
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  ;; potを受け取る
+  (send *ri* :stop-grasp :larm :wait t)
+  (send *ri* :speak-jp "鍋を握らせて下さい")
+  (unix:sleep *s-time*)
+  (send *ri* :start-grasp :larm :wait t)
+  
+  (warn "please run (put-pot) ~%")  
+  )
+
+(defun put-pot ()
+  ;; potを置く位置
+  (if (not (eql (send *pot* :parent) nil))
+      (send (send *pot* :parent) :dissoc *pot*))
+  (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *pot* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate #f(100 0 100) :world)  
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *arrow* :translate #f(-100 0 -100) :world)  
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *ri* :stop-grasp :larm :wait t)
+
+  (send *arrow* :translate #f(100 0 -100) :world)
+  (send *pr2* :larm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+  	:rotation-axis t
+  	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :angle-vector #f(117.007 48.3805 113.439 -103.326 38.7107 -5.72958 14.4628))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (setq *lav4* (float-vector 75.0 50.0 110.0 -110.0 -20.0 -10.0 -10.0))
+  (send *pr2* :larm :angle-vector *lav4*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)  
+  )
+
 
 
 ;; now codes
@@ -1370,4 +1450,9 @@
 (defun now-set-tool-1 ()
   (now-set-spatula-1)
   (now-set-ladle-1)
+  )
+
+(defun now-set-pot ()
+  (recieve-pot)
+  (put-pot)
   )
