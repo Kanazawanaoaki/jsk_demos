@@ -13,7 +13,7 @@
 (ros::roseus "pr2-microwave")
 
 ;; add for sense
-(setq *x-thre* -15)
+(setq *x-thre* -20)
 (ros::load-ros-manifest "geometry_msgs")
 (setq *cb-flag* nil)
 (defun wrench-x-cb (msg)
@@ -39,7 +39,7 @@
    
    ;; init 73B2 room
    (unless (boundp '*scene*) (setq *scene* (make-eng2-scene)))
-
+   
    ;; init PR2
    (unless (boundp '*pr2*) (setq *pr2* (instance pr2-sensor-robot :init)))
    (unless (boundp '*ri*) (setq *ri* (instance pr2-interface :init)))
@@ -53,7 +53,7 @@
    ;; show objects in irtviewer
    (objects (list *scene* *microwave* *pr2*))
    (send *irtviewer* :look-all *pr2*)
-
+   
    ;; register spot of microwave
    (let ((microwave-front-spots (make-cascoords :pos (float-vector 2280 7100 30000) :rpy (float-vector (/ pi 2.0) 0 0) :name "microwave-front-spot")))
      (send *scene* :add-spots (list microwave-front-spots))
@@ -179,7 +179,7 @@
      (send *microwave* :rotate pi/2 :y)
      (send *microwave* :rotate pi :x)
      (send *microwave* :translate (float-vector 0 370 -300))  ;; -220
-
+     
      (setq microwave-pos (send *microwave* :pos))
      (setq microwave-rpy (send *microwave* :rpy-angle))
      )
@@ -562,20 +562,20 @@
        (setq avs (list))
        (setq tms (list))
        
-       (dotimes (i 10)
-	 (send *pr2* :larm :move-end-pos #f(10 0 0) :world)
+       (dotimes (i 15)
+	 (send *pr2* :rarm :move-end-pos #f(10 0 0) :world)
 	 (setq av (send *pr2* :angle-vector))
 	 (setq avs (append avs (list av)))
 	 (setq tms (append tms (list 400)))
 	 )
        (send *ri* :angle-vector-sequence avs tms)
        
-       (ros::unsubscribe "/left_endeffector/wrench")
-       (setq *topic-name* "/left_endeffector/wrench")
+       (ros::unsubscribe "/right_endeffector/wrench")
+       (setq *topic-name* "/right_endeffector/wrench")
        (setq *cb-flag* nil)
-       (ros::subscribe "/left_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-x-cb)
+       (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-x-cb)
        
-       (while (some #'identity (send *ri* :wait-interpolation nil 0.1))
+       (while (some #'identity (send *ri* :wait-interpolation nil 0.01))
 	 (when (progn
 		 (ros::spin-once)
 		 (if *cb-flag* t)
@@ -586,7 +586,7 @@
 	   )
 	 )
        
-       (ros::unsubscribe "/left_endeffector/wrench")
+       (ros::unsubscribe "/right_endeffector/wrench")
        
        )
 
@@ -599,6 +599,35 @@
      )
    )
 
+  (:push-button-without-sense
+   (pos &optional (wait? nil))
+   (let* ((button-front (send (send *microwave* :copy-worldcoords) :transform (make-coords :pos pos)))
+          (button (send (send button-front :copy-worldcoords) :translate (float-vector 95 0 0) :world))) ;; 85
+     
+     (progn ;; pre-push
+       (send *pr2* :rarm :inverse-kinematics button-front :rotation-axis t)
+       (if wait? (wait-enter))
+       (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+       (send *ri* :wait-interpolation)
+       )
+     
+     (progn   ;; push
+       (send *pr2* :rarm :inverse-kinematics button :rotation-axis t)
+       (if wait? (wait-enter))
+       (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+       (send *ri* :wait-interpolation)
+       )
+     
+     (progn   ;; post-push
+       (send *pr2* :rarm :inverse-kinematics button-front :rotation-axis t)
+       (if wait? (wait-enter))
+       (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+       (send *ri* :wait-interpolation)
+       )
+     )
+   )
+
+  
   (:push-500w-button
    (&optional (wait? nil))
    (send *pr2* :reset-pose)
@@ -629,7 +658,7 @@
    (send *microwave* :angle-vector (float-vector 180))
 
    ;; (send self :push-button (float-vector -70 -390 110)) ;; (float-vector -70 -390 120)
-   (send *pmi* :push-button (float-vector -70 -400 100))
+   (send *pmi* :push-button (float-vector -70 -405 100))
    
    (progn   ;; reset-pose
      (send *pr2* :reset-pose)

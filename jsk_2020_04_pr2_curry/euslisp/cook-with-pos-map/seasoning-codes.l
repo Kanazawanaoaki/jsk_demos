@@ -40,3 +40,6 @@
   (send *ri* :wait-interpolation)
   )
 
+
+
+;; seasoning funcs
