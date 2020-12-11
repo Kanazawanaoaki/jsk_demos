@@ -16,21 +16,21 @@
   <!--           savetype: ColorImage -->
   <!--     </rosparam> -->
   <!--   </node> -->
-
-    <node name="after_stow_data_collection"
+  
+  <node name="after_stow_data_collection"
         pkg="jsk_data" type="data_collection_server.py"
         output="screen" if="$(arg collect_data)">
-      <rosparam subst_value="true">
-        message_filters: true
-        approximate_sync: true
-        method: request
-        save_dir: ~/Desktop/data/vegs_prosilica
-        method: request
-        topics:
-          - name: /prosilica/image_raw
-            msg_class: sensor_msgs/Image
-            fname: pr2_prosilica_image_raw_veg.png
-            savetype: ColorImage
-      </rosparam>
-    </node>
+    <rosparam subst_value="true">
+      message_filters: true
+      approximate_sync: true
+      method: request
+      save_dir: ~/Desktop/data/vegs_prosilica
+      method: request
+      topics:
+        - name: /prosilica/image_raw
+	  msg_class: sensor_msgs/Image
+	  fname: pr2_prosilica_image_raw_veg.png
+	  savetype: ColorImage
+    </rosparam>
+  </node>
 </launch>
