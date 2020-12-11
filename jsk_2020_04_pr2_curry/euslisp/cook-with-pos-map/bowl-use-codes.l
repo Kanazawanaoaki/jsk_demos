@@ -1178,14 +1178,16 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
-  ;;右腕をセットして置く
+  ;;右腕をセットしておく
   (before-recieve-rarm)
   
   ;; 右腕をセットする位置
   (send *arrow* :newcoords (send (send *oil-dispenser* :handle-handle0) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 80) :world)
   (send *arrow* :rotate (deg2rad 90) :z :world)
-
+  
+  (send *ri* :stop-grasp :rarm :wait t)
+  
   (send *arrow* :translate #f(0 100 80) :world)
   (send *pr2* :rarm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
@@ -1193,6 +1195,8 @@
 	:debug-view *debug-flag*)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
+  
+  (send *ri* :start-grasp :rarm :wait t)
   
   (send *arrow* :translate #f(0 -100 -80) :world)
   (send *pr2* :rarm :inverse-kinematics
@@ -1257,14 +1261,15 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
-
-  (send *ri* :start-grasp :rarm :wait t)
-
+  
+  (send *ri* :start-grasp :larm :wait t)
+  
   (if (not (eql (send *oil-dispenser* :parent) nil))
       (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
   (send *pr2* :larm :end-coords :assoc *oil-dispenser*)
   
   ;; 右腕を戻して左腕をputの前位置にする．
+  (send *ri* :stop-grasp :rarm :wait t)
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 100 0) :world)
   (send *pr2* :rarm :inverse-kinematics
