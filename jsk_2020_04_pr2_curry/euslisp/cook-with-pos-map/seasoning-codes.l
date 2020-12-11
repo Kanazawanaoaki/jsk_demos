@@ -64,7 +64,7 @@
   ;; (send *pr2* :larm :inverse-kinematics
   ;; 	(send *arrow* :copy-worldcoords)
   ;; 	:rotation-axis t
-  ;; 	:debug-view t)
+  ;; 	:debug-view *debug-flag*)
   (setq *lav2* #f(74.761 -20.2122 117.179 -115.102 -160.43 -37.4844 44.0878))
   (send *pr2* :larm :angle-vector *lav2*)
   (send *viewer* :draw-objects)
