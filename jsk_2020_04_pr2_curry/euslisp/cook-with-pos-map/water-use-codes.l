@@ -1,11 +1,18 @@
 (defun water-init ()
   ;; init
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
-
+  
+  ;; set objects
+  (setq *veg* (make-cube 100 50 40))
+  (send *veg* :set-color :green)
+  
   ;; set global num
   (setq *s-time* 3)
   
   (move-to-sink-irt)
+  
+  (objects (list *veg* *pr2* *scene* *mcup*))
+  (update-view)
   )
 
 (water-init)
@@ -30,6 +37,26 @@
   (send *pr2* :rarm :angle-vector *rav3*)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
+  )
+
+
+(defun before-recieve-larm ()
+  ;;少し上に
+  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 250) :world)
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis nil
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  ;;少し前に
+  (send *pr2* :larm :angle-vector #f(30.046 -16.1647 77.4608 -67.7082 57.0472 -86.8259 -43.9204))
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation) 
   )
 
 ;; water funcs
@@ -89,7 +116,6 @@
   (warn "please run (water-on) ~%") 
   )
 
-
 (defun water-on ()
   ;; こことかも実はモデルをつくって開ける閉める動作にした方が良いのかな？という感じはする．
   ;; レバーを掴んでいる状態から
@@ -112,7 +138,7 @@
   (send *arrow* :translate (float-vector 0 0 -40) :world)
   (send *pr2* :rarm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
-	:rotation-axis nil
+	:rotation-axis t
 	:debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
@@ -228,6 +254,119 @@
 
 
 ;; wash vegitable funcs
+(defun set-veg ()
+  (if (not (eql (send *veg* :parent) nil))
+      (send (send *veg* :parent) :dissoc *veg*))
+  (let (local-cds)
+    (setq local-cds (make-cascoords))
+    (send local-cds :newcoords (send (send *veg* :handle-handle0) :copy-worldcoords))
+    (send local-cds :assoc *veg*)
+    (send local-cds :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+    (send local-cds :dissoc *veg*)
+    )
+  (send *viewer* :draw-objects)
+  (send (send *pr2* :larm :end-coords) :assoc *veg*)
+  )
+
+(defun recieve-veg ()
+  (before-recieve-larm)
+  
+  (send *veg* :newcoords (make-coords :pos (float-vector 450 9160 30870)))  
+  (send *veg* :rotate (deg2rad 90) :z)
+  (send *viewer* :draw-objects)  
+  (send *arrow* :newcoords (send *veg* :copy-worldcoords))
+  (send *arrow* :rotate (deg2rad 30) :y)
+  
+  (send *arrow* :translate #f(0 -100 80) :world)
+  (send *pr2* :larm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+  	:rotation-axis t
+  	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)  
+  
+  (send *arrow* :translate #f(0 100 -80) :world)
+  (send *pr2* :larm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+  	:rotation-axis t
+  	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)  
+  
+  (send *ri* :stop-grasp :larm :wait t)
+  (send *ri* :speak-jp "野菜を握らせて下さい")
+  (unix:sleep *s-time*)
+  (send *ri* :start-grasp :larm :wait t)
+  (send *pr2* :larm :end-coords :assoc *veg*)
+
+  (warn "please run (wash-veg-set) ~%")
+  )
+
+(defun veg-set ()
+  ;; arrowが目標にセットされている想定
+  (send *arrow* :translate #f(80 0 -40) :world)
+  (send *pr2* :larm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+	:move-target *veg*
+  	:rotation-axis t
+  	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)  
+  
+  (send *arrow* :translate #f(-80 0 40) :world)
+  (send *pr2* :larm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+	:move-target *veg*
+  	:rotation-axis t
+  	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun wash-veg-set ()
+  ;; 洗う位置
+  (send *arrow* :newcoords (send *fauset-coords* :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 20) :world)
+  (send *arrow* :rotate (deg2rad -90) :z)  
+  
+  (veg-set)
+  
+  (warn "please water on ~%")
+  )
+
+(defun rotate-veg-wash ()
+  (send *arrow* :newcoords (send *veg* :copy-worldcoords))
+  (send *arrow* :translate #f(80 0 -40) :world)
+  (send *pr2* :larm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+	:move-target *veg*
+  	:rotation-axis t
+  	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)  
+  
+  ;; 次に洗う位置
+  (send *arrow* :newcoords (send *fauset-coords* :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 20) :world)
+  (send *arrow* :rotate (deg2rad -90) :z)  
+  (send *arrow* :rotate (deg2rad 90) :x)
+  
+  (veg-set)
+  
+  (warn "please run (after-wash) ~%")
+  )
+
+(defun after-wash ()
+
+  
+  
+  (warn "please return to kitchen spot! ~%")
+  )
 
 
 ;; now funcs
@@ -246,7 +385,18 @@
   (after-mcup-water)
   )
 
-(defun tmp-test ()
+(defun now-on-water ()
+  (grasp-lever)
+  (water-on)
+  )
+
+(defun now-off-water ()
+  (water-off)
+  (release-lever)
+  )
+
+
+(defun tmp-water-test ()
   (set-pose)
   
   (grasp-lever)
@@ -256,4 +406,9 @@
   
   (water-off)
   (release-lever)
+  )
+
+(defun tmp-test ()
+  (set-pose)
+  (recieve-veg)
   )
