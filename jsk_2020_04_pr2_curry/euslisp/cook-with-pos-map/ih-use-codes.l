@@ -605,10 +605,14 @@
   
   ;; 回転させる
   (setq *cds0* (make-cascoords :pos (send (send (send *pot* :attention-attention0) :copy-worldcoords) :worldpos))) ;;中心の座標
-  (setq *cds1* (make-cascoords :pos (send (send (send *cds0* :copy-worldcoords) :translate #f(50 0 5) :world) :worldpos))) ;;回転の初期位置
+  (setq *cds1* (make-cascoords :pos (send (send (send *cds0* :copy-worldcoords) :translate #f(45 0 5) :world) :worldpos))) ;;回転の初期位置 ;;半径 50だった
   
-  (setq *rpy1* (float-vector -2.267 0.887 0.091)) ;;回転中の目標姿勢
+  ;; (setq *rpy1* (float-vector -2.267 0.887 0.091)) ;;回転中の目標姿勢
   ;; (setq *rpy1* (float-vector -2.406 1.193 0.156)) ;;回転中の目標姿勢 ;;IK解けなかった．
+  ;; (setq *rpy1* (float-vector -2.253 0.974 0.102)) ;;回転中の目標姿勢
+  
+  (setq *rpy1* (float-vector -2.235 1.061 0.117)) ;;回転中の目標姿勢１
+  (setq *rpy2* (float-vector -2.267 0.887 0.091)) ;;回転中の目標姿勢２
   
   (send *cds0* :assoc *cds1*)
   
@@ -617,6 +621,7 @@
   
   (setq hoge (send *arrow* :copy-worldcoords))
   
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
   (send *pr2* :rarm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
 	:move-target (car (send *spatula* :attention))
@@ -640,14 +645,23 @@
 			:rotation-axis t
 			:debug-view nil))
     (if (eql ik-flag nil)
-	(progn    
-	  (send *pr2* :rarm :inverse-kinematics
-		(send *arrow* :copy-worldcoords)
-		:move-target (car (send *spatula* :attention))
-		:rotation-axis nil
-		:debug-view *debug-flag*)
-	  (setq cnt0 (+ cnt0 1))
-	  ))
+	(progn
+	  (send *arrow* :newcoords (make-coords :pos (send (send *cds1* :copy-worldcoords) :worldpos) :rpy *rpy2*))
+	  (setq ik-flag (send *pr2* :rarm :inverse-kinematics
+			      (send *arrow* :copy-worldcoords)
+			      :move-target (car (send *spatula* :attention))
+			      :rotation-axis t
+			      :debug-view nil))
+	  (if (eql ik-flag nil)
+	      (progn
+		(send *pr2* :rarm :inverse-kinematics
+		      (send *arrow* :copy-worldcoords)
+		      :move-target (car (send *spatula* :attention))
+		      :rotation-axis nil
+		      :debug-view *debug-flag*)
+		(setq cnt0 (+ cnt0 1))
+		))))
+    
     (send *viewer* :draw-objects)
     (setq av (send *pr2* :angle-vector))
     (setq avs (append avs (list av)))
