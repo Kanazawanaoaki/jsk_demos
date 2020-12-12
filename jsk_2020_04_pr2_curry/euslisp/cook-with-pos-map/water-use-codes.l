@@ -259,7 +259,7 @@
       (send (send *veg* :parent) :dissoc *veg*))
   (let (local-cds)
     (setq local-cds (make-cascoords))
-    (send local-cds :newcoords (send (send *veg* :handle-handle0) :copy-worldcoords))
+    (send local-cds :newcoords (send (send *veg* :copy-worldcoords) :rotate (deg2rad 30) :y))
     (send local-cds :assoc *veg*)
     (send local-cds :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
     (send local-cds :dissoc *veg*)
@@ -327,6 +327,19 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun after-wash-veg-set ()
+  (send *arrow* :newcoords (send *veg* :copy-worldcoords))
+  (send *arrow* :translate #f(80 0 -40) :world)
+  (send *pr2* :larm :inverse-kinematics
+  	(send *arrow* :copy-worldcoords)
+	:move-target *veg*
+  	:rotation-axis t
+  	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)  
+  )
+
 (defun wash-veg-set ()
   ;; 洗う位置
   (send *arrow* :newcoords (send *fauset-coords* :copy-worldcoords))
@@ -338,17 +351,8 @@
   (warn "please water on ~%")
   )
 
-(defun rotate-veg-wash ()
-  (send *arrow* :newcoords (send *veg* :copy-worldcoords))
-  (send *arrow* :translate #f(80 0 -40) :world)
-  (send *pr2* :larm :inverse-kinematics
-  	(send *arrow* :copy-worldcoords)
-	:move-target *veg*
-  	:rotation-axis t
-  	:debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)  
+(defun rotate-veg-wash-1 ()
+  (after-wash-veg-set)
   
   ;; 次に洗う位置
   (send *arrow* :newcoords (send *fauset-coords* :copy-worldcoords))
@@ -358,11 +362,26 @@
   
   (veg-set)
   
+  (warn "please run (rotate-veg-wash-2) ~%")
+  )
+
+(defun rotate-veg-wash-2 ()
+  (after-wash-veg-set)
+  
+  ;; 次に洗う位置
+  (send *arrow* :newcoords (send *fauset-coords* :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 40) :world)
+  (send *arrow* :rotate (deg2rad -90) :z)  
+  (send *arrow* :rotate (deg2rad -90) :x)
+  
+  (veg-set)
+  
   (warn "please run (after-wash) ~%")
   )
 
-(defun after-wash ()
 
+(defun after-wash ()
+  
   
   
   (warn "please return to kitchen spot! ~%")
@@ -393,6 +412,13 @@
 (defun now-off-water ()
   (water-off)
   (release-lever)
+  )
+
+
+(defun now-wash-veg ()
+  (wash-veg-set)
+  
+  
   )
 
 
