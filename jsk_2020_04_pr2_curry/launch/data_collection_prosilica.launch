@@ -28,9 +28,9 @@
       method: request
       topics:
         - name: /prosilica/image_raw
-	  msg_class: sensor_msgs/Image
-	  fname: pr2_prosilica_image_raw_veg.png
-	  savetype: ColorImage
+          msg_class: sensor_msgs/Image
+          fname: pr2_prosilica_image_raw_veg.png
+          savetype: ColorImage
     </rosparam>
   </node>
 </launch>
