@@ -575,7 +575,6 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
-  )
 
   (warn "please run (after-put-rcup) ~%")
   )

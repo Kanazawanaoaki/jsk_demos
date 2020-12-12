@@ -50,7 +50,7 @@
   ;;     (setq found-obj t)
   ;;     (print (list 'found? found-obj obj-pos))
   ;;     obj-pos))
-  )
+  ;; )
 
 
 ;; subscribeして認識

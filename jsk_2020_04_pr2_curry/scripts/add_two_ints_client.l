@@ -19,4 +19,5 @@
 	(2 (setq res (ros::service-call "add_two_ints" req))))
   (setq after (ros::time-now))
   (format t "~d + ~d = ~d~ (~A sec)~%" (send req :a) (send req :b) (send res :sum) (send (ros::time- after before) :to-sec))
-  (unix:sleep 1))
+  (unix:sleep 1)
+  )
