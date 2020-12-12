@@ -1,9 +1,9 @@
 (defclass red-cup-object
   :super cascaded-link
   :slots (handle0
-	  attention0
-	  attention1
-	  ))
+      attention0
+      attention1
+      ))
 
 (defmethod red-cup-object
   (:init

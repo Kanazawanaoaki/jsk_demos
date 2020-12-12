@@ -192,10 +192,10 @@
        (let ((world-cds (make-coords :pos (float-vector 0.0000000000000000e+00 0.0000000000000000e+00 0.0000000000000000e+00))
                         ))
          (send root_lk :transform world-cds)
-	 ;;add this part !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	 (send root_lk :locate #f(3000.0 -200.0 -16780.0))
+     ;;add this part !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     (send root_lk :locate #f(3000.0 -200.0 -16780.0))
 
-	 )
+     )
        )
 
      (send self :assoc root_lk)

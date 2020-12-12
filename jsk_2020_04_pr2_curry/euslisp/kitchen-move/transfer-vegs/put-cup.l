@@ -184,9 +184,9 @@
   ;; (setq *target* (make-coords :pos (float-vector 497.544 2098.394 1000) :rpy (float-vector -3.097 0.222 -1.404)))
   ;; (set-pose)
   ;; (send *pr2* :rarm :inverse-kinematics
-  ;; 	*target*
-  ;; 	:rotation-axis t
-  ;; 	:debug-view t)
+  ;;     *target*
+  ;;     :rotation-axis t
+  ;;     :debug-view t)
   ;; (send *viewer* :draw-objects)
   ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 6000)
   ;; (send *ri* :wait-interpolation)
@@ -194,9 +194,9 @@
   ;; (setq *target* (make-coords :pos (float-vector 397.545 2098.393 922.693) :rpy (float-vector -3.097 0.222 -1.404)))
   ;; (set-pose)
   ;; (send *pr2* :rarm :inverse-kinematics
-  ;; 	*target*
-  ;; 	:rotation-axis t
-  ;; 	:debug-view t)
+  ;;     *target*
+  ;;     :rotation-axis t
+  ;;     :debug-view t)
   ;; (send *viewer* :draw-objects)
   ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
   ;; (send *ri* :wait-interpolation)
@@ -204,9 +204,9 @@
   ;; (setq *target* (make-coords :pos (float-vector 297.544 2098.392 922.696) :rpy (float-vector -3.097 0.222 -1.404)))
   ;; (set-pose)
   ;; (send *pr2* :rarm :inverse-kinematics
-  ;; 	*target*
-  ;; 	:rotation-axis t
-  ;; 	:debug-view t)
+  ;;     *target*
+  ;;     :rotation-axis t
+  ;;     :debug-view t)
   ;; (send *viewer* :draw-objects)
   ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   ;; (send *ri* :wait-interpolation)

@@ -31,8 +31,8 @@
         (setq height tmp)
         
         (setq obj-pos (scale 0.001 (send obj-coord :worldpos)))
-	(if (> width 0)
-	    (setq found-obj t))
+    (if (> width 0)
+        (setq found-obj t))
         (print (list 'found? found-obj obj-pos)))
       obj-pos)))
 
@@ -57,16 +57,16 @@
 
   (setq found-obj nil)
   (until found-obj
-	 (print 4)
+     (print 4)
 
-	 (x::window-main-one) ;; IRT viewerの視点を変えられる。見にくければ変えよう
+     (x::window-main-one) ;; IRT viewerの視点を変えられる。見にくければ変えよう
 
-	 (setq msg (one-shot-subscribe *topic-name* jsk_recognition_msgs::BoundingBoxArray))
-	 (object-pose-cb msg)
-	 
-	 ;; (ros::spin-once)
-	 ;; (ros::sleep)
-	 )
+     (setq msg (one-shot-subscribe *topic-name* jsk_recognition_msgs::BoundingBoxArray))
+     (object-pose-cb msg)
+     
+     ;; (ros::spin-once)
+     ;; (ros::sleep)
+     )
 
   ;; ikを解く
   (load "models/arrow-object.l")
@@ -88,8 +88,8 @@
 
   (objects (list *potato* *pr2* *cutting-board* *kitchen*))
   (send *irtviewer* :look-all
-	(geo::make-bounding-box 
-	 (flatten (send-all (send *pr2* :bodies) :vertices))))
+    (geo::make-bounding-box 
+     (flatten (send-all (send *pr2* :bodies) :vertices))))
   (send *irtviewer* :draw-objects)
   
   (warn "please run (grasp-potato) or (now-devel)~%")
@@ -155,9 +155,9 @@
   (fail-check)
   (if (eql *fail-flag* t)
       (progn
-	;; (reset-larm)
-	(setq adj (- adj 20))
-	))
+    ;; (reset-larm)
+    (setq adj (- adj 20))
+    ))
 
   (touch-test-set)
   (touch-test)
@@ -167,8 +167,8 @@
 
   ;; (if (eql *fail-flag* nil)
   ;;     (progn
-  ;; 	(reset-larm)
-  ;; 	))
+  ;;     (reset-larm)
+  ;;     ))
   (reset-larm)
   
   (before-cut)

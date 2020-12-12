@@ -98,8 +98,8 @@
   
   (objects (list *kitchen* *pr2* *cutting-board* *potato*))
   (send *irtviewer* :look-all
-	(geo::make-bounding-box 
-	 (flatten (send-all (send *pr2* :bodies) :vertices))))
+    (geo::make-bounding-box 
+     (flatten (send-all (send *pr2* :bodies) :vertices))))
   
   (warn "please run (set-larm) ~%")
   )
@@ -109,9 +109,9 @@
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 250) :world)
   (send *pr2* :larm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:rotation-axis nil
-	:debug-view t)
+    (send *arrow* :copy-worldcoords)
+    :rotation-axis nil
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -142,18 +142,18 @@
   (send *ri* :stop-grasp :larm :wait t)
   (send *arrow* :translate #f(0 -100 100) :world)
   (send *pr2* :larm :inverse-kinematics
-  	(send *arrow* :copy-worldcoords)
-	:rotation-axis t
-	:debug-view t)
+      (send *arrow* :copy-worldcoords)
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
   (send *arrow* :translate #f(0 100 -100) :world)
   (send *pr2* :larm :inverse-kinematics
-  	(send *arrow* :copy-worldcoords)
-	:rotation-axis t
-	:debug-view t)
+      (send *arrow* :copy-worldcoords)
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -172,9 +172,9 @@
   
   (send *arrow* :translate (float-vector 0 (* num -1) 0) :world)
   (send *pr2* :larm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:rotation-axis t
-	:debug-view t)
+    (send *arrow* :copy-worldcoords)
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -182,9 +182,9 @@
   (send *arrow* :translate (float-vector 0 (* num 1.5) 0) :world)
   ;; (send *arrow* :translate (float-vector 0 (* num -0.5) 0) :world)
   (send *pr2* :larm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:rotation-axis t
-	:debug-view t)
+    (send *arrow* :copy-worldcoords)
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)

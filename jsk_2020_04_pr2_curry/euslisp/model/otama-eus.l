@@ -1,7 +1,7 @@
 (defclass otama-eus-object
   :super cascaded-link
   :slots (
-	  ))
+      ))
 
 (defmethod otama-eus-object
   (:init

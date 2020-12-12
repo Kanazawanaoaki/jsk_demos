@@ -1,11 +1,11 @@
 (defclass cooking-pot-object
   :super cascaded-link
   :slots (
-	  handle0
-	  attention0
-	  content
-	  bottom
-	  ))
+      handle0
+      attention0
+      content
+      bottom
+      ))
 
 (defmethod cooking-pot-object
   (:init

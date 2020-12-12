@@ -51,8 +51,8 @@
   
   (objects (list *room* *pr2* *cutting-board* *carrot*))
   (send *irtviewer* :look-all
-	(geo::make-bounding-box 
-	 (flatten (send-all (send *pr2* :bodies) :vertices))))
+    (geo::make-bounding-box 
+     (flatten (send-all (send *pr2* :bodies) :vertices))))
 
   (warn "please run (set-peeler) ~%")
   )
@@ -78,8 +78,8 @@
 
   (objects (list *room* *pr2* *cutting-board* *carrot* *peeler*))
   (send *irtviewer* :look-all
-	(geo::make-bounding-box 
-	 (flatten (send-all (send *pr2* :bodies) :vertices))))
+    (geo::make-bounding-box 
+     (flatten (send-all (send *pr2* :bodies) :vertices))))
 
   (warn "please run (set-larm) ~%")
   )
@@ -87,9 +87,9 @@
 (defun set-larm ()
   (if (not (boundp '*peeler*))
       (progn
-	(setq *peeler* (peeler))
-	(send *peeler* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-	(send *pr2* :rarm :end-coords :assoc *peeler*)))
+    (setq *peeler* (peeler))
+    (send *peeler* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+    (send *pr2* :rarm :end-coords :assoc *peeler*)))
   
   (setq *arrow* (arrow))
   (send *arrow* :newcoords (send *carrot* :copy-worldcoords))
@@ -99,8 +99,8 @@
 
   (objects (list *room* *pr2* *cutting-board* *carrot* *peeler* *arrow*))
   (send *irtviewer* :look-all
-	(geo::make-bounding-box 
-	 (flatten (send-all (send *pr2* :bodies) :vertices))))
+    (geo::make-bounding-box 
+     (flatten (send-all (send *pr2* :bodies) :vertices))))
 
   (send *ri* :stop-grasp :larm :wait t)
   (send *arrow* :translate #f(0 -100 100) :world)
@@ -132,10 +132,10 @@
   (send *arrow* :rotate (deg2rad 20) :y)
   
   (send *pr2* :rarm :inverse-kinematics
-	*arrow*
-	:move-target (car (send *peeler* :attention))
-	:rotation-axis t
-	:debug-view t)
+    *arrow*
+    :move-target (car (send *peeler* :attention))
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -143,10 +143,10 @@
   ;; 皮剥き始める所
   (send *arrow* :translate (float-vector 0 0 (* -1 height)) :world)
   (send *pr2* :rarm :inverse-kinematics
-	*arrow*
-	:move-target (car (send *peeler* :attention))
-	:rotation-axis t
-	:debug-view t)
+    *arrow*
+    :move-target (car (send *peeler* :attention))
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -154,10 +154,10 @@
   ;; 剥き終わり
   (send *arrow* :translate (float-vector 0 (* (+ width 20) 1) 0) :world)
   (send *pr2* :rarm :inverse-kinematics
-	*arrow*
-	:move-target (car (send *peeler* :attention))
-	:rotation-axis t
-	:debug-view t)
+    *arrow*
+    :move-target (car (send *peeler* :attention))
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -175,10 +175,10 @@
   (send *arrow* :translate (float-vector 0 0 (* height 1)))
   
   (send *pr2* :rarm :inverse-kinematics
-	*arrow*
-	:move-target (car (send *peeler* :attention))
-	:rotation-axis t
-	:debug-view t)
+    *arrow*
+    :move-target (car (send *peeler* :attention))
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -186,10 +186,10 @@
   ;; 皮剥き始める所
   (send *arrow* :translate (float-vector 0 0 (* -1 height)))
   (send *pr2* :rarm :inverse-kinematics
-	*arrow*
-	:move-target (car (send *peeler* :attention))
-	:rotation-axis t
-	:debug-view t)
+    *arrow*
+    :move-target (car (send *peeler* :attention))
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -199,10 +199,10 @@
   (dotimes (i (+ (round (/ width interval)) 1))
     (send *arrow* :translate (float-vector (* interval -1) 0 0))
     (send *pr2* :rarm :inverse-kinematics
-	  *arrow*
-	  :move-target (car (send *peeler* :attention))
-	  :rotation-axis t
-	  :debug-view t)
+      *arrow*
+      :move-target (car (send *peeler* :attention))
+      :rotation-axis t
+      :debug-view t)
     (send *viewer* :draw-objects)
     (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
     (send *ri* :wait-interpolation)

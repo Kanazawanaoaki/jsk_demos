@@ -35,8 +35,8 @@
 (look-table)
 
 (let* ((x 240)
-	   (y 320)
-	   (pub-msg (instance geometry_msgs::Pointstamped :init)))
+       (y 320)
+       (pub-msg (instance geometry_msgs::Pointstamped :init)))
   ;; publish
   (format t "x y ~A ~A~%" x y)
   (send pub-msg :header :stamp (ros::time-now))

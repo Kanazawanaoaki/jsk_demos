@@ -87,8 +87,8 @@
 
   (objects (list *kitchen* *pr2* *spatula* *pot*))
   (send *irtviewer* :look-all
-	(geo::make-bounding-box
-	 (flatten (send-all (send *pr2* :bodies) :vertices))))  
+    (geo::make-bounding-box
+     (flatten (send-all (send *pr2* :bodies) :vertices))))  
 
   (warn "please run (peel-test) ~%")
   )

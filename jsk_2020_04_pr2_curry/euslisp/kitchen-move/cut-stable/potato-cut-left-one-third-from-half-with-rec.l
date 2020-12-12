@@ -104,7 +104,7 @@
         (setq height tmp)
         
         (setq obj-pos (scale 0.001 (send obj-coord :worldpos)))
-	(if (> width 0)
+    (if (> width 0)
               (setq found-obj t))
         (print (list 'found? found-obj obj-pos)))
       obj-pos)))
@@ -215,8 +215,8 @@
 
   (objects (list *kitchen* *pr2* *cutting-board* *potato* *knife*))
   (send *irtviewer* :look-all
-	(geo::make-bounding-box 
-	 (flatten (send-all (send *pr2* :bodies) :vertices))))
+    (geo::make-bounding-box 
+     (flatten (send-all (send *pr2* :bodies) :vertices))))
 
   (warn "please run (cut-test-4) ~%")
   )
@@ -237,8 +237,8 @@
 
   (objects (list *kitchen* *pr2* *cutting-board* *potato* *knife*))
   (send *irtviewer* :look-all
-	(geo::make-bounding-box 
-	 (flatten (send-all (send *pr2* :bodies) :vertices))))
+    (geo::make-bounding-box 
+     (flatten (send-all (send *pr2* :bodies) :vertices))))
 
   (warn "please run (cut-test-4) ~%")
   )
@@ -250,9 +250,9 @@
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 100) :world)
   (send *pr2* :rarm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:rotation-axis nil
-	:debug-view t)
+    (send *arrow* :copy-worldcoords)
+    :rotation-axis nil
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -270,10 +270,10 @@
  
   (send *arrow* :translate (float-vector 0 0 offset))  
   (send *pr2* :rarm :inverse-kinematics
-	*arrow*
-	:move-target (car (send *knife* :attention))
-	:rotation-axis t
-	:debug-view t)
+    *arrow*
+    :move-target (car (send *knife* :attention))
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -281,10 +281,10 @@
 
   (send *arrow* :translate (float-vector 0 0 (* offset -1)))  
   (send *pr2* :rarm :inverse-kinematics
-	*arrow*
-	:move-target (car (send *knife* :attention))
-	:rotation-axis t
-	:debug-view t)
+    *arrow*
+    :move-target (car (send *knife* :attention))
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -293,20 +293,20 @@
   (dotimes (i (+ (round (/ (* *height* 0.5) interval)) 1))
     (send *arrow* :translate (float-vector interval 0 (/ interval -2)))
     (send *pr2* :rarm :inverse-kinematics
-	  *arrow*
-	  :move-target (car (send *knife* :attention))
-	  :rotation-axis t
-	  :debug-view t)
+      *arrow*
+      :move-target (car (send *knife* :attention))
+      :rotation-axis t
+      :debug-view t)
     (send *viewer* :draw-objects)
     (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
     (send *ri* :wait-interpolation)
 
     (send *arrow* :translate (float-vector (* interval -1) 0 (/ interval -2)))
     (send *pr2* :rarm :inverse-kinematics
-	  *arrow*
-	  :move-target (car (send *knife* :attention))
-	  :rotation-axis t
-	  :debug-view t)
+      *arrow*
+      :move-target (car (send *knife* :attention))
+      :rotation-axis t
+      :debug-view t)
     (send *viewer* :draw-objects)
     (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
     (send *ri* :wait-interpolation)
@@ -325,9 +325,9 @@
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 100) :world)
   (send *pr2* :rarm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:rotation-axis nil
-	:debug-view t)
+    (send *arrow* :copy-worldcoords)
+    :rotation-axis nil
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -345,10 +345,10 @@
  
   (send *arrow* :translate (float-vector 0 0 offset))  
   (send *pr2* :rarm :inverse-kinematics
-	*arrow*
-	:move-target (car (send *knife* :attention))
-	:rotation-axis t
-	:debug-view t)
+    *arrow*
+    :move-target (car (send *knife* :attention))
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -356,10 +356,10 @@
 
   (send *arrow* :translate (float-vector 0 0 (* offset -1)))  
   (send *pr2* :rarm :inverse-kinematics
-	*arrow*
-	:move-target (car (send *knife* :attention))
-	:rotation-axis t
-	:debug-view t)
+    *arrow*
+    :move-target (car (send *knife* :attention))
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -368,20 +368,20 @@
   (dotimes (i (+ (round (/ (* *height* 0.5) interval)) 1))
     (send *arrow* :translate (float-vector interval 0 (/ interval -2)))
     (send *pr2* :rarm :inverse-kinematics
-	  *arrow*
-	  :move-target (car (send *knife* :attention))
-	  :rotation-axis t
-	  :debug-view t)
+      *arrow*
+      :move-target (car (send *knife* :attention))
+      :rotation-axis t
+      :debug-view t)
     (send *viewer* :draw-objects)
     (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
     (send *ri* :wait-interpolation)
 
     (send *arrow* :translate (float-vector (* interval -1) 0 (/ interval -2)))
     (send *pr2* :rarm :inverse-kinematics
-	  *arrow*
-	  :move-target (car (send *knife* :attention))
-	  :rotation-axis t
-	  :debug-view t)
+      *arrow*
+      :move-target (car (send *knife* :attention))
+      :rotation-axis t
+      :debug-view t)
     (send *viewer* :draw-objects)
     (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
     (send *ri* :wait-interpolation)
@@ -398,20 +398,20 @@
   (dotimes (i num)
     (send *arrow* :translate (float-vector interval 0 (/ interval -2)))
     (send *pr2* :rarm :inverse-kinematics
-	  *arrow*
-	  :move-target (car (send *knife* :attention))
-	  :rotation-axis t
-	  :debug-view t)
+      *arrow*
+      :move-target (car (send *knife* :attention))
+      :rotation-axis t
+      :debug-view t)
     (send *viewer* :draw-objects)
     (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
     (send *ri* :wait-interpolation)
 
     (send *arrow* :translate (float-vector (* interval -1) 0 (/ interval -2)))
     (send *pr2* :rarm :inverse-kinematics
-	  *arrow*
-	  :move-target (car (send *knife* :attention))
-	  :rotation-axis t
-	  :debug-view t)
+      *arrow*
+      :move-target (car (send *knife* :attention))
+      :rotation-axis t
+      :debug-view t)
     (send *viewer* :draw-objects)
     (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
     (send *ri* :wait-interpolation))
@@ -431,10 +431,10 @@
   (send *arrow* :newcoords (send (car (send *knife* :attention)) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 100) :world)
   (send *pr2* :rarm :inverse-kinematics
-	*arrow*
-	:move-target (car (send *knife* :attention))
-	:rotation-axis t
-	:debug-view t)
+    *arrow*
+    :move-target (car (send *knife* :attention))
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
   (send *ri* :wait-interpolation)
@@ -453,10 +453,10 @@
   (send *arrow* :newcoords (send (car (send *knife* :attention)) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 50) :world)
   (send *pr2* :rarm :inverse-kinematics
-	*arrow*
-	:move-target (car (send *knife* :attention))
-	:rotation-axis t
-	:debug-view t)
+    *arrow*
+    :move-target (car (send *knife* :attention))
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
   (send *ri* :wait-interpolation)
@@ -464,10 +464,10 @@
   (send *arrow* :newcoords (send (car (send *knife* :attention)) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 50) :world)
   (send *pr2* :rarm :inverse-kinematics
-	*arrow*
-	:move-target (car (send *knife* :attention))
-	:rotation-axis t
-	:debug-view t)
+    *arrow*
+    :move-target (car (send *knife* :attention))
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
   (send *ri* :wait-interpolation)

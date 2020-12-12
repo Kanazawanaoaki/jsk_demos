@@ -13,10 +13,10 @@
 
 (defun ik-test ()
   (send *pr2* :rarm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:move-target (car (send *spatula* :attention))
-	:rotation-axis t
-	:debug-view t)
+    (send *arrow* :copy-worldcoords)
+    :move-target (car (send *spatula* :attention))
+    :rotation-axis t
+    :debug-view t)
   )
 
 (load "models/arrow-object.l")
@@ -42,10 +42,10 @@
 
 ;; (defun ik-test ()
 ;;   (send *pr2* :rarm :inverse-kinematics
-;; 	(send *arrow* :copy-worldcoords)
-;; 	:move-target (elt (send *ladle* :attention) 1)
-;; 	:rotation-axis t
-;; 	:debug-view t)
+;;     (send *arrow* :copy-worldcoords)
+;;     :move-target (elt (send *ladle* :attention) 1)
+;;     :rotation-axis t
+;;     :debug-view t)
 ;;   )
 
 ;; (load "models/arrow-object.l")

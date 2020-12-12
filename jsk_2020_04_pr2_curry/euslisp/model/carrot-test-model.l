@@ -3,17 +3,17 @@
     (setq c-flag nil)
     (setq i 0)
     (until c-flag
-	   (catch 'hoge
-	     (unwind-protect
-		 (progn
-		   (setq *error-handler* #'(lambda (code msg1 form &optional msg2) (throw 'hoge -1)));;エラーハンドラを変える
-		   (setq b1 (body- abody box)) ;;ここでエラーが起こるとcatchを抜ける
-		   (setq c-flag t)
-		   0)
-	       (setq *error-handler* #'euserror)));;エラーハンドラをもとに戻す
-	   (send coords :locate #f(-1 0 0))
-	   (setq i (+ i 1))
-	   )
+       (catch 'hoge
+         (unwind-protect
+         (progn
+           (setq *error-handler* #'(lambda (code msg1 form &optional msg2) (throw 'hoge -1)));;エラーハンドラを変える
+           (setq b1 (body- abody box)) ;;ここでエラーが起こるとcatchを抜ける
+           (setq c-flag t)
+           0)
+           (setq *error-handler* #'euserror)));;エラーハンドラをもとに戻す
+       (send coords :locate #f(-1 0 0))
+       (setq i (+ i 1))
+       )
 
     (setq b2 (body- abody b1))
     (list b1 b2)))
@@ -23,17 +23,17 @@
     (setq c-flag nil)
     (setq i 0)
     (until c-flag
-	   (catch 'hoge
-	     (unwind-protect
-		 (progn
-		   (setq *error-handler* #'(lambda (code msg1 form &optional msg2) (throw 'hoge -1)));;エラーハンドラを変える
-		   (setq b1 (body- abody box)) ;;ここでエラーが起こるとcatchを抜ける
-		   (setq c-flag t)
-		   0)
-	       (setq *error-handler* #'euserror)));;エラーハンドラをもとに戻す
-	   (send box :locate #f(0 -1 0))
-	   (setq i (+ i 1))
-	   )
+       (catch 'hoge
+         (unwind-protect
+         (progn
+           (setq *error-handler* #'(lambda (code msg1 form &optional msg2) (throw 'hoge -1)));;エラーハンドラを変える
+           (setq b1 (body- abody box)) ;;ここでエラーが起こるとcatchを抜ける
+           (setq c-flag t)
+           0)
+           (setq *error-handler* #'euserror)));;エラーハンドラをもとに戻す
+       (send box :locate #f(0 -1 0))
+       (setq i (+ i 1))
+       )
 
     (setq b2 (body- abody b1))
     (list b1 b2)))
@@ -43,17 +43,17 @@
     (setq c-flag nil)
     (setq i 0)
     (until c-flag
-	   (catch 'hoge
-	     (unwind-protect
-		 (progn
-		   (setq *error-handler* #'(lambda (code msg1 form &optional msg2) (throw 'hoge -1)));;エラーハンドラを変える
-		   (setq b1 (body- abody box)) ;;ここでエラーが起こるとcatchを抜ける
-		   (setq c-flag t)
-		   0)
-	       (setq *error-handler* #'euserror)));;エラーハンドラをもとに戻す
-	   (send box :locate #f(-1 0 0))
-	   (setq i (+ i 1))
-	   )
+       (catch 'hoge
+         (unwind-protect
+         (progn
+           (setq *error-handler* #'(lambda (code msg1 form &optional msg2) (throw 'hoge -1)));;エラーハンドラを変える
+           (setq b1 (body- abody box)) ;;ここでエラーが起こるとcatchを抜ける
+           (setq c-flag t)
+           0)
+           (setq *error-handler* #'euserror)));;エラーハンドラをもとに戻す
+       (send box :locate #f(-1 0 0))
+       (setq i (+ i 1))
+       )
     
     (setq b2 (body- abody b1))
     (list b1 b2))) 
@@ -140,7 +140,7 @@
 (defclass carrot-object
   :super bodyset-link
   :slots (
-	  ))
+      ))
 
 (defmethod carrot-object
   (:init

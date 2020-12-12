@@ -1,18 +1,18 @@
 (defclass shelf-door-object
   :super cascaded-link
   :slots (
-	  handle0
+      handle0
          ))
 
 (defmethod shelf-door-object
   (:init
    (&rest args &key (name "shelf-door") (pos (float-vector 0 0 0)) (rot (unit-matrix 3)) &allow-other-keys)
    (let (link1
-	 b1
-	 b2
-	 (sy 280)
-	 (sz 60)
-	 )
+     b1
+     b2
+     (sy 280)
+     (sz 60)
+     )
      (send-super* :init :name name args)
 
      ;; definition of link

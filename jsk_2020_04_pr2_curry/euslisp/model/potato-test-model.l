@@ -13,9 +13,9 @@
 (defclass potato-object
   :super bodyset-link
   :slots (width
-	  length
-	  height
-	  ))
+      length
+      height
+      ))
 
 (defmethod potato-object
   (:init

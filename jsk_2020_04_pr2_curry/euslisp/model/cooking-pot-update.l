@@ -1,7 +1,7 @@
 (defclass cooking-pot-object
   :super cascaded-link
   :slots (content
-	  bottom
+      bottom
          ))
 
 (defmethod cooking-pot-object

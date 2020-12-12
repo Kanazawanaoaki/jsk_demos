@@ -50,9 +50,9 @@
   (setq local-flag (send *ri* :move-to (make-coords :pos #f(1400 8500 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
   (if (eql local-flag t)
       (progn
-	(send *ri* :go-pos-unsafe 0.2 0 0)
-	(warn "go-pos unsafe !! ~%")
-	)
+    (send *ri* :go-pos-unsafe 0.2 0 0)
+    (warn "go-pos unsafe !! ~%")
+    )
     (send *ri* :speak-jp "移動に失敗しました")
     )
   )

@@ -1,8 +1,8 @@
 (defclass white-dish-object
   :super cascaded-link
   :slots (
-	  attention0
-	  ))
+      attention0
+      ))
 
 (defmethod white-dish-object
   (:init

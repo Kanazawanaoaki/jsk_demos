@@ -6,8 +6,8 @@
 (defclass knife-object
   :super cascaded-link
   :slots (sensors
-	 handle0
-	 attention0 
+     handle0
+     attention0 
          ))
 (defmethod knife-object
   (:init

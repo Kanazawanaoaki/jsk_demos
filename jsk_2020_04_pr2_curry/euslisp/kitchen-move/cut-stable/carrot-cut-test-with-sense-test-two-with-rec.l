@@ -22,18 +22,18 @@
       (setq *pose* (send *bbox* :pose))
       (setq cam->obj-coords (ros::tf-pose->coords *pose*))
       (when (send *l* :wait-for-transform  "base_footprint" "head_mount_kinect_rgb_optical_frame" tm2 10)
-	(setq cam-coords (send (send *pr2* :copy-worldcoords) :transform 
-			       (send *l* :lookup-transform "base_footprint" "head_mount_kinect_rgb_optical_frame" tm2))))
+    (setq cam-coords (send (send *pr2* :copy-worldcoords) :transform 
+                   (send *l* :lookup-transform "base_footprint" "head_mount_kinect_rgb_optical_frame" tm2))))
       (when cam-coords
-	(setq obj-coord (send cam-coords :transform cam->obj-coords))
-	(setq tmp (- (+ (elt (send obj-coord :pos) 2) (/ height 2)) (+ (elt (send *cutting-board* :worldpos) 2) 10)))
-	(send obj-coord :translate (float-vector 0 0 (- (/ height 2) (/ tmp 2))) :world)
-	(setq height tmp)
-	
-	(setq obj-pos (scale 0.001 (send obj-coord :worldpos)))
-	(if (> width 0)
+    (setq obj-coord (send cam-coords :transform cam->obj-coords))
+    (setq tmp (- (+ (elt (send obj-coord :pos) 2) (/ height 2)) (+ (elt (send *cutting-board* :worldpos) 2) 10)))
+    (send obj-coord :translate (float-vector 0 0 (- (/ height 2) (/ tmp 2))) :world)
+    (setq height tmp)
+    
+    (setq obj-pos (scale 0.001 (send obj-coord :worldpos)))
+    (if (> width 0)
               (setq found-obj t))
-	(print (list 'found? found-obj obj-pos)))
+    (print (list 'found? found-obj obj-pos)))
       obj-pos)))
 
 
@@ -59,16 +59,16 @@
 
   (setq found-obj nil)
   (until found-obj
-	 (print 4)
-	 
-	 (x::window-main-one) ;; IRT viewerの視点を変えられる。見にくければ変えよう
+     (print 4)
+     
+     (x::window-main-one) ;; IRT viewerの視点を変えられる。見にくければ変えよう
 
-	 (setq msg (one-shot-subscribe *topic-name* jsk_recognition_msgs::BoundingBoxArray))
-	 (object-pose-cb msg)
-	 
-	 ;; (ros::spin-once)
-	 ;; (ros::sleep)
-	 )
+     (setq msg (one-shot-subscribe *topic-name* jsk_recognition_msgs::BoundingBoxArray))
+     (object-pose-cb msg)
+     
+     ;; (ros::spin-once)
+     ;; (ros::sleep)
+     )
 
 
   ;; ikを解く
@@ -84,8 +84,8 @@
   (send *carrot* :cut)
   (objects (list *carrot* *pr2* *cutting-board* *kitchen*))
   (send *irtviewer* :look-all
-	(geo::make-bounding-box 
-	 (flatten (send-all (send *pr2* :bodies) :vertices))))
+    (geo::make-bounding-box 
+     (flatten (send-all (send *pr2* :bodies) :vertices))))
   (send *irtviewer* :draw-objects)
 
 

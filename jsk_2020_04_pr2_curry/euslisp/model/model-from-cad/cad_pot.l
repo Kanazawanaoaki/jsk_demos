@@ -193,9 +193,9 @@
                         ))
          (send root_lk :transform world-cds)
 
-	 ;;add this part !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	 (send root_lk :locate #f(9050.0 -9110.0 9100.0))
-	 )
+     ;;add this part !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     (send root_lk :locate #f(9050.0 -9110.0 9100.0))
+     )
        )
 
      (send self :assoc root_lk)

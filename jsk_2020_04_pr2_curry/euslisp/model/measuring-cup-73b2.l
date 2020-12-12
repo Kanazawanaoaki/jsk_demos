@@ -15,10 +15,10 @@
 (defclass measuring-cup-73b2-object
   :super cascaded-link
   :slots (handle0
-	  handle1
-	  attention0
-	  attention1
-	  ))
+      handle1
+      attention0
+      attention1
+      ))
 
 (defmethod measuring-cup-73b2-object
   (:init

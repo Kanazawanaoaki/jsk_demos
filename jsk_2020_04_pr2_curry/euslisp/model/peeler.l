@@ -1,7 +1,7 @@
 (defclass peeler-object
   :super cascaded-link
   :slots (handle0
-	  attention0
+      attention0
          ))
 
 (defmethod peeler-object

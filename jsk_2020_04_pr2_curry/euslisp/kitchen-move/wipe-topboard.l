@@ -58,18 +58,18 @@
 
   (send *arrow* :translate #f(0 0 100) :world)
   (send *pr2* :inverse-kinematics
-	*arrow*
-	:rotation-axis t
-	:debug-view t)
+    *arrow*
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
   (send *arrow* :translate #f(0 0 -100) :world)
   (send *pr2* :inverse-kinematics
-	*arrow*
-	:rotation-axis t
-	:debug-view t)
+    *arrow*
+    :rotation-axis t
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -82,9 +82,9 @@
   (dotimes (i 3)
     (send *arrow* :translate #f(-50 0 0) :world)
     (send *pr2* :inverse-kinematics
-	  *arrow*
-	  :rotation-axis t
-	  :debug-view t)
+      *arrow*
+      :rotation-axis t
+      :debug-view t)
     (send *viewer* :draw-objects)
     (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
     (send *ri* :wait-interpolation)
@@ -96,9 +96,9 @@
   (dotimes (i 3)
     (send *arrow* :translate #f(-50 0 0) :world)
     (send *pr2* :inverse-kinematics
-	  *arrow*
-	  :rotation-axis nil
-	  :debug-view t)
+      *arrow*
+      :rotation-axis nil
+      :debug-view t)
     (send *viewer* :draw-objects)
     (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
     (send *ri* :wait-interpolation)
@@ -108,9 +108,9 @@
 (defun one-more ()
   (send *arrow* :translate #f(-50 0 0) :world)
   (send *pr2* :inverse-kinematics
-	*arrow*
-	:rotation-axis nil
-	:debug-view t)
+    *arrow*
+    :rotation-axis nil
+    :debug-view t)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)

@@ -1,9 +1,9 @@
 (defclass ladle-object
   :super cascaded-link
   :slots (
-	  handle0
-	  attention0
-	  attention1
+      handle0
+      attention0
+      attention1
          ))
 
 (defmethod ladle-object

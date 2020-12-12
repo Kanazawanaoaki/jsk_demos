@@ -1,9 +1,9 @@
 (defclass bowl-1-object
   :super cascaded-link
   :slots (
-	  handle0
-	  attention0
-	  ))
+      handle0
+      attention0
+      ))
 
 (defmethod bowl-1-object
   (:init
