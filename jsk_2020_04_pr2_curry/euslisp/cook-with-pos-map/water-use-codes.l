@@ -362,15 +362,16 @@
   
   (veg-set)
   
-  (warn "please run (rotate-veg-wash-2) ~%")
+  ;; (warn "please run (rotate-veg-wash-2) ~%")
+  (warn "please run (after-wash) ~%")
   )
 
-(defun rotate-veg-wash-2 ()
+(defun rotate-veg-wash-2 () ;; 現状IKが解けない
   (after-wash-veg-set)
   
   ;; 次に洗う位置
   (send *arrow* :newcoords (send *fauset-coords* :copy-worldcoords))
-  (send *arrow* :translate #f(0 0 40) :world)
+  (send *arrow* :translate #f(0 0 20) :world)
   (send *arrow* :rotate (deg2rad -90) :z)  
   (send *arrow* :rotate (deg2rad -90) :x)
   
