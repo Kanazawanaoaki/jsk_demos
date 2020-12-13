@@ -1199,7 +1199,7 @@
   )
 
 (defun now-ladle-mix ()
-  ;; おたまでかき混ぜる動作 へらは掴んでいる前提
+  ;; おたまでかき混ぜる動作 おたまは掴んでいる前提
   (set-ladle)
   (grasp-pot-from-below)
   (look-at-pot)
