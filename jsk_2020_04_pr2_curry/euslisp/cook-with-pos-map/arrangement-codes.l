@@ -20,23 +20,20 @@
 
 
 (defun scoop-up-curry-1 ()
-  (send *arrow* :newcoords (make-coords :pos (float-vector 417.495 8067.248 30861.184) :rpy (float-vector 1.772 1.446 1.068)))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 391.83 8092.564 30840) :rpy (float-vector -1.135 0.805 -1.056)))
+  (send *arrow* :newcoords (make-coords :pos (float-vector 391.83 8092.564 30820) :rpy (float-vector -1.135 0.805 -1.056)))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
-      :move-target (elt (send *ladle* :attention) 1)
-      :rotation-axis t
-      :debug-view *debug-flag*)
+	:move-target (elt (send *ladle* :attention) 1)
+	:rotation-axis t
+	:debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   )
 
 (defun scoop-up-curry-2 ()
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 437.495 8087.248 30861.184) :rpy (float-vector 0.788 0.633 0.136)))
-
-  (send *arrow* :newcoords (make-coords :pos (float-vector 417.495 8067.248 30861.184) :rpy (float-vector 1.772 1.446 1.068)))
-  (send *arrow* :rotate (deg2rad -30) :y)
-
+  (send *arrow* :newcoords (make-coords :pos (float-vector 420 8065 30870) :rpy (float-vector -1.525 0.066 -0.424)))
   (send *pr2* :rarm :inverse-kinematics  
         (send *arrow* :copy-worldcoords)
         :move-target (elt (send *ladle* :attention) 1)
@@ -48,7 +45,7 @@
   )
 
 (defun scoop-up-curry-3 ()
-  (send *arrow* :newcoords (make-coords :pos (float-vector 457.495 8107.248 30901.184) :rpy (float-vector  0.701 -0.06 0.109)))
+  (send *arrow* :newcoords (make-coords :pos (float-vector 446.773 8053.785 30870) :rpy (float-vector -1.525 0.066 -0.424)))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :move-target (elt (send *ladle* :attention) 1)
@@ -59,7 +56,33 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun scoop-up-curry ()
+  (scoop-up-curry-1)
+  (scoop-up-curry-2)
+  (scoop-up-curry-3)
 
+  (dotimes (i 3)
+    (send *pr2* :rarm :move-end-pos #f(0 0 50) :world)
+    (send *viewer* :draw-objects)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+    )
+
+  )
+
+(defun transfer-curry ()
+  (send *pr2* :rarm :move-end-pos #f(0 100 0) :world)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  
+  )
+
+
+(defun tmp-set ()
+  (update-pos)
+  (set-ladle)
+  )
 
 (defun now-test ()
   (set-pose)

@@ -319,8 +319,8 @@
   (send *arrow* :translate #f(-80 0 40) :world)
   (send *pr2* :larm :inverse-kinematics
       (send *arrow* :copy-worldcoords)
-    :move-target *veg*
-      :rotation-axis t
+      :move-target *veg*
+      :rotation-axis :z
       :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
@@ -331,10 +331,10 @@
   (send *arrow* :newcoords (send *veg* :copy-worldcoords))
   (send *arrow* :translate #f(80 0 -40) :world)
   (send *pr2* :larm :inverse-kinematics
-      (send *arrow* :copy-worldcoords)
-    :move-target *veg*
-      :rotation-axis t
-      :debug-view *debug-flag*)
+	(send *arrow* :copy-worldcoords)
+	:move-target *veg*
+	:rotation-axis t
+	:debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)  
@@ -435,7 +435,20 @@
   (release-lever)
   )
 
-(defun tmp-test ()
-  (set-pose)
+(defun tmp-wash-veg ()
   (recieve-veg)
+  (wash-veg-set)
+  )
+
+(defun tmp-test ()
+  (unix:sleep 1)
+  (wash-veg-set)
+  
+  (grasp-lever)
+  (water-on)
+  
+  (unix:sleep 3)
+  
+  (water-off)
+  (release-lever)
   )
