@@ -1,9 +1,10 @@
-;; my spot
+1;5202;0c;; my spot
 (setq *kitchen-spot* (make-coords :pos (float-vector 1200 8500 30000) :rpy (float-vector pi 0 0)))
 (setq *sink-spot* (make-coords :pos (float-vector 1100 9100 30000) :rpy (float-vector pi 0 0)))
 (setq *stove-spot* (make-coords :pos (float-vector 1400 8100 30000) :rpy (float-vector pi 0 0)))
 (setq *microwave-spot* (make-coords :pos (float-vector 1600 9300 30000) :rpy (float-vector 0 0 0)))
 (setq *seasoning-spot* (make-coords :pos (float-vector 1700 8900 30000) :rpy (float-vector 0 0 0)))
+(setq *arrange-spot* (make-coords :pos (float-vector 1200 8200 30000) :rpy (float-vector pi 0 0)))
 
 ;; tool coords
 (setq *knife-coords* (make-coords :pos (float-vector 580 8715 30857) :rpy (float-vector 3.14 0.073 1.498))) ;; 包丁
