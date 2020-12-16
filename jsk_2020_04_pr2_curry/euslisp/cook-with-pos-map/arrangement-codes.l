@@ -11,8 +11,7 @@
 
   ;; (setq *dish-pour-codes* (make-coords :pos (float-vector )))
   
-  ;; (move-to-kitchen-irt)
-  (send *pr2* :move-to (make-coords :pos #f(1200 8200 30000) :rpy (float-vector pi 0 0)) :world)
+  (move-to-arrange-irt)
   (objects (list *pr2* *scene* *spatula* *ladle* *pot*))
   (update-view)
   )
@@ -144,6 +143,7 @@
     )
   )
 
+
 (defun tmp-set ()
   (update-pos)
   (set-ladle)
@@ -164,11 +164,10 @@
   ;; (release-pot-from-below)
   )
 
-(defun tmp-test ()
+(defun now-arrange-curry ()
   (scoop-up-curry)
   (carry-curry-set)
   (carry-curry)
   (transfer-curry-set)
   (transfer-curry)
-  
   )
