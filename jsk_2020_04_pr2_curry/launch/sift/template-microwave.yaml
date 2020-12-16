@@ -1,0 +1,27 @@
+method: CCOEFF
+template_list: OF 500W 1M 2M START 0S
+template:
+    OF:
+        name: /off
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/off_cropped_prosilica_grey.jpg"
+        thre: 0.75
+    500W:
+        name: /500w
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/500w_cropped_prosilica_grey.jpg"
+        thre: 0.75
+    1M:
+        name: /1m
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/1min_cropped_prosilica_grey.jpg"
+        thre: 0.75
+    2M:
+        name: /2m
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/2min_cropped_prosilica_grey.jpg"
+        thre: 0.75
+    START:
+        name: /start
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/after_start_cropped_prosilica_grey.jpg"
+        thre: 0.75
+    0S:
+        name: /0s
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/0s_cropped_prosilica_grey.jpg"
+        thre: 0.75
