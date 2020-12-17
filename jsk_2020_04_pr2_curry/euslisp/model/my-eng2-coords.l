@@ -32,6 +32,8 @@
 (setq *rcup-coords* (make-coords :pos (float-vector 320 8525 30840)))
 (setq *oil-dispenser-coords* (make-coords :pos (float-vector 300 8280 30845) :rpy (float-vector 3.14 0.0 0.0)))
 
+(setq *curry-dish-coords* (make-coords :pos (float-vector 520 8440 30840) :rpy (float-vector 0 0 0)))
+
 (setq *solt-coords* (make-coords :pos (float-vector 2500 8788 30910) :rpy (float-vector 0 0 0)))
 (setq *dispenser-coords* (make-coords :pos (float-vector 2500 8676 30900) :rpy (float-vector 0 0 0)))
 (setq *white-dish-coords* (make-coords :pos (float-vector 2523 9000 30870) :rpy (float-vector 0 0 0)))

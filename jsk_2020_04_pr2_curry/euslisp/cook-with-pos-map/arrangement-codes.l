@@ -3,16 +3,14 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
   
   ;; set objects
-
-  ;; TODO set curry-dish model
-  
+  (load "package://jsk_2020_04_pr2_curry/euslisp/model/curry-dish.l")
+  (setq *curry-dish* (curry-dish))
+  (send *curry-dish* :newcoords (send *curry-dish-coords* :copy-worldcoords))
   
   ;; def global coords
 
-  ;; (setq *dish-pour-codes* (make-coords :pos (float-vector )))
-  
   (move-to-arrange-irt)
-  (objects (list *pr2* *scene* *spatula* *ladle* *pot*))
+  (objects (list *pr2* *scene* *spatula* *ladle* *pot* *curry-dish*))
   (update-view)
   )
 

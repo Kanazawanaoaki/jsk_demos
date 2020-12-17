@@ -20,10 +20,10 @@
      (send-super* :init :name name args)
      
      ;; definition of link
-     (setq b1 (make-cylinder 97 20))
-     (setq b1 (make-distort b1 1 0.5))
-     (setq b2 (make-cylinder 95 16))
-     (setq b2 (make-distort b2 1 0.5))
+     (setq b1 (make-cylinder 75 50))
+     (setq b1 (make-distort b1 1 1.73333))
+     (setq b2 (make-cylinder 73 46))
+     (setq b2 (make-distort b2 1 1.73333))
      (send b2 :locate #f(0 0 4))
      
      (setq b1 (body- b1 b2))
