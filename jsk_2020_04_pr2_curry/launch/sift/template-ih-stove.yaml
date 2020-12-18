@@ -1,0 +1,51 @@
+method: CCOEFF
+template_list: OF 1 2 3 4 5 6 7 8 9 10
+template:
+    OF:
+        name: /off
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/ih-panel-stove-off-cropped-grey.jpg"
+        thre: 0.75
+    1:
+        name: /500w
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/ih-panel-stove-1-cropped-grey.png"
+        thre: 0.75
+    2:
+        name: /1m
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/ih-panel-stove-2-cropped-grey.png"
+        thre: 0.75
+    3:
+        name: /2m
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/ih-panel-stove-3-cropped-grey.png"
+        thre: 0.75
+    4:
+        name: /start
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/ih-panel-stove-4-cropped-grey.png"
+        thre: 0.75
+    5:
+        name: /0s
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/ih-panel-stove-5-cropped-grey.png"
+        thre: 0.75
+    6:
+        name: /0s
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/ih-panel-stove-6-cropped-grey.png"
+        thre: 0.75
+    7:
+        name: /0s
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/ih-panel-stove-7-cropped-grey.png"
+        thre: 0.75
+    8:
+        name: /0s
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/ih-panel-stove-8-cropped-grey.png"
+        thre: 0.75
+    9:
+        name: /0s
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/ih-panel-stove-9-cropped-grey.png"
+        thre: 0.75
+    10:
+        name: /0s
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/ih-panel-stove-10-cropped-grey.png"
+        thre: 0.75
+    11:
+        name: /0s
+        path: "package://jsk_2020_04_pr2_curry/data/microwave_numbers/ih-panel-stove-11-cropped-grey.png"
+        thre: 0.75

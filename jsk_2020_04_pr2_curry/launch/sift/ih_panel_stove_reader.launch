@@ -1,0 +1,13 @@
+<launch>
+  <node name="microwave_reader"
+        pkg="jsk_2020_04_pr2_curry" type="match_template.py"
+        output="screen">
+    <remap from="~image" to="/prosilica/image_raw"/>
+    
+    <rosparam command="load"
+              file="$(find jsk_2020_04_pr2_curry)/launch/sift/template-ih-stove.yaml"/>
+    <rosparam>
+      show_probability: ture
+    </rosparam>
+  </node>
+</launch>
