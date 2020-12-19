@@ -41,6 +41,26 @@
 (tool-init)
 
 
+;; add for sense
+(setq *x-thre* -15)
+
+(ros::roseus "stove_rec_test" :anonymous t)
+(setq *topic-name* "/right_endeffector/wrench")
+(ros::load-ros-manifest "geometry_msgs")
+(setq *cb-flag* nil)
+(defun wrench-x-cb (msg)
+  (when msg
+    (let ((x nil))
+      (setq x (send msg :wrench :force :x))
+      (if (< x *x-thre*)
+          (progn 
+            (setq *cb-flag* t)
+            (format t "OK!! x: ~A ~%" x)
+            )
+        (format t "x: ~A ~%" x))
+      )))
+
+
 ;; set codes
 (warn "~%  If you use real robot, run (update-pos) ~%")
 (warn "please run (now-set-tools) or (set-knife) ~%")
@@ -505,12 +525,36 @@
     )
   
   (send *ri* :angle-vector-sequence avs tms)
-  (send *ri* :wait-interpolation)
-
-  ;; (send *arrow* :newcoords)
   
-
-  ;; (send *ri* :start-grasp :rarm :wait t)
+  (ros::unsubscribe "/right_endeffector/wrench")
+  (setq *topic-name* "/right_endeffector/wrench")
+  (setq *cb-flag* nil)
+  (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-x-cb)
+  
+  (while (some #'identity (send *ri* :wait-interpolation nil 0.01))
+    (when (progn
+            (ros::spin-once)
+            (if *cb-flag* t)
+            )
+      (send *ri* :cancel-angle-vector)
+      (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+      (warn "cancel!!! ~%")
+      )
+    )
+  
+  (ros::unsubscribe "/right_endeffector/wrench")
+  
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate #f(10 0 0) :world)
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *ri* :angle-vector (send *pr2* :angle-vector))
+  (send *ri* :wait-interpolation)
+  
+  (send *ri* :start-grasp :rarm :wait t)
   
   (warn "please run (open-shelf) ~%")
   )
@@ -541,10 +585,14 @@
 (defun after-open ()
   (send *ri* :stop-grasp :rarm :wait t)
   
-  (send *pr2* :rarm :move-end-pos #f(0 20 -60) :world)
+  (send *pr2* :rarm :move-end-pos #f(0 20 -80) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
   
+  (send *pr2* :rarm :move-end-pos #f(0 -100 -100) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
   ;; 中間姿勢になる
   (rarm-middle-pose)
   
