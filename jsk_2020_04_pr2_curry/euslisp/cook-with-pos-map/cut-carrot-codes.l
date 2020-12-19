@@ -177,6 +177,25 @@
   (warn "please run (grasp-carrot) or (now-devel) ~%")
   )
 
+;; add for rosservice
+(ros::load-ros-manifest "std_srvs")
+(ros::wait-for-service "after_stow_data_collection/save_request")
+(setq req (instance std_srvs::TriggerRequest :init))
+
+
+(defun rossrv-test ()
+  (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
+  )
+
+(defun look-at-arrow ()
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :head :look-at (send (send *arrow* :copy-worldcoords) :worldpos))
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
+  )
+
+
 ;; cut funcs
 (defun set-carrot-cut (&rest args &key (w 160) (l 40) (h 40) &allow-other-keys)
   
@@ -256,6 +275,8 @@
 
   (send *ri* :start-grasp :larm :wait t :gain 0.05)  
  
+  (look-at-left-hand)
+  (rossrv-test)
   (warn "please run  (set-knife-hor) ~%")
   )
 
@@ -698,7 +719,10 @@
   ;;調整
   ;; (send *arrow* :translate #f(0 10 0))
   (send *arrow* :translate (float-vector 0 adj 0))
-
+  
+  (look-at-arrow)
+  (rossrv-test)
+  
   ;; 少し上にするために
   (setq offset 50)
  
@@ -763,6 +787,8 @@
   (send *ri* :wait-interpolation)
 
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))  
+  
+  (rossrv-test)
   
   (warn "you can retry (cut-test), (continue-cut 4) or you want to finish please run (finish-pose)  ~%")
   (warn "or please run (set-cut-2) ~%")

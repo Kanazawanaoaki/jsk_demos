@@ -421,9 +421,9 @@
   (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
   )
 
-(defun look-at-left-hand ()
+(defun look-at-arrow ()
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-  (send *pr2* :head :look-at (send (send (send *pr2* :larm :end-coords) :copy-worldcoords) :worldpos))
+  (send *pr2* :head :look-at (send (send *arrow* :copy-worldcoords) :worldpos))
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
   (send *ri* :wait-interpolation)
@@ -540,9 +540,6 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
-  (look-at-left-hand)
-  (rossrv-test)
-  
   (send *arrow* :newcoords (send *kp* :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 (* *cut-height* 1)))
   
@@ -551,6 +548,9 @@
 
   ;; 少し上にするために
   (setq offset 50)
+  
+  (look-at-arrow)
+  (rossrv-test)
   
   (send *arrow* :translate (float-vector 0 0 offset))  
   (send *pr2* :rarm :inverse-kinematics
