@@ -98,6 +98,14 @@
   (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
   )
 
+(defun look-at-left-hand ()
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :head :look-at (send (send (send *pr2* :larm :end-coords) :copy-worldcoords) :worldpos))
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
+  )
+
 
 
 (print 3)
@@ -302,11 +310,9 @@
   (warn "please run (peel-test) ~%")
   )
 
-(defun peel-test ()
-  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-  (send *pr2* :head :look-at (send (send (send *pr2* :larm :end-coords) :copy-worldcoords) :worldpos))
-  (send *ri* :angle-vector (send *pr2* :angle-vector))
-
+(defun peel-test ()  
+  (look-at-left-hand)
+  
   ;; 右手を上げる
   (setq *c* (make-coords))
   (send *c* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
@@ -437,6 +443,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
+  (look-at-left-hand)
   (rossrv-test)
   (warn "please run  (set-potato-1-2) ~%")  
   )
@@ -474,6 +481,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
+  (look-at-left-hand)
   (rossrv-test)
   (warn "please run  (peel-test-2) ~%")  
   )
@@ -496,6 +504,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
+  (look-at-left-hand)
   (rossrv-test)
   (warn "please run  (peel-test-3) ~%")  
   )
@@ -518,6 +527,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
+  (look-at-left-hand)
   (rossrv-test)
   (warn "please run  (peel-test-4) ~%")  
   )
@@ -540,6 +550,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
+  (look-at-left-hand)
   (rossrv-test)
   (warn "please run  (peel-test-5) ~%")  
   )
@@ -562,6 +573,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
+  (look-at-left-hand)
   (rossrv-test)
   (warn "please run  (peel-test-6) ~%")  
   )
@@ -584,6 +596,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
+  (look-at-left-hand)
   (rossrv-test)
   (warn "please run  (peel-test-7) ~%")  
   )
@@ -606,6 +619,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
+  (look-at-left-hand)
   (rossrv-test)
   (warn "please run  (peel-test-8) ~%")  
   )

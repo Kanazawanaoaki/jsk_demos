@@ -410,6 +410,26 @@
     )
   )
 
+
+;; add for rosservice
+(ros::load-ros-manifest "std_srvs")
+(ros::wait-for-service "after_stow_data_collection/save_request")
+(setq req (instance std_srvs::TriggerRequest :init))
+
+
+(defun rossrv-test ()
+  (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
+  )
+
+(defun look-at-left-hand ()
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :head :look-at (send (send (send *pr2* :larm :end-coords) :copy-worldcoords) :worldpos))
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
+  )
+
+
 ;; cut funcs
 (defun set-potato-cut (&rest args &key (w 160) (l 40) (h 40) &allow-other-keys)
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/potato-new-type.l")
@@ -430,7 +450,7 @@
   (warn "please run (grasp-potato) ~%")
   )
 
-(defun grasp-potato ()
+(defun grasp-potato ()  
   ;;少し上に
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 250) :world)
@@ -485,7 +505,9 @@
   (send *ri* :start-grasp :larm :wait t)
 
   (send *ri* :start-grasp :larm :wait t :gain 0.05)  
- 
+
+  (look-at-left-hand)
+  (rossrv-test)
   (warn "please run  (set-knife-hor) ~%")
   )
 
@@ -517,6 +539,9 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
+  
+  (look-at-left-hand)
+  (rossrv-test)
   
   (send *arrow* :newcoords (send *kp* :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 (* *cut-height* 1)))
@@ -587,7 +612,9 @@
   (send *ri* :angle-vector-sequence avs tms)
   (send *ri* :wait-interpolation)
 
-  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))  
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+
+  (rossrv-test)
   
   (warn "you can retry (cut-test), (continue-cut 4) or you want to finish please run (finish-pose)  ~%")
   )
