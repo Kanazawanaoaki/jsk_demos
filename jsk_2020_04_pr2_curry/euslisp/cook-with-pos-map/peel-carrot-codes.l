@@ -70,7 +70,7 @@
   (send *carrot* :newcoords (send *obj-coord* :copy-worldcoords))
   (send *carrot* :rotate (deg2rad 180) :x)
   
-  (objects (list *potato* *pr2* *cutting-board* *scene*))
+  (objects (list *carrot* *pr2* *cutting-board* *scene*))
   (send *irtviewer* :look-all
     (geo::make-bounding-box 
      (flatten (send-all (send *pr2* :bodies) :vertices))))

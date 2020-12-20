@@ -632,6 +632,7 @@
   (:push-500w-button
    (&optional (wait? nil))
    (send *pr2* :reset-pose)
+   (send *pr2* :head :neck-p :joint-angle 28)
    (send *pr2* :start-grasp :rarm)
    (send *ri* :start-grasp :rarm)
 
@@ -643,6 +644,7 @@
 
    (progn   ;; reset-pose
      (send *pr2* :reset-pose)
+     (send *pr2* :head :neck-p :joint-angle 28)
      (if wait? (wait-enter))
      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
      (send *ri* :wait-interpolation)
@@ -652,6 +654,7 @@
   (:push-1min-button
    (&optional (wait? nil))
    (send *pr2* :reset-pose)
+   (send *pr2* :head :neck-p :joint-angle 28)
    (send *pr2* :start-grasp :rarm)
    (send *ri* :start-grasp :rarm)
 
@@ -663,6 +666,7 @@
    
    (progn   ;; reset-pose
      (send *pr2* :reset-pose)
+     (send *pr2* :head :neck-p :joint-angle 28)
      (if wait? (wait-enter))
      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
      (send *ri* :wait-interpolation)
@@ -672,6 +676,7 @@
   (:push-start-button
    (&optional (wait? nil))
    (send *pr2* :reset-pose)
+   (send *pr2* :head :neck-p :joint-angle 28)
    (send *pr2* :start-grasp :rarm)
    (send *ri* :start-grasp :rarm)
 
@@ -683,6 +688,7 @@
    
    (progn   ;; reset-pose
      (send *pr2* :reset-pose)
+     (send *pr2* :head :neck-p :joint-angle 28)
      (if wait? (wait-enter))
      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
      (send *ri* :wait-interpolation)

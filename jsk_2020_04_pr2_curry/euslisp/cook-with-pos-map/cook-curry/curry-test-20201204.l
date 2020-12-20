@@ -7,6 +7,11 @@
   (now-set-1)
   (now-set-2)
   
+  ;; まな板をセットする
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cutting-board-codes.l")
+  (update-pos)
+  (now-set-board)
+  
   ;; 道具３つをセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
@@ -41,7 +46,7 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cut-carrot-codes.l")
   (update-pos)
   (now-cut)
-
+  
   ;; 包丁を置く
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
@@ -241,16 +246,35 @@
   )
 
 
-(defun tmp-func () ;; 人参の下ごしらえ  
-  ;; コンロ操作をする 電源を入れるところから
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
+(defun tmp-func ()
+  ;; じゃがいもピーラーを掴む
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
-  (now-start-ih :deg -10)
-  
-  ;; かき混ぜる　ヘラは掴んでいる前提
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
+  (grasp-potato-peeler)
+
+  ;; じゃがいも皮剥き
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/peel-potato-codes.l")
   (update-pos)
-  (now-spatula-mix-loop :times 10)
+  (now-peel)
   
-  (warn " 加熱準備の準備（棚を開けられたら無くせる）をして please run (curry-3) ~%")
+  ;; じゃがいもピーラーを置いて包丁を掴む
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
+  (update-pos)
+  (put-potato-peeler)
+  (grasp-knife)
+
+  ;; じゃがいも切断
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cut-potato-codes.l")
+  (update-pos)
+  (now-cut-half)
+  (now-right-set)
+  (now-right-rotate)
+  (now-cut-right)
+  (now-left-rotate)
+  (now-cut-left)
+  
+  ;; 包丁を置く
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
+  (update-pos)
+  (put-knife)
   )

@@ -27,8 +27,6 @@
 (seasoning-init)
 
 (warn "If you use real robot, run (update-pos) ~%")
-(warn "please run (grasp-lever) ~%")
-
 
 ;; def util-funcs
 (defun reset-rarm ()
@@ -740,11 +738,11 @@
 ;; now funcs
 (defun now-devel ()
   (veg-pose)
-  (set-rcup)
   (now-transfer-vegs)
   )
 
 (defun now-transfer-vegs ()
+  (set-rcup)
   (transfer-cup-to-dish-set)
   (transfer-cup-to-dish)
   (after-cup-to-dish)

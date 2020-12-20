@@ -10,6 +10,17 @@
 
 (microwave-codes-init)
 
+;; add for rosservice
+(ros::load-ros-manifest "std_srvs")
+(ros::wait-for-service "after_stow_data_collection/save_request")
+(setq req (instance std_srvs::TriggerRequest :init))
+
+
+(defun rossrv-test ()
+  (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
+  )
+
+
 (defun recieve-sato ()
   (send *ri* :stop-grasp :rarm :wait t)
   
@@ -55,10 +66,15 @@
   
   ;; push button
   (send *pmi* :push-500w-button)
+  (rossrv-test)
   (send *pmi* :push-1min-button)
+  (rossrv-test)
   (send *pmi* :push-1min-button)
+  (rossrv-test)
   (send *pmi* :push-1min-button)
+  (rossrv-test)
   (send *pmi* :push-start-button)
+  (rossrv-test)
   
   ;; wait for heating
   (unix::sleep (* 3 60))
@@ -67,6 +83,18 @@
   (send *pmi* :open-microwave)
   (send *pmi* :kanazawa-take-object)
   (send *pmi* :close-microwave)
+  )
+
+(defun button-test ()
+  ;; push button
+  (send *pmi* :push-500w-button)
+  (rossrv-test)
+  (send *pmi* :push-1min-button)
+  (rossrv-test)
+  (send *pmi* :push-1min-button)
+  (rossrv-test)
+  (send *pmi* :push-start-button)
+  (rossrv-test)
   )
 
 (defun tmp-test ()

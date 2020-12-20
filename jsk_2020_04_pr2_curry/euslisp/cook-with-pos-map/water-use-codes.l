@@ -206,7 +206,7 @@
   (send *arrow* :translate #f(0 100 0) :world)
   (send *pr2* :larm :inverse-kinematics
       (send *arrow* :copy-worldcoords)
-    :move-target (elt (send *mcup* :attention) 1)
+      :move-target (elt (send *mcup* :attention) 1)
       :rotation-axis t
       :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
@@ -399,6 +399,8 @@
   (water-on)
   
   ;; 本当はここで認識をする
+  (unix:sleep 3)
+  
   (water-off)
   (release-lever)
   
