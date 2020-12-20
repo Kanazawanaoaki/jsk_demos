@@ -1244,6 +1244,29 @@
   (wait-pose-ladle)
   )
 
+(defun spatula-mix-rotate-loop (&rest args &key (times 10) &allow-other-keys)
+  (look-at-pot)
+  (rossrv-test)
+  (wait-pose-spatula)
+  (dotimes (i times)
+    (rotate-mix-with-spatula)
+    )
+  (wait-pose-spatula)
+  (rossrv-test)
+  )
+
+(defun ladle-mix-rotate-loop (&rest args &key (times 10) &allow-other-keys)
+  (look-at-pot)
+  (rossrv-test)
+  (wait-pose-ladle)
+  (dotimes (i times)
+    (rotate-mix-with-ladle)
+    )
+  (wait-pose-ladle)
+  (rossrv-test)
+  )
+
+
 (defun now-spatula-mix-loop (&rest args &key (times 10) &allow-other-keys)
   ;; ヘラでtims回かき混ぜる動作 ヘラは掴んでいる前提
   (grasp-pot-from-below)
@@ -1266,6 +1289,28 @@
   (release-pot-from-below)
   )
 
+(defun now-spatula-mix-rotate-loop (&rest args &key (times 10) &allow-other-keys)
+  ;; ヘラでtims回かき混ぜる動作 ヘラは掴んでいる前提
+  (grasp-pot-from-below)
+  (look-at-pot)
+  (set-spatula)
+  (mix-with-spatula-set)
+  (spatula-mix-rotate-loop :times times)
+  (avoid-rarm-spatula)
+  (release-pot-from-below)
+  )
+
+(defun now-ladle-mix-rotate-loop (&rest args &key (times 10) &allow-other-keys)
+  ;; おたまでtims回かき混ぜる動作 へらは掴んでいる前提
+  (set-ladle)
+  (grasp-pot-from-below)
+  (look-at-pot)
+  (mix-with-ladle-set)
+  (ladle-mix-rotate-loop :times times)
+  (avoid-rarm-ladle)
+  (release-pot-from-below)
+  )
+
 
 (defun now-knob (&rest args &key (deg -70) &allow-other-keys)
   ;;つまみが出ている状態で調節する
@@ -1274,6 +1319,7 @@
   (grasp-knob) ;;つまみを掴む
   (rotate-knob :deg 30) ;;時計回りにdeg度つまみを回す
   (rotate-knob :deg deg) ;;時計回りにdeg度つまみを回す
+  (rossrv-test)
   (release-knob) ;;つまみを離す
   )
 
