@@ -3,7 +3,7 @@
   
   <arg name="manager" default="pr2_cutting_board_nodelet_manager" />
   <arg name="rosbag" default="false" />
-
+  
   <arg name="run_decompress" value="false" if="$(arg rosbag)" />
   <arg name="RGB_CAMERA_INFO" value="/kinect_head/rgb/throttled/camera_info" if="$(arg rosbag)" />
   <arg name="RGB_IMAGE" value="/kinect_head/rgb/throttled/image_rect_color" if="$(arg rosbag)" />
@@ -13,7 +13,7 @@
   <arg name="DEPTH_REMOTE_IMAGE" value="/kinect_head/depth_registered/throttled/image_rect" if="$(arg rosbag)" />
   <arg name="CLOUD" value="/kinect_head/depth_registered/throttled/points" if="$(arg rosbag)" />
   <arg name="CLOUD_INFO" value="/kinect_head/depth_registered/throttled/camera_info" if="$(arg rosbag)" />
-
+  
   <arg name="run_decompress" value="true" unless="$(arg rosbag)" />
   <arg name="RGB_CAMERA_INFO" value="/kinect_head/rgb/camera_info" unless="$(arg rosbag)" />
   <arg name="RGB_IMAGE" value="/kinect_head/rgb/image_rect_color" unless="$(arg rosbag)" />
