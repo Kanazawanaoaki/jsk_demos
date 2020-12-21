@@ -1496,12 +1496,12 @@
   (open-shelf-set)
   (open-shelf)
   (after-open)
-
+  
   (receive-spatula)
   (put-spatula-0)
   (receive-ladle)
   (put-ladle-0)
-
+  
   (close-shelf-set)
   (close-shelf)
   (after-close)
