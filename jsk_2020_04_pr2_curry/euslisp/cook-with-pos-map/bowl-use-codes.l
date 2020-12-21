@@ -9,7 +9,7 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/measuring-cup-73b2.l")
   (setq *mcup* (measuring-cup-73b2))
   (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
-    
+  
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-1.l")
   (setq *bowl-1* (bowl-1))
   (send *bowl-1* :newcoords (send *bowl-1-coords* :copy-worldcoords))

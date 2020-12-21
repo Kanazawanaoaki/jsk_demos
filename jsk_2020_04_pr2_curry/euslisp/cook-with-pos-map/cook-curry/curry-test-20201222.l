@@ -1,6 +1,6 @@
 (warn "please run (curry-0) ~%")
 
-(defun curry-0 () ;; 非加熱調理の準備
+(defun curry-0 () ;; 最初の準備
   ;; 棚の中にヘラとおたまをセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
@@ -9,8 +9,12 @@
   ;; ボウルをセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
   (update-pos)
-  (now-set-1)
-  (now-set-2)
+  ;; (now-set-1)
+  ;; (now-set-2)
+  (now-set-1-model)
+  (now-set-2-model)
+  (now-set-3-model)
+  (now-set-4-model)
   
   ;; ;; まな板をセットする
   ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cutting-board-codes.l")
@@ -58,7 +62,8 @@
   
   ;; ボウル１に移す動作
   (load "package://jsk_2020_04_pr2_curry/euslisp/kitchen-move/transfer-vegs/transfer-test-with-rec.l")
-  (now-transfer-bowl-1)
+  ;; (now-transfer-bowl-1)
+  (now-transfer-bowl-1-model)
   
   (warn "じゃがいもを洗ってセットして please run (curry-2) ~%")
   )
@@ -99,7 +104,7 @@
   
   ;; ボウル１に移す動作
   (load "package://jsk_2020_04_pr2_curry/euslisp/kitchen-move/transfer-vegs/transfer-test-with-rec.l")
-  (now-transfer-bowl-1)  
+  (now-transfer-bowl-1-model)  
   
   (warn " 加熱準備の準備（棚を開けられたら無くせる）をして please run (curry-3) ~%")
   )
@@ -108,15 +113,17 @@
   ;; ボウルをセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
   (update-pos)
-  (switch-bowl-2) ;; ボウル２をまな板の上に
-  (now-set-3) ;; ボウル３をセットする
-  (now-set-4) ;; ボウル４をセットする
+  (switch-bowl-2-model) ;; ボウル２をまな板の上に
+  ;; (switch-bowl-2) ;; ボウル２をまな板の上に
+  ;; (now-set-3) ;; ボウル３をセットする
+  ;; (now-set-4) ;; ボウル４をセットする
   
-  ;; ヘラとおたまを置く 
+  ;; ヘラとおたまを棚から取り出す 
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
-  (now-set-spatula-1)
-  (now-set-ladle-1)
+  ;; (now-set-spatula-1)
+  ;; (now-set-ladle-1)
+  (now-set-from-shelf)
   
   (warn "玉ねぎをセットして　please run (curry-4) ~%")
   )
@@ -126,19 +133,25 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
   (update-pos)
   (grasp-spatula) ;; ヘラを掴む
-  (now-transfer-2)
+  ;; (now-transfer-2)
+  (now-transfer-2-model)
   
   ;; コンロ操作をする 電源を入れるところから
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
   (update-pos)
   (now-on-stove)
-  (now-start-ih :deg -10)
+  ;; (now-start-ih :deg -10)
+  (now-start-ih :deg -30) ;; 中火にする
   
   ;; かき混ぜる　ヘラは掴んでいる前提
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
   (update-pos)
   ;; (now-spatula-mix)
-  (now-spatula-mix-loop :times 10)
+  
+  (now-start-spatula-mix)
+  (spatula-mix-rotate-loop :times 10)
+
+  ;; 認識を入れて，条件を達成するまで(spatula-mix-rotate-loop :times 10)を繰り返して，(push-knob) (after-spatula-mix)
   
   (warn " 玉ねぎを炒めて確認し，肉をセットして please run (curry-5) ~%")
   )
@@ -152,18 +165,24 @@
   ;; ボウル４を鍋に移す ヘラは掴んでいる前提
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
   (update-pos)
-  (now-transfer-4) ;; ヘラは掴んでいる前提
+  ;; (now-transfer-4) ;; ヘラは掴んでいる前提
+  (now-transfer-4-model) ;; ヘラは掴んでいる前提
   
   ;; コンロ操作をする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
   (update-pos)
-  (now-start-ih :deg -10)
+  ;; (now-start-ih :deg -10)
+  (now-start-ih :deg -30) ;; 中火にする
   
   ;; かき混ぜる ヘラは掴んでいる前提
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
   (update-pos)
   ;; (now-spatula-mix)
-  (now-spatula-mix-loop :times 10)
+  
+  (now-start-spatula-mix)
+  (spatula-mix-rotate-loop :times 10)
+  
+  ;; 認識を入れて，条件を達成するまで(spatula-mix-rotate-loop :times 10)を繰り返して， (push-knob) (after-spatula-mix)
   
   (warn "肉を炒めて確認して please run (curry-6) ~%")
   )
@@ -188,9 +207,19 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
   (update-pos)
   (grasp-ladle) ;; おたまを掴む 
-  (now-start-ih :deg -30) ;; コンロ操作
+  
+  (now-start-ih :deg -50) ;; 弱火にする
   ;; (now-ladle-mix) ;; おたまで混ぜる
-  (now-ladle-mix-loop :times 10) ;; おたまで10回混ぜる
+  
+  ;; 沸騰するまで見る等をする？
+  (look-at-pot)
+  (dotimes (i 5)
+    (unix:sleep 20)
+    (rossrv-test)
+    )
+
+  ;; 沸騰したら灰汁を取る？
+  
   
   (warn "灰汁を取るなどをしながら，カレールーを入れるタイミングで please run (curry-8) ~%")
   )
@@ -200,7 +229,7 @@
   ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
   ;; (update-pos)
   ;; (push-knob)
-
+  
   ;; ボウル３を鍋に移す 途中でおたまからヘラに持ち替える
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
   (update-pos)
@@ -208,14 +237,19 @@
   (grasp-spatula)
   (now-transfer-3)
   (put-spatula-1)
-
+  
   ;; おたまを掴む，コンロ操作，おたまで混ぜる．
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
   (update-pos)
   (grasp-ladle) ;; おたまを掴む 
-  (now-start-ih :deg -50) ;; コンロ操作
+  (now-start-ih :deg -50) ;; 弱火にする
   ;; (now-ladle-mix) ;; おたまで混ぜる
-  (now-ladle-mix-loop :times 10) ;; おたまで10回混ぜる
+
+  
+  (now-start-ladle-mix)
+  (ladle-mix-rotate-loop :times 10)
+  
+  ;; ここは時間で良さそう 時間が立ったら (push-knob) (after-ladle-mix)
   
   (warn "完成するまで混ぜたり様子をみたりする ~%")
   )

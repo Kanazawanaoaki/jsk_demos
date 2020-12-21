@@ -1312,6 +1312,33 @@
   )
 
 
+
+(defun now-start-spatula-mix ()
+  (grasp-pot-from-below-model)
+  (look-at-pot)
+  (set-spatula)
+  (mix-with-spatula-set)
+  )
+
+(defun after-spatula-mix ()
+  (avoid-rarm-ladle)
+  (release-pot-from-below-model)
+  )
+
+(defun now-start-ladle-mix ()
+  (grasp-pot-from-below-model)
+  (look-at-pot)
+  (set-ladle)
+  (mix-with-ladle-set)
+  )
+
+(defun after-ladle-mix ()
+  (avoid-rarm-ladle)
+  (release-pot-from-below-model)
+  )
+
+
+
 (defun now-knob (&rest args &key (deg -70) &allow-other-keys)
   ;;つまみが出ている状態で調節する
   (look-at-ih-panel)
