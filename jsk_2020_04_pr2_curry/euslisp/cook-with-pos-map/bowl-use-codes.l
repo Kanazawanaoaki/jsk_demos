@@ -67,6 +67,23 @@
         (format t "x: ~A ~%" x))
       )))
 
+;; add for rosservice
+(ros::load-ros-manifest "std_srvs")
+(ros::wait-for-service "after_stow_data_collection/save_request")
+(setq req (instance std_srvs::TriggerRequest :init))
+
+
+(defun rossrv-test ()
+  (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
+  )
+
+(defun look-at-arrow ()
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :head :look-at (send (send *arrow* :copy-worldcoords) :worldpos))
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
+  )
 
 (warn "If you use real robot, run (update-pos) ~%")
 (warn "please run (now-set-bowls) or (set-bowl-1) ~%")
@@ -1592,16 +1609,20 @@
   (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
   (send *arrow* :translate #f(0 -50 120) :world)
   (send *arrow* :rotate (deg2rad -90) :z :world)
+
+  (look-at-arrow)
   
   (send *pr2* :larm :inverse-kinematics
-    (send *arrow* :copy-worldcoords)
-    :move-target (send *bowl-1* :attention-attention0)
-    :rotation-axis t
-    :debug-view *debug-flag*)
+        (send *arrow* :copy-worldcoords)
+        :move-target (send *bowl-1* :attention-attention0)
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
+  
+
   (warn "please run (after-transfer) ~%")  
   )
 
@@ -1614,6 +1635,8 @@
   (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
   (send *arrow* :translate #f(0 -50 120) :world)
   (send *arrow* :rotate (deg2rad -90) :z :world)
+
+  (look-at-arrow)
   
   (send *pr2* :larm :inverse-kinematics
     (send *arrow* :copy-worldcoords)
@@ -1637,6 +1660,8 @@
   (send *arrow* :translate #f(0 -50 120) :world)
   (send *arrow* :rotate (deg2rad -90) :z :world)
   
+  (look-at-arrow)
+  
   (send *pr2* :larm :inverse-kinematics
     (send *arrow* :copy-worldcoords)
     :move-target (send *bowl-3* :attention-attention0)
@@ -1659,6 +1684,8 @@
   (send *arrow* :translate #f(0 -50 120) :world)
   (send *arrow* :rotate (deg2rad -90) :z :world)
   
+  (look-at-arrow)
+
   (send *pr2* :larm :inverse-kinematics
     (send *arrow* :copy-worldcoords)
     :move-target (send *bowl-4* :attention-attention0)
@@ -1876,6 +1903,9 @@
   (set-spatula) ;; ヘラは掴んでいる想定で行う
   (squeeze-test-set)
   (squeeze-test)
+
+  (rossrv-test)
+  
   (avoid-rarm)
   
   (after-transfer)
@@ -1890,6 +1920,9 @@
   (set-spatula) ;; ヘラは掴んでいる想定で行う
   (squeeze-test-set)
   (squeeze-test)
+
+  (rossrv-test)
+  
   (avoid-rarm)
   
   (after-transfer)
@@ -1904,6 +1937,9 @@
   (set-spatula) ;; ヘラは掴んでいる想定で行う
   (squeeze-test-set)
   (squeeze-test)
+
+  (rossrv-test)
+  
   (avoid-rarm)
   
   (after-transfer-left)
@@ -1918,6 +1954,9 @@
   (set-spatula) ;; ヘラは掴んでいる想定で行う
   (squeeze-test-set)
   (squeeze-test)
+
+  (rossrv-test)
+  
   (avoid-rarm)
   
   (after-transfer-left)
