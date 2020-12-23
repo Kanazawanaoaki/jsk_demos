@@ -28,7 +28,7 @@
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
   (send *pr2* :head :look-at (send (send *curry-dish* :copy-worldcoords) :worldpos))
   (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
   )
 
@@ -177,6 +177,15 @@
   (send *ri* :wait-interpolation)
   
   ;; avoid-pose的な姿勢になる．
+  (send *arrow* :newcoords (make-coords :pos (float-vector 628.029 8528.539 31050.217) :rpy (float-vector -3.14 0.18 -0.086)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (elt (send *ladle* :attention) 1)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
   )
 
 ;; サトウのごはん
@@ -197,22 +206,57 @@
 
 
 (defun recieve-sato-rice ()
+  ;;少し上に
+  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 250) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis nil
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  ;;少し前に
+  ;; (send *pr2* :larm :angle-vector #f(30.046 -16.1647 77.4608 -67.7082 57.0472 -86.8259 -43.9204))
+  (send *arrow* :newcoords (make-coords :pos (float-vector 600.0 8061.0 31167.0) :rpy (float-vector 1.571 1.047 1.571)))
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (send *arrow* :newcoords (make-coords :pos (float-vector 557.0 8315.0 31125.0) :rpy (float-vector 2.356 0.785 1.571)))
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
   )
 
 (defun transfer-sato-set ()
   
+  
   )
 
 (defun squeeze-sato-set ()
+  
   )
 
 (defun squeeze-sato ()
+  
   )
 
 (defun avoid-spatula-sato ()
+  
   )
 
 (defun after-sato ()
+  
   )
 
 

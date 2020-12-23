@@ -28,7 +28,7 @@
      ;; definition of joint
      
      ;; definition of :handle
-     (setq handle0 (make-cascoords :pos #f(57 -75 35) :rpy #f(2.356 0.785 0.0) :name "handle0"))
+     (setq handle0 (make-cascoords :pos #f(57 -75 35) :rpy #f(2.356 0.785 1.571) :name "handle0"))
      (send link1 :assoc handle0)
      
      ;; definition of :attention
