@@ -554,11 +554,12 @@
   (send *ri* :wait-interpolation)
   
   ;; サトウのごはんを置く位置
-  (send *arrow* :newcoords (send *sato-rice-coords* :copy-worldcoords))
+  (if (not (eql (send *sato-rice* :parent) nil))
+      (send (send *sato-rice* :parent) :dissoc *sato-rice*))
+  (send *sato-rice* :newcoords (send *sato-rice-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *sato-rice* :handle-handle0) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
-  
-  (put-obj-larm)  
-  
+  (put-obj-larm)
   )
 
 
@@ -606,7 +607,6 @@
   (transfer-curry-set)
   (transfer-curry)
   )
-
 
 (defun now-arrange-sato ()
   (recieve-sato-rice)

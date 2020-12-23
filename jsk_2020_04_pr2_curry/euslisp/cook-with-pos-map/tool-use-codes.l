@@ -533,27 +533,23 @@
   )
 
 (defun put-ladle-a ()  
-  (send *pr2* :larm :angle-vector #f(117.007 48.3805 113.439 -103.326 38.7107 -5.72958 14.4628))
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)
-  
   (send *arrow* :newcoords (send *ladle-coords-a* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad -90) :x)
   
   (send *arrow* :translate #f(60 0 100) :world)
   (send *pr2* :rarm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:rotation-axis t
-	:debug-view *debug-flag*)
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
   (send *arrow* :translate #f(-60 0 -100) :world)  
   (send *pr2* :rarm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:rotation-axis t
-	:debug-view *debug-flag*)
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -566,9 +562,9 @@
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 100) :world)
   (send *pr2* :rarm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:rotation-axis t
-	:debug-view *debug-flag*)
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -577,9 +573,9 @@
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(60 100 170) :world)
   (send *pr2* :rarm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:rotation-axis t
-	:debug-view *debug-flag*)
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)  
@@ -589,9 +585,9 @@
   ;; 中間姿勢になる
   (send *arrow* :newcoords (make-coords :pos (float-vector 570 8500 31100) :rpy (float-vector 3.14 0.0 0.0)))
   (send *pr2* :rarm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:rotation-axis t
-	:debug-view *debug-flag*)
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -610,22 +606,22 @@
   
   (send *arrow* :translate (float-vector 100 0 -100) :world)
   (send *pr2* :rarm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:rotation-axis t
-	:debug-view *debug-flag*)
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
   (send *arrow* :translate (float-vector 0 0 100) :world)
   (send *pr2* :rarm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:rotation-axis t
-	:debug-view *debug-flag*)
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
-
+  
   ;; ノブのところまで手を伸ばす 力覚を入れても良い．
   (setq avs (list))
   (setq tms (list))
