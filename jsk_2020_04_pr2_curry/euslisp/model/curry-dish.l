@@ -56,11 +56,8 @@
 
      self))
 
-  (:handle (&rest args) (forward-message-to-all (list  handle0) args))
-  (:handle-handle0 (&rest args) (forward-message-to handle0 args))
-  (:attention (&rest args) (forward-message-to-all (list  attention0 attention1) args))
+  (:attention (&rest args) (forward-message-to-all (list  attention0) args))
   (:attention-attention0 (&rest args) (forward-message-to attention0 args))
-  (:attention-attention1 (&rest args) (forward-message-to attention1 args))
   )
 
 (defun curry-dish (&rest args) (instance* curry-dish-object :init args))

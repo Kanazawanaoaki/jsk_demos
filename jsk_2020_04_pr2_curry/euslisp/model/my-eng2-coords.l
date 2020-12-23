@@ -14,9 +14,12 @@
 (setq *ladle-coords-1* (make-coords :pos (float-vector 599 8313 30877) :rpy (float-vector 3.128 -0.098 1.514))) ;; おたま，平置き
 
 ;; (setq *spatula-coords-0* (make-coords :pos (float-vector 340 8739 31450) :rpy (float-vector -3.14 -0.008 1.529))) ;; ヘラ，棚の中
-(setq *spatula-coords-0* (make-coords :pos (float-vector 340 8705 31450) :rpy (float-vector -3.14 -0.008 1.529))) ;; ヘラ，棚の中
+(setq *spatula-coords-0* (make-coords :pos (float-vector 340 8720 31450) :rpy (float-vector -3.14 -0.008 1.529))) ;; ヘラ，棚の中
 ;; (setq *ladle-coords-0* (make-coords :pos (float-vector 346 8637 31450) :rpy (float-vector -3.14 -0.008 1.529))) ;; おたま，棚の中
-(setq *ladle-coords-0* (make-coords :pos (float-vector 346 8600 31460) :rpy (float-vector -3.14 -0.008 1.529))) ;; おたま，棚の中
+(setq *ladle-coords-0* (make-coords :pos (float-vector 346 8620 31460) :rpy (float-vector -3.14 -0.008 1.529))) ;; おたま，棚の中
+
+(setq *spatula-coords-a* (make-coords :pos (float-vector 592 8900 30872) :rpy (float-vector 3.084 -0.042 1.542))) ;; ヘラ，盛り付け時
+(setq *ladle-coords-a* (make-coords :pos (float-vector 599 8700 30877) :rpy (float-vector 3.128 -0.098 1.514))) ;; おたま，盛り付け時
 
 
 ;; kitchenware coords
@@ -36,6 +39,7 @@
 (setq *oil-dispenser-coords* (make-coords :pos (float-vector 300 8280 30845) :rpy (float-vector 3.14 0.0 0.0)))
 
 (setq *curry-dish-coords* (make-coords :pos (float-vector 520 8440 30840) :rpy (float-vector 0 0 0)))
+(setq *sato-rice-coords* (make-coords :pos (float-vector 300 8390 30840) :rpy (float-vector 0 0 0)))
 
 (setq *solt-coords* (make-coords :pos (float-vector 2500 8788 30910) :rpy (float-vector 0 0 0)))
 (setq *dispenser-coords* (make-coords :pos (float-vector 2500 8676 30900) :rpy (float-vector 0 0 0)))

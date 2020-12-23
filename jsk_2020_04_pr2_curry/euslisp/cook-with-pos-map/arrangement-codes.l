@@ -7,10 +7,16 @@
   (setq *curry-dish* (curry-dish))
   (send *curry-dish* :newcoords (send *curry-dish-coords* :copy-worldcoords))
   
+  (load "package://jsk_2020_04_pr2_curry/euslisp/model/sato-rice.l")
+  (setq *sato-rice* (sato-rice))
+  (send *sato-rice* :newcoords (send *sato-rice-coords* :copy-worldcoords))
+  
+  (send *spatula* :newcoords (send *spatula-coords-a* :copy-worldcoords))
+  (send *ladle* :newcoords (send *ladle-coords-a* :copy-worldcoords))
+  
   ;; def global coords
-
   (move-to-arrange-irt)
-  (objects (list *pr2* *scene* *spatula* *ladle* *pot* *curry-dish*))
+  (objects (list *pr2* *scene* *spatula* *ladle* *pot* *curry-dish* *sato-rice*))
   (update-view)
   )
 
@@ -52,13 +58,9 @@
 
 (defun scoop-up-curry-2 ()
   ;; (send *arrow* :newcoords (make-coords :pos (float-vector 420 8065 30870) :rpy (float-vector -1.525 0.066 -0.424)))
-
   ;; (send *arrow* :newcoords (make-coords :pos (float-vector 473.293 8060.197 30859.318) :rpy (float-vector -0.608 0.452 -0.756)))
-  
   ;; (send *arrow* :translate #f(0 0 -20) :world)
-
-  (send *arrow* :translate #f(40 60 0) :world)
-  
+  (send *arrow* :translate #f(40 60 0) :world)  
   (send *pr2* :rarm :inverse-kinematics  
         (send *arrow* :copy-worldcoords)
         :move-target (elt (send *ladle* :attention) 1)
@@ -148,10 +150,70 @@
     (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
     (send *ri* :wait-interpolation)
     )
-  (warn "please run (transfer-curry) ~%")
+  (warn "please run (after-transfer-curry) ~%")
   )
 
-;; TODO aftre-transfer-curry
+(defun after-transfer-curry ()
+  (send *pr2* :rarm :move-end-pos #f(0 0 100) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
+  
+  (setq avs (list))
+  (setq tms (list))
+  
+  (dotimes (i 3)
+    (send *pr2* :rarm :move-end-pos #f(-40 0 0) :world)
+    (setq av (send *pr2* :angle-vector))
+    (setq avs (append avs (list av)))
+    (setq tms (append tms (list 400)))
+    
+    (send *pr2* :rarm :move-end-pos #f(40 0 0) :world)
+    (setq av (send *pr2* :angle-vector))
+    (setq avs (append avs (list av)))
+    (setq tms (append tms (list 400)))
+    )
+  
+  (send *ri* :angle-vector-sequence avs tms)
+  (send *ri* :wait-interpolation)
+  
+  ;; avoid-pose的な姿勢になる．
+  )
+
+;; サトウのごはん
+(defun set-sato-rice ()
+  (if (not (eql (send *sato-rice* :parent) nil))
+      (send (send *sato-rice* :parent) :dissoc *sato-rice*))
+  (let (local-cds)
+    (setq local-cds (make-cascoords))
+    (send local-cds :newcoords (send *sato-rice* :copy-worldcoords))
+    (send local-cds :assoc *sato-rice*)
+    (send local-cds :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+    (send local-cds :dissoc *sato-rice*)
+    )
+  (send *sato-rice* :rotate (deg2rad 90) :x)
+  (send *viewer* :draw-objects)
+  (send (send *pr2* :larm :end-coords) :assoc *sato-rice*)
+  )
+
+
+(defun recieve-sato-rice ()
+  )
+
+(defun transfer-sato-set ()
+  
+  )
+
+(defun squeeze-sato-set ()
+  )
+
+(defun squeeze-sato ()
+  )
+
+(defun avoid-spatula-sato ()
+  )
+
+(defun after-sato ()
+  )
 
 
 
