@@ -1026,14 +1026,14 @@
   ;; 移し始める座標
   (send *arrow* :newcoords (make-coords :pos (float-vector 510 8100 31080) :rpy (float-vector 3.14 0 0)))
   (send *pr2* :larm :inverse-kinematics
-      (send *arrow* :copy-worldcoords)
-    :move-target (car (send *mcup* :attention))
-      :rotation-axis t
-      :debug-view *debug-flag*)
+	(send *arrow* :copy-worldcoords)
+	:move-target (car (send *mcup* :attention))
+	:rotation-axis t
+	:debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)  
-
+  
   ;; 傾けていく
   (setq avs (list))
   (setq tms (list))
@@ -1042,7 +1042,7 @@
     (send *arrow* :rotate (deg2rad 10) :y)
     (send *pr2* :larm :inverse-kinematics
           *arrow*
-      :move-target (car (send *mcup* :attention))
+	  :move-target (car (send *mcup* :attention))
           :rotation-axis t
           :debug-view nil)
     
@@ -1749,6 +1749,10 @@
   (set-spatula) ;; ヘラは掴んでいる想定で行う
   (squeeze-test-set)
   (squeeze-test)
+
+  ;; tmp
+  (rossrv-test)
+
   (avoid-rarm)
   
   (after-transfer)
@@ -1775,7 +1779,16 @@
 
 (defun now-transfer-2 ()
   (grasp-bowl-2-set)
+  ;; tmp
+  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
+  (send *arrow* :translate #f(0 -50 120) :world)
+  (send *arrow* :rotate (deg2rad -90) :z :world)
+  
+  (look-at-arrow)
+
   (now-transfer)
+
+  
   (put-bowl-2-set)
   (reset-larm)
   )

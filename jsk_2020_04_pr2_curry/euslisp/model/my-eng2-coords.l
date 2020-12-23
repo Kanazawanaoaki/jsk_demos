@@ -10,10 +10,13 @@
 (setq *knife-coords* (make-coords :pos (float-vector 580 8715 30857) :rpy (float-vector 3.14 0.073 1.498))) ;; 包丁
 (setq *peeler-coords* (make-coords :pos (float-vector 580 8815 30870) :rpy (float-vector 3.14 0.049 1.51))) ;; ピーラー
 (setq *potato-peeler-coords* (make-coords :pos (float-vector 580 8915 30865) :rpy (float-vector 3.14 0.013 1.545))) ;; じゃがいもピーラー
-(setq *spatula-coords-0* (make-coords :pos (float-vector 340 8739 31450) :rpy (float-vector -3.14 -0.008 1.529))) ;; ヘラ，棚の中
 (setq *spatula-coords-1* (make-coords :pos (float-vector 592 8549 30872) :rpy (float-vector 3.084 -0.042 1.542))) ;; ヘラ，平置き
-(setq *ladle-coords-0* (make-coords :pos (float-vector 346 8637 31450) :rpy (float-vector -3.14 -0.008 1.529))) ;; おたま，棚の中
 (setq *ladle-coords-1* (make-coords :pos (float-vector 599 8313 30877) :rpy (float-vector 3.128 -0.098 1.514))) ;; おたま，平置き
+
+;; (setq *spatula-coords-0* (make-coords :pos (float-vector 340 8739 31450) :rpy (float-vector -3.14 -0.008 1.529))) ;; ヘラ，棚の中
+(setq *spatula-coords-0* (make-coords :pos (float-vector 340 8705 31450) :rpy (float-vector -3.14 -0.008 1.529))) ;; ヘラ，棚の中
+;; (setq *ladle-coords-0* (make-coords :pos (float-vector 346 8637 31450) :rpy (float-vector -3.14 -0.008 1.529))) ;; おたま，棚の中
+(setq *ladle-coords-0* (make-coords :pos (float-vector 346 8600 31460) :rpy (float-vector -3.14 -0.008 1.529))) ;; おたま，棚の中
 
 
 ;; kitchenware coords
@@ -49,7 +52,8 @@
 (setq *shelf-door-coords* (make-coords :pos (float-vector 400 8835 31445) :rpy (float-vector 3.14 0 0)))
 
 ;; 水道
-(setq *fauset-lever-rarm-coords* (make-coords :pos (float-vector 227 9190 31014) :rpy (float-vector  -2.429 0.369 1.988))) ;; 水道のレバーを掴む座標
+;; (setq *fauset-lever-rarm-coords* (make-coords :pos (float-vector 227 9190 31014) :rpy (float-vector  -2.429 0.369 1.988))) ;; 水道のレバーを掴む座標
+(setq *fauset-lever-rarm-coords* (make-coords :pos (float-vector 220 9190 31014) :rpy (float-vector  -2.429 0.369 1.988))) ;; 水道のレバーを掴む座標
 
 ;; (setq *fauset-coords* (make-coords :pos (float-vector 358 9114 30900) :rpy (float-vector 3.14 0 0)))
 (setq *fauset-coords* (make-coords :pos (float-vector 350 9114 30900) :rpy (float-vector 3.14 0 0)))

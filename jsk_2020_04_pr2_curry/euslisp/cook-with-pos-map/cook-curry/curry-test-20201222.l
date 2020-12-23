@@ -61,9 +61,9 @@
   (put-knife)
   
   ;; ボウル１に移す動作
-  (load "package://jsk_2020_04_pr2_curry/euslisp/kitchen-move/transfer-vegs/transfer-test-with-rec.l")
-  ;; (now-transfer-bowl-1)
-  (now-transfer-bowl-1-model)
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/transfer-vegs-codes.l")
+  (update-pos)
+  (now-transfer-bowl-1)
   
   (warn "じゃがいもを洗ってセットして please run (curry-2) ~%")
   )
@@ -103,8 +103,9 @@
   (put-knife)
   
   ;; ボウル１に移す動作
-  (load "package://jsk_2020_04_pr2_curry/euslisp/kitchen-move/transfer-vegs/transfer-test-with-rec.l")
-  (now-transfer-bowl-1-model)  
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/transfer-vegs-codes.l")
+  (update-pos)
+  (now-transfer-bowl-1)
   
   (warn " 加熱準備の準備（棚を開けられたら無くせる）をして please run (curry-3) ~%")
   )
@@ -150,7 +151,7 @@
   
   (now-start-spatula-mix)
   (spatula-mix-rotate-loop :times 10)
-
+  
   ;; 認識を入れて，条件を達成するまで(spatula-mix-rotate-loop :times 10)を繰り返して，(push-knob) (after-spatula-mix)
   
   (warn " 玉ねぎを炒めて確認し，肉をセットして please run (curry-5) ~%")
@@ -180,7 +181,7 @@
   ;; (now-spatula-mix)
   
   (now-start-spatula-mix)
-  (spatula-mix-rotate-loop :times 10)
+  (spatula-mix-rotate-loop :times 5)
   
   ;; 認識を入れて，条件を達成するまで(spatula-mix-rotate-loop :times 10)を繰り返して， (push-knob) (after-spatula-mix)
   
@@ -198,6 +199,7 @@
   (update-pos)
   (now-transfer-1) ;; ヘラは掴んでいる前提
   (put-spatula-1)
+  (reset-rarm)
   
   (warn "水を組んで入れたら please run (curry-7) ~%")
   )
@@ -213,11 +215,14 @@
   
   ;; 沸騰するまで見る等をする？
   (look-at-pot)
-  (dotimes (i 5)
-    (unix:sleep 20)
+  (dotimes (i 10)
+    (unix:sleep 30)
+    (send *ri* :speak-jp "画像を記録します")
+    (unix:sleep 2)
     (rossrv-test)
+    (send *ri* :speak-jp "記録しました")
     )
-
+  
   ;; 沸騰したら灰汁を取る？
   
   
@@ -243,11 +248,16 @@
   (update-pos)
   (grasp-ladle) ;; おたまを掴む 
   (now-start-ih :deg -50) ;; 弱火にする
-  ;; (now-ladle-mix) ;; おたまで混ぜる
-
   
-  (now-start-ladle-mix)
-  (ladle-mix-rotate-loop :times 10)
+  (look-at-pot)
+  (rossrv-test)
+  
+  (now-ladle-mix) ;; おたまで混ぜる
+  
+  (rossrv-test)
+  
+  ;; (now-start-ladle-mix)
+  ;; (ladle-mix-rotate-loop :times 10)
   
   ;; ここは時間で良さそう 時間が立ったら (push-knob) (after-ladle-mix)
   
@@ -285,34 +295,16 @@
 
 
 (defun tmp-func ()
-  ;; じゃがいもピーラーを掴む
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
+  ;; かき混ぜる　ヘラは掴んでいる前提
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
   (update-pos)
-  (grasp-potato-peeler)
 
-  ;; じゃがいも皮剥き
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/peel-potato-codes.l")
-  (update-pos)
-  (now-peel)
-  
-  ;; じゃがいもピーラーを置いて包丁を掴む
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
-  (update-pos)
-  (put-potato-peeler)
-  (grasp-knife)
-
-  ;; じゃがいも切断
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cut-potato-codes.l")
-  (update-pos)
-  (now-cut-half)
-  (now-right-set)
-  (now-right-rotate)
-  (now-cut-right)
-  (now-left-rotate)
-  (now-cut-left)
-  
-  ;; 包丁を置く
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
-  (update-pos)
-  (put-knife)
+  (look-at-pot)
+  (dotimes (i 10)
+    (unix:sleep 30)
+    (send *ri* :speak-jp "画像を記録します")
+    (unix:sleep 2)
+    (rossrv-test)
+    (send *ri* :speak-jp "記録しました")
+    )
   )

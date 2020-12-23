@@ -608,14 +608,24 @@
   (warn "please run (mix-with-spatula) again or (wait-pose-spatula) ~%")
   )
 
-(defun rotate-mix-with-spatula ()
+(defun rotate-mix-with-spatula (&rest args &key (times 10) &allow-other-keys)
   ;; 最初の位置
+  (send *arrow* :newcoords (make-coords :pos (float-vector 461.01 8107.529 30992.813) :rpy (float-vector -2.023 0.672 0.059)))
+  (send *pr2* :rarm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:move-target (car (send *spatula* :attention))
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
   (send *arrow* :newcoords (make-coords :pos (send (send (send (send *pot* :attention-attention0) :copy-worldcoords) :translate #f(0 0 60) :world) :worldpos) :rpy (float-vector -2.288 0.713 0.075)))
   (send *pr2* :rarm :inverse-kinematics
-      (send *arrow* :copy-worldcoords)
-      :move-target (car (send *spatula* :attention))
-      :rotation-axis t
-      :debug-view *debug-flag*)
+	(send *arrow* :copy-worldcoords)
+	:move-target (car (send *spatula* :attention))
+	:rotation-axis t
+	:debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -657,10 +667,12 @@
     (send *arrow* :newcoords (make-coords :pos (send (send *cds1* :copy-worldcoords) :worldpos) :rpy *rpy1*))
     
     (setq ik-flag (send *pr2* :rarm :inverse-kinematics
-            (send *arrow* :copy-worldcoords)
-            :move-target (car (send *spatula* :attention))
-            :rotation-axis t
-            :debug-view nil))
+			(send *arrow* :copy-worldcoords)
+			:move-target (car (send *spatula* :attention))
+			:rotation-axis t
+			:debug-view nil
+			:stop 10)
+	  )
     (if (eql ik-flag nil)
     (progn
       (send *arrow* :newcoords (make-coords :pos (send (send *cds1* :copy-worldcoords) :worldpos) :rpy *rpy2*))
@@ -668,7 +680,9 @@
                   (send *arrow* :copy-worldcoords)
                   :move-target (car (send *spatula* :attention))
                   :rotation-axis t
-                  :debug-view nil))
+                  :debug-view nil
+		  :stop 10
+		  ))
       (if (eql ik-flag nil)
           (progn
         (send *pr2* :rarm :inverse-kinematics
@@ -684,18 +698,30 @@
     (setq avs (append avs (list av)))
     (setq tms (append tms (list 600)))
     )
-  
-  (send *ri* :angle-vector-sequence avs tms)
-  (send *ri* :wait-interpolation)
+
+  (dotimes (i times)
+    (send *ri* :angle-vector-sequence avs tms)
+    (send *ri* :wait-interpolation)
+    )
   
   (send *arrow* :newcoords (make-coords :pos (send (send (send (send *pot* :attention-attention0) :copy-worldcoords) :translate #f(0 0 60) :world) :worldpos) :rpy (float-vector -2.288 0.713 0.075)))
   (send *pr2* :rarm :inverse-kinematics
-      (send *arrow* :copy-worldcoords)
-      :move-target (car (send *spatula* :attention))
-      :rotation-axis t
-      :debug-view *debug-flag*)
+	(send *arrow* :copy-worldcoords)
+	:move-target (car (send *spatula* :attention))
+	:rotation-axis t
+	:debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  
+  (send *arrow* :newcoords (make-coords :pos (float-vector 461.01 8107.529 30992.813) :rpy (float-vector -2.023 0.672 0.059)))
+  (send *pr2* :rarm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:move-target (car (send *spatula* :attention))
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
   (print cnt0)
@@ -1248,9 +1274,7 @@
   (look-at-pot)
   (rossrv-test)
   (wait-pose-spatula)
-  (dotimes (i times)
-    (rotate-mix-with-spatula)
-    )
+  (rotate-mix-with-spatula :times times)
   (wait-pose-spatula)
   (rossrv-test)
   )
@@ -1321,7 +1345,7 @@
   )
 
 (defun after-spatula-mix ()
-  (avoid-rarm-ladle)
+  (avoid-rarm-spatula)
   (release-pot-from-below-model)
   )
 

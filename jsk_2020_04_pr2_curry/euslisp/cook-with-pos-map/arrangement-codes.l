@@ -17,6 +17,15 @@
 (arrangement-init)
 
 
+
+(defun look-at-dish ()
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :head :look-at (send (send *curry-dish* :copy-worldcoords) :worldpos))
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
+  )
+
 (defun scoop-up-curry-1 ()
   ;; (send *arrow* :newcoords (make-coords :pos (float-vector 391.83 8092.564 30820) :rpy (float-vector -1.135 0.805 -1.056)))
   (send *arrow* :newcoords (make-coords :pos (float-vector 426 8039 30834) :rpy (float-vector -0.74 0.613 -1.132)))
@@ -139,7 +148,11 @@
     (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
     (send *ri* :wait-interpolation)
     )
+  (warn "please run (transfer-curry) ~%")
   )
+
+;; TODO aftre-transfer-curry
+
 
 
 (defun tmp-set ()
@@ -166,6 +179,9 @@
   (scoop-up-curry)
   (carry-curry-set)
   (carry-curry)
+  
+  (look-at-dish)
+  
   (transfer-curry-set)
   (transfer-curry)
   )
