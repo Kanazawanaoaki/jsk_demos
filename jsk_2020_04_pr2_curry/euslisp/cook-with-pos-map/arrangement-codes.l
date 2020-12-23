@@ -596,6 +596,7 @@
   )
 
 (defun now-arrange-curry ()
+  (set-spatula)
   (scoop-up-curry)
   (carry-curry-set)
   (carry-curry)
@@ -604,4 +605,15 @@
   
   (transfer-curry-set)
   (transfer-curry)
+  )
+
+
+(defun now-arrange-sato ()
+  (recieve-sato-rice)
+  (transfer-sato-set)
+  (set-spatula)
+  (squeeze-sato-set)
+  (squeeze-sato)
+  (avoid-spatula-sato)
+  (after-sato)  
   )
