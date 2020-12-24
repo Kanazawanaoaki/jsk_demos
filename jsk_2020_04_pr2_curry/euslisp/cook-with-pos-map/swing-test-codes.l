@@ -50,6 +50,23 @@
   (print *data-list*)
   )
 
+(defun tool-grasp-swing (&rest args &key (times 10) &allow-other-keys)
+  (set-pose)
+  (setq *data-list* (list))
+  
+  ;; 開閉を繰り返す
+  (dotimes (i times)
+    (send *ri* :stop-grasp :rarm :wait t)
+    (send *ri* :speak-jp "包丁を握らせて下さい")
+    (unix:sleep *s-time*)
+    (send *ri* :start-grasp :rarm :wait t)
+    (setq data (send *ri* :state :gripper :rarm :position))
+    (setq *data-list* (append *data-list* (list data)))
+    )
+  
+  (print *data-list*)
+  )
+
 
 
 ;; knife swing
