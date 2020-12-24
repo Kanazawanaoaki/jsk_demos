@@ -21,11 +21,11 @@
     (let ((x nil))
       (setq x (send msg :wrench :force :x))
       (if (< x *x-thre*)
-      (progn 
+          (progn 
             (setq *cb-flag* t)
             (format t "OK!! x: ~A ~%" x)
             )
-    (format t "x: ~A ~%" x))
+        (format t "x: ~A ~%" x))
       )))
 
 (defclass pr2-microwave-interface
@@ -156,7 +156,7 @@
   (:update-microwave-pose
    ()
    (let ((local-cds)
-     (local-pos)
+         (local-pos)
          (microwave-cds (make-coords)))
      (send *microwave* :move-to (send *ri* :state :worldcoords) :world)
      (send *pr2* :move-to (send *ri* :state :worldcoords) :world)
@@ -564,11 +564,11 @@
        (setq tms (list))
        
        (dotimes (i 15)
-     (send *pr2* :rarm :move-end-pos #f(10 0 0) :world)
-     (setq av (send *pr2* :angle-vector))
-     (setq avs (append avs (list av)))
-     (setq tms (append tms (list 400)))
-     )
+         (send *pr2* :rarm :move-end-pos #f(10 0 0) :world)
+         (setq av (send *pr2* :angle-vector))
+         (setq avs (append avs (list av)))
+         (setq tms (append tms (list 400)))
+         )
        (send *ri* :angle-vector-sequence avs tms)
        
        (ros::unsubscribe "/right_endeffector/wrench")
@@ -577,15 +577,15 @@
        (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-x-cb)
        
        (while (some #'identity (send *ri* :wait-interpolation nil 0.01))
-     (when (progn
-         (ros::spin-once)
-         (if *cb-flag* t)
+         (when (progn
+                 (ros::spin-once)
+                 (if *cb-flag* t)
+                 )
+           (send *ri* :cancel-angle-vector)
+           (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+           (warn "cancel!!! ~%")
+           )
          )
-       (send *ri* :cancel-angle-vector)
-       (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-       (warn "cancel!!! ~%")
-       )
-     )
        
        (ros::unsubscribe "/right_endeffector/wrench")
        

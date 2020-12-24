@@ -357,12 +357,14 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
+  (setq *tmp-rav-0* (send *pr2* :rarm :angle-vector))
+  
   ;; 皮剥き始める所
   (ros::unsubscribe "/right_endeffector/wrench")
   (setq *cb-flag* nil)
   (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-y-cb)
-
+  
   (setq interval 10)
 
   (setq avs (list))

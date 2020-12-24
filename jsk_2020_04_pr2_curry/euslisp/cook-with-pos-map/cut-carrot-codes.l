@@ -342,12 +342,15 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
+  ;; tmp
+  (setq *tmp-rav-0* (send *pr2* :rarm :angle-vector))
+
   (warn "please run (touch-test) , (touch-test-2) or (touch-test-3) ~%")
   )
 
 (defun touch-test ()
   (setq interval 10)
-
+  
   (ros::unsubscribe "/right_endeffector/wrench")
   (setq *topic-name* "/right_endeffector/wrench")
   (setq *cb-flag* nil)
@@ -405,6 +408,9 @@
     (setq tms (append tms (list 600)))
     )
 
+  ;; tmp
+  (setq *tmp-rav-1* (send *pr2* :rarm :angle-vector))
+  
   (send *ri* :angle-vector-sequence avs tms)
 
   (while (some #'identity (send *ri* :wait-interpolation nil 0.1))
@@ -561,7 +567,7 @@
 
 (defun slide-knife ()
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-
+  
   ;; 少し上げる
   (send *arrow* :newcoords (send (car (send *knife* :attention)) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 adj2) :world)

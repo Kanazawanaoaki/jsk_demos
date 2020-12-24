@@ -96,7 +96,6 @@
 
   (send *ri* :stop-grasp :rarm)
   (send *ri* :speak-jp "包丁を握らせて下さい")
-
   (unix:sleep *s-time*)
   (send *ri* :start-grasp :rarm :wait t :gain 100)
   
