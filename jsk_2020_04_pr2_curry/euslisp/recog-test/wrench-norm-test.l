@@ -38,7 +38,6 @@
     (sigma-section-test num av sd sigma)
     ))
 
-
 (defun list-check (num lis sigma)
   (let (av v sd s-res m-res (res t))
     (setq av (calc-av lis))
