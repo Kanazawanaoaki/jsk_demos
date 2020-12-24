@@ -282,83 +282,83 @@
       (send (send *peeler* :parent) :dissoc *peeler*))
   )
 
-;; potato peeler funcs
-(defun set-peeler-hor ()
-  (if (not (eql (send *peeler* :parent) nil))
-      (send (send *peeler* :parent) :dissoc *peeler*))
-  (let (local-cds)
-    (setq local-cds (make-cascoords))
-    (send local-cds :newcoords (send *peeler* :copy-worldcoords))
-    (send local-cds :assoc *peeler*)
-    (send local-cds :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-    (send local-cds :dissoc *peeler*)
-    )
-  (send *peeler* :rotate (deg2rad 90) :x)
-  (send *viewer* :draw-objects)
-  (send (send *pr2* :rarm :end-coords) :assoc *peeler*)
-  )
+;; ;; potato peeler funcs
+;; (defun set-peeler-hor ()
+;;   (if (not (eql (send *peeler* :parent) nil))
+;;       (send (send *peeler* :parent) :dissoc *peeler*))
+;;   (let (local-cds)
+;;     (setq local-cds (make-cascoords))
+;;     (send local-cds :newcoords (send *peeler* :copy-worldcoords))
+;;     (send local-cds :assoc *peeler*)
+;;     (send local-cds :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+;;     (send local-cds :dissoc *peeler*)
+;;     )
+;;   (send *peeler* :rotate (deg2rad 90) :x)
+;;   (send *viewer* :draw-objects)
+;;   (send (send *pr2* :rarm :end-coords) :assoc *peeler*)
+;;   )
 
-(defun peeler-swing-set ()
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
+;; (defun peeler-swing-set ()
+;;   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   
-  (set-pose)
+;;   (set-pose)
   
-  (send *pr2* :rarm :angle-vector #f(-27.6361 -13.2569 -74.5467 -60.3697 -37.8241 -72.4582 396.357))
-  (send *ri* :angle-vector (send *pr2* :angle-vector))
-  (send *ri* :wait-interpolation)
+;;   (send *pr2* :rarm :angle-vector #f(-27.6361 -13.2569 -74.5467 -60.3697 -37.8241 -72.4582 396.357))
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector))
+;;   (send *ri* :wait-interpolation)
   
-  ;; ピーラーを受け取る
-  (send *ri* :stop-grasp :rarm)
-  (send *ri* :speak-jp "ピーラーを握らせて下さい")
-  (unix:sleep *s-time*)
-  (send *ri* :start-grasp :rarm :wait t)
+;;   ;; ピーラーを受け取る
+;;   (send *ri* :stop-grasp :rarm)
+;;   (send *ri* :speak-jp "ピーラーを握らせて下さい")
+;;   (unix:sleep *s-time*)
+;;   (send *ri* :start-grasp :rarm :wait t)
   
-  ;; 揺すられるまで待つ．
-  (wait-for-hand-impact :larm)
+;;   ;; 揺すられるまで待つ．
+;;   (wait-for-hand-impact :larm)
   
-  (send *ri* :start-grasp :rarm :wait t :gain 100)
-  (set-peeler)
+;;   (send *ri* :start-grasp :rarm :wait t :gain 100)
+;;   (set-peeler)
   
-  (warn "please start recording rosbag and run (peeler-swing) ~%")  
-  )
+;;   (warn "please start recording rosbag and run (peeler-swing) ~%")  
+;;   )
 
-(defun peeler-swing ()
-  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-  (send *arrow* :newcoords (send (send *knife* :attention-attention0) :copy-worldcoords))
+;; (defun peeler-swing ()
+;;   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+;;   (send *arrow* :newcoords (send (send *knife* :attention-attention0) :copy-worldcoords))
   
-  (setq interval 10)
+;;   (setq interval 10)
   
-  (setq avs (list))
-  (setq tms (list))
+;;   (setq avs (list))
+;;   (setq tms (list))
   
-  (dotimes (i (11))
-    (send *arrow* :translate (float-vector 0 0 (* interval -1)))
-    (send *pr2* :rarm :inverse-kinematics
-          *arrow*
-          :move-target (car (send *peeler* :attention))
-          :rotation-axis t
-          :debug-view nil)
+;;   (dotimes (i (11))
+;;     (send *arrow* :translate (float-vector 0 0 (* interval -1)))
+;;     (send *pr2* :rarm :inverse-kinematics
+;;           *arrow*
+;;           :move-target (car (send *peeler* :attention))
+;;           :rotation-axis t
+;;           :debug-view nil)
     
-    (setq av (send *pr2* :angle-vector))
+;;     (setq av (send *pr2* :angle-vector))
     
-    (setq avs (append avs (list av)))
-    (setq tms (append tms (list 600)))
-    )
+;;     (setq avs (append avs (list av)))
+;;     (setq tms (append tms (list 600)))
+;;     )
   
-  (send *ri* :angle-vector-sequence avs tms)
-  (send *ri* :wait-interpolation)
+;;   (send *ri* :angle-vector-sequence avs tms)
+;;   (send *ri* :wait-interpolation)
   
-  (warn "please finish recording rosbad and run (after-peeler-swing) ~%")
-  )
+;;   (warn "please finish recording rosbad and run (after-peeler-swing) ~%")
+;;   )
 
-(defun after-peeler-swing ()
-  ;; ピーラーを離す
-  (send *ri* :speak-jp "ピーラーを離します")
-  (unix:sleep *s-time*)
-  (send *ri* :stop-grasp :rarm)  
-  (if (not (eql (send *peeler* :parent) nil))
-      (send (send *peeler* :parent) :dissoc *peeler*))
-  )
+;; (defun after-peeler-swing ()
+;;   ;; ピーラーを離す
+;;   (send *ri* :speak-jp "ピーラーを離します")
+;;   (unix:sleep *s-time*)
+;;   (send *ri* :stop-grasp :rarm)  
+;;   (if (not (eql (send *peeler* :parent) nil))
+;;       (send (send *peeler* :parent) :dissoc *peeler*))
+;;   )
 
 
 ;; push button
@@ -469,7 +469,7 @@
   (setq avs (list))
   (setq tms (list))
   
-  (dotimes (i 10)
+  (dotimes (i 12)
     (send *arrow* :translate (float-vector -10 0 0) :world)
     (send *pr2* :rarm :inverse-kinematics
           *arrow*
@@ -487,5 +487,83 @@
   (warn "please finish recording rosbad ~%")
   )
 
+
+;; spatula squeeze
+(defun set-spatula-hor ()
+  (if (not (eql (send *spatula* :parent) nil))
+      (send (send *spatula* :parent) :dissoc *spatula*))
+  (let (local-cds)
+    (setq local-cds (make-cascoords))
+    (send local-cds :newcoords (send *spatula* :copy-worldcoords))
+    (send local-cds :assoc *spatula*)
+    (send local-cds :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+    (send local-cds :dissoc *spatula*)
+    )
+  (send *spatula* :rotate (deg2rad 90) :x)
+  (send *viewer* :draw-objects)
+  (send (send *pr2* :rarm :end-coords) :assoc *spatula*)
+  )
+
+(defun squeeze-swing-set ()
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
+  
+  (set-pose)
+  
+  (send *pr2* :rarm :angle-vector #f(-4.85911 4.80276 -91.7891 -58.8883 -712.761 -21.1501 348.83))
+  (send *ri* :angle-vector (send *pr2* :angle-vector))
+  (send *ri* :wait-interpolation)
+  
+  ;; ヘラを受け取る
+  (send *ri* :stop-grasp :rarm)
+  (send *ri* :speak-jp "ヘラを握らせて下さい")
+  (unix:sleep *s-time*)
+  (send *ri* :start-grasp :rarm :wait t)
+  
+  ;; 揺すられるまで待つ．
+  (wait-for-hand-impact :larm)
+  
+  (send *ri* :start-grasp :rarm :wait t :gain 100)
+  (set-spatula)
+  
+  (warn "please start recording rosbag and run (peeler-swing) ~%")  
+  )
+
+(defun squeeze-swing ()
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *arrow* :newcoords (send (elt (send *spatula* :attention) 1) :copy-worldcoords))
+  
+  (setq interval 10)
+  
+  (setq avs (list))
+  (setq tms (list))
+  
+  (dotimes (i (15))
+    (send *arrow* :translate (float-vector 0 -10 0) :world)
+    (send *pr2* :rarm :inverse-kinematics
+          *arrow*
+          :move-target (elt (send *spatula* :attention) 1)
+          :rotation-axis t
+          :debug-view nil)
+    
+    (setq av (send *pr2* :angle-vector))
+    
+    (setq avs (append avs (list av)))
+    (setq tms (append tms (list 600)))
+    )
+  
+  (send *ri* :angle-vector-sequence avs tms)
+  (send *ri* :wait-interpolation)
+  
+  (warn "please finish recording rosbad and run (after-peeler-swing) ~%")
+  )
+
+(defun after-squeeze-swing ()
+  ;; ヘラを離す
+  (send *ri* :speak-jp "ヘラを離します")
+  (unix:sleep *s-time*)
+  (send *ri* :stop-grasp :rarm)  
+  (if (not (eql (send *spatula* :parent) nil))
+      (send (send *spatula* :parent) :dissoc *spatula*))
+  )
 
 
