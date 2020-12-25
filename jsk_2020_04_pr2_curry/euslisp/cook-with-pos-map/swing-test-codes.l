@@ -209,7 +209,7 @@
   (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-reg-cb)
   
   (send *ri* :angle-vector-sequence avs tms)
-  (while (some #'identity (send *ri* :wait-interpolation nil 0.1))
+  (while (some #'identity (send *ri* :wait-interpolation nil 0.01))
     (when (progn
             (ros::spin-once)
             )))
@@ -304,7 +304,7 @@
   (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-reg-cb)
   
   (send *ri* :angle-vector-sequence avs tms)
-  (while (some #'identity (send *ri* :wait-interpolation nil 0.1))
+  (while (some #'identity (send *ri* :wait-interpolation nil 0.01))
     (when (progn
             (ros::spin-once)
             )))
@@ -392,7 +392,7 @@
   (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-reg-cb)
   
   (send *ri* :angle-vector-sequence avs tms)  
-  (while (some #'identity (send *ri* :wait-interpolation nil 0.1))
+  (while (some #'identity (send *ri* :wait-interpolation nil 0.01))
     (when (progn
             (ros::spin-once)
             )))
@@ -531,7 +531,7 @@
   (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-reg-cb)
   
   (send *ri* :angle-vector-sequence avs tms)  
-  (while (some #'identity (send *ri* :wait-interpolation nil 0.1))
+  (while (some #'identity (send *ri* :wait-interpolation nil 0.01))
     (when (progn
             (ros::spin-once)
             )))
@@ -603,7 +603,7 @@
   (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-reg-cb)
   
   (send *ri* :angle-vector-sequence avs tms)  
-  (while (some #'identity (send *ri* :wait-interpolation nil 0.1))
+  (while (some #'identity (send *ri* :wait-interpolation nil 0.01))
     (when (progn
             (ros::spin-once)
             )))
@@ -660,7 +660,7 @@
   (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-reg-cb)
   
   (send *ri* :angle-vector-sequence avs tms)  
-  (while (some #'identity (send *ri* :wait-interpolation nil 0.1))
+  (while (some #'identity (send *ri* :wait-interpolation nil 0.01))
     (when (progn
             (ros::spin-once)
             )))
@@ -747,7 +747,7 @@
   (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-reg-cb)
   
   (send *ri* :angle-vector-sequence avs tms)  
-  (while (some #'identity (send *ri* :wait-interpolation nil 0.1))
+  (while (some #'identity (send *ri* :wait-interpolation nil 0.01))
     (when (progn
             (ros::spin-once)
             )))
