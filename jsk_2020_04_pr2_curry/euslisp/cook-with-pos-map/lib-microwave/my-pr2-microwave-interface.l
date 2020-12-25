@@ -266,9 +266,10 @@
   (:close-microwave
    (&optional (wait? nil))
    (let* ((handle-coords))
+     (send *pr2* :head :neck-p :joint-angle 28)
      (pr2-left-reset-pose)
      (send *microwave* :angle-vector (float-vector 70))
-
+     
      (progn   ;; pre-hang left hand to microwave
        (setq handle-coords (make-coords :pos (send (send (send m-handle :copy-worldcoords) :translate (float-vector -100 -100 -50)) :worldpos) :rpy (float-vector (car (car (rpy-angle (send m-handle :worldrot)))) 0 0)))
        (send *pr2* :larm :inverse-kinematics (send (send handle-coords :copy-worldcoords) :rotate (/ pi -2) :y) :rotation-axis nil)
@@ -305,6 +306,7 @@
      )
 
    (progn   ;; reset pose
+     (send *pr2* :head :neck-p :joint-angle 28)
      (pr2-left-reset-pose)
      (if wait? (wait-enter))
      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
