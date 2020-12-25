@@ -134,6 +134,8 @@
     (if (equal *data* "/2m")
         (setq *push-flag* t))
     )
+
+  (setq *tmp-data* *data*)
   
   (setq *push-flag* nil)
   (while (eql *push-flag* nil)
@@ -141,7 +143,7 @@
     (unix:sleep 2)
     (setq msg (one-shot-subscribe "/microwave_reader/result" roseus::StringStamped :timeout 5000))
     (microwave-cb msg)
-    (if (equal *data* "/start")
+    (if (or (equal *data* "/start") (not (equal *data* *tmp-data*)))
         (setq *push-flag* t))
     )
   )
