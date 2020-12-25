@@ -148,7 +148,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 6000)
   (send *ri* :wait-interpolation)  
   
-  (send *lav4* (float-vector 75.0 50.0 110.0 -110.0 -20.0 -10.0 -10.0))
+  (setq *lav4* (float-vector 75.0 50.0 110.0 -110.0 -20.0 -10.0 -10.0))
   (send *pr2* :larm :angle-vector *lav4*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)

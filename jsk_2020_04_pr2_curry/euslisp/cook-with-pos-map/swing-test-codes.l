@@ -37,6 +37,15 @@
       )
     (/ sos num)))
 
+
+(defun calc-list (lis)
+  (let (av v sd)
+    (setq av (calc-av lis))
+    (setq v (calc-var lis av))
+    (setq sd (sqrt v))
+    (format t "av: ~A , var: ~A , sd: ~A ~%" av v sd))
+  )
+
 (defun sigma-section-test (num av sd sigma)
   (let ((err (abs (- num av)))
         (res t))
@@ -96,8 +105,10 @@
   (dotimes (i times)
     (send *ri* :stop-grasp :rarm :wait t)
     (send *ri* :start-grasp :rarm :wait t)
+    (unix:sleep 1)
     (setq data (send *ri* :state :gripper :rarm :position))
     (setq *data-list* (append *data-list* (list data)))
+    (print data)
     )
   
   (print *data-list*)
@@ -111,8 +122,10 @@
   (dotimes (i times)
     (send *ri* :stop-grasp :larm :wait t)
     (send *ri* :start-grasp :larm :wait t)
+    (unix:sleep 1)
     (setq data (send *ri* :state :gripper :larm :position))
     (setq *data-list* (append *data-list* (list data)))
+    (print data)
     )
   
   (print *data-list*)
@@ -130,6 +143,7 @@
     (send *ri* :start-grasp :rarm :wait t)
     (setq data (send *ri* :state :gripper :rarm :position))
     (setq *data-list* (append *data-list* (list data)))
+    (print data)
     )
   
   (print *data-list*)
@@ -189,7 +203,7 @@
   (setq avs (list))
   (setq tms (list))
   
-  (dotimes (i (11))
+  (dotimes (i 11)
     (send *arrow* :translate (float-vector 0 0 (* interval -1)))
     (send *pr2* :rarm :inverse-kinematics
           *arrow*
@@ -324,7 +338,7 @@
 
 
 ;; peeler swing
-(defun set-peeler-hor ()
+(defun set-peeler ()
   (if (not (eql (send *peeler* :parent) nil))
       (send (send *peeler* :parent) :dissoc *peeler*))
   (let (local-cds)
@@ -354,8 +368,8 @@
   (unix:sleep *s-time*)
   (send *ri* :start-grasp :rarm :wait t)
   
-  ;; 揺すられるまで待つ．
-  (wait-for-hand-impact :rarm)
+  ;; ;; 揺すられるまで待つ．
+  ;; (wait-for-hand-impact :rarm)
   
   (send *ri* :start-grasp :rarm :wait t :gain 100)
   (set-peeler)
@@ -365,14 +379,14 @@
 
 (defun peeler-swing ()
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-  (send *arrow* :newcoords (send (send *knife* :attention-attention0) :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *peeler* :attention-attention0) :copy-worldcoords))
   
   (setq interval 10)
   
   (setq avs (list))
   (setq tms (list))
   
-  (dotimes (i (11))
+  (dotimes (i 11)
     (send *arrow* :translate (float-vector 0 0 (* interval -1)))
     (send *pr2* :rarm :inverse-kinematics
           *arrow*
@@ -552,7 +566,7 @@
 
 (defun push-ih-on-button-set ()
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
-
+  
   (set-pose)
   (set-pose-3)
   
@@ -598,9 +612,9 @@
     )
   
   (setq *wrench-list* (list))
-  (ros::unsubscribe "/right_endeffector/wrench")
-  (setq *topic-name* "/right_endeffector/wrench")
-  (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-reg-cb)
+  (ros::unsubscribe "/left_endeffector/wrench")
+  (setq *topic-name* "/left_endeffector/wrench")
+  (ros::subscribe "/left_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-reg-cb)
   
   (send *ri* :angle-vector-sequence avs tms)  
   (while (some #'identity (send *ri* :wait-interpolation nil 0.01))
@@ -608,7 +622,7 @@
             (ros::spin-once)
             )))
   
-  (ros::unsubscribe "/right_endeffector/wrench")
+  (ros::unsubscribe "/left_endeffector/wrench")
   
   (setq *AV* (calc-av *wrench-list*))
   (setq *V* (calc-var *wrench-list* *AV*))
@@ -727,7 +741,7 @@
   (setq avs (list))
   (setq tms (list))
   
-  (dotimes (i (15))
+  (dotimes (i 15)
     (send *arrow* :translate (float-vector 0 -10 0) :world)
     (send *pr2* :rarm :inverse-kinematics
           *arrow*

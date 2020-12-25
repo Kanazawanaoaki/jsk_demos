@@ -212,12 +212,12 @@
   (setq tms (list))
   
   (dotimes (i 3)
-    (send *pr2* :rarm :move-end-pos #f(-40 0 0) :world)
+    (send *pr2* :rarm :move-end-pos #f(0 0 -40) :world)
     (setq av (send *pr2* :angle-vector))
     (setq avs (append avs (list av)))
     (setq tms (append tms (list 400)))
     
-    (send *pr2* :rarm :move-end-pos #f(40 0 0) :world)
+    (send *pr2* :rarm :move-end-pos #f(0 0 40) :world)
     (setq av (send *pr2* :angle-vector))
     (setq avs (append avs (list av)))
     (setq tms (append tms (list 400)))
@@ -227,7 +227,7 @@
   (send *ri* :wait-interpolation)
   
   ;; avoid-pose的な姿勢になる．
-  (send *arrow* :newcoords (make-coords :pos (float-vector 628.029 8528.539 31050.217) :rpy (float-vector -3.14 0.18 -0.086)))
+  (send *arrow* :newcoords (make-coords :pos (float-vector 628.029 8528.539 31050.217) :rpy (float-vector -3.14 0.18 3.056)))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -597,7 +597,8 @@
   )
 
 (defun now-arrange-curry ()
-  (set-spatula)
+  (set-ladle)
+  (look-at-pot)
   (scoop-up-curry)
   (carry-curry-set)
   (carry-curry)
@@ -606,6 +607,7 @@
   
   (transfer-curry-set)
   (transfer-curry)
+  (after-transfer-curry)
   )
 
 (defun now-arrange-sato ()
@@ -616,4 +618,20 @@
   (squeeze-sato)
   (avoid-spatula-sato)
   (after-sato)  
+  )
+
+(defun set-tmp-pose ()
+  (send *pr2* :rarm :angle-vector #f(-38.3949 -2.90787 -80.2822 -11.5856 -8.70289 -113.777 -356.552))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  )
+
+
+(defun tmp-test ()
+  (set-sato-rice)
+  (transfer-sato-set)
+  (set-spatula)
+  (squeeze-sato)
+  (set-tmp-pose)
+  (after-sato)
   )
