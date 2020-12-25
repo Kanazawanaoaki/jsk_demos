@@ -170,7 +170,7 @@
   (send *ri* :start-grasp :rarm :wait t)
   
   ;; 揺すられるまで待つ．
-  (wait-for-hand-impact :larm)
+  (wait-for-hand-impact :rarm)
   
   (send *ri* :start-grasp :rarm :wait t :gain 100)
   (set-knife-hor)
@@ -267,7 +267,7 @@
   (send *ri* :start-grasp :rarm :wait t)
   
   ;; 揺すられるまで待つ．
-  (wait-for-hand-impact :larm)
+  (wait-for-hand-impact :rarm)
   
   (send *ri* :start-grasp :rarm :wait t :gain 100)
   (set-knife-hor) 
@@ -355,7 +355,7 @@
   (send *ri* :start-grasp :rarm :wait t)
   
   ;; 揺すられるまで待つ．
-  (wait-for-hand-impact :larm)
+  (wait-for-hand-impact :rarm)
   
   (send *ri* :start-grasp :rarm :wait t :gain 100)
   (set-peeler)
@@ -450,7 +450,7 @@
 ;;   (send *ri* :start-grasp :rarm :wait t)
   
 ;;   ;; 揺すられるまで待つ．
-;;   (wait-for-hand-impact :larm)
+;;   (wait-for-hand-impact :rarm)
   
 ;;   (send *ri* :start-grasp :rarm :wait t :gain 100)
 ;;   (set-peeler)
@@ -710,7 +710,7 @@
   (send *ri* :start-grasp :rarm :wait t)
   
   ;; 揺すられるまで待つ．
-  (wait-for-hand-impact :larm)
+  (wait-for-hand-impact :rarm)
   
   (send *ri* :start-grasp :rarm :wait t :gain 100)
   (set-spatula)
