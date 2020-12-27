@@ -95,6 +95,18 @@
       (format t "norm: ~A ~%" n)
       )))
 
+(setq *wrench-flag* nil)
+(defun wrench-check-cb (msg)
+  (when msg
+    (let (n x y z)
+      (setq x (send msg :wrench :force :x))
+      (setq y (send msg :wrench :force :y))
+      (setq z (send msg :wrench :force :z))
+      (setq n (norm (float-vector x  y z)))
+      (unless (list-check n *lis* *sigma*)
+        (setq *wrench-flag* t))
+      (format t "norm: ~A ~%" n)
+      )))
 
 ;; grasp swing
 (defun grasp-swing-rarm (&rest args &key (times 10) &allow-other-keys)
@@ -364,7 +376,7 @@
   
   ;; ピーラーを受け取る
   (send *ri* :stop-grasp :rarm)
-  (send *ri* :speak-jp "ピーラーを握らせて下さい")
+  ;; (send *ri* :speak-jp "ピーラーを握らせて下さい")
   (unix:sleep *s-time*)
   (send *ri* :start-grasp :rarm :wait t)
   
@@ -387,7 +399,7 @@
   (setq tms (list))
   
   (dotimes (i 11)
-    (send *arrow* :translate (float-vector 0 0 (* interval -1)))
+    (send *arrow* :translate (float-vector 0 0 (* interval -1)) :world)
     (send *pr2* :rarm :inverse-kinematics
           *arrow*
           :move-target (car (send *peeler* :attention))
@@ -786,5 +798,52 @@
   (if (not (eql (send *spatula* :parent) nil))
       (send (send *spatula* :parent) :dissoc *spatula*))
   )
+
+
+;; (defun peeler-swing ()
+;;   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+;;   (send *arrow* :newcoords (send (send *peeler* :attention-attention0) :copy-worldcoords))
+  
+;;   (setq interval 10)
+  
+;;   (setq avs (list))
+;;   (setq tms (list))
+  
+;;   (dotimes (i 11)
+;;     (send *arrow* :translate (float-vector 0 0 (* interval -1)))
+;;     (send *pr2* :rarm :inverse-kinematics
+;;           *arrow*
+;;           :move-target (car (send *peeler* :attention))
+;;           :rotation-axis t
+;;           :debug-view nil)
+    
+;;     (setq av (send *pr2* :angle-vector))
+    
+;;     (setq avs (append avs (list av)))
+;;     (setq tms (append tms (list 600)))
+;;     )
+
+;;   (setq *wrench-list* (list))
+;;   (ros::unsubscribe "/right_endeffector/wrench")
+;;   (setq *topic-name* "/right_endeffector/wrench")
+;;   (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-reg-cb)
+  
+;;   (send *ri* :angle-vector-sequence avs tms)  
+;;   (while (some #'identity (send *ri* :wait-interpolation nil 0.01))
+;;     (when (progn
+;;             (ros::spin-once)
+;;             )))
+  
+;;   (ros::unsubscribe "/right_endeffector/wrench")
+  
+;;   (setq *AV* (calc-av *wrench-list*))
+;;   (setq *V* (calc-var *wrench-list* *AV*))
+;;   (setq *SD* (sqrt *V*))
+;;   (setq *MAX* (apply #'max *wrench-list*))
+;;   (setq *MIN* (apply #'min *wrench-list*))
+;;   (format t "average: ~A , variance: ~A , standard deviation: ~A , max: ~A , min: ~A ~%" *AV* *V* *SD* *MAX* *MIN*)
+  
+;;   (warn "please finish recording rosbad and run (after-peeler-swing) ~%")
+;;   )
 
 
