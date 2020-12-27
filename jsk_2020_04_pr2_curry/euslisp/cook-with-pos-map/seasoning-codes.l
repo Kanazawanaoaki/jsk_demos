@@ -273,7 +273,14 @@
   (send *solt* :newcoords (send *solt-coords* :copy-worldcoords))
   (send *arrow* :newcoords (send (send *solt* :handle-handle0) :copy-worldcoords))
 
-  (send *arrow* :translate #f(60 0 100) :world)
+  (send *arrow* :translate #f(-80 0 100) :world)
+  (send *pr2* :rarm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
 
   (send *ri* :stop-grasp :rarm :wait t)
   (send *ri* :speak-jp "塩を握らせて下さい")
@@ -291,9 +298,16 @@
       (send (send *rcup* :parent) :dissoc *rcup*))
   (send *rcup* :newcoords (send *rcup-seasoning-coords* :copy-worldcoords))
   (send *arrow* :newcoords (send (send *rcup* :handle-handle0) :copy-worldcoords))
-
-  (send *arrow* :translate #f(60 0 100) :world)
   
+  (send *arrow* :translate #f(-80 0 100) :world)
+  (send *pr2* :rarm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
   (send *ri* :stop-grasp :rarm :wait t)
   (send *ri* :speak-jp "コップを握らせて下さい")
   (unix:sleep *s-time*)
@@ -310,11 +324,18 @@
       (send (send *dispenser* :parent) :dissoc *dispenser*))
   (send *dispenser* :newcoords (send *dispenser-coords* :copy-worldcoords))
   (send *arrow* :newcoords (send (send *dispenser* :handle-handle0) :copy-worldcoords))
-
-  (send *arrow* :translate #f(60 0 100) :world)
+  
+  (send *arrow* :translate #f(-80 0 100) :world)
+  (send *pr2* :rarm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
   
   (send *ri* :stop-grasp :rarm :wait t)
-  (send *ri* :speak-jp "コップを握らせて下さい")
+  (send *ri* :speak-jp "ディスペンサーを握らせて下さい")
   (unix:sleep *s-time*)
   (send *ri* :start-grasp :rarm :wait t)
   
@@ -606,14 +627,14 @@
   (send *arrow* :rotate (deg2rad -90) :x :world)
   
   (send *pr2* :rarm :inverse-kinematics
-      (send *arrow* :copy-worldcoords)
-      :move-target (send *dispenser* :attention-attention0)
-      :rotation-axis t
-      :debug-view *debug-flag*)
+	(send *arrow* :copy-worldcoords)
+	:move-target (send *dispenser* :attention-attention0)
+	:rotation-axis t
+	:debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
-
+  
   ;; 左腕をセットしておく
   (before-recieve-larm)
   
@@ -621,29 +642,27 @@
   (send *arrow* :translate #f(0 0 50) :world)
   (send *arrow* :rotate (deg2rad -90) :z :world)
   (send *arrow* :rotate (deg2rad 180) :x)
-
   (send *arrow* :rotate (deg2rad 45) :z :world)
-  
-  (send *ri* :stop-grasp :larm :wait t)  
   
   (send *arrow* :translate #f(-50 50 80) :world)
   (send *pr2* :larm :inverse-kinematics
-    (send *arrow* :copy-worldcoords)
-    :rotation-axis t
-    :debug-view *debug-flag*)
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
-  (send *ri* :start-grasp :larm :wait t)
   
+  (send *ri* :stop-grasp :larm :wait t)  
+
   (send *arrow* :translate #f(50 -50 -80) :world)
   (send *pr2* :larm :inverse-kinematics
-    (send *arrow* :copy-worldcoords)
-    :rotation-axis t
-    :debug-view *debug-flag*)
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
+  (send *ri* :start-grasp :larm :wait t)
   
   (warn "please run (add-mayo) ~%")
   )
@@ -663,7 +682,7 @@
   
   ;; 上にして持ち替える
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate #f(-100 0 0) :world)
+  (send *arrow* :translate #f(-150 0 0) :world)
   (send *pr2* :rarm :inverse-kinematics
     (send *arrow* :copy-worldcoords)
     :rotation-axis t
@@ -683,7 +702,7 @@
   (send *ri* :wait-interpolation)
   
   (send *arrow* :newcoords (make-coords :pos (send (send (send *dispenser* :handle-handle0) :copy-worldcoords) :worldpos)))
-  (send *arrow* :translate #f(-100 0 0) :world)
+  (send *arrow* :translate #f(-150 0 0) :world)
   (send *pr2* :rarm :inverse-kinematics
     (send *arrow* :copy-worldcoords)
     :rotation-axis t
@@ -692,7 +711,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
   
-  (send *arrow* :translate #f(100 0 0) :world)
+  (send *arrow* :translate #f(150 0 0) :world)
   (send *pr2* :rarm :inverse-kinematics
     (send *arrow* :copy-worldcoords)
     :rotation-axis t
@@ -702,26 +721,19 @@
   (send *ri* :wait-interpolation)
   
   (send *ri* :start-grasp :rarm :wait t)
-
   (if (not (eql (send *dispenser* :parent) nil))
       (send (send *dispenser* :parent) :dissoc *dispenser*))
   (send *pr2* :rarm :end-coords :assoc *dispenser*)
+  (send *ri* :stop-grasp :larm :wait t)
   
   ;; 左腕を戻して右腕をputの前位置にする．
-  (send *ri* :stop-grasp :larm :wait t)
-  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate #f(-80 80 0) :world)
-  (send *pr2* :larm :inverse-kinematics
-      (send *arrow* :copy-worldcoords)
-      :rotation-axis t
-      :debug-view *debug-flag*)
+  (send *pr2* :rarm :move-end-pos #f(0 0 100) :world)
+  
   (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
   
-  (reset-larm)
-  
-  (send *pr2* :rarm :move-end-pos #f(0 0 100) :world)
+  (send *pr2* :rarm :move-end-pos #f(0 -100 0) :world)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
@@ -730,6 +742,18 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
+  
+  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate #f(-80 80 0) :world)
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (reset-larm)
   
   (warn "please run (put-dispenser) ~%")
   )
@@ -780,7 +804,9 @@
   (now-set-mayo)
   )
 
+
 (defun tmp-test ()
-  (set-pose)
-  (now-add-mayo)
+  (recieve-dispenser)
+  (add-mayo-set)
+  (add-mayo)
   )

@@ -800,6 +800,7 @@
   )
 
 
+;; old ver.
 ;; (defun peeler-swing ()
 ;;   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
 ;;   (send *arrow* :newcoords (send (send *peeler* :attention-attention0) :copy-worldcoords))
