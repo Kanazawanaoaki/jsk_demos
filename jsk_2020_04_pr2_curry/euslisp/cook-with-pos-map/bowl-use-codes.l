@@ -1925,7 +1925,7 @@
   )
 
 (defun now-grasp-mcup ()
-  (set-pose)
+  ;; (set-pose)
   (grasp-mcup)
   (carry-mcup-pose)
   

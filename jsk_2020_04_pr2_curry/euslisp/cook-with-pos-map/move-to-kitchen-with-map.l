@@ -162,6 +162,24 @@
   )
 
 
+(defun go-to-sink-from-arrange ()
+  ;; arrange spotからsinkに実行する
+  (send *ri* :go-pos-unsafe 0 -0.9 0)
+  (send *ri* :go-pos-unsafe 0.09 0 0)
+  (update-pos)
+  (update-view)
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun go-to-arrnage-from-sink ()
+  ;; sinkからarrange spotに移動する
+  (send *ri* :go-pos-unsafe -0.09 0 0)  
+  (send *ri* :go-pos-unsafe 0 0.9 0)
+  (update-pos)
+  (update-view)
+  (print (send *ri* :state :worldcoords))
+  )
+
 ;; def util-funcs
 (defun set-pose ()
   (send *pr2* :reset-manip-pose)

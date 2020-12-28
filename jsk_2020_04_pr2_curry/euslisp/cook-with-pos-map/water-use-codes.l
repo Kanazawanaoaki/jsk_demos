@@ -433,6 +433,23 @@
   )
 
 
+(defun now-fetch-water ()
+  (set-mcup)
+  (mcup-water-set)
+ 
+  (grasp-lever)
+  (water-on)
+  
+  ;; 本当はここで認識をする
+  (unix:sleep 3)
+  
+  (water-off)
+  (release-lever)
+  
+  (after-mcup-water)
+  )
+
+
 (defun tmp-water-test ()
   (set-pose)
   
