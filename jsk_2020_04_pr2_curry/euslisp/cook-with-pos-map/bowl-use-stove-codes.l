@@ -175,7 +175,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 6000)
   (send *ri* :wait-interpolation)  
   
-  (send *lav4* (float-vector 75.0 50.0 110.0 -110.0 -20.0 -10.0 -10.0))
+  (setq *lav4* (float-vector 75.0 50.0 110.0 -110.0 -20.0 -10.0 -10.0))
   (send *pr2* :larm :angle-vector *lav4*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
@@ -195,12 +195,12 @@
   (send *ri* :wait-interpolation)
   
   ;;少し前に
-  (send *arrow* :newcoords (make-coords :pos (float-vector 600 8361 31167) :rpy (float-vector 1.571 1.047 1.571)))
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  ;; (send *pr2* :larm :angle-vector #f(30.046 -16.1647 77.4608 -67.7082 57.0472 -86.8259 -43.9204))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 600 8361 31167) :rpy (float-vector 1.571 1.047 1.571)))
+  ;; (send *pr2* :larm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
+  (send *pr2* :larm :angle-vector #f(30.046 -16.1647 77.4608 -67.7082 57.0472 -86.8259 -43.9204))
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation) 
@@ -1170,7 +1170,7 @@
       (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
   (let (local-cds)
     (setq local-cds (make-cascoords))
-    (send local-cds :newcoords (send (send *oil-dispenser* :handle-handle0) :copy-worldcoords))
+    (send local-cds :newcoords (send (send *oil-dispenser* :handle-handle1) :copy-worldcoords))
     (send local-cds :assoc *oil-dispenser*)
     (send local-cds :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
     (send local-cds :dissoc *oil-dispenser*)
@@ -1206,7 +1206,7 @@
   (if (not (eql (send *oil-dispenser* :parent) nil))
       (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
   (send *oil-dispenser* :newcoords (send *oil-dispenser-stove-coords* :copy-worldcoords))
-  (send *arrow* :newcoords (send (send *oil-dispenser* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *oil-dispenser* :handle-handle1) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -1221,7 +1221,7 @@
   (unix:sleep *s-time*)
   (send *ri* :start-grasp :larm :wait t)
 
-  (set-oil-dispenser)  
+  (set-oil-dispenser) 
   )
 
 (defun put-oil-dispenser ()
@@ -1229,7 +1229,7 @@
   (if (not (eql (send *oil-dispenser* :parent) nil))
       (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
   (send *oil-dispenser* :newcoords (send *oil-dispenser-stove-coords* :copy-worldcoords))
-  (send *arrow* :newcoords (send (send *oil-dispenser* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *oil-dispenser* :handle-handle1) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
   
   (put-bowl-larm)
@@ -1238,7 +1238,7 @@
 (defun grasp-oil-dispenser ()
   ;; oil-dispenserの位置
   (setq *target* (make-coords))
-  (send *target* :newcoords (send (send *oil-dispenser* :handle-handle0) :copy-worldcoords))
+  (send *target* :newcoords (send (send *oil-dispenser* :handle-handle1) :copy-worldcoords))
   
   (grasp-bowl-larm)
   
@@ -1281,7 +1281,7 @@
   (before-recieve-rarm)
   
   ;; 右腕をセットする位置
-  (send *arrow* :newcoords (send (send *oil-dispenser* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *oil-dispenser* :handle-handle1) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 80) :world)
   (send *arrow* :rotate (deg2rad 90) :z :world)
   
@@ -1450,18 +1450,7 @@
   (send (send *pr2* :larm :end-coords) :assoc *bowl-2*)
   )
 
-(defun put-bowl-2-model ()
-  ;; (setq *larm1* (float-vector 42.6232 6.188 43.7963 -57.5889 111.452 -100.941 -32.9738))
-  ;; (send *pr2* :larm :angle-vector *larm1*)
-  (send *arrow* :newcoords (make-coords :pos (float-vector 550.916 8025.169 31085.839) :rpy (float-vector 2.561 1.128 2.104)))
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-  
+(defun put-bowl-2-model ()  
   ;; ボウル２を置く位置
   (if (not (eql (send *bowl-2* :parent) nil))
       (send (send *bowl-2* :parent) :dissoc *bowl-2*))
@@ -1499,16 +1488,16 @@
   )
 
 (defun put-bowl-3-model ()
-  ;; (setq *larm1* (float-vector 42.6232 6.188 43.7963 -57.5889 111.452 -100.941 -32.9738))
-  ;; (send *pr2* :larm :angle-vector *larm1*)
-  (send *arrow* :newcoords (make-coords :pos (float-vector 550.916 8025.169 31085.839) :rpy (float-vector 2.561 1.128 2.104)))
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
+  ;; ;; (setq *larm1* (float-vector 42.6232 6.188 43.7963 -57.5889 111.452 -100.941 -32.9738))
+  ;; ;; (send *pr2* :larm :angle-vector *larm1*)
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 550.916 8025.169 31085.839) :rpy (float-vector 2.561 1.128 2.104)))
+  ;; (send *pr2* :larm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
+  ;; (send *viewer* :draw-objects)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  ;; (send *ri* :wait-interpolation)
   
   ;; ボウル３を置く位置
   (if (not (eql (send *bowl-3* :parent) nil))
@@ -1670,166 +1659,6 @@
   )
 
 
-;; now funcs
-;; ボウル２をセット
-(defun now-set-2 ()
-  (recieve-bowl-2)
-  (put-bowl-2)
-  (reset-rarm)
-  )
-
-;; ボウル１をセット
-(defun now-set-1 ()
-  (recieve-bowl-1)
-  (put-bowl-1)
-  (reset-larm)
-  )
-
-(defun now-set-3 ()
-  (recieve-bowl-3)
-  (put-bowl-3)
-  (reset-larm)
-  )
-
-(defun now-set-4 ()
-  (recieve-bowl-4)
-  (put-bowl-4)
-  (reset-larm)
-  )
-
-;; ボウル１〜４をセット
-(defun now-set-all ()
-  (now-set-1)
-  (now-set-2)
-  (now-set-3)
-  (now-set-4)
-  )
-
-
-;; ボウル２をまな板上に
-(defun switch-bowl-2 ()
-  (grasp-bowl-2)
-  (move-bowl-2-set)
-  (reset-rarm)
-  )
-
-(defun now-transfer ()
-  (transfer-to-pot)
-
-  ;; (grasp-spatula)
-  (set-spatula) ;; ヘラは掴んでいる想定で行う
-  (squeeze-test-set)
-  (squeeze-test)
-
-  ;; tmp
-  (rossrv-test)
-
-  (avoid-rarm)
-  
-  (after-transfer)
-  )
-
-(defun now-transfer-left ()
-  (transfer-to-pot-left)
-
-  ;; (grasp-spatula)
-  (set-spatula) ;; ヘラは掴んでいる想定で行う
-  (squeeze-test-set)
-  (squeeze-test)
-  (avoid-rarm)
-  
-  (after-transfer-left)
-  )
-
-(defun now-transfer-1 ()
-  (grasp-bowl-1)
-  (now-transfer)
-  (put-bowl-1)
-  (reset-larm)
-  )
-
-(defun now-transfer-2 ()
-  (grasp-bowl-2-set)
-  ;; tmp
-  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
-  (send *arrow* :translate #f(0 -50 120) :world)
-  (send *arrow* :rotate (deg2rad -90) :z :world)
-  
-  (look-at-arrow)
-
-  (now-transfer)
-
-  
-  (put-bowl-2-set)
-  (reset-larm)
-  )
-
-(defun now-transfer-3 ()
-  (grasp-bowl-3)
-  (now-transfer-left)
-  (put-bowl-3)
-  (reset-larm)
-  )
-
-(defun now-transfer-4 ()
-  (grasp-bowl-4)
-  (now-transfer-left)
-  (put-bowl-4)
-  (reset-larm)
-  )
-
-
-(defun now-set-test ()
-  (recieve-bowl-2)
-  (put-bowl-2)
-  (reset-rarm)
-
-  (recieve-bowl-1)
-  (put-bowl-1)
-  (reset-larm)
-
-  (recieve-bowl-3)
-  (put-bowl-3)
-  (reset-larm)
-
-  (recieve-bowl-4)
-  (put-bowl-4)
-  (reset-larm)
-  )
-
-(defun transfer-all-test ()
-  (switch-bowl-2)
-  (now-transfer-2) ;; 玉ねぎ
-  (now-transfer-4) ;; 肉
-  (now-transfer-1) ;; 野菜
-  (now-transfer-3) ;; カレールー
-  )
-
-(defun now-set-mcup ()
-  (recieve-mcup)
-  (put-mcup)
-  )
-
-(defun now-grasp-mcup ()
-  ;; (set-pose)
-  (grasp-mcup)
-  (carry-mcup-pose)
-  
-  (warn "please go to sink spot ~%")
-  )
-
-(defun now-pour-water ()
-  (carry-mcup-pose)
-  (transfer-mcup)
-  (after-mcup)
-  (put-mcup)
-  (reset-larm)
-  )
-
-
-
-
-
 ;; ボウル２をセット
 (defun now-set-2-model ()
   (recieve-bowl-2)
@@ -1924,5 +1753,27 @@
   (after-oil)
 
   (put-oil-dispenser)
+  (reset-larm)
+  )
+
+
+(defun now-set-mcup ()
+  (recieve-mcup)
+  (put-mcup)
+  )
+
+(defun now-grasp-mcup ()
+  ;; (set-pose)
+  (grasp-mcup)
+  (carry-mcup-pose)
+  
+  (warn "please go to sink spot ~%")
+  )
+
+(defun now-pour-water ()
+  (carry-mcup-pose)
+  (transfer-mcup)
+  (after-mcup)
+  (put-mcup)
   (reset-larm)
   )
