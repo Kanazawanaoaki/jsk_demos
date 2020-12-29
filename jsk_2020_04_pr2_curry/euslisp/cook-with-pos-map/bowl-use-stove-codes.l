@@ -1063,14 +1063,13 @@
   )
 
 (defun carry-mcup-pose ()
-  ;; (setq *lav-cm* #f(38.442 -20.2481 94.8038 -104.353 117.885 -64.3683 -258.356))
-  ;; (send *pr2* :larm :angle-vector *lav-cm*)
-  (send *arrow* :newcoords (make-coords :pos (float-vector 604.833 8300.101 31079.393) :rpy (float-vector 3.141 0.75 0.0)))
-  (send *pr2* :rarm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :move-target (car (send *spatula* :attention))
-        :rotation-axis t
-        :debug-view *debug-flag*)
+  (setq *lav-cm* #f(38.442 -20.2481 94.8038 -104.353 117.885 -64.3683 -258.356))
+  (send *pr2* :larm :angle-vector *lav-cm*)
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 604.833 8300.101 31079.393) :rpy (float-vector 3.141 0.75 0.0)))
+  ;; (send *pr2* :rarm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
   (send *ri* :wait-interpolation)
@@ -1744,6 +1743,7 @@
 (defun now-set-oil ()
   (recieve-oil-dispenser)
   (put-oil-dispenser)
+  (reset-larm)
   )
 
 (defun now-add-oil ()
@@ -1760,6 +1760,7 @@
 (defun now-set-mcup ()
   (recieve-mcup)
   (put-mcup)
+  (reset-larm)
   )
 
 (defun now-grasp-mcup ()
