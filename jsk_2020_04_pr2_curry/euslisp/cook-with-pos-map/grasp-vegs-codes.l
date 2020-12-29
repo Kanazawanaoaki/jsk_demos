@@ -8,10 +8,20 @@
   (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
 
   ;; carrot potato onion モデルじゃ無くても置いておく．
+  (load "package://jsk_2020_04_pr2_curry/euslisp/model/potato-new-type.l")
+  (setq *potato* (potato :w 90 :l 60 :h 60))
+  (send *potato* :transform (make-coords :pos (float-vector 310.071 8313.284 30937.902) :rpy (float-vector 3.063 0.773 3.019)))
   
+  (load "package://jsk_2020_04_pr2_curry/euslisp/model/carrot-ellipsoid-model.l")
+  (setq *carrot* (carrot :w 140 :l 50 :h 50))
+  (send *carrot* :transform (make-coords :pos (float-vector 309.029 8399.786 30942.039) :rpy (float-vector 3.007 0.739 2.994)))
+  
+  (setq *onion* (make-cube 100 50 40))
+  (send *onion* :set-color :green)
+  (send *onion* :transform (make-coords :pos (float-vector 314.539 8479.935 30946.933) :rpy (float-vector 3.026 0.687 2.974)))
   
   (move-to-kitchen-irt)
-  (objects (list *pr2* *scene* *cutting-board*))
+  (objects (list *pr2* *scene* *cutting-board* *potato* *carrot* *onion*))
   (update-view)  
   )
 
