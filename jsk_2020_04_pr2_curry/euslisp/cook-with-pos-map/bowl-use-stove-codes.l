@@ -1579,8 +1579,6 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
-  
 
   (warn "please run (after-transfer) ~%")  
   )
@@ -1588,7 +1586,7 @@
 (defun transfer-bowl-2-to-pot ()
   (set-bowl-2-model)
   
-  (transfer-to-pot-set)
+  (transfer-to-pot-left-set)
   
   ;; 注ぐ位置
   (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
@@ -1596,10 +1594,34 @@
   (send *arrow* :rotate (deg2rad -90) :z :world)
   
   (look-at-arrow)
+
+  (send *arrow* :translate #f(10 0 20) :world)
   
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :move-target (send *bowl-2* :attention-attention0)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (warn "please run (after-transfer) ~%")  
+  )
+
+(defun hoge ()
+  (set-bowl-3-model)
+  
+  ;; 注ぐ位置
+  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
+  (send *arrow* :translate #f(0 -50 120) :world)
+  (send *arrow* :rotate (deg2rad -90) :z :world)
+  
+  (send *arrow* :translate #f(10 0 20) :world)
+
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (send *bowl-3* :attention-attention0)
         :rotation-axis t
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
@@ -1621,6 +1643,8 @@
   
   (look-at-arrow)
   
+  (send *arrow* :translate #f(10 0 20) :world)
+
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :move-target (send *bowl-3* :attention-attention0)
@@ -1717,8 +1741,8 @@
   
   (avoid-rarm)
   
-  (after-transfer)
-  (put-bowl-2-set-model)
+  (after-transfer-left)
+  (put-bowl-2-model)
   (reset-larm)
   )
 
@@ -1781,4 +1805,48 @@
 
 
 (defun tmp-test ()
+  (grasp-bowl-2-model)
+  
+  (transfer-bowl-2-to-pot)
+  ;; (set-spatula) ;; ヘラは掴んでいる想定で行う
+  ;; (squeeze-test-set)
+  ;; (squeeze-test)
+  
+  ;; (rossrv-test)
+  
+  ;; (avoid-rarm)
+  
+  (after-transfer-left)
+  (put-bowl-2-model)
+  (reset-larm)
+  )
+
+(defun tmp-test-a-1 ()
+  (grasp-bowl-3-model)
+  
+  (transfer-bowl-3-to-pot)
+  (warn "please run (tmp-test-a-2) ~%")
+  )
+
+(defun tmp-test-a-2 ()
+  (after-transfer-left)
+  (put-bowl-3-model)
+  (reset-larm)
+  )
+
+(defun tmp-test-3 ()
+  (grasp-bowl-3-model)
+
+  (transfer-bowl-3-to-pot)
+  ;; (set-spatula) ;; ヘラは掴んでいる想定で行う
+  ;; (squeeze-test-set)
+  ;; (squeeze-test)
+  
+  ;; (rossrv-test)
+  
+  ;; (avoid-rarm)
+  
+  (after-transfer-left)
+  (put-bowl-3-model)
+  (reset-larm)
   )

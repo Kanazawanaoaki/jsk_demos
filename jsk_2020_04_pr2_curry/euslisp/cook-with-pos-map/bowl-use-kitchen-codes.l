@@ -1735,27 +1735,6 @@
   (warn "please run (after-transfer) ~%")  
   )
 
-(defun hoge ()
-  (set-bowl-1-model)
-  
-  ;; 注ぐ位置
-  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
-  (send *arrow* :translate #f(0 -50 120) :world)
-  (send *arrow* :rotate (deg2rad -90) :z :world)
-  
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :move-target (send *bowl-1* :attention-attention0)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-  
-  (warn "please run (after-transfer) ~%")  
-  )
-
-
 (defun transfer-bowl-2-to-pot ()
   (set-bowl-2-model)
   
