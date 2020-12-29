@@ -4,6 +4,7 @@
       handle0
       attention0
       attention1
+      attention2
       ))
 
 (defmethod cutting-board-object
@@ -36,6 +37,8 @@
      (send link1 :assoc attention0)
      (setq attention1 (make-cascoords :pos (float-vector 100 0 0) :rpy (float-vector 0 0 0) :name "attention1"))
      (send link1 :assoc attention1)
+     (setq attention2 (make-cascoords :pos (float-vector 0 175 0) :rpy (float-vector 1.571 0 0) :name "attention1"))
+     (send link1 :assoc attention2)
      
      ;; init-ending 
      (setq links (list link1))
@@ -47,9 +50,10 @@
   
   (:handle (&rest args) (forward-message-to-all (list handle0) args))
   (:handle-handle0 (&rest args) (forward-message-to handle0 args))
-  (:attention (&rest args) (forward-message-to-all (list attention0 attention1) args))
+  (:attention (&rest args) (forward-message-to-all (list attention0 attention1 attention2) args))
   (:attention-attention0 (&rest args) (forward-message-to-all attention0 args))
   (:attention-attention1 (&rest args) (forward-message-to-all attention1 args))
+  (:attention-attention2 (&rest args) (forward-message-to-all attention2 args))
   )
 
 (defun cutting-board (&rest args) (instance* cutting-board-object :init args))
