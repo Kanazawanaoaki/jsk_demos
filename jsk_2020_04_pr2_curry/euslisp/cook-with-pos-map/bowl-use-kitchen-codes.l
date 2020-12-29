@@ -693,13 +693,17 @@
   )
 
 (defun after-transfer ()
-  ;; (setq *larm2* (float-vector 35.0371 5.51912 50.9811 -60.5584 159.61 -110.561 -25.9414))
-  ;; (send *pr2* :larm :angle-vector *larm2*)
-  (send *arrow* :newcoords (make-coords :pos (float-vector 536.332 7996.084 31098.396) :rpy (float-vector -1.915 0.881 -2.415)))
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
+  (send *pr2* :larm :move-end-pos #f(0 75 75) :world)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (setq *larm2* (float-vector 34.9944 -11.0913 43.0889 -33.7 111.114 -97.0155 -15.6321))
+  (send *pr2* :larm :angle-vector *larm2*)
+  ;; (send *pr2* :larm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
   (send *ri* :wait-interpolation)
@@ -814,7 +818,7 @@
   ;; (setq *rav0* #f(-20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
   ;; (send *pr2* :rarm :angle-vector *rav0*)
   (send *arrow* :newcoords (make-coords :pos (float-vector 628.029 8828.539 31050.217) :rpy (float-vector -3.14 0.18 -0.086)))
-  (send *pr2* :larm :inverse-kinematics
+  (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
         :debug-view *debug-flag*)
@@ -1146,7 +1150,7 @@
   (send *pr2* :larm :move-end-pos #f(0 100 100) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  x
+  
   (carry-mcup-pose)
   
   (warn "please run (put-mcup) ~%")
@@ -1666,6 +1670,12 @@
   (send *pr2* :larm :move-end-pos (float-vector 0 -100 0) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
   (send *ri* :wait-interpolation)
+
+  ;; tmp
+  (send *pr2* :larm :move-end-pos (float-vector 0 0 100) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
+
   )
 
 (defun transfer-to-pot-left-set ()
@@ -1695,6 +1705,43 @@
   (send *arrow* :rotate (deg2rad -90) :z :world)
 
   (look-at-arrow)
+
+  (send *arrow* :translate #f(0 0 20) :world)
+
+  (send *arrow* :translate #f(-20 150 150) :world)
+  (send *arrow* :rotate (deg2rad -45) :y)
+  (send *arrow* :rotate (deg2rad 30) :x)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (send *bowl-1* :attention-attention0)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (send *arrow* :rotate (deg2rad -30) :x)
+  (send *arrow* :rotate (deg2rad 45) :y)
+  (send *arrow* :translate #f(20 -150 -150) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (send *bowl-1* :attention-attention0)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (warn "please run (after-transfer) ~%")  
+  )
+
+(defun hoge ()
+  (set-bowl-1-model)
+  
+  ;; 注ぐ位置
+  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
+  (send *arrow* :translate #f(0 -50 120) :world)
+  (send *arrow* :rotate (deg2rad -90) :z :world)
   
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -1705,10 +1752,9 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
-  
-
   (warn "please run (after-transfer) ~%")  
   )
+
 
 (defun transfer-bowl-2-to-pot ()
   (set-bowl-2-model)
@@ -2011,7 +2057,7 @@
   )
 
 (defun now-transfer-2-model ()
-  (grasp-bowl-2-set-model)
+  (grasp-bowl-2-model)
   
   (transfer-bowl-2-to-pot)
   (set-spatula) ;; ヘラは掴んでいる想定で行う
@@ -2035,7 +2081,7 @@
   (squeeze-test-set)
   (squeeze-test)
 
-  (rossrv-test)
+  ;; (rossrv-test)
   
   (avoid-rarm)
   
@@ -2075,4 +2121,16 @@
 
   (put-oil-dispenser)
   (reset-larm)
+  )
+
+
+(defun tmp-test ()
+  (grasp-bowl-1-model)
+    
+  (transfer-bowl-1-to-pot)
+
+  (warn "please run (after-transfer) ~%")
+  ;; (after-transfer)
+  ;; (put-bowl-1-model)
+  ;; (reset-larm)
   )
