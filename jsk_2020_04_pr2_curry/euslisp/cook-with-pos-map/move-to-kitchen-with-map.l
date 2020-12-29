@@ -107,13 +107,6 @@
   )
 
 (defun move-to-stove-ri ()
-  ;; コンロまで移動する
-  (send *ri* :clear-costmap)
-  (send *ri* :move-to (make-coords :pos #f(1400 8100 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
-  (print (send *ri* :state :worldcoords))
-  )
-
-(defun move-to-stove-new ()
   (send *ri* :clear-costmap)
   ;; (send *ri* :move-to (make-coords :pos #f(1200 8100 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
   (setq local-flag (send *ri* :move-to (make-coords :pos #f(1400 8100 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
@@ -158,7 +151,7 @@
 
 ;; kitchen spotとsink間の移動
 (defun go-to-sink ()
-  ;; kitchen spotからsinkに実行する
+  ;; kitchen spotからsinkに移動する
   (send *ri* :go-pos-unsafe 0 -0.6 0)
   (send *ri* :go-pos-unsafe 0.09 0 0)
   (update-pos)
@@ -175,6 +168,27 @@
   (print (send *ri* :state :worldcoords))
   )
 
+(defun go-to-stove ()
+  ;; kitchen spotからstoveに移動する
+  (send *ri* :go-pos-unsafe 0 0.4 0)
+  (update-pos)
+  (update-view)
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun go-to-kitchen-from-stove ()
+  ;; stoveからkitchen spotに移動する
+  (send *ri* :go-pos-unsafe 0 -0.4 0)
+  (update-pos)
+  (update-view)
+  (print (send *ri* :state :worldcoords))
+  )
+
+
+(defun go-to-microwave ()
+  ;; kitchenからmicrowaveに移動する
+  
+  )
 
 (defun go-to-sink-from-arrange ()
   ;; arrange spotからsinkに実行する
