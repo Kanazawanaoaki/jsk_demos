@@ -90,35 +90,35 @@
 ;; def util-funcs
 (defun reset-rarm ()
   
-  (setq *rav0* (float-vector -25.6468 7.87241 -48.2704 -85.3763 253.675 -77.8887 -147.102))
-  (send *pr2* :rarm :angle-vector *rav0*)
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 556.424 8603.557 31158.464) :rpy (float-vector -2.286 0.656 0.542)))
-  ;; (send *pr2* :rarm :inverse-kinematics
-  ;;       (send *arrow* :copy-worldcoords)
-  ;;       :rotation-axis t
-  ;;       :debug-view *debug-flag*)
+  ;; (setq *rav0* (float-vector -25.6468 7.87241 -48.2704 -85.3763 253.675 -77.8887 -147.102))
+  ;; (send *pr2* :rarm :angle-vector *rav0*)
+  (send *arrow* :newcoords (make-coords :pos (float-vector 556.424 8603.557 31158.464) :rpy (float-vector -2.286 0.656 0.542)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)  
   
-  (setq *rav1* (float-vector -20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
-  (send *pr2* :rarm :angle-vector *rav1*)
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 628.029 8828.539 31050.217) :rpy (float-vector -3.14 0.18 -0.086)))
-  ;; (send *pr2* :rarm :inverse-kinematics
-  ;;       (send *arrow* :copy-worldcoords)
-  ;;       :rotation-axis t
-  ;;       :debug-view *debug-flag*)
+  ;; (setq *rav1* (float-vector -20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
+  ;; (send *pr2* :rarm :angle-vector *rav1*)
+  (send *arrow* :newcoords (make-coords :pos (float-vector 628.029 8828.539 31050.217) :rpy (float-vector -3.14 0.18 -0.086)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
-  (setq *rav3* (float-vector -75.0 50.0 -110.0 -110.0 20.0 -10.0 -10.0))
-  (send *pr2* :rarm :angle-vector *rav3*)
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 800.191 8689.104 30866.677) :rpy (float-vector -2.341 -0.222 -0.482)))
-  ;; (send *pr2* :rarm :inverse-kinematics
-  ;;       (send *arrow* :copy-worldcoords)
-  ;;       :rotation-axis t
-  ;;       :debug-view *debug-flag*)
+  ;; (setq *rav3* (float-vector -75.0 50.0 -110.0 -110.0 20.0 -10.0 -10.0))
+  ;; (send *pr2* :rarm :angle-vector *rav3*)
+  (send *arrow* :newcoords (make-coords :pos (float-vector 800.191 8689.104 30866.677) :rpy (float-vector -2.341 -0.222 -0.482)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
@@ -144,41 +144,41 @@
   (send *ri* :wait-interpolation)
   
   ;; 少し上にして水平に
-  (setq *lav1* (float-vector 16.6498 -20.1996 123.812 -51.9785 -42.6397 -65.2851 -0.059116))
-  (send *pr2* :larm :angle-vector *lav1*)
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 509.999 8489.998 31189.999) :rpy (float-vector 1.571 0.0 1.349)))
-  ;; (send *pr2* :larm :inverse-kinematics
-  ;;       (send *arrow* :copy-worldcoords)
-  ;;       :rotation-axis t
-  ;;       :debug-view *debug-flag*)
+  ;; (setq *lav1* (float-vector 16.6498 -20.1996 123.812 -51.9785 -42.6397 -65.2851 -0.059116))
+  ;; (send *pr2* :larm :angle-vector *lav1*)
+  (send *arrow* :newcoords (make-coords :pos (float-vector 509.999 8489.998 31189.999) :rpy (float-vector 1.571 0.0 1.349)))
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
   ;; 手前にする
-  (setq *lav2* (float-vector 41.8129 -20.2467 85.9536 -82.3235 -13.8272 -47.9804 -0.0))
-  (send *pr2* :larm :angle-vector *lav2*)
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 660.0 8390.0 31290.0) :rpy (float-vector 1.571 0.0 1.722)))
-  ;; (send *pr2* :larm :inverse-kinematics
-  ;;       (send *arrow* :copy-worldcoords)
-  ;;       :rotation-axis t
-  ;;       :debug-view *debug-flag*)
+  ;; (setq *lav2* (float-vector 41.8129 -20.2467 85.9536 -82.3235 -13.8272 -47.9804 -0.0))
+  ;; (send *pr2* :larm :angle-vector *lav2*)
+  (send *arrow* :newcoords (make-coords :pos (float-vector 660.0 8390.0 31290.0) :rpy (float-vector 1.571 0.0 1.722)))
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
-  (setq *lav3* (float-vector 75.8217 52.0712 108.49 -109.796 -2.86542 -9.47056 -0.0))
-  (send *pr2* :larm :angle-vector *lav3*)
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 800.188 8310.893 30866.671) :rpy (float-vector 2.341 -0.222 0.589)))
-  ;; (send *pr2* :larm :inverse-kinematics
-  ;;       (send *arrow* :copy-worldcoords)
-  ;;       :rotation-axis t
-  ;;       :debug-view *debug-flag*)
+  ;; (setq *lav3* (float-vector 75.8217 52.0712 108.49 -109.796 -2.86542 -9.47056 -0.0))
+  ;; (send *pr2* :larm :angle-vector *lav3*)
+  (send *arrow* :newcoords (make-coords :pos (float-vector 800.188 8310.893 30866.671) :rpy (float-vector 2.341 -0.222 0.589)))
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 6000)
   (send *ri* :wait-interpolation)  
   
-  (send *lav4* (float-vector 75.0 50.0 110.0 -110.0 -20.0 -10.0 -10.0))
+  (setq *lav4* (float-vector 75.0 50.0 110.0 -110.0 -20.0 -10.0 -10.0))
   (send *pr2* :larm :angle-vector *lav4*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
@@ -452,7 +452,7 @@
   (unix:sleep *s-time*)
   (send *ri* :start-grasp :larm :wait t)
 
-  (warn "please run (put-bowl-1) ~%")
+  (warn "please run (put-bowl-1-model) ~%")
   )
 
 (defun put-bowl-1 ()
@@ -1421,7 +1421,7 @@
   ;; ボウル１を置く位置
   (if (not (eql (send *bowl-1* :parent) nil))
       (send (send *bowl-1* :parent) :dissoc *bowl-1*))
-  (send *bowl-1* :newcoords (send *bowl-1-coords* :copy-worldcoords))
+  (send *bowl-1* :newcoords (send *bowl-1-stove-coords* :copy-worldcoords))
   (send *arrow* :newcoords (send (send *bowl-1* :handle-handle0) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
   
