@@ -221,14 +221,14 @@
 
 (defun curry-5 () ;; 玉ねぎを炒める
   ;; コンロ操作をする 電源を入れるところから
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   (now-on-stove)
   ;; (now-start-ih :deg -10)
   (now-start-ih :deg -30) ;; 中火にする ;;本当に？
   
   ;; かき混ぜる　ヘラは掴んでいる前提 ;; TODO
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   ;; (now-spatula-mix)
   
@@ -239,7 +239,7 @@
   ;; tmpとしては音声対話を入れる方式にする．
   
   ;; 火を止める　玉ねぎを炒めたら一度火を止める
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   (push-knob)
   (after-spatula-mix)
@@ -254,13 +254,13 @@
   (now-transfer-2-model)
   
   ;; コンロ操作をする
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   ;; (now-start-ih :deg -10)
   (now-start-ih :deg -30) ;; 中火にする
   
   ;; かき混ぜる ヘラは掴んでいる前提 ;; TODO
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   ;; (now-spatula-mix)
   
@@ -271,7 +271,7 @@
   ;; tmpとしては音声対話を入れる方式にする．
   
   ;; 火を止める　玉ねぎを炒めたら一度火を止める
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   (push-knob)
   (after-spatula-mix)
@@ -284,7 +284,7 @@
 
   
   ;; ボウル１を鍋に移す ヘラは掴んでいる前提
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
   (update-pos)
   (now-transfer-1) ;; ヘラは掴んでいる前提
   (put-spatula-1)
@@ -298,7 +298,7 @@
 
 (defun curry-8 () ;; 煮込む動作
   ;; おたまを掴む，コンロ操作，おたまで混ぜる． ;; TODO
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   (grasp-ladle) ;; おたまを掴む 
   
@@ -319,7 +319,7 @@
   
   ;; 沸騰してから少ししてから火を止める．時間などを見るのが良いか？
   ;; 火を止める
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   (push-knob)
   (after-ladle-mix)
@@ -337,7 +337,7 @@
   (put-spatula-1)
   
   ;; おたまを掴む，コンロ操作，おたまで混ぜる． ;; TODO
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   (grasp-ladle) ;; おたまを掴む 
   (now-start-ih :deg -50) ;; 弱火にする
@@ -352,7 +352,7 @@
   
   ;; ここは時間で良さそう 時間が立ったら (push-knob) (after-ladle-mix)
   ;; 火を止める
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   (push-knob)
   (after-ladle-mix)
@@ -391,37 +391,10 @@
 
 
 ;; defun util funcs
-(defun use-ih-tmp ()
-  ;; コンロ操作をする
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
-  (update-pos)
-  (now-on-start-ih)
-  )
-
-(defun grasp-pot-tmp ()
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
-  (update-pos)
-  (grasp-pot-from-below)
-  )
-
-(defun relase-pot-tmp ()
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
-  (update-pos)
-  (release-pot-from-below)
-  )
-
-(defun spatula-mix-tmp (&rest args &key (times 10) &allow-other-keys)
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
-  (update-pos)
-  (mix-with-spatula-set)
-  (spatula-mix-loop :times times)
-  (avoid-rarm-spatula)  
-  )
-
 
 (defun tmp-func ()
   ;; かき混ぜる　ヘラは掴んでいる前提
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
 
   (look-at-pot)
