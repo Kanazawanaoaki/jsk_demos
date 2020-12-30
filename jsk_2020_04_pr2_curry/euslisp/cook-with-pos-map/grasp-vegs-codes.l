@@ -2,7 +2,6 @@
   ;; init
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/move-to-kitchen-with-map.l")
   
-
   ;; set global coodes
   (setq *potato-stand-coords* (make-coords :pos (float-vector 310.071 8313.284 30937.902) :rpy (float-vector 3.142 0 0)))
   (setq *carrot-stand-coords* (make-coords :pos (float-vector 309.029 8399.786 30942.039) :rpy (float-vector 3.142 0 0)))
@@ -450,18 +449,29 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
-  (send *pr2* :larm :move-end-pos #f(0 0 100) :world)
+  (send *pr2* :larm :move-end-pos #f(100 0 100) :world)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
-  
+
+  (send *pr2* :larm :move-end-pos #f(100 0 0) :world)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
   (warn "please run (vegs-carry-pose) ~%")  
   )
 
 (defun vegs-carry-pose ()
-  (setq *lav-cm* #f(38.442 -20.2481 94.8038 -104.353 117.885 -64.3683 -258.356))
-  (send *pr2* :larm :angle-vector *lav-cm*)
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 604.833 8300.101 31079.393) :rpy (float-vector 3.141 0.75 0.0)))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 640 8445 31174) :rpy (float-vector 1.587 0 0)))
+  ;; (send *pr2* :larm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :move-target *potato*
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
+  (setq *lav-vc* #f(35.2692 -2.67452 58.1589 -95.2169 65.0479 -80.0523 -157.341))
+  (send *pr2* :larm :angle-vector *lav-vc*)
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 640.324 8425.003 31174.0) :rpy (float-vctor 1.587 0.785 0.0)))
   ;; (send *pr2* :rarm :inverse-kinematics
   ;;       (send *arrow* :copy-worldcoords)
   ;;       :rotation-axis t
@@ -469,7 +479,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
   (send *ri* :wait-interpolation)
-
+  
   (warn "please go to sink spot !! ~%")  
   )
 
@@ -712,3 +722,18 @@
   (reset-larm)
   )
 
+
+
+(defun tmp-pose ()
+  (send *arrow* :newcoords (make-coords :pos (float-vector 640 8445 31174) :rpy (float-vector 1.587 0 0)))
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target *potato*
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
+  (send *ri* :wait-interpolation)
+
+  (warn "please go to sink spot !! ~%")  
+  )
