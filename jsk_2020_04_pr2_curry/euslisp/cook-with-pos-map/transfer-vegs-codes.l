@@ -15,6 +15,7 @@
   (setq *red-cup-put-coords* (make-coords :pos (float-vector 300 8530 31030) :rot #2f((0.0 -1.0 0.0) (1.0 0.0 0.0) (0.0 0.0 1.0)))) ;; 300も良さげではあった．
   (setq *bowl-1-put-coords* (make-coords :pos (float-vector 328 8433 30997) :rpy #f(2.837 0.793 -1.721)))
   (setq *bowl-2-put-coords* (make-coords :pos (float-vector 323 8631 30960) :rpy #f(2.697 0.249 3.102)))
+  (setq *bowl-1-kitchen-put-coords* (make-coords :pos (float-vector 358 8634 30990) :rpy (float-vector 2.312 -0.147 -0.083)))
   
   (move-to-kitchen-irt)
   (objects (list *pr2* *scene* *cutting-board* *rcup*))
@@ -393,6 +394,58 @@
   (warn "please run  (avoid-larm) ~%")
   )
 
+(defun put-target-bowl-1-kitchen ()
+  ;; 左手を上げる
+  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 150) :world)
+  (send *pr2* :larm :inverse-kinematics
+      (send *arrow* :copy-worldcoords)
+      :rotation-axis t
+      :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  ;; 位置に．
+  (send *arrow* :newcoords (send *bowl-1-kitchen-put-coords* :copy-worldcoords))
+  
+  (send *arrow* :translate #f(0 0 30) :world)
+  (send *pr2* :larm :inverse-kinematics
+    (send *arrow* :copy-worldcoords)
+    :move-target *tar*
+    :rotation-axis nil
+    :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *arrow* :translate #f(0 0 -30) :world)
+  (send *pr2* :larm :inverse-kinematics
+    (send *arrow* :copy-worldcoords)
+    :move-target *tar*
+    :rotation-axis nil
+    :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *ri* :stop-grasp :larm)
+  (send (send *pr2* :larm :end-coords) :dissoc *tar*)
+
+  ;; 左手を上げる
+  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 100) :world)
+  (send *pr2* :larm :inverse-kinematics
+      (send *arrow* :copy-worldcoords)
+      :rotation-axis t
+      :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (warn "please run  (avoid-larm) ~%")
+  )
+
 (defun put-target-bowl-2 ()
   ;; 左手を上げる
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
@@ -631,6 +684,24 @@
      (if (eql *fail-flag* nil)
          (progn
            (put-target-bowl-1)
+           (avoid-larm)
+           (recognition))
+       (progn
+         (return-larm)
+         (recognition))
+       )
+     )
+  )
+
+(defun now-transfer-bowl-1-kitchen ()
+  (setq *end-flag* nil)
+  (recognition)
+  (until *end-flag*
+     (setq *fail-flag* nil)
+     (grasp-target)
+     (if (eql *fail-flag* nil)
+         (progn
+           (put-target-bowl-1-kitchen)
            (avoid-larm)
            (recognition))
        (progn
