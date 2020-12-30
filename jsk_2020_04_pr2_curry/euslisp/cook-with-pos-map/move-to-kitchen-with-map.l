@@ -24,8 +24,8 @@
 
   ;; set global variables
   (setq *s-time* 3)
+  (setq *w-time* 2)
   (setq *debug-flag* nil)
-  
   )
 
 (defun update-view ()
@@ -51,6 +51,22 @@
 (warn "~% If you use real robot, run (update-pos) ~%")
 (warn "please run (move-to-kitchen-ri) , (move-to-sink-ri) or (move-to-stove-ri) and (set-pose)~%")
 
+;; add for voice recognition
+(ros::load-ros-manifest "speech_recognition_msgs")
+(setq *ok-flag* nil)
+(defun voice-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (if (equal *data* '("OK"))
+        (progn
+          (format t "了解しました！ ~%" *data*)
+	  (setq *ok-flag* t)
+          )
+      (format t "data: ~A ~%" *data*)
+      ) 
+    )
+  )
 
 ;; IRT上の移動
 (defun move-to-kitchen-irt ()
@@ -225,3 +241,61 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   )
+
+
+
+;; move with speech
+(defun go-to-stove-with-speech ()
+  ;; kitchen spotからstoveに移動する
+  
+  (send *ri* :speak-jp "移動するので電源ケーブルを抜いて，合図して下さい")
+  
+  (ros::unsubscribe "/speech_to_text")
+  (setq *ok-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+  (until *ok-flag*
+	 (ros::spin-once)
+	 (ros::sleep)
+	 )
+
+  (send *ri* :speak-jp "ありがとうございます．移動を開始します")
+  (unix:sleep 2)
+  (send *ri* :go-pos-unsafe 0 0.4 0)
+  (update-pos)
+  (update-view)
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun go-to-stove-with-speech-and-speech ()
+  ;; kitchen spotからstoveに移動する
+  
+  (send *ri* :speak-jp "移動するので電源ケーブルを抜いて，合図して下さい")
+  
+  (ros::unsubscribe "/speech_to_text")
+  (setq *ok-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+  (until *ok-flag*
+	 (ros::spin-once)
+	 (ros::sleep)
+	 )
+  
+  (send *ri* :speak-jp "ありがとうございます．移動を開始します")
+  (unix:sleep *w-time*)
+  (send *ri* :go-pos-unsafe 0 0.4 0)
+  (update-pos)
+  (update-view)
+  (print (send *ri* :state :worldcoords))
+  
+  (send *ri* :speak-jp "電源ケーブルを挿して下さい")
+
+  (ros::unsubscribe "/speech_to_text")
+  (setq *ok-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+  (until *ok-flag*
+	 (ros::spin-once)
+	 (ros::sleep)
+	 )  
+  (send *ri* :speak-jp "ありがとうございます．調理を再開します")
+  (unix:sleep *w-time*)
+  )
+

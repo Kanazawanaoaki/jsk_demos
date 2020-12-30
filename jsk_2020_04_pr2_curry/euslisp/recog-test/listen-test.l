@@ -1,4 +1,4 @@
-;; add for sense
+;; add for voice recognition
 
 (ros::roseus "speech_rec_test" :anonymous t)
 (ros::load-ros-manifest "speech_recognition_msgs")

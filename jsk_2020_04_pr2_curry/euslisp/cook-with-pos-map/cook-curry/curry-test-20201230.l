@@ -90,7 +90,7 @@
   ;; ボウル１に移す動作
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/transfer-vegs-codes.l")
   (update-pos)
-  (now-transfer-bowl-1) ;; TODO bowl１の位置が変わっているはず．
+  (now-transfer-bowl-1-kitchen)
   
   (warn "please run (curry-2) ~%")
   )
@@ -153,7 +153,7 @@
   ;; ボウル１に移す動作
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/transfer-vegs-codes.l")
   (update-pos)
-  (now-transfer-bowl-1)
+  (now-transfer-bowl-1-kitchen)
   
   (warn "please run (curry-3) ~%")
   )
