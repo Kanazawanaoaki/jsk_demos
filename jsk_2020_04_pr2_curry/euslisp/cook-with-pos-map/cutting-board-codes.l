@@ -154,7 +154,7 @@
 (defun slide-board-set ()
   ;; slide時の左腕待機座標
   (send *arrow* :newcoords (send *slide-larm-coords* :copy-worldcoords))
-
+  
   (send *ri* :start-grasp :larm :wait t)
   
   (send *arrow* :translate #f(50 0 0) :world)
@@ -231,7 +231,7 @@
 (defun slide-board ()
   (setq avs (list))
   (setq tms (list))
-
+  
   (dotimes (i 10)
     (send *pr2* :rarm :move-end-pos #f(10 0 0) :world)
     (setq av (send *pr2* :angle-vector))
@@ -788,6 +788,8 @@
   (send *ri* :wait-interpolation)
   
   (send *ri* :start-grasp :larm :wait t)
+  (send *ri* :start-grasp :larm :gain 30 :wait t)
+  
   (set-board-model)
   
   (send *arrow* :rotate (deg2rad 10) :x :world)
@@ -803,7 +805,6 @@
   )
 
 
-;; TODO
 (defun after-transfer-board ()
   (send *pr2* :larm :move-ens-pos #f(-60 100 100) :world)
   (send *viewer* :draw-objects)
@@ -845,6 +846,8 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
+
+  (warn "please run (knife-slide-transfer) ~%")
   )
 
 (defun knife-slide-transfer ()
@@ -862,10 +865,27 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
-  (dotimes (i (/ slide-length 10))  ;; TODO
-    ()
+  (setq avs (list))
+  (setq tms (list))
+  
+  (dotimes (i (+ (/ slide-length 10) 1))
+    (send *arrow* :translate #f(0 -10 0))
+    (send *pr2* :rarm :inverse-kinematics
+	  (send *arrow* :copy-worldcoords)
+	  :move-target (car (send *knife* :attention))
+	  :rotation-axis t
+	  :debug-view *debug-flag*)
+    (setq av (send *pr2* :angle-vector))
+    (setq avs (append avs (list av)))
+    (setq tms (append tms (list 600)))
     )
   
+  (send *ri* :angle-vector-sequence avs tms)
+  (send *ri* :wait-interpolation)
+  
+  (warn "please run (avoid-rarm-knife) ~%")
+  )
+
 
 (defun avoid-rarm-knife ()
   (send *arrow* :newcoords (make-coords :pos (float-vector 635.773 8244.413 31202.306) :rpy (float-vector -2.079 -0.062 -1.446)))
@@ -893,7 +913,19 @@
   )
 
 (defun set-knife-model ()
-  
+  (if (not (eql (send *knife* :parent) nil))
+      (send (send *knife* :parent) :dissoc *knife*))
+  (let (local-cds)
+    (setq local-cds (make-cascoords))
+    (send local-cds :newcoords (send *knife* :copy-worldcoords))
+    (send local-cds :translate #f(-12 0 0))
+    (send local-cds :rotate (deg2rad -90) :x)
+    (send local-cds :assoc *knife*)
+    (send local-cds :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+    (send local-cds :dissoc *knife*)
+    )
+  (send *viewer* :draw-objects)
+  (send (send *pr2* :larm :end-coords) :assoc *knife*)
   )
 
 
