@@ -748,47 +748,6 @@
   )
 
 
-(defun now-board ()
-  (slide-board-set)
-  (slide-board)
-  (after-slide)
-  (grasp-board)
-  (lift-board)
-  )
-
-
-(defun now-tmp ()
-  (set-pose)
-  ;; (slide-board-set)
-  (slide-board-model-set)
-  (slide-board)
-  (after-slide)
-  (grasp-borad-model)
-  )
-
-(defun now-set-board ()
-  (recieve-cutting-board)
-  (put-cutting-board)
-  (push-board-set)
-  (push-board-1)
-  (after-push-board-1)
-  )
-
-(defun only-set-board ()
-  (put-cutting-board)
-  (push-board-set)
-  (push-board-1)
-  (after-push-board-1)
-  )
-
-
-(defun tmp-test ()
-  (tmp-grasp)
-  (lift-board)
-  (transfer-to-pot-set)
-  (transfer-to-pot)
-  )
-
 
 (defun set-board-model ()
   (if (not (eql (send *cutting-board* :parent) nil))
@@ -842,3 +801,88 @@
   
   (warn "please run (lift-board) ~%")
   )
+
+
+;; TODO
+(defun after-transfer-board ()
+  ;; どこか姿勢を作ってその姿勢になる
+  
+  
+  )
+
+;; knife codes
+(defun knife-slide-transfer-set ()
+  )
+
+(defun knife-slide-transfer ()
+  )
+
+(defun avoid-rarm-kinfe ()
+  )
+
+(defun now-board ()
+  (slide-board-set)
+  (slide-board)
+  (after-slide)
+  ;; (grasp-board)
+  (tmp-grasp)
+  (lift-board)
+  )
+
+
+(defun now-tmp ()
+  (set-pose)
+  ;; (slide-board-set)
+  (slide-board-model-set)
+  (slide-board)
+  (after-slide)
+  (grasp-borad-model)
+  )
+
+(defun now-set-board ()
+  (recieve-cutting-board)
+  (put-cutting-board)
+  (push-board-set)
+  (push-board-1)
+  (after-push-board-1)
+  )
+
+(defun only-set-board ()
+  (put-cutting-board)
+  (push-board-set)
+  (push-board-1)
+  (after-push-board-1)
+  )
+
+(defun now-cutting-board-transfer-set ()
+  (now-board)
+  (transfer-to-pot-set)
+  (transfer-to-pot)
+  )
+
+(defun now-cutting-board-transfer ()
+  (knife-slide-transfer-set)
+  (knife-slide-transfer)
+  (avoid-rarm-kinfe)
+  )
+
+(defun now-cutting-board-transfer-after ()
+  (after-transfer-board)
+  (only-set-board)
+  )
+
+(defun now-cutting-board-transfer-all ()
+  (now-cutting-board-transfer-set)
+  (grasp-knife)
+  (now-cutting-board-transfer)
+  (put-knife)
+  (now-cutting-board-transfer-after)
+  )
+
+(defun tmp-test ()
+  (tmp-grasp)
+  (lift-board)
+  (transfer-to-pot-set)
+  (transfer-to-pot)
+  )
+
