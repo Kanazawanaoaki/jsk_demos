@@ -1,12 +1,12 @@
 (defun cutting-board-init ()
   ;; init
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-cods.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   
   ;; set objects
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/cutting-board.l")
   (setq *cutting-board* (cutting-board))
   (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
-    
+  
   ;; def global-coords
   (setq *slide-rarm-coords* (make-coords :pos (float-vector 430.297 8421.198 30852.165) :rpy (float-vector -3.086 1.155 3.132)))
   (setq *slide-larm-coords* (make-coords :pos (float-vector 735.864 8441.372 30866.716) :rpy (float-vector 2.244 -1.518 0.872)))
@@ -428,9 +428,9 @@
   (send *arrow* :translate (float-vector 100 50 200) :world)
   
   (send *pr2* :larm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:rotation-axis t
-	:debug-view *debug-flag*)
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)  
@@ -805,20 +805,35 @@
 
 ;; TODO
 (defun after-transfer-board ()
-  ;; どこか姿勢を作ってその姿勢になる
+  ;; まな板を置く位置
+  (if (not (eql (send *cutting-board* :parent) nil))
+      (send (send *cutting-board* :parent) :dissoc *cutting-board*))
+  (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *cutting-board* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 100 50 200) :world)
   
-  
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)  
   )
 
 ;; knife codes
 (defun knife-slide-transfer-set ()
+  
   )
 
 (defun knife-slide-transfer ()
+  
   )
 
 (defun avoid-rarm-kinfe ()
+  
   )
+
 
 (defun now-board ()
   (slide-board-set)
@@ -879,10 +894,21 @@
   (now-cutting-board-transfer-after)
   )
 
+
 (defun tmp-test ()
-  (tmp-grasp)
-  (lift-board)
-  (transfer-to-pot-set)
-  (transfer-to-pot)
+  (set-pose)
+  (now-cutting-board-transfer-set)
+  (grasp-knife)
   )
 
+
+(defun tmp-pose ()
+  (send *arrow* :newcoords (make-coords :pos (float-vector 737.109 7985.153 31099.402) :rpy (float-vector 3.004 0.222 1.621)))
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  )
