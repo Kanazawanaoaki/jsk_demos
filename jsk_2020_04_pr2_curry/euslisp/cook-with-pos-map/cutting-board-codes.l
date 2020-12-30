@@ -805,6 +805,11 @@
 
 ;; TODO
 (defun after-transfer-board ()
+  (send *pr2* :larm :move-ens-pos #f(-60 100 100) :world)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  
   ;; まな板を置く位置
   (if (not (eql (send *cutting-board* :parent) nil))
       (send (send *cutting-board* :parent) :dissoc *cutting-board*))
@@ -823,14 +828,71 @@
 
 ;; knife codes
 (defun knife-slide-transfer-set ()
+  (send *arrow* :newcoords (make-coords :pos (float-vector 593.408 8513.682 31202.493) :rpy (float-vector -2.624 -0.054 -0.026)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)  
   
+  (send *arrow* :newcoords (make-coords :pos (float-vector 635.773 8244.413 31202.306) :rpy (float-vector -2.079 -0.062 -1.446)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
   )
 
 (defun knife-slide-transfer ()
+  (setq slide-length 220)
+
+  (send *arrow* :newcoords (send (send *cutting-board* :attention-attention2) :copy-worldcoords))
+  (send *arrow* :rotate (deg2rad 90) :z)
+  (send *arrow* :translate (float-vector 0 slide-length 0))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+	:move-target (car (send *knife* :attention))
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (dotimes (i (/ slide-length 10))  ;; TODO
+    ()
+    )
   
+
+(defun avoid-rarm-knife ()
+  (send *arrow* :newcoords (make-coords :pos (float-vector 635.773 8244.413 31202.306) :rpy (float-vector -2.079 -0.062 -1.446)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (send *arrow* :newcoords (make-coords :pos (float-vector 593.408 8513.682 31202.493) :rpy (float-vector -2.624 -0.054 -0.026)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (setq *rav0* #f(-20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
+  (send *pr2* :rarm :angle-vector *rav0*)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)  
   )
 
-(defun avoid-rarm-kinfe ()
+(defun set-knife-model ()
   
   )
 
@@ -909,6 +971,13 @@
         :rotation-axis t
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun tmp-rarm ()
+  (setq *rav0* #f(-20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
+  (send *pr2* :rarm :angle-vector *rav0*)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
   )
