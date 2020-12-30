@@ -19,6 +19,8 @@
   (update-pos)
   (now-set-2-model)
   (now-set-3-model)
+  (now-set-oil)
+  (now-set-mcup)
   
   ;; キッチンの前に戻る
   (go-to-kithen-from-stove-with-speech-after)
@@ -216,6 +218,11 @@
   ;; コンロの前まで移動する
   (go-to-stove-with-speech-before-and-after)
 
+  ;;   油を掛ける動 ;; TODO
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
+  (update-pos)
+  ;; TODO
+  
   (warn "please run (curry-5) ~%")
   )
 
@@ -227,7 +234,7 @@
   ;; (now-start-ih :deg -10)
   (now-start-ih :deg -30) ;; 中火にする ;;本当に？
   
-  ;; かき混ぜる　ヘラは掴んでいる前提 ;; TODO ヘラを掴むのを入れる？ 様子を聞きながら調理する．
+  ;; かき混ぜる ;; TODO ヘラを掴むのを入れる？ 様子を聞きながら調理する．
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   ;; (now-spatula-mix)
@@ -287,11 +294,20 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
   (update-pos)
   (now-transfer-1-model) ;; ヘラは掴んでいる前提
-  ;; (put-spatula-1)
-  ;; (reset-rarm)
-
+  (put-spatula-1)
+  (reset-rarm)
+  
   ;; 移し終わったら移動をする
   (go-to-stove-with-speech-after)
+
+
+  ;; 計量カップを掴む ;; TODO
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
+  (update-pos)
+  ;; TODO
+  
+  ;; 水を汲んで注ぐのを繰り返す．
+  
   
   (warn "please run (curry-8) ~%")
   )
