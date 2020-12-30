@@ -227,7 +227,7 @@
   ;; (now-start-ih :deg -10)
   (now-start-ih :deg -30) ;; 中火にする ;;本当に？
   
-  ;; かき混ぜる　ヘラは掴んでいる前提 ;; TODO
+  ;; かき混ぜる　ヘラは掴んでいる前提 ;; TODO ヘラを掴むのを入れる？
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   ;; (now-spatula-mix)
