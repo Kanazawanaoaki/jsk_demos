@@ -69,8 +69,7 @@
   ;; take object from microwave
   (send *pmi* :open-microwave)
   ;; (send *pmi* :kanazawa-take-object)
-  ;; (send *pmi* :close-microwave)
-  
+  ;; (send *pmi* :close-microwave)  
   )
 
 (defun hot-veg-micro ()
@@ -150,8 +149,72 @@
     )
   )
 
+
+(defun sato-push-button-with-rec ()
+  ;; push button
+  (setq *push-flag* nil)
+  (while (eql *push-flag* nil)
+    (send *pmi* :push-500w-button)
+    (unix:sleep *wait-num*)
+    (setq msg (one-shot-subscribe "/microwave_reader/result" roseus::StringStamped :timeout 5000))
+    (microwave-cb msg)
+    (if (equal *data* "/500w")
+        (setq *push-flag* t))
+    )
+  
+  ;; ここは二回押していたらどうするとかがあっても良いようにしたい．
+  (setq *push-flag* nil)
+  (while (eql *push-flag* nil)
+    (send *pmi* :push-1min-button)
+    (unix:sleep *wait-num*)
+    (setq msg (one-shot-subscribe "/microwave_reader/result" roseus::StringStamped :timeout 5000))
+    (microwave-cb msg)
+    (if (equal *data* "/1m")
+        (setq *push-flag* t))
+    )
+  
+  (setq *push-flag* nil)
+  (while (eql *push-flag* nil)
+    (send *pmi* :push-1min-button)
+    (unix:sleep *wait-num*)
+    (setq msg (one-shot-subscribe "/microwave_reader/result" roseus::StringStamped :timeout 5000))
+    (microwave-cb msg)
+    (if (equal *data* "/2m")
+        (setq *push-flag* t))
+    )
+
+  (setq *tmp-data* *data*)
+  
+  (setq *push-flag* nil)
+  (while (eql *push-flag* nil)
+    (send *pmi* :push-start-button)
+    (unix:sleep *wait-num*)
+    (setq msg (one-shot-subscribe "/microwave_reader/result" roseus::StringStamped :timeout 5000))
+    (microwave-cb msg)
+    (if (or (equal *data* "/start") (not (equal *data* *tmp-data*)))
+        (setq *push-flag* t))
+    )
+  )
+
 ;; TODO 
 (defun sato-rice-micro-with-rec ()
+  ;; put object in microwave
+  (send *pmi* :open-microwave)
+  (send *pmi* :kanazawa-put-object)
+  (send *pmi* :close-microwave)
+  
+  ;; push button
+  (sato-push-button-with-rec)
+  
+  ;; wait for heating
+  (unix::sleep (* 2 60))
+  
+  ;; take object from microwave
+  (send *pmi* :open-microwave)
+  ;; (send *pmi* :kanazawa-take-object)
+  ;; (send *pmi* :close-microwave)
+
+  ;; 取り出す所がまだだから，助けをこう TODO
   
   )
 
