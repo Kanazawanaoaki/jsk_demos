@@ -375,20 +375,25 @@
 
 
 (defun curry-11 ()
-  ;; サトウのごはんを盛り付ける
+  ;; サトウのごはんを盛り付ける ;;TODO ヘラを 
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/arrangement-codes.l")
   (update-pos)
+  (grasp-spatula)
   (now-arrange-sato)
+  (put-spatula)
   
   ;; 少し温めるなら温める (今は良いかな？)
   
   
-  
   ;; カレーを盛り付ける
-  
-  
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/arrangement-codes.l")
+  (update-pos)
+  (grasp-ladle)
+  (now-arrange-curry)
+  (put-ladle)
   
   ;;完成！！
+  
   )
 
 
