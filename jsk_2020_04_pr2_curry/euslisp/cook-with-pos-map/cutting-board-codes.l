@@ -1,11 +1,15 @@
 (defun cutting-board-init ()
   ;; init
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/move-to-kitchen-with-map.l")
+  ;; ここもtoolの方が良いかも．
   
   ;; set objects
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/cutting-board.l")
   (setq *cutting-board* (cutting-board))
   (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
+
+  ;; 鍋と包丁のモデルを出す!!
+  
   
   ;; def global-coords
   (setq *slide-rarm-coords* (make-coords :pos (float-vector 430.297 8421.198 30852.165) :rpy (float-vector -3.086 1.155 3.132)))
