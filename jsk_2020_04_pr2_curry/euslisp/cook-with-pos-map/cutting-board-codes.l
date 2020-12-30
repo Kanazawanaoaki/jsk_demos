@@ -1,23 +1,19 @@
 (defun cutting-board-init ()
   ;; init
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/move-to-kitchen-with-map.l")
-  ;; ここもtoolの方が良いかも．
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-cods.l")
   
   ;; set objects
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/cutting-board.l")
   (setq *cutting-board* (cutting-board))
   (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
-
-  ;; 鍋と包丁のモデルを出す!!
-  
-  
+    
   ;; def global-coords
   (setq *slide-rarm-coords* (make-coords :pos (float-vector 430.297 8421.198 30852.165) :rpy (float-vector -3.086 1.155 3.132)))
   (setq *slide-larm-coords* (make-coords :pos (float-vector 735.864 8441.372 30866.716) :rpy (float-vector 2.244 -1.518 0.872)))
   (setq *grasp-larm-coords* (make-coords :pos (float-vector 679.695 8281.493 30832.711) :rpy (float-vector 1.882 0.065 1.548)))  
   
   (move-to-kitchen-irt)
-  (objects (list *pr2* *scene* *cutting-board*))
+  (objects (list *pr2* *scene* *cutting-board* *knife* *pot*))
   (update-view)  
   )
 
@@ -739,11 +735,12 @@
   )
 
 (defun transfer-to-pot ()
-  (send *arrow* :newcoords (make-coords :pos (float-vector 743.982 7943.09 31092.558) :rpy (float-vector  -3.005 0.145 1.655)))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 743.982 7943.09 31092.558) :rpy (float-vector  -3.005 0.145 1.655)))
+  (send *arrow* :newcoords (make-coords :pos (float-vector 737.109 7985.153 31099.402) :rpy (float-vector 3.004 0.222 1.621)))
   (send *pr2* :larm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:rotation-axis t
-	:debug-view *debug-flag*)
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
