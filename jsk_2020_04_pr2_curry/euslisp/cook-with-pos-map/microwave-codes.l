@@ -116,7 +116,7 @@
         (setq *push-flag* t))
     )
   
-  ;; ここは二回押していたらどうするとかがあっても良い．
+  ;; ここは二回押していたらどうするとかがあっても良いようにしたい．
   (setq *push-flag* nil)
   (while (eql *push-flag* nil)
     (send *pmi* :push-1min-button)
@@ -148,6 +148,18 @@
     (if (or (equal *data* "/start") (not (equal *data* *tmp-data*)))
         (setq *push-flag* t))
     )
+  )
+
+;; TODO 
+(defun sato-rice-micro-with-rec ()
+  
+  )
+
+(defun now-sato-rice-micro ()
+  (recieve-sato)
+  (recognition)
+  (micro-all)
+  (sato-rice-micro-with-rec)
   )
 
 (defun tmp-test ()

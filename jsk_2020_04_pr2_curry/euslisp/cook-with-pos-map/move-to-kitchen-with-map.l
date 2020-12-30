@@ -245,11 +245,8 @@
 
 
 ;; move with speech
-(defun go-to-stove-with-speech ()
-  ;; kitchen spotからstoveに移動する
-  
+(defun speech-before-move ()
   (send *ri* :speak-jp "移動するので電源ケーブルを抜いて，合図して下さい")
-  
   (ros::unsubscribe "/speech_to_text")
   (setq *ok-flag* nil)
   (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
@@ -259,33 +256,9 @@
 	 )
 
   (send *ri* :speak-jp "ありがとうございます．移動を開始します")
-  (unix:sleep 2)
-  (send *ri* :go-pos-unsafe 0 0.4 0)
-  (update-pos)
-  (update-view)
-  (print (send *ri* :state :worldcoords))
   )
 
-(defun go-to-stove-with-speech-and-speech ()
-  ;; kitchen spotからstoveに移動する
-  
-  (send *ri* :speak-jp "移動するので電源ケーブルを抜いて，合図して下さい")
-  
-  (ros::unsubscribe "/speech_to_text")
-  (setq *ok-flag* nil)
-  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
-  (until *ok-flag*
-	 (ros::spin-once)
-	 (ros::sleep)
-	 )
-  
-  (send *ri* :speak-jp "ありがとうございます．移動を開始します")
-  (unix:sleep *w-time*)
-  (send *ri* :go-pos-unsafe 0 0.4 0)
-  (update-pos)
-  (update-view)
-  (print (send *ri* :state :worldcoords))
-  
+(defun speech-after-move ()
   (send *ri* :speak-jp "電源ケーブルを挿して下さい")
 
   (ros::unsubscribe "/speech_to_text")
@@ -296,6 +269,60 @@
 	 (ros::sleep)
 	 )  
   (send *ri* :speak-jp "ありがとうございます．調理を再開します")
+  )
+
+
+(defun go-to-stove-with-speech-before ()
+  ;; kitchen spot(拠点)からstoveに移動する
+  (speech-before-move)
+  (unix:sleep *w-time*)
+  (go-to-stove)
+  )
+
+(defun go-to-stove-with-speech-after ()
+  ;; kitchen spotからstove(拠点)に移動する
+  (go-to-stove)
+  (speech-after-move)
   (unix:sleep *w-time*)
   )
 
+(defun go-to-stove-with-speech-before-and-after ()
+  ;; kitchen spotからstoveに移動し，拠点も移動させる  
+  (speech-before-move)
+  (unix:sleep *w-time*)
+  (go-to-stove)
+  (speech-after-move)
+  (unix:sleep *w-time*)
+  )
+
+(defun go-to-kithen-from-stove-with-speech-after ()
+  ;; stoveからkitchen spot(拠点)に移動する
+  (go-to-kitchen-from-stove)
+  (speech-after-move)
+  (unix:sleep *w-time*)
+  )
+
+(defun go-to-kithen-from-stove-with-speech-before ()
+  ;; stove(拠点)からkitchen spotに移動する
+  (speech-before-move)
+  (unix:sleep *w-time*)
+  (go-to-kitchen-from-stove)
+  )
+
+
+(defun go-to-sink-with-speech-before ()
+  ;; kitchen spot(拠点)からsinkに移動する
+  (speech-before-move)
+  (unix:sleep *w-time*)
+  (go-to-sink)  
+  )
+
+(defun go-to-kithen-from-sink-with-speech-after ()
+  ;; sinkからkitchen spot(拠点)に移動する
+  (go-to-kitchen-from-sink)
+  (speech-after-move)
+  (unix:sleep *w-time*)
+  )
+
+
+;; TODO stove→microwave， microwave→arrnage

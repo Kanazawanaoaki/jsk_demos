@@ -2025,8 +2025,8 @@
   (set-spatula) ;; ヘラは掴んでいる想定で行う
   (squeeze-test-set)
   (squeeze-test)
-
-  (rossrv-test)
+  
+  ;; (rossrv-test)
   
   (avoid-rarm)
   
