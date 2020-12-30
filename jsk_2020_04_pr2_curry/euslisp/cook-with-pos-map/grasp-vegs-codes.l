@@ -3,9 +3,9 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/move-to-kitchen-with-map.l")
   
   ;; set global coodes
-  (setq *potato-stand-coords* (make-coords :pos (float-vector 310.071 8313.284 30937.902) :rpy (float-vector 3.142 0 0)))
-  (setq *carrot-stand-coords* (make-coords :pos (float-vector 309.029 8399.786 30942.039) :rpy (float-vector 3.142 0 0)))
-  (setq *onion-stand-coords* (make-coords :pos (float-vector 314.539 8479.935 30946.933) :rpy (float-vector 3.142 0 0)))
+  (setq *potato-stand-coords* (make-coords :pos (float-vector 310.071 8313.284 30947) :rpy (float-vector 3.142 0 0)))
+  (setq *carrot-stand-coords* (make-coords :pos (float-vector 309.029 8399.786 30947) :rpy (float-vector 3.142 0 0)))
+  (setq *onion-stand-coords* (make-coords :pos (float-vector 314.539 8479.935 30947) :rpy (float-vector 3.142 0 0)))
   
   ;; set objscts
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/cutting-board.l")
