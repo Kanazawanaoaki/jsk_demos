@@ -11,7 +11,7 @@
   (update-pos)
   (now-set-1-model)
   
-  ;; コンロの前まで移動する
+  ;; コンロの前まで移動する ;; TODO音声対話を入れる
   (go-to-stove)
   
   ;; ボウル２・３をセットする
@@ -19,8 +19,8 @@
   (update-pos)
   (now-set-2-model)
   (now-set-3-model)
-
-  ;; キッチンの前に戻る
+  
+  ;; キッチンの前に戻る ;; TODO音声対話を入れる
   (go-to-kitchen-from-stove)
   
   ;; まな板をセットする
@@ -41,24 +41,23 @@
   ;; 人参を掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
-  (grasp-carrot)
-  (vegs-carry-pose)
+  (now-grasp-carrot)
   
-  ;; シンクの前に移動する
+  ;; シンクの前に移動する ;; TODO音声対話を入れる
   (go-to-sink)
   
   ;; 人参を洗う
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
   (update-pos)
-  ;;(wash-vegs)
+  ;;(wash-vegs) ;; TODO洗うプログラムを用意する
 
-  ;; キッチンの前に戻る
+  ;; キッチンの前に戻る ;; TODO音声対話を入れる
   (go-to-kitchen-from-sink)  
   
   ;; 人参をまな板に置く
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
-  (put-carrot)
+  (now-put-carrot-on-board)
   
   ;; ピーラーを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
@@ -91,33 +90,32 @@
   ;; ボウル１に移す動作
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/transfer-vegs-codes.l")
   (update-pos)
-  (now-transfer-bowl-1) ;; bowl１の位置が変わっているはず．
+  (now-transfer-bowl-1) ;; TODO bowl１の位置が変わっているはず．
   
-  (warn "じゃがいもを洗ってセットして please run (curry-2) ~%")
+  (warn "please run (curry-2) ~%")
   )
 
 (defun curry-2 () ;; じゃがいもの下ごしらえ
   ;; じゃがいもを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
-  (grasp-potato)
-  (vegs-carry-pose)
+  (now-grasp-potato)
   
   ;; シンクの前に移動する
-  (go-to-sink)
+  (go-to-sink) ;; TODO音声対話を入れる
   
-  ;; たまねぎを洗う
+  ;; じゃがいもを洗う
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
   (update-pos)
-  ;;(wash-vegs)
+  ;;(wash-vegs) ;; TODO洗うプログラムを用意する
   
   ;; キッチンの前に戻る
-  (go-to-kitchen-from-sink)  
+  (go-to-kitchen-from-sink) ;; TODO音声対話を入れる
   
   ;; じゃがいもをまな板に置く
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
-  (put-potato)  
+  (now-put-potato-on-board)
   
   ;; じゃがいもピーラーを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
@@ -137,7 +135,7 @@
   (put-potato-peeler)
   (grasp-knife)
 
-  ;; じゃがいも切断
+  ;; じゃがいも切断   ;; ここ上手くいかないとおもう
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cut-potato-codes.l")
   (update-pos)
   (now-cut-half)
@@ -164,39 +162,33 @@
   ;; たまねぎを掴む？？
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
-  (grasp-onion)
-  (vegs-carry-pose)
+  (now-grasp-onion)
   
   ;; シンクの前に移動する
-  (go-to-sink)
+  (go-to-sink) ;; TODO音声対話を入れる
   
   ;; たまねぎを洗う
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
   (update-pos)
-  ;;(wash-vegs)
+  ;;(wash-vegs) ;; TODO
 
   ;; キッチンの前に戻る
-  (go-to-kitchen-from-sink)  
+  (go-to-kitchen-from-sink) ;; TODO音声対話を入れる
   
   ;; たまねぎをまな板に置く
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
-  (put-potato)  
+  (now-put-onion-on-board)  
   
   ;; 包丁を掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
   (grasp-knife)
   
-  ;; じゃがいも切断
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cut-potato-codes.l")
+  ;; たまねぎ切断
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cut-carrot-codes.l")
   (update-pos)
-  (now-cut-half)
-  (now-right-set)
-  (now-right-rotate)
-  (now-cut-right)
-  (now-left-rotate)
-  (now-cut-left)
+  (now-cut)
   
   ;; 包丁を置く
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
@@ -206,21 +198,23 @@
   ;; まな板を持って鍋に移す動作
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cutting-board-codes.l")
   (update-pos)
-  ;; TODO
+  (now-cutting-board-transfer-set)
+  (grasp-knife)
+  (now-cutting-board-transfer)
+  (put-knife)
+  (now-cutting-board-transfer-after)
   
   (warn "please run (curry-4) ~%")
   )
 
 (defun curry-4 () ;; 加熱調理の準備
-  ;; ボウル１をセットする？どうしようかという感じ
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
-  (update-pos)
-  (switch-bowl-2-model) ;; ボウル２をまな板の上に
-  
   ;; ヘラとおたまを棚から取り出す 
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
   (now-set-from-shelf)
+
+  ;; コンロの前まで移動する ;; TODO音声対話を入れる
+  (go-to-stove) ;; ここはケーブル位置もこっちに移動する．
   
   (warn "please run (curry-5) ~%")
   )
@@ -231,9 +225,9 @@
   (update-pos)
   (now-on-stove)
   ;; (now-start-ih :deg -10)
-  (now-start-ih :deg -30) ;; 中火にする
+  (now-start-ih :deg -30) ;; 中火にする ;;本当に？
   
-  ;; かき混ぜる　ヘラは掴んでいる前提
+  ;; かき混ぜる　ヘラは掴んでいる前提 ;; TODO
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
   (update-pos)
   ;; (now-spatula-mix)
@@ -255,7 +249,7 @@
 
 (defun curry-6 () ;; 肉を炒める
   ;; ボウル２を鍋に移す ヘラは掴んでいる前提 ;; TODO変える必要あり．
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
   (update-pos)
   (now-transfer-2-model)
   
@@ -265,7 +259,7 @@
   ;; (now-start-ih :deg -10)
   (now-start-ih :deg -30) ;; 中火にする
   
-  ;; かき混ぜる ヘラは掴んでいる前提
+  ;; かき混ぜる ヘラは掴んでいる前提 ;; TODO
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
   (update-pos)
   ;; (now-spatula-mix)
@@ -286,8 +280,8 @@
   )
 
 (defun curry-7 () ;; 野菜を入れる
-  ;; 必要なら移動をする．
-  
+  ;; キッチン前に移動する ;; TODO
+
   
   ;; ボウル１を鍋に移す ヘラは掴んでいる前提
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
@@ -296,13 +290,14 @@
   (put-spatula-1)
   (reset-rarm)
 
-  ;; 移し終わったら移動をする?
+  ;; 移し終わったら移動をする? ;; TODO
+
   
   (warn "please run (curry-8) ~%")
   )
 
 (defun curry-8 () ;; 煮込む動作
-  ;; おたまを掴む，コンロ操作，おたまで混ぜる．
+  ;; おたまを掴む，コンロ操作，おたまで混ぜる． ;; TODO
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
   (update-pos)
   (grasp-ladle) ;; おたまを掴む 
@@ -321,7 +316,7 @@
     )
   
   ;; 沸騰したら灰汁を取る？
-
+  
   ;; 沸騰してから少ししてから火を止める．時間などを見るのが良いか？
   ;; 火を止める
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
@@ -334,14 +329,14 @@
 
 (defun curry-9 ()   ;; カレールーを入れる
   ;; ボウル３を鍋に移す 途中でおたまからヘラに持ち替える
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
   (update-pos)
   (put-ladle-1)
   (grasp-spatula)
   (now-transfer-3)
   (put-spatula-1)
   
-  ;; おたまを掴む，コンロ操作，おたまで混ぜる．
+  ;; おたまを掴む，コンロ操作，おたまで混ぜる． ;; TODO
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
   (update-pos)
   (grasp-ladle) ;; おたまを掴む 
