@@ -176,7 +176,7 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
   (update-pos)
   ;;(wash-vegs) ;; TODO
-
+  
   ;; キッチンの前に戻る
   (go-to-kithen-from-sink-with-speech-after)  
   
@@ -283,8 +283,8 @@
   ;; 火を止める　玉ねぎを炒めたら一度火を止める
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
-  (push-knob)
   (after-spatula-mix)
+  (push-knob)
   
   (warn "please run (curry-7) ~%")
   )
@@ -320,9 +320,7 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   (grasp-ladle) ;; おたまを掴む 
-  
   (now-start-ih :deg -50) ;; 弱火にする，弱火なのか？
-  ;; (now-ladle-mix) ;; おたまで混ぜる
   
   ;; 沸騰するまで見る等をする？
   (look-at-pot)
@@ -334,14 +332,14 @@
     (send *ri* :speak-jp "記録しました")
     )
   
-  ;; 沸騰したら灰汁を取る？
+  ;; 沸騰したら灰汁を取る？ (今はいいかな？)
   
   ;; 沸騰してから少ししてから火を止める．時間などを見るのが良いか？
   ;; 火を止める
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
-  (push-knob)
   (after-ladle-mix)
+  (push-knob)
   
   (warn "please run (curry-9) ~%")
   )
@@ -371,8 +369,9 @@
   ;; 火を止める
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
-  (push-knob)
   (after-ladle-mix)
+  (push-knob)
+  (put-ladle) ;; TODO put-ladle とか spatulaとかってあるんだっけ？
   
   (warn "please run (curry-10) ~%")
   )

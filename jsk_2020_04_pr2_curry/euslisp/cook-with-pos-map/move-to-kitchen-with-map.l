@@ -61,7 +61,7 @@
     (if (equal *data* '("OK"))
         (progn
           (format t "了解しました！ ~%" *data*)
-	  (setq *ok-flag* t)
+          (setq *ok-flag* t)
           )
       (format t "data: ~A ~%" *data*)
       ) 
