@@ -1,5 +1,8 @@
 (warn "please run (curry-0) ~%")
 
+;; TODO それぞれの関数の最後に確認をしてOKといってもらうのを用意する．
+
+
 (defun curry-0 () ;; 最初の準備
   ;; 棚の中にヘラとおたまをセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
@@ -52,7 +55,7 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
   (update-pos)
   ;;(wash-vegs) ;; TODO洗うプログラムを用意する
-
+  
   ;; キッチンの前に戻る
   (go-to-kithen-from-sink-with-speech-after)  
   
@@ -377,6 +380,7 @@
 (defun curry-10 ()
   ;; 電子レンジまで移動する　(それか棚の前まで移動してサトウのご飯を掴む動作をするなど，それには認識が必要か？)
   ;; TODO
+
   
   ;; サトウのごはんを調理する
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/microwave-codes.l")
