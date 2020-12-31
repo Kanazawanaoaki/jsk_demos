@@ -1528,6 +1528,7 @@
          (ros::sleep)
          )
   (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep 1)
   )
 
 (defun dialogue-test ()
@@ -1537,6 +1538,7 @@
          (send *ri* :speak-jp "画像を記録します")
          (rossrv-test)
          (send *ri* :speak-jp "記録しました")
+         (unix:sleep 1)
          (send *ri* :speak-jp "具材は炒め終わっていますか？")
          (dialogue-func)
          (if (equal *data* '("はい"))
@@ -1544,6 +1546,7 @@
            )
          )
   (send *ri* :speak-jp "次の工程に進みます")
+  (unix:sleep *w-time*)
   )
 
 (defun now-spatula-mix-rotate-loop-with-dialogue (&rest args &key (times 10) &allow-other-keys)
@@ -1557,6 +1560,7 @@
          (send *ri* :speak-jp "画像を記録します")
          (rossrv-test)
          (send *ri* :speak-jp "記録しました")
+         (unix:sleep 1)
          (send *ri* :speak-jp "具材は炒め終わっていますか？")
          (dialogue-func)
          (if (equal *data* '("はい"))
@@ -1564,6 +1568,7 @@
            )
          )
   (send *ri* :speak-jp "次の工程に進みます")  
+  (unix:sleep *w-time*)
   )
 
 (defun now-ladle-mix-rotate-loop-with-dialogue (&rest args &key (times 10) &allow-other-keys)
@@ -1577,6 +1582,7 @@
          (send *ri* :speak-jp "画像を記録します")
          (rossrv-test)
          (send *ri* :speak-jp "記録しました")
+         (unix:sleep 1)
          (send *ri* :speak-jp "具材は上手く混ざっていますか？")
          (dialogue-func)
          (if (equal *data* '("はい"))
@@ -1584,6 +1590,7 @@
            )
          )
   (send *ri* :speak-jp "次の工程に進みます")  
+  (unix:sleep *w-time*)
   )
 
 (defun now-boil-with-dialogue (&rest args &key (sleep-time 30) &allow-other-keys)
