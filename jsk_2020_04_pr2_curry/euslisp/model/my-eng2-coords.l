@@ -15,9 +15,11 @@
 (setq *ladle-coords-1* (make-coords :pos (float-vector 630 8313 30877) :rpy (float-vector 3.128 -0.098 1.514))) ;; おたま，平置き
 
 ;; (setq *spatula-coords-0* (make-coords :pos (float-vector 340 8739 31450) :rpy (float-vector -3.14 -0.008 1.529))) ;; ヘラ，棚の中
-(setq *spatula-coords-0* (make-coords :pos (float-vector 340 8720 31450) :rpy (float-vector -3.14 -0.008 1.529))) ;; ヘラ，棚の中
+;; (setq *spatula-coords-0* (make-coords :pos (float-vector 340 8720 31450) :rpy (float-vector -3.14 -0.008 1.529))) ;; ヘラ，棚の中
+(setq *spatula-coords-0* (make-coords :pos (float-vector 350 8730 31450) :rpy (float-vector -3.14 -0.008 1.529))) ;; ヘラ，棚の中
 ;; (setq *ladle-coords-0* (make-coords :pos (float-vector 346 8637 31450) :rpy (float-vector -3.14 -0.008 1.529))) ;; おたま，棚の中
-(setq *ladle-coords-0* (make-coords :pos (float-vector 346 8620 31460) :rpy (float-vector -3.14 -0.008 1.529))) ;; おたま，棚の中
+;; (setq *ladle-coords-0* (make-coords :pos (float-vector 346 8620 31460) :rpy (float-vector -3.14 -0.008 1.529))) ;; おたま，棚の中
+(setq *ladle-coords-0* (make-coords :pos (float-vector 350 8630 31460) :rpy (float-vector -3.14 -0.008 1.529))) ;; おたま，棚の中
 
 (setq *spatula-coords-a* (make-coords :pos (float-vector 592 8900 30872) :rpy (float-vector 3.084 -0.042 1.542))) ;; ヘラ，盛り付け時
 (setq *ladle-coords-a* (make-coords :pos (float-vector 599 8700 30877) :rpy (float-vector 3.128 -0.098 1.514))) ;; おたま，盛り付け時
@@ -67,7 +69,8 @@
 (setq *fauset-lever-rarm-coords* (make-coords :pos (float-vector 220 9190 31014) :rpy (float-vector  -2.429 0.369 1.988))) ;; 水道のレバーを掴む座標
 
 ;; (setq *fauset-coords* (make-coords :pos (float-vector 358 9114 30900) :rpy (float-vector 3.14 0 0)))
-(setq *fauset-coords* (make-coords :pos (float-vector 350 9114 30900) :rpy (float-vector 3.14 0 0)))
+;; (setq *fauset-coords* (make-coords :pos (float-vector 350 9114 30900) :rpy (float-vector 3.14 0 0)))
+(setq *fauset-coords* (make-coords :pos (float-vector 350 9140 30900) :rpy (float-vector 3.14 0 0)))
 
 ;; コンロ
 (setq *ih-switch-on-coords* (make-coords :pos (float-vector 680 8171 30750) :rpy (float-vector -3.047 -0.011 1.512)))

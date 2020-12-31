@@ -201,7 +201,7 @@
   )
 
 
-(defun go-to-microwave ()
+(defun go-to-microwave () ;; TODO
   ;; kitchenからmicrowaveに移動する
   
   )
@@ -222,6 +222,24 @@
   (update-pos)
   (update-view)
   (print (send *ri* :state :worldcoords))
+  )
+
+(defun go-to-sink-from-stove ()
+  ;; stoveからsinkに移動する
+  (send *ri* :go-pos-unsafe 0 -0.4 0)
+  (send *ri* :go-pos-unsafe 0 -0.4 0)
+  (update-pos)
+  (update-view)
+  (print (send *ri* :state :worldcoords))  
+  )
+
+(defun go-to-stove-from-sink ()
+  ;; sinkからstoveに移動する
+  (send *ri* :go-pos-unsafe 0 0.4 0)
+  (send *ri* :go-pos-unsafe 0 0.4 0)
+  (update-pos)
+  (update-view)
+  (print (send *ri* :state :worldcoords))  
   )
 
 ;; def util-funcs

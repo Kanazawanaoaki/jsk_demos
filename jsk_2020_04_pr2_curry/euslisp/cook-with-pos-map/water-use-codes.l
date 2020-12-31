@@ -341,6 +341,8 @@
   )
 
 (defun wash-veg-set ()
+  (set-veg)
+  
   ;; 洗う位置
   (send *arrow* :newcoords (send *fauset-coords* :copy-worldcoords))
   (send *arrow* :translate #f(0 0 20) :world)
@@ -479,7 +481,7 @@
   (now-devel-wash-veg)
   )
 
-(defun tmp-test ()
+(defun tmp-devel ()
   (unix:sleep 1)
   (wash-veg-set)
   
@@ -492,7 +494,7 @@
   (release-lever)
   )
 
-(defun now-devel-wash-veg ()
+(defun now-wash-veg ()
   (wash-veg-set)
   
   (grasp-lever)
@@ -504,4 +506,6 @@
   (release-lever)
   
   (after-wash-veg-set)
+  (vegs-carry-pose)
   )
+

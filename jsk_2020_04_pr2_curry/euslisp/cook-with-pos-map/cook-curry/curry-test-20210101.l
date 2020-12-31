@@ -1,7 +1,7 @@
 (warn "please run (curry-0) ~%")
 
+;; 最初に換気扇とIHの電源を入れていく
 ;; TODO それぞれの関数の最後に確認をしてOKといってもらうのを用意する．
-
 
 (defun curry-0 () ;; 最初の準備
   ;; 棚の中にヘラとおたまをセットする
@@ -54,7 +54,7 @@
   ;; 人参を洗う
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
   (update-pos)
-  ;;(wash-vegs) ;; TODO洗うプログラムを用意する
+  (now-wash-veg)
   
   ;; キッチンの前に戻る
   (go-to-kithen-from-sink-with-speech-after)  
@@ -112,7 +112,7 @@
   ;; じゃがいもを洗う
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
   (update-pos)
-  ;;(wash-vegs) ;; TODO洗うプログラムを用意する
+  (now-wash-veg)
   
   ;; キッチンの前に戻る
   (go-to-kithen-from-sink-with-speech-after)  
@@ -175,7 +175,7 @@
   ;; たまねぎを洗う
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
   (update-pos)
-  ;;(wash-vegs) ;; TODO
+  (now-wash-veg)
   
   ;; キッチンの前に戻る
   (go-to-kithen-from-sink-with-speech-after)  
@@ -222,38 +222,27 @@
   ;; コンロの前まで移動する
   (go-to-stove-with-speech-before-and-after)
 
-  ;;   油を掛ける動 ;; TODO
+  ;; 油を掛ける動
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
   (update-pos)
-  ;; TODO
+  (now-add-oil)
   
   (warn "please run (curry-5) ~%")
   )
 
 (defun curry-5 () ;; 玉ねぎを炒める
-  ;; コンロ操作をする 電源を入れるところから
+  ;; コンロ操作をする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
-  (now-on-stove)
-  ;; (now-start-ih :deg -10)
-  (now-start-ih :deg -30) ;; 中火にする ;;本当に？
-  
-  ;; かき混ぜる ;; TODO ヘラを掴むのを入れる？ 様子を聞きながら調理する．
+  ;; (now-on-stove)
+  (now-start-ih :deg -10)
+  (now-spatula-mix-rotate-loop-with-dialogue :times 10)
+
+  ;; 火を止める
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
-  ;; (now-spatula-mix)
-  
-  (now-start-spatula-mix)
-  (spatula-mix-rotate-loop :times 10)
-  
-  ;; 認識を入れて，条件を達成するまで(spatula-mix-rotate-loop :times 10)を繰り返して，(push-knob) (after-spatula-mix)
-  ;; tmpとしては音声対話を入れる方式にする．
-  
-  ;; 火を止める　玉ねぎを炒めたら一度火を止める
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
-  (update-pos)
-  (push-knob)
   (after-spatula-mix)
+  (push-knob)
   
   (warn "please run (curry-6) ~%")
   )
@@ -267,20 +256,9 @@
   ;; コンロ操作をする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
-  ;; (now-start-ih :deg -10)
-  (now-start-ih :deg -30) ;; 中火にする
-  
-  ;; かき混ぜる ヘラは掴んでいる前提 ;; TODO たまねぎと同じく変更する．
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
-  (update-pos)
-  ;; (now-spatula-mix)
-  
-  (now-start-spatula-mix)
-  (spatula-mix-rotate-loop :times 5)
-  
-  ;; 認識を入れて，条件を達成するまで(spatula-mix-rotate-loop :times 10)を繰り返して， (push-knob) (after-spatula-mix)
-  ;; tmpとしては音声対話を入れる方式にする．
-  
+  (now-start-ih :deg -10)
+  (now-spatula-mix-rotate-loop-with-dialogue :times 10)
+
   ;; 火を止める　玉ねぎを炒めたら一度火を止める
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
@@ -291,7 +269,7 @@
   )
 
 (defun curry-7 () ;; 野菜を入れる
-  ;; キッチン前に移動する ;; TODO
+  ;; キッチン前に移動する
   (go-to-kithen-from-stove-with-speech-before)
   
   ;; ボウル１を鍋に移す ヘラは掴んでいる前提
@@ -303,15 +281,36 @@
   
   ;; 移し終わったら移動をする
   (go-to-stove-with-speech-after)
-
-
-  ;; 計量カップを掴む ;; TODO
+  
+  ;; 計量カップを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
   (update-pos)
-  ;; TODO
+  (now-grasp-mcup)
   
-  ;; 水を汲んで注ぐのを繰り返す．
+  ;; 水を汲んで注ぐのを繰り返す． TODO音声対話を入れる
+  (speech-before-move)
+  (setq *fetch-flag* nil)
+  (until *fetch-flag*
+	 (go-to-sink-from-stove)
+
+	 ;; 水を汲む
+	 (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
+	 (update-pos)
+	 ;; (now-wash-veg) ;; TODO
+
+	 (go-to-stove-from-sink)
+	 
+	 ;; 水を注ぐ
+	 (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
+	 (update-pos)
+	 (now-grasp-mcup)
+
+
+	 ;; 水汲みの状態を聞く
+	 
+	 )
   
+  (speech-after-move)
   
   (warn "please run (curry-8) ~%")
   )
@@ -320,27 +319,16 @@
   ;; コンロ操作，沸騰しているか見る ;; TODO 混ぜるの無しで沸騰させる
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
-  (grasp-ladle) ;; おたまを掴む 
-  (now-start-ih :deg -50) ;; 弱火にする，弱火なのか？
+  (now-start-ih :deg -30)
+  (now-boil-with-dialogue)
   
-  ;; 沸騰するまで見る等をする？
-  (look-at-pot)
-  (dotimes (i 10)
-    (unix:sleep 30)
-    (send *ri* :speak-jp "画像を記録します")
-    (unix:sleep 2)
-    (rossrv-test)
-    (send *ri* :speak-jp "記録しました")
-    )
-  
-  ;; 沸騰したら灰汁を取る？ (今はいいかな？)
-  
-  ;; 沸騰してから少ししてから火を止める．時間などを見るのが良いか？
   ;; 火を止める
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
-  (after-ladle-mix)
   (push-knob)
+  
+  ;; 沸騰したら灰汁を取る？ (今はいいかな？)
+  
   
   (warn "please run (curry-9) ~%")
   )
@@ -349,6 +337,7 @@
   ;; ボウル３を鍋に移し，ヘラを置く
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
   (update-pos)
+  (grasp-spatula)
   (now-transfer-3-model)
   (put-spatula-1)
   
@@ -356,29 +345,21 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   (grasp-ladle) ;; おたまを掴む 
-  (now-start-ih :deg -50) ;; 弱火にする
-  
-  (look-at-pot)
-  ;; (rossrv-test)
-  
-  (now-ladle-mix) ;; おたまで混ぜる
-  
-  ;; (now-start-ladle-mix)
-  ;; (ladle-mix-rotate-loop :times 10)
-  
-  ;; ここは時間で良さそう 時間が立ったら (push-knob) (after-ladle-mix)
+  (now-start-ih :deg -30) ;; 弱火にする
+  (now-ladle-mix-rotate-loop-with-dialogue)
+
   ;; 火を止める
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   (after-ladle-mix)
   (push-knob)
-  (put-ladle) ;; TODO put-ladle とか spatulaとかってあるんだっけ？
-
+  (put-ladle-1)  
   
-  ;; ここでひとまず完成にする！！！　今回は！！
+  ;; ここでひとまず完成にする！！！　今回は！！ ;; TODO 対話を入れる
   
   (warn "please run (curry-10) ~%")
   )
+
 
 
 
