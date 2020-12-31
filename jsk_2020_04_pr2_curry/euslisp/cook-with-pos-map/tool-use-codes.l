@@ -60,11 +60,62 @@
         (format t "x: ~A ~%" x))
       )))
 
+;; add for voice recognition
+(ros::load-ros-manifest "speech_recognition_msgs")
+(setq *data-flag* nil)
+(defun voice-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (setq *data-flag* t)
+    (format t "data: ~A ~%" *data*)
+    )
+  )
+
+(defun dialogue-func ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *data-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+  (until *data-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep 1)
+  )
+
+
+(setq *ok-flag* nil)
+(defun voice-ok-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (if (equal *data* '("OK"))
+        (progn
+          (format t "了解しました！ ~%" *data*)
+          (setq *ok-flag* t)
+          )
+      (format t "data: ~A ~%" *data*)
+      ) 
+    )
+  )
+
+(defun ok-grasp ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *ok-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
+  (until *ok-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep *w-time*)
+  (sned *ri* :start-grasp :rarm :wait t)
+  )
 
 ;; set codes
 (warn "~%  If you use real robot, run (update-pos) ~%")
 (warn "please run (now-set-tools) or (set-knife) ~%")
-
 
 (defun set-shelf-door ()
   (if (not (eql (send *shelf-door* :parent) nil))
@@ -77,6 +128,28 @@
     (send local-cds :dissoc *shelf-door*)
     )
   (send *viewer* :draw-objects)
+  )
+
+(defun recieve-with-dialogue ()
+  (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい")
+  (setq *yes-flag* nil)
+  (until *yes-flag*
+	 (send *ri* :stop-grasp :rarm :wait t)
+	 (ok-grasp)
+	 (unix:sleep *w-time*)
+	 (send *ri* :speak-jp "上手くつかめていますか？")
+	 (dialogue-func)
+         (if (equal *data* '("はい"))
+             (setq *yes-flag* t)
+	   (progn
+	     (send *ri* :speak-jp "グリッパを開きます.もう一度お願いします")
+	     (unix:sleep *w-time*)
+	     )
+           )
+	 )
+  
+  (send *ri* :speak-jp "次の行動に移ります")
+  (unix:sleep *w-time*)
   )
 
 (defun receive-knife ()
@@ -94,9 +167,31 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
-  (send *ri* :stop-grasp :rarm)
-  (send *ri* :speak-jp "包丁を握らせて下さい")
-  (unix:sleep *s-time*)
+  ;; (send *ri* :stop-grasp :rarm)
+  ;; (send *ri* :speak-jp "包丁を握らせて下さい")
+  ;; (unix:sleep *s-time*)
+  ;; (send *ri* :start-grasp :rarm :wait t :gain 100)
+  
+  (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい")
+  (setq *yes-flag* nil)
+  (until *yes-flag*
+	 (send *ri* :stop-grasp :rarm :wait t)
+	 (ok-grasp)
+	 (unix:sleep *w-time*)
+	 (send *ri* :speak-jp "上手くつかめていますか？")
+	 (dialogue-func)
+         (if (equal *data* '("はい"))
+             (setq *yes-flag* t)
+	   (progn
+	     (send *ri* :speak-jp "グリッパを開きます.もう一度お願いします")
+	     (unix:sleep *w-time*)
+	     )
+           )
+	 )
+  
+  (send *ri* :speak-jp "次の行動に移ります")
+  (unix:sleep *w-time*)
+  
   (send *ri* :start-grasp :rarm :wait t :gain 100)
   
   (send *knife* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))

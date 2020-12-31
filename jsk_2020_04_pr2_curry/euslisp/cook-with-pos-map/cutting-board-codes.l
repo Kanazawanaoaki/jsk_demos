@@ -921,11 +921,11 @@
     (send local-cds :translate #f(-12 0 0))
     (send local-cds :rotate (deg2rad -90) :x)
     (send local-cds :assoc *knife*)
-    (send local-cds :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+    (send local-cds :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
     (send local-cds :dissoc *knife*)
     )
   (send *viewer* :draw-objects)
-  (send (send *pr2* :larm :end-coords) :assoc *knife*)
+  (send (send *pr2* :rarm :end-coords) :assoc *knife*)
   )
 
 

@@ -54,7 +54,7 @@
 ;; add for voice recognition
 (ros::load-ros-manifest "speech_recognition_msgs")
 (setq *ok-flag* nil)
-(defun voice-cb (msg)
+(defun voice-ok-cb (msg)
   (when msg
     (setq *msg* msg)
     (setq *data* (send *msg* :transcript))
@@ -249,7 +249,7 @@
   (send *ri* :speak-jp "移動するので電源ケーブルを抜いて，合図して下さい")
   (ros::unsubscribe "/speech_to_text")
   (setq *ok-flag* nil)
-  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
   (until *ok-flag*
 	 (ros::spin-once)
 	 (ros::sleep)
@@ -263,7 +263,7 @@
 
   (ros::unsubscribe "/speech_to_text")
   (setq *ok-flag* nil)
-  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
   (until *ok-flag*
 	 (ros::spin-once)
 	 (ros::sleep)
