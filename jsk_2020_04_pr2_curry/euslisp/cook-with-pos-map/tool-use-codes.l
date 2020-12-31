@@ -736,9 +736,9 @@
   (ros::unsubscribe "/right_endeffector/wrench")
   
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(10 0 0) :world)
-  (send *pr2* :larm :inverse-kinematics
+  (send *pr2* :rarm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
 	:rotation-axis t
 	:debug-view *debug-flag*)
@@ -746,7 +746,7 @@
   (send *ri* :wait-interpolation)
   
   (send *ri* :start-grasp :rarm :wait t)
-  (send *ri* :start-grasp :rarm :wait t :gain 0.05)
+  (send *ri* :start-grasp :rarm :wait t :gain 0.08)
   
   (set-shelf-door)
   (warn "please run (open-shelf) ~%")

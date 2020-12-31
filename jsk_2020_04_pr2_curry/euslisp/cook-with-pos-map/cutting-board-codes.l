@@ -24,7 +24,7 @@
 
 
 ;; add for sense
-(setq *x-thre* 15)
+(setq *z-thre* 15)
 
 (ros::roseus "board_rec_test" :anonymous t)
 (setq *topic-name* "/left_endeffector/wrench")
@@ -33,13 +33,13 @@
 (defun wrench-z-cb (msg)
   (when msg
     (let ((z nil))
-      (setq x (send msg :wrench :force :z))
+      (setq z (send msg :wrench :force :z))
       (if (> z *z-thre*)
           (progn 
             (setq *cb-flag* t)
-            (format t "OK!! x: ~A ~%" x)
+            (format t "OK!! z: ~A ~%" z)
             )
-        (format t "x: ~A ~%" x))
+        (format t "z: ~A ~%" z))
       )))
 
 ;; def util-funcs
@@ -439,6 +439,7 @@
   (send *ri* :speak-jp "まな板を握らせて下さい")
   (unix:sleep *s-time*)
   (send *ri* :start-grasp :larm :wait t)
+  (send *ri* :start-grasp :larm :gain 30 :wait t)
   
   (warn "please run (put-cutting-board) ~%")
   )
@@ -449,7 +450,8 @@
       (send (send *cutting-board* :parent) :dissoc *cutting-board*))
   (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
   (send *arrow* :newcoords (send (send *cutting-board* :handle-handle0) :copy-worldcoords))
-  (send *arrow* :translate (float-vector 100 50 200) :world)
+  ;; (send *arrow* :translate (float-vector 100 50 200) :world)
+  (send *arrow* :translate (float-vector 50 50 200) :world)
   
   (send *pr2* :larm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
@@ -710,7 +712,7 @@
   (send *ri* :wait-interpolation)
 
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
-  (dotimes (i 4)
+  (dotimes (i 3) ;; 4だったり6だったりした．
     (send *arrow* :rotate (deg2rad 10) :z :world)
     (send *pr2* :larm :inverse-kinematics
 	  (send *arrow* :copy-worldcoords)
@@ -721,22 +723,9 @@
     (send *ri* :wait-interpolation)
     )
 
-  (send *pr2* :larm :move-end-pos #f(0 -100 0) :world)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  (send *ri* :wait-interpolation)
-
-  (send *pr2* :larm :move-end-pos #f(0 -100 0) :world)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  (send *ri* :wait-interpolation)
-
-  (warn "please run (transfer-to-pot) ~%")
-  )
-
-(defun transfer-to-pot ()
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 743.982 7943.09 31092.558) :rpy (float-vector  -3.005 0.145 1.655)))
-  (send *arrow* :newcoords (make-coords :pos (float-vector 737.109 7985.153 31099.402) :rpy (float-vector 3.004 0.222 1.621)))
+  (setq *tmp* (send *pr2* :larm :angle-vector))
+  
+  (send *arrow* :newcoords (make-coords :pos (float-vector 602.379 8152.78 31274.974) :rpy (float-vector 2.795 -0.12 1.542)))
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -744,9 +733,39 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
+
   
+  (warn "please run (transfer-to-pot) ~%")
   )
 
+(defun transfer-to-pot ()
+  ;; ;; (send *arrow* :newcoords (make-coords :pos (float-vector 743.982 7943.09 31092.558) :rpy (float-vector  -3.005 0.145 1.655)))
+  ;; ;; (send *arrow* :newcoords (make-coords :pos (float-vector 737.109 7985.153 31099.402) :rpy (float-vector 3.004 0.222 1.621)))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 755.645 7945.73 31127.555) :rpy (float-vector 3.038 0.241 1.757)))
+  ;; (send *pr2* :larm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
+  ;; (send *viewer* :draw-objects)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  ;; (send *ri* :wait-interpolation)
+
+  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))  
+  (send *arrow* :translate #f(0 0 150))
+  (send *arrow* :rotate (deg2rad -30) :z)
+  (send *arrow* :rotate (deg2rad 30) :y)
+
+  (send *arrow* :translate #f(-10 0 0)) 
+  
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+	:move-target (send *cutting-board* :attention-attention2)
+	:rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  )
 
 
 (defun set-board-model ()
@@ -806,7 +825,7 @@
 
 
 (defun after-transfer-board ()
-  (send *pr2* :larm :move-ens-pos #f(-60 100 100) :world)
+  (send *pr2* :larm :move-end-pos #f(-60 100 100) :world)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
@@ -852,10 +871,11 @@
 
 (defun knife-slide-transfer ()
   (setq slide-length 220)
-
+  (setq adj -10)
+  
   (send *arrow* :newcoords (send (send *cutting-board* :attention-attention2) :copy-worldcoords))
   (send *arrow* :rotate (deg2rad 90) :z)
-  (send *arrow* :translate (float-vector 0 slide-length 0))
+  (send *arrow* :translate (float-vector 0 slide-length adj))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
 	:move-target (car (send *knife* :attention))
@@ -864,12 +884,12 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   (setq avs (list))
   (setq tms (list))
   
   (dotimes (i (+ (/ slide-length 10) 1))
-    (send *arrow* :translate #f(0 -10 0))
+    (send *arrow* :translate #f(0 -10 -3))
     (send *pr2* :rarm :inverse-kinematics
 	  (send *arrow* :copy-worldcoords)
 	  :move-target (car (send *knife* :attention))
@@ -954,6 +974,7 @@
   (push-board-set)
   (push-board-1)
   (after-push-board-1)
+  (reset-rarm)
   )
 
 (defun only-set-board ()
@@ -961,6 +982,7 @@
   (push-board-set)
   (push-board-1)
   (after-push-board-1)
+  (reset-rarm)
   )
 
 (defun now-cutting-board-transfer-set ()
@@ -972,7 +994,7 @@
 (defun now-cutting-board-transfer ()
   (knife-slide-transfer-set)
   (knife-slide-transfer)
-  (avoid-rarm-kinfe)
+  (avoid-rarm-knife)
   )
 
 (defun now-cutting-board-transfer-after ()
@@ -985,6 +1007,7 @@
   (grasp-knife)
   (now-cutting-board-transfer)
   (put-knife)
+  (reset-rarm)
   (now-cutting-board-transfer-after)
   )
 
@@ -992,12 +1015,11 @@
 (defun tmp-test ()
   (set-pose)
   (now-cutting-board-transfer-set)
-  (grasp-knife)
   )
 
 
 (defun tmp-pose ()
-  (send *arrow* :newcoords (make-coords :pos (float-vector 737.109 7985.153 31099.402) :rpy (float-vector 3.004 0.222 1.621)))
+  (send *arrow* :newcoords (make-coords :pos (float-vector 755.645 7945.73 31127.555) :rpy (float-vector 3.038 0.241 1.757)))
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t

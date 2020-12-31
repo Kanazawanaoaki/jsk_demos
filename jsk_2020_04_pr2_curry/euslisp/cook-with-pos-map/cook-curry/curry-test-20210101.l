@@ -207,6 +207,7 @@
   (grasp-knife)
   (now-cutting-board-transfer)
   (put-knife)
+  (reset-rarm)
   (now-cutting-board-transfer-after)
   
   (warn "please run (curry-4) ~%")
