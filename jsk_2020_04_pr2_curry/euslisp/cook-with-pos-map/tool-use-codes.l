@@ -110,7 +110,7 @@
          )
   (send *ri* :speak-jp "ありがとうございます")
   (unix:sleep *w-time*)
-  (sned *ri* :start-grasp :rarm :wait t)
+  (send *ri* :start-grasp :rarm :wait t)
   )
 
 ;; set codes
@@ -131,13 +131,12 @@
   )
 
 (defun recieve-with-dialogue ()
-  (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい")
+  ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
   (setq *yes-flag* nil)
   (until *yes-flag*
 	 (send *ri* :stop-grasp :rarm :wait t)
 	 (ok-grasp)
-	 (unix:sleep *w-time*)
-	 (send *ri* :speak-jp "上手くつかめていますか？")
+	 (send *ri* :speak-jp "上手く掴めていますか？")
 	 (dialogue-func)
          (if (equal *data* '("はい"))
              (setq *yes-flag* t)
@@ -173,24 +172,7 @@
   ;; (send *ri* :start-grasp :rarm :wait t :gain 100)
   
   (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい")
-  (setq *yes-flag* nil)
-  (until *yes-flag*
-	 (send *ri* :stop-grasp :rarm :wait t)
-	 (ok-grasp)
-	 (unix:sleep *w-time*)
-	 (send *ri* :speak-jp "上手くつかめていますか？")
-	 (dialogue-func)
-         (if (equal *data* '("はい"))
-             (setq *yes-flag* t)
-	   (progn
-	     (send *ri* :speak-jp "グリッパを開きます.もう一度お願いします")
-	     (unix:sleep *w-time*)
-	     )
-           )
-	 )
-  
-  (send *ri* :speak-jp "次の行動に移ります")
-  (unix:sleep *w-time*)
+  (recieve-with-dialogue)
   
   (send *ri* :start-grasp :rarm :wait t :gain 100)
   
