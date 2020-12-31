@@ -373,9 +373,14 @@
   (after-ladle-mix)
   (push-knob)
   (put-ladle) ;; TODO put-ladle とか spatulaとかってあるんだっけ？
+
+  
+  ;; ここでひとまず完成にする！！！　今回は！！
   
   (warn "please run (curry-10) ~%")
   )
+
+
 
 (defun curry-10 ()
   ;; 電子レンジまで移動する　(それか棚の前まで移動してサトウのご飯を掴む動作をするなど，それには認識が必要か？)
@@ -392,7 +397,6 @@
   
   (warn "please run (curry-11) ~%")
   )
-
 
 (defun curry-11 ()
   ;; サトウのごはんを盛り付ける ;;TODO ヘラを 

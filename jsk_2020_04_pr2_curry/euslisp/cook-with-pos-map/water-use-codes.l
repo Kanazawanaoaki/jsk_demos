@@ -389,6 +389,18 @@
   )
 
 
+
+(defun vegs-carry-pose ()
+  (setq *lav-vc* #f(35.2692 -2.67452 58.1589 -95.2169 65.0479 -80.0523 -157.341))
+  (send *pr2* :larm :angle-vector *lav-vc*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
+  (send *ri* :wait-interpolation)
+  
+  (warn "please go to kitchen spot !! ~%")  
+  )
+
+
 ;; now funcs
 (defun now-devel ()
   (set-mcup)
@@ -418,7 +430,7 @@
   )
 
 
-(defun now-wash-veg ()
+(defun now-devel-wash-veg ()
   (wash-veg-set)
   
   (grasp-lever)
@@ -464,7 +476,7 @@
 
 (defun tmp-wash-veg ()
   (recieve-veg)
-  (now-wash-veg)
+  (now-devel-wash-veg)
   )
 
 (defun tmp-test ()
@@ -478,4 +490,18 @@
   
   (water-off)
   (release-lever)
+  )
+
+(defun now-devel-wash-veg ()
+  (wash-veg-set)
+  
+  (grasp-lever)
+  (water-on)
+  
+  (unix:sleep 3)
+  
+  (water-off)
+  (release-lever)
+  
+  (after-wash-veg-set)
   )
