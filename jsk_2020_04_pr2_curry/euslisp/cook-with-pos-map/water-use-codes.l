@@ -521,7 +521,12 @@
   (release-lever)
   
   (after-wash-veg-set)
-  (after-wash-veg)
+  (after-wash)
   (vegs-carry-pose)
   )
 
+
+(defun tmp-exec ()
+  (after-wash)
+  (vegs-carry-pose)
+  )

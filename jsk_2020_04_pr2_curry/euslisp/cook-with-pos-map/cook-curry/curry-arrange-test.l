@@ -1,14 +1,18 @@
 (warn "please run (curry-a-0) ~%")
 
 (defun curry-a-0 () ;;最初に準備をする
-  
+  ;; サトウのごはんとおたまとへらを用意するのかな
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/arrangement-codes.l")
+  (update-pos)
+  (now-set-sato) ;; TODO
+  (now-set-tools-a)
   
   )
 
 (defun curry-a-1 ()
   ;; 電子レンジまで移動する　(それか棚の前まで移動してサトウのご飯を掴む動作をするなど，それには認識が必要か？)
   ;; TODO
-
+  
   
   ;; サトウのごはんを調理する
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/microwave-codes.l")

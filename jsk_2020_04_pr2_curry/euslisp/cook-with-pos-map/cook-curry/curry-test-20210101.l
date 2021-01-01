@@ -1,3 +1,4 @@
+(load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/move-to-kitchen-with-map.l")
 (warn "please run (curry-0) or (curry-all)~%")
 
 ;; 最初に換気扇とIHの電源を入れていく，野菜を洗って台の上にセットしておく
@@ -151,11 +152,13 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
   (put-knife)
+  (reset-rarm)
   
   ;; ボウル１に移す動作
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/transfer-vegs-codes.l")
   (update-pos)
   (now-transfer-bowl-1-kitchen)
+  (reset-larm)
   
   (send *ri* :speak-jp "人参の調理を行いました．確認して合図をして下さい")
   (curry-ok-wait)
@@ -299,8 +302,8 @@
   
   ;; コンロの前まで移動する
   (go-to-stove-with-speech-before-and-after)
-
-  ;; 油を掛ける動
+  
+  ;; 油を掛ける
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
   (update-pos)
   (now-add-oil)
@@ -319,12 +322,15 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   ;; (now-on-stove)
+  (grasp-spatula)
   (now-start-ih :deg -10)
+  (grasp-pot-from-below-model)
   (now-spatula-mix-rotate-loop-with-dialogue :times 10)
 
   ;; 火を止める
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
+  (set-spatula)
   (after-spatula-mix)
   (push-knob)
   
@@ -347,14 +353,17 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   (now-start-ih :deg -10)
+  (set-spatula)
+  (grasp-pot-from-below-model)
   (now-spatula-mix-rotate-loop-with-dialogue :times 10)
-
+  
   ;; 火を止める
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
+  (set-spatula)
   (after-spatula-mix)
   (push-knob)
-
+  
   (send *ri* :speak-jp "肉を炒める調理を行いました．確認して合図をして下さい")
   (curry-ok-wait)
   (send *ri* :speak-jp "次の工程に移ります")
@@ -508,6 +517,27 @@
   (curry-5) ;; たまねぎを炒める
   (unix:sleep 2)
   (curry-6) ;; 肉を炒める
+  (unix:sleep 2)
+  (curry-7) ;; 煮込む調理の準備
+  (unix:sleep 2)
+  (curry-8) ;; 煮込む調理
+  (unix:sleep 2)
+  (curry-9) ;; カレールーを入れる
+  )
+
+
+(defun tmp-curry ()
+  ;; 火を止める
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
+  (update-pos)
+  (set-spatula)
+  (after-spatula-mix)
+  (push-knob)
+  
+  (send *ri* :speak-jp "肉を炒める調理を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+
   (unix:sleep 2)
   (curry-7) ;; 煮込む調理の準備
   (unix:sleep 2)

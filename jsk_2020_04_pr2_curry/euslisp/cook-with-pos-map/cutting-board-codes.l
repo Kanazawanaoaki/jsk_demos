@@ -273,7 +273,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   (send *ri* :start-grasp :rarm :wait t)
 
   ;; slideを始める位置

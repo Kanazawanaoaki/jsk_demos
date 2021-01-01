@@ -57,7 +57,7 @@
     <remap from="~input/points" to="$(arg CLOUD)" />
     <remap from="~input" to="$(arg CLOUD_INFO)" />
     <rosparam>
-      initial_pos: [0.7, 0, 0.8]
+      initial_pos: [0.65, 0.1, 0.8]
       initial_rot: [0, 0, 0]
       <!-- dimension_x: 0.5 -->
       dimension_x: 0.25

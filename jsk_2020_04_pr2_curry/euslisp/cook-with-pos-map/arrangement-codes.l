@@ -24,6 +24,13 @@
 
 
 ;; util funcs
+(defun reset-rarm ()
+  )
+
+(defun reset-larm ()
+  )
+
+
 (defun look-at-dish ()
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
   (send *pr2* :head :look-at (send (send *curry-dish* :copy-worldcoords) :worldpos))
@@ -619,6 +626,23 @@
   (avoid-spatula-sato)
   (after-sato)  
   )
+
+(defun 
+
+;; TODO 用意する　-with-dialogueも作りたい．
+(defun now-set-sato ()
+  ;; 右腕でサトウのごはんを受け取ってセットする
+  (resieve-sato-rice-rarm)
+  (put-sato-rice-rarm)
+  (reset-rarm)
+  )
+
+(defun now-set-tools-a ()
+  ;; ヘラとおたまを受け取ってセットする
+  ()
+  )
+
+
 
 (defun set-tmp-pose ()
   (send *pr2* :rarm :angle-vector #f(-38.3949 -2.90787 -80.2822 -11.5856 -8.70289 -113.777 -356.552))

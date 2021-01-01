@@ -175,7 +175,7 @@
   (print (send *ri* :state :worldcoords))
   )
 
-(defun go-to-kitchen ()
+(defun go-to-kitchen-from-sink ()
   ;; sinkからkitchen spotに移動する
   (send *ri* :go-pos-unsafe -0.09 0 0)  
   (send *ri* :go-pos-unsafe 0 0.6 0)
@@ -277,8 +277,8 @@
   )
 
 (defun speech-after-move ()
-  (send *ri* :speak-jp "電源ケーブルを挿して下さい")
-
+  (send *ri* :speak-jp "電源ケーブルを挿して，合図して下さい")
+  
   (ros::unsubscribe "/speech_to_text")
   (setq *ok-flag* nil)
   (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)

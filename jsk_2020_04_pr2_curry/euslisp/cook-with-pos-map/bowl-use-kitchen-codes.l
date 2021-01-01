@@ -2066,10 +2066,9 @@
 
 (defun now-set-1-model-with-dialogue ()
   (recieve-bowl-1-with-dialogue)
-  (put-bowl-1)
+  (put-bowl-1-model)
   (reset-larm)
   )
-
 
 (defun now-set-3-model ()
   (recieve-bowl-3)
