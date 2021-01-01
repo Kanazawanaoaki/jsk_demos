@@ -1,6 +1,6 @@
-(warn "please run (curry-0) ~%")
+(warn "please run (curry-0) or (curry-all)~%")
 
-;; 最初に換気扇とIHの電源を入れていく
+;; 最初に換気扇とIHの電源を入れていく，野菜を洗って台の上にセットしておく
 ;; TODO それぞれの関数の最後に確認をしてOKといってもらうのを用意する．
 
 ;; add for voice recognition
@@ -16,6 +16,21 @@
     )
   )
 
+(setq *ok-flag* nil)
+(defun voice-ok-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (if (equal *data* '("OK"))
+        (progn
+          (format t "了解しました！ ~%" *data*)
+          (setq *ok-flag* t)
+          )
+      (format t "data: ~A ~%" *data*)
+      ) 
+    )
+  )
+
 (defun curry-dialogue ()
   (ros::unsubscribe "/speech_to_text")
   (setq *data-flag* nil)
@@ -28,7 +43,21 @@
   (unix:sleep 1)  
   )
 
+(defun curry-ok-wait ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *ok-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
+  (until *ok-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep *w-time*)
+  )
+
 (defun curry-0 () ;; 最初の準備
+  (send *ri* :speak-jp "準備を開始します")
+  
   ;; 棚の中にヘラとおたまをセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
@@ -64,10 +93,16 @@
   (now-set-tools-with-dialogue) ;; 包丁，ピーラー，じゃがいもピーラーをセットする．
   (reset-rarm)
   
+  (send *ri* :speak-jp "準備を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+
   (warn "please run (curry-1) ~%")
   )
 
 (defun curry-1 () ;; 人参の下ごしらえ
+  (send *ri* :speak-jp "人参の調理を開始します")
+  
   ;; 人参を掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
@@ -122,10 +157,16 @@
   (update-pos)
   (now-transfer-bowl-1-kitchen)
   
+  (send *ri* :speak-jp "人参の調理を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+  
   (warn "please run (curry-2) ~%")
   )
 
 (defun curry-2 () ;; じゃがいもの下ごしらえ
+  (send *ri* :speak-jp "じゃがいもの調理を開始します")
+  
   ;; じゃがいもを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
@@ -185,10 +226,16 @@
   (update-pos)
   (now-transfer-bowl-1-kitchen)
   
+  (send *ri* :speak-jp "じゃがいもの調理を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+
   (warn "please run (curry-3) ~%")
   )
 
 (defun curry-3 ()
+  (send *ri* :speak-jp "たまねぎの調理を開始します")
+  
   ;; たまねぎを掴む？？
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
@@ -235,10 +282,16 @@
   (reset-rarm)
   (now-cutting-board-transfer-after)
   
+  (send *ri* :speak-jp "たまねぎの調理を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+  
   (warn "please run (curry-4) ~%")
   )
 
 (defun curry-4 () ;; 加熱調理の準備
+  (send *ri* :speak-jp "炒める調理の準備を開始します")  
+  
   ;; ヘラとおたまを棚から取り出す 
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
@@ -252,10 +305,16 @@
   (update-pos)
   (now-add-oil)
   
+  (send *ri* :speak-jp "炒める調理の準備を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+  
   (warn "please run (curry-5) ~%")
   )
 
 (defun curry-5 () ;; 玉ねぎを炒める
+  (send *ri* :speak-jp "たまねぎを炒める調理を開始します")
+  
   ;; コンロ操作をする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
@@ -269,10 +328,16 @@
   (after-spatula-mix)
   (push-knob)
   
+  (send *ri* :speak-jp "たまねぎを炒める調理を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+
   (warn "please run (curry-6) ~%")
   )
 
 (defun curry-6 () ;; 肉を炒める
+  (send *ri* :speak-jp "肉を炒める調理を開始します")
+  
   ;; ボウル２を鍋に移す ヘラは掴んでいる前提
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
   (update-pos)
@@ -284,16 +349,22 @@
   (now-start-ih :deg -10)
   (now-spatula-mix-rotate-loop-with-dialogue :times 10)
 
-  ;; 火を止める　玉ねぎを炒めたら一度火を止める
+  ;; 火を止める
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   (after-spatula-mix)
   (push-knob)
-  
+
+  (send *ri* :speak-jp "肉を炒める調理を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+
   (warn "please run (curry-7) ~%")
   )
 
 (defun curry-7 () ;; 野菜を入れる
+  (send *ri* :speak-jp "煮込む調理の準備を開始します")
+  
   ;; キッチン前に移動する
   (go-to-kithen-from-stove-with-speech-before)
   
@@ -339,13 +410,20 @@
            )
          )
   
-  (send *ri* :speak-jp "次の工程に進みます")
+  (send *ri* :speak-jp "移動します")
+  (unix:sleep 2)
   (go-to-stove-with-speech-after)
-  
+
+  (send *ri* :speak-jp "煮込む調理の準備を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+
   (warn "please run (curry-8) ~%")
   )
 
 (defun curry-8 () ;; 煮込む動作
+  (send *ri* :speak-jp "煮込む調理を開始します")
+  
   ;; コンロ操作，沸騰しているか見る
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
@@ -360,10 +438,16 @@
   ;; 沸騰したら灰汁を取る？ (今はいいかな？)
   
   
+  (send *ri* :speak-jp "煮込む調理を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+  
   (warn "please run (curry-9) ~%")
   )
 
 (defun curry-9 ()   ;; カレールーを入れる
+  (send *ri* :speak-jp "カレールーを入れる工程を開始します")
+  
   ;; ボウル３を鍋に移し，ヘラを置く
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
   (update-pos)
@@ -386,51 +470,11 @@
   (put-ladle-1)  
   
   ;; ここでひとまず完成にする！！！　今回は！！ ;; TODO 対話を入れる
-  
-  (warn "please run (curry-10) ~%")
-  )
-
-
-
-
-(defun curry-10 ()
-  ;; 電子レンジまで移動する　(それか棚の前まで移動してサトウのご飯を掴む動作をするなど，それには認識が必要か？)
-  ;; TODO
-
-  
-  ;; サトウのごはんを調理する
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/microwave-codes.l")
-  (update-pos)
-  (now-sato-rice-micro) ;; TODO用意する
-   
-  ;; サトウのごはんを持ってキッチンまで行く (移動先で受け取る？持ったまま移動して左手に渡すか？) 
-  ;; TODO
-  
-  (warn "please run (curry-11) ~%")
-  )
-
-(defun curry-11 ()
-  ;; サトウのごはんを盛り付ける ;;TODO ヘラを 
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/arrangement-codes.l")
-  (update-pos)
-  (grasp-spatula)
-  (now-arrange-sato)
-  (put-spatula)
-  
-  ;; 少し温めるなら温める (今は良いかな？)
-  
-  
-  ;; カレーを盛り付ける
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/arrangement-codes.l")
-  (update-pos)
-  (grasp-ladle)
-  (now-arrange-curry)
-  (put-ladle)
-  
-  ;;完成！！
+  (send *ri* :speak-jp "カレールーを入れる工程を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "カレーが完成しました")
   
   )
-
 
 
 ;; defun util funcs
@@ -447,4 +491,27 @@
     (rossrv-test)
     (send *ri* :speak-jp "記録しました")
     )
+  )
+
+
+(defun curry-all ()
+  (curry-0) ;; 準備
+  (unix:sleep 2)
+  (curry-1) ;; 人参の調理
+  (unix:sleep 2)
+  (curry-2) ;; じゃがいもの調理
+  (unix:sleep 2)
+  (curry-3) ;; たまねぎの調理
+  (unix:sleep 2)
+  (curry-4) ;; 炒める調理の準備
+  (unix:sleep 2)
+  (curry-5) ;; たまねぎを炒める
+  (unix:sleep 2)
+  (curry-6) ;; 肉を炒める
+  (unix:sleep 2)
+  (curry-7) ;; 煮込む調理の準備
+  (unix:sleep 2)
+  (curry-8) ;; 煮込む調理
+  (unix:sleep 2)
+  (curry-9) ;; カレールーを入れる
   )
