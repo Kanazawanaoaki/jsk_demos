@@ -42,6 +42,80 @@
         (format t "z: ~A ~%" z))
       )))
 
+;; add for voice recognition
+(ros::load-ros-manifest "speech_recognition_msgs")
+(setq *data-flag* nil)
+(defun voice-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (setq *data-flag* t)
+    (format t "data: ~A ~%" *data*)
+    )
+  )
+
+(defun dialogue-func ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *data-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+  (until *data-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep 1)
+  )
+
+(setq *ok-flag* nil)
+(defun voice-ok-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (if (equal *data* '("OK"))
+        (progn
+          (format t "了解しました！ ~%" *data*)
+          (setq *ok-flag* t)
+          )
+      (format t "data: ~A ~%" *data*)
+      ) 
+    )
+  )
+
+(defun ok-grasp-larm ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *ok-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
+  (until *ok-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep *w-time*)
+  (send *ri* :start-grasp :larm :wait t)
+  )
+
+(defun receive-with-dialogue-larm ()
+  ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
+  (setq *yes-flag* nil)
+  (until *yes-flag*
+         (send *ri* :stop-grasp :larm :wait t)
+         (ok-grasp-larm)
+         (send *ri* :speak-jp "上手く掴めていますか？")
+         (dialogue-func)
+         (if (equal *data* '("はい"))
+             (setq *yes-flag* t)
+           (progn
+             (send *ri* :speak-jp "グリッパを開きます.もう一度お願いします")
+             (unix:sleep *w-time*)
+             )
+           )
+         )
+  
+  (send *ri* :speak-jp "次の行動に移ります")
+  (unix:sleep *w-time*)
+  )
+
+
 ;; def util-funcs
 (defun reset-rarm ()
   ;;少し上に
@@ -407,6 +481,40 @@
   (warn "please run (lift-board) ~%")
   )
 
+
+(defun recieve-cutting-board-with-dialogue ()
+  ;;少し上に
+  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 250) :world)
+  (send *pr2* :larm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis nil
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  ;; まな板を置く位置
+  (if (not (eql (send *cutting-board* :parent) nil))
+      (send (send *cutting-board* :parent) :dissoc *cutting-board*))
+  (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *cutting-board* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 100 50 200) :world)
+  
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)  
+  
+  (send *ri* :speak-jp "まな板を渡す準備をして，合図をして下さい")
+  (receive-with-dialogue-larm)  
+  (send *ri* :start-grasp :larm :gain 30 :wait t)
+  
+  (warn "please run (put-cutting-board) ~%")
+  )
 
 (defun recieve-cutting-board ()
   ;;少し上に
@@ -970,6 +1078,15 @@
 
 (defun now-set-board ()
   (recieve-cutting-board)
+  (put-cutting-board)
+  (push-board-set)
+  (push-board-1)
+  (after-push-board-1)
+  (reset-rarm)
+  )
+
+(defun now-set-board-with-dialogue ()
+  (recieve-cutting-board-with-dialogue)
   (put-cutting-board)
   (push-board-set)
   (push-board-1)

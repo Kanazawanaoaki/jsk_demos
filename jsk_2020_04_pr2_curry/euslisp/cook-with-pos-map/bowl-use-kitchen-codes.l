@@ -84,6 +84,81 @@
   (send *ri* :wait-interpolation)
   )
 
+
+;; add for voice recognition
+(ros::load-ros-manifest "speech_recognition_msgs")
+(setq *data-flag* nil)
+(defun voice-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (setq *data-flag* t)
+    (format t "data: ~A ~%" *data*)
+    )
+  )
+
+(defun dialogue-func ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *data-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+  (until *data-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep 1)
+  )
+
+(setq *ok-flag* nil)
+(defun voice-ok-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (if (equal *data* '("OK"))
+        (progn
+          (format t "了解しました！ ~%" *data*)
+          (setq *ok-flag* t)
+          )
+      (format t "data: ~A ~%" *data*)
+      ) 
+    )
+  )
+
+(defun ok-grasp-larm ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *ok-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
+  (until *ok-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep *w-time*)
+  (send *ri* :start-grasp :larm :wait t)
+  )
+
+(defun receive-with-dialogue-larm ()
+  ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
+  (setq *yes-flag* nil)
+  (until *yes-flag*
+         (send *ri* :stop-grasp :larm :wait t)
+         (ok-grasp-larm)
+         (send *ri* :speak-jp "上手く掴めていますか？")
+         (dialogue-func)
+         (if (equal *data* '("はい"))
+             (setq *yes-flag* t)
+           (progn
+             (send *ri* :speak-jp "グリッパを開きます.もう一度お願いします")
+             (unix:sleep *w-time*)
+             )
+           )
+         )
+  
+  (send *ri* :speak-jp "次の行動に移ります")
+  (unix:sleep *w-time*)
+  )
+
+
 (warn "If you use real robot, run (update-pos) ~%")
 (warn "please run (now-set-bowls) or (set-bowl-1) ~%")
 
@@ -442,7 +517,6 @@
   (send *ri* :wait-interpolation)  
   )
 
-
 ;; bowl funcs
 (defun recieve-bowl-1 ()
   (before-recieve-larm)
@@ -452,6 +526,17 @@
   (unix:sleep *s-time*)
   (send *ri* :start-grasp :larm :wait t)
 
+  (warn "please run (put-bowl-1-model) ~%")
+  )
+
+
+(defun recieve-bowl-1-with-dialogue ()
+  (before-recieve-larm)
+  
+  (send *ri* :speak-jp "ボウル１を渡す準備をして，合図をして下さい")
+  (receive-with-dialogue-larm)  
+  (send *ri* :start-grasp :larm :wait t)
+  
   (warn "please run (put-bowl-1-model) ~%")
   )
 
@@ -1978,6 +2063,13 @@
   (put-bowl-1-model)
   (reset-larm)
   )
+
+(defun now-set-1-model-with-dialogue ()
+  (recieve-bowl-1-with-dialogue)
+  (put-bowl-1)
+  (reset-larm)
+  )
+
 
 (defun now-set-3-model ()
   (recieve-bowl-3)

@@ -81,6 +81,79 @@
   (send *ri* :wait-interpolation)
   )
 
+;; add for voice recognition
+(ros::load-ros-manifest "speech_recognition_msgs")
+(setq *data-flag* nil)
+(defun voice-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (setq *data-flag* t)
+    (format t "data: ~A ~%" *data*)
+    )
+  )
+
+(defun dialogue-func ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *data-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+  (until *data-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep 1)
+  )
+
+(setq *ok-flag* nil)
+(defun voice-ok-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (if (equal *data* '("OK"))
+        (progn
+          (format t "了解しました！ ~%" *data*)
+          (setq *ok-flag* t)
+          )
+      (format t "data: ~A ~%" *data*)
+      ) 
+    )
+  )
+
+(defun ok-grasp-larm ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *ok-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
+  (until *ok-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep *w-time*)
+  (send *ri* :start-grasp :larm :wait t)
+  )
+
+(defun receive-with-dialogue-larm ()
+  ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
+  (setq *yes-flag* nil)
+  (until *yes-flag*
+         (send *ri* :stop-grasp :larm :wait t)
+         (ok-grasp-larm)
+         (send *ri* :speak-jp "上手く掴めていますか？")
+         (dialogue-func)
+         (if (equal *data* '("はい"))
+             (setq *yes-flag* t)
+           (progn
+             (send *ri* :speak-jp "グリッパを開きます.もう一度お願いします")
+             (unix:sleep *w-time*)
+             )
+           )
+         )
+  
+  (send *ri* :speak-jp "次の行動に移ります")
+  (unix:sleep *w-time*)
+  )
+
 (warn "If you use real robot, run (update-pos) ~%")
 (warn "please run (now-set-bowls) or (set-bowl-1) ~%")
 
@@ -470,7 +543,17 @@
 
   (warn "please run (put-bowl-2-model) ~%")
   )
+
+(defun recieve-bowl-2-with-dialogue ()
+  (before-recieve-larm)
   
+  (send *ri* :speak-jp "ボウル２を渡す準備をして，合図をして下さい")
+  (receive-with-dialogue-larm)  
+  (send *ri* :start-grasp :larm :wait t)
+  
+  (warn "please run (put-bowl-2-model) ~%")
+  )
+
 (defun put-bowl-2 ()
   ;; ボウル２を置く位置
   (send *arrow* :newcoords (send *bowl-2-grasp-coords* :copy-worldcoords))
@@ -488,6 +571,16 @@
   (unix:sleep *s-time*)
   (send *ri* :start-grasp :larm :wait t)
 
+  (warn "please run (put-bowl-3) ~%")
+  )
+
+(defun recieve-bowl-3-with-dialogue ()
+  (before-recieve-larm)
+  
+  (send *ri* :speak-jp "ボウル３を渡す準備をして，合図をして下さい")
+  (receive-with-dialogue-larm)  
+  (send *ri* :start-grasp :larm :wait t)
+  
   (warn "please run (put-bowl-3) ~%")
   )
 
@@ -1164,6 +1257,18 @@
   (warn "please run (put-mcup) ~%")
   )
 
+(defun recieve-mcup-with-dialogue ()
+  (carry-mcup-pose)
+  
+  ;; mcupを受け取る
+  (send *ri* :speak-jp "計量カップを渡す準備をして，合図をして下さい")
+  (receive-with-dialogue-larm)  
+  (send *ri* :start-grasp :larm :wait t)
+  
+  (set-mcup)
+  (warn "please run (put-mcup) ~%")
+  )
+
 
 ;; oil-dispenser codes
 (defun set-oil-dispenser ()
@@ -1220,6 +1325,50 @@
   (send *ri* :stop-grasp :larm :wait t)
   (send *ri* :speak-jp "ディスペンサーを握らせて下さい")
   (unix:sleep *s-time*)
+  (send *ri* :start-grasp :larm :wait t)
+
+  (set-oil-dispenser) 
+  )
+
+(defun recieve-oil-dispenser-with-dialogue ()
+  ;;少し上に
+  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 250) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis nil
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  ;;少し前に
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 600 8361 31167) :rpy (float-vector 3.14 0 0)))
+  ;; (send *pr2* :larm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
+  (send *pr2* :larm :angle-vector #f(25.9612 -20.2538 51.0301 -90.7875 148.483 -82.2836 126.197))  
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  ;; oil-dispenserを置く位置
+  (if (not (eql (send *oil-dispenser* :parent) nil))
+      (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
+  (send *oil-dispenser* :newcoords (send *oil-dispenser-stove-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *oil-dispenser* :handle-handle1) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 200) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (send *ri* :speak-jp "ディスペンサーを渡す準備をして，合図をして下さい")
+  (receive-with-dialogue-larm)  
   (send *ri* :start-grasp :larm :wait t)
 
   (set-oil-dispenser) 
@@ -1704,8 +1853,20 @@
   (reset-larm)
   )
 
+(defun now-set-2-model-with-dialogue ()
+  (recieve-bowl-2-with-dialogue)
+  (put-bowl-2-model)
+  (reset-larm)
+  )
+
 (defun now-set-3-model ()
   (recieve-bowl-3)
+  (put-bowl-3-model)
+  (reset-larm)
+  )
+
+(defun now-set-3-model-with-dialogue ()
+  (recieve-bowl-3-with-dialogue)
   (put-bowl-3-model)
   (reset-larm)
   )
@@ -1785,6 +1946,12 @@
   (reset-larm)
   )
 
+(defun now-set-oil-with-dialogue ()
+  (recieve-oil-dispenser-with-dialogue)
+  (put-oil-dispenser)
+  (reset-larm)
+  )
+
 (defun now-add-oil ()
   (grasp-oil-dispenser)
   (add-oil-set)
@@ -1798,6 +1965,12 @@
 
 (defun now-set-mcup ()
   (recieve-mcup)
+  (put-mcup)
+  (reset-larm)
+  )
+
+(defun now-set-mcup-with-dialogue ()
+  (recieve-mcup-with-dialogue)
   (put-mcup)
   (reset-larm)
   )

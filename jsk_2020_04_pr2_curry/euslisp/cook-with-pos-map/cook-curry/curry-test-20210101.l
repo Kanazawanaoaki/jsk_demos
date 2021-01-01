@@ -32,12 +32,12 @@
   ;; 棚の中にヘラとおたまをセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
-  (now-set-in-shelf)
+  (now-set-in-shelf-with-dialogue)
   
   ;; ボウル１をセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
   (update-pos)
-  (now-set-1-model)
+  (now-set-1-model-with-dialogue)
   
   ;; コンロの前まで移動する
   (go-to-stove-with-speech-before)
@@ -45,10 +45,10 @@
   ;; ボウル２・３をセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
   (update-pos)
-  (now-set-2-model)
-  (now-set-3-model)
-  (now-set-oil)
-  (now-set-mcup)
+  (now-set-2-model-with-dialogue)
+  (now-set-3-model-with-dialogue)
+  (now-set-oil-with-dialogue)
+  (now-set-mcup-with-dialogue)
   
   ;; キッチンの前に戻る
   (go-to-kithen-from-stove-with-speech-after)
@@ -56,12 +56,12 @@
   ;; まな板をセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cutting-board-codes.l")
   (update-pos)
-  (now-set-board)
+  (now-set-board-with-dialogue)
   
   ;; 道具３つをセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
-  (now-set-tools) ;; 包丁，ピーラー，じゃがいもピーラーをセットする．
+  (now-set-tools-with-dialogue) ;; 包丁，ピーラー，じゃがいもピーラーをセットする．
   (reset-rarm)
   
   (warn "please run (curry-1) ~%")
