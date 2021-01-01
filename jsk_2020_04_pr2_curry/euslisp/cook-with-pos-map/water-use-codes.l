@@ -331,10 +331,10 @@
   (send *arrow* :newcoords (send *veg* :copy-worldcoords))
   (send *arrow* :translate #f(80 0 -40) :world)
   (send *pr2* :larm :inverse-kinematics
-	(send *arrow* :copy-worldcoords)
-	:move-target *veg*
-	:rotation-axis t
-	:debug-view *debug-flag*)
+        (send *arrow* :copy-worldcoords)
+        :move-target *veg*
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)  
@@ -384,8 +384,23 @@
 
 
 (defun after-wash ()
+  (setq avs (list))
+  (setq tms (list))
   
+  (dotimes (i 3)
+    (send *pr2* :larm :move-end-pos #f(0 0 30) :world)
+    (setq av (send *pr2* :angle-vector))
+    (setq avs (append avs (list av)))
+    (setq tms (append tms (list 400)))
+    
+    (send *pr2* :larm :move-end-pos #f(0 0 -30) :world)
+    (setq av (send *pr2* :angle-vector))
+    (setq avs (append avs (list av)))
+    (setq tms (append tms (list 400)))
+    )
   
+  (send *ri* :angle-vector-sequence avs tms)
+  (send *ri* :wait-interpolation)
   
   (warn "please return to kitchen spot! ~%")
   )
@@ -447,7 +462,7 @@
   )
 
 
-(defun now-fetch-water ()
+(defun now-fetch-water (&rest args &key (sleep-time 2) &allow-other-keys)
   (set-mcup)
   (mcup-water-set)
  
@@ -455,7 +470,7 @@
   (water-on)
   
   ;; 本当はここで認識をする
-  (unix:sleep 3)
+  (unix:sleep sleep-time)
   
   (water-off)
   (release-lever)
@@ -494,18 +509,19 @@
   (release-lever)
   )
 
-(defun now-wash-veg ()
+(defun now-wash-veg (&rest args &key (sleep-time 3) &allow-other-keys)
   (wash-veg-set)
   
   (grasp-lever)
   (water-on)
   
-  (unix:sleep 3)
+  (unix:sleep sleep-time)
   
   (water-off)
   (release-lever)
   
   (after-wash-veg-set)
+  (after-wash-veg)
   (vegs-carry-pose)
   )
 

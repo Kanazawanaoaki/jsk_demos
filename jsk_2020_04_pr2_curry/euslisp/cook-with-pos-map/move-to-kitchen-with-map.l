@@ -225,7 +225,7 @@
   )
 
 (defun go-to-sink-from-stove ()
-  ;; stoveからsinkに移動する
+  ;; stoveからsinkに移動する ;; TODO 確認
   (send *ri* :go-pos-unsafe 0 -0.4 0)
   (send *ri* :go-pos-unsafe 0 -0.4 0)
   (update-pos)

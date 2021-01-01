@@ -3,6 +3,31 @@
 ;; 最初に換気扇とIHの電源を入れていく
 ;; TODO それぞれの関数の最後に確認をしてOKといってもらうのを用意する．
 
+;; add for voice recognition
+(ros::roseus "curry_rec_test" :anonymous t)
+(ros::load-ros-manifest "speech_recognition_msgs")
+(setq *data-flag* nil)
+(defun voice-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (setq *data-flag* t)
+    (format t "data: ~A ~%" *data*)
+    )
+  )
+
+(defun curry-dialogue ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *data-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+  (until *data-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep 1)  
+  )
+
 (defun curry-0 () ;; 最初の準備
   ;; 棚の中にヘラとおたまをセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
@@ -280,43 +305,48 @@
   (reset-rarm)
   
   ;; 移し終わったら移動をする
-  (go-to-stove-with-speech-after)
+  (go-to-stove)
   
   ;; 計量カップを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
   (update-pos)
   (now-grasp-mcup)
   
-  ;; 水を汲んで注ぐのを繰り返す． TODO音声対話を入れる
-  (speech-before-move)
+  ;; 水を汲んで注ぐのを繰り返す
+  (go-to-kithen-from-stove)  
   (setq *fetch-flag* nil)
   (until *fetch-flag*
-	 (go-to-sink-from-stove)
-
-	 ;; 水を汲む
-	 (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
-	 (update-pos)
-	 ;; (now-wash-veg) ;; TODO
-
-	 (go-to-stove-from-sink)
-	 
-	 ;; 水を注ぐ
-	 (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
-	 (update-pos)
-	 (now-grasp-mcup)
-
-
-	 ;; 水汲みの状態を聞く
-	 
-	 )
+         (go-to-sink)
+         
+         ;; 水を汲む
+         (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
+         (update-pos)
+         (now-fetch-water :sleep-time 2)
+         
+         (go-to-kitchen-from-sink)
+         
+         ;; 水を注ぐ
+         (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
+         (update-pos)
+         (now-pour-water :sleep-time 4)
+         
+         ;; 水汲みの状態を確認する
+         (look-at-pot) 
+         (send *ri* :speak-jp "まだ水が必要ですか？")
+         (curry-dialogue)
+         (unless (equal *data* '("はい"))
+           (setq *fetch-flag* t)
+           )
+         )
   
-  (speech-after-move)
+  (send *ri* :speak-jp "次の工程に進みます")
+  (go-to-stove-with-speech-after)
   
   (warn "please run (curry-8) ~%")
   )
 
 (defun curry-8 () ;; 煮込む動作
-  ;; コンロ操作，沸騰しているか見る ;; TODO 混ぜるの無しで沸騰させる
+  ;; コンロ操作，沸騰しているか見る
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   (now-start-ih :deg -30)

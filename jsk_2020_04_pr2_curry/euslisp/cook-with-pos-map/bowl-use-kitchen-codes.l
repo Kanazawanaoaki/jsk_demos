@@ -1956,14 +1956,14 @@
   (warn "please go to sink spot ~%")
   )
 
-(defun now-pour-water ()
+(defun now-pour-water (&rest args &key (sleep-time 4) &allow-other-keys)
   (carry-mcup-pose)
   (transfer-mcup)
+  (unix:sleep sleep-time)
   (after-mcup)
   (put-mcup)
   (reset-larm)
   )
-
 
 ;; ボウル２をセット
 (defun now-set-2-model ()
