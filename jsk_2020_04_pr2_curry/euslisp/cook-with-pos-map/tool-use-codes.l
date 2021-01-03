@@ -112,23 +112,6 @@
   (send *ri* :start-grasp :rarm :wait t)
   )
 
-;; set codes
-(warn "~%  If you use real robot, run (update-pos) ~%")
-(warn "please run (now-set-tools) or (set-knife) ~%")
-
-(defun set-shelf-door ()
-  (if (not (eql (send *shelf-door* :parent) nil))
-      (send (send *shelf-door* :parent) :dissoc *shelf-door*))
-  (let (local-cds)
-    (setq local-cds (make-cascoords))
-    (send local-cds :newcoords (send (car (send *shelf-door* :handle)) :copy-worldcoords))
-    (send local-cds :assoc *shelf-door*)
-    (send local-cds :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-    (send local-cds :dissoc *shelf-door*)
-    )
-  (send *viewer* :draw-objects)
-  )
-
 (defun receive-with-dialogue ()
   ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
   (setq *yes-flag* nil)
@@ -149,6 +132,25 @@
   (send *ri* :speak-jp "次の行動に移ります")
   (unix:sleep *w-time*)
   )
+
+
+;; set codes
+(warn "~%  If you use real robot, run (update-pos) ~%")
+(warn "please run (now-set-tools) or (set-knife) ~%")
+
+(defun set-shelf-door ()
+  (if (not (eql (send *shelf-door* :parent) nil))
+      (send (send *shelf-door* :parent) :dissoc *shelf-door*))
+  (let (local-cds)
+    (setq local-cds (make-cascoords))
+    (send local-cds :newcoords (send (car (send *shelf-door* :handle)) :copy-worldcoords))
+    (send local-cds :assoc *shelf-door*)
+    (send local-cds :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+    (send local-cds :dissoc *shelf-door*)
+    )
+  (send *viewer* :draw-objects)
+  )
+
 
 (defun receive-knife ()
   ;; knifeの位置

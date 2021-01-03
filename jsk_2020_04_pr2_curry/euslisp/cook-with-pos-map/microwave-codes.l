@@ -4,8 +4,10 @@
   
   (unless (boundp '*pmi*) (setq *pmi* (instance pr2-microwave-interface :init)))
   (send *pmi* :kanazawa-pose)
-  
+
+  ;; set global num
   (setq *wait-num* 3)
+  (setq *w-time* 2)
   )
 
 (microwave-codes-init)
@@ -70,17 +72,43 @@
     )
   )
 
-(defun ok-grasp ()
+(defun ok-wait ()
   (ros::unsubscribe "/speech_to_text")
   (setq *ok-flag* nil)
   (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
   (until *ok-flag*
          (ros::spin-once)
          (ros::sleep)
-         )
+         )  
   (send *ri* :speak-jp "ありがとうございます")
   (unix:sleep *w-time*)
+  )
+
+
+(defun ok-grasp ()
+  (ok-wait)
   (send *ri* :start-grasp :rarm :wait t)
+  )
+
+(defun receive-with-dialogue ()
+  ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
+  (setq *yes-flag* nil)
+  (until *yes-flag*
+         (send *ri* :stop-grasp :rarm :wait t)
+         (ok-grasp)
+         (send *ri* :speak-jp "上手く掴めていますか？")
+         (dialogue-func)
+         (if (equal *data* '("はい"))
+             (setq *yes-flag* t)
+           (progn
+             (send *ri* :speak-jp "グリッパを開きます.もう一度お願いします")
+             (unix:sleep *w-time*)
+             )
+           )
+         )
+  
+  (send *ri* :speak-jp "次の行動に移ります")
+  (unix:sleep *w-time*)
   )
 
 
@@ -270,48 +298,84 @@
 
 ;; TODO
 (defun sato-push-button-with-rec-with-dialogue ()
-  ;; push button
+  ;; push 500w button
   (setq *push-flag* nil)
+  (setq cnt 0)
   (while (eql *push-flag* nil)
-    (send *pmi* :push-500w-button)
-    (unix:sleep *wait-num*)
     (setq msg (one-shot-subscribe "/microwave_reader/result" roseus::StringStamped :timeout 5000))
     (microwave-cb msg)
     (if (equal *data* "/500w")
-        (setq *push-flag* t))
+        (setq *push-flag* t)
+      (progn
+        (if (> cnt 2) ;;もし二回以上トライしていたら助けを求める
+            (progn
+              (send *ri* :speak-jp "レンジのボタンを押して500wにセットして，合図をしてください")
+              (ok-wait)
+              )
+          (progn
+            (send *pmi* :push-500w-button)
+            (unix:sleep *wait-num*)
+            (setq cnt (+ cnt 1))
+            )
+          )
+        )
+      )
     )
-  
-  ;; ここは二回押していたらどうするとかがあっても良いようにしたい． ;; TODO
+
+  ;; push 1min button x2
   (setq *push-flag* nil)
+  (setq tmp "/500w")
+  (setq cnt 0)
   (while (eql *push-flag* nil)
-    (send *pmi* :push-1min-button)
-    (unix:sleep *wait-num*)
-    (setq msg (one-shot-subscribe "/microwave_reader/result" roseus::StringStamped :timeout 5000))
-    (microwave-cb msg)
-    (if (equal *data* "/1m")
-        (setq *push-flag* t))
-    )
-  
-  (setq *push-flag* nil)
-  (while (eql *push-flag* nil)
-    (send *pmi* :push-1min-button)
-    (unix:sleep *wait-num*)
     (setq msg (one-shot-subscribe "/microwave_reader/result" roseus::StringStamped :timeout 5000))
     (microwave-cb msg)
     (if (equal *data* "/2m")
-        (setq *push-flag* t))
+        (setq *push-flag* t)
+      (progn
+        (if (> cnt 2) ;;もし二回以上トライしていたら助けを求める
+            (progn
+              (send *ri* :speak-jp "1分のボタンを押して2分にセットして，合図をしてください")
+              (ok-wait)
+              )
+          (progn
+            (send *pmi* :push-1min-button)
+            (unix:sleep *wait-num*)
+            (if (equal *data* "/1m")
+                (progn
+                  (if (equal tmp *data*)
+                      (setq cnt (+ cnt 1))
+                    ))
+              (setq cnt (+ cnt 1))
+              )
+            )
+          )
+        )
+      )
+    (setq tmp *data*)
     )
-
-  (setq *tmp-data* *data*)
   
+  (setq *tmp-data* *data*)
   (setq *push-flag* nil)
+  (setq cnt 0)
   (while (eql *push-flag* nil)
-    (send *pmi* :push-start-button)
-    (unix:sleep *wait-num*)
     (setq msg (one-shot-subscribe "/microwave_reader/result" roseus::StringStamped :timeout 5000))
     (microwave-cb msg)
     (if (or (equal *data* "/start") (not (equal *data* *tmp-data*)))
-        (setq *push-flag* t))
+        (setq *push-flag* t)
+      (progn
+        (if (> cnt 2) ;;もし二回以上トライしていたら助けを求める
+            (progn
+              (send *ri* :speak-jp "スタートのボタンを押して，合図をしてください")
+              (ok-wait)
+              )
+          (progn
+            (send *pmi* :push-start-button)
+            (unix:sleep *wait-num*)
+            (setq cnt (+ cnt 1))
+            )
+          )
+        )
+      )
     )
   )
 
@@ -336,12 +400,12 @@
   (unix:sleep 2)
   )
 
-;; TODO
 (defun recieve-sato-with-dialogue ()
-  (send *ri* :stop-grasp :rarm :wait t)
+  (send *pmi* :kanazawa-pose)
   
-  (send *ri* :speak-jp "サトウのごはんを握らせて下さい")
-  (unix::sleep 3)
+
+  (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい")
+  (receive-with-dialogue)  
   (send *ri* :start-grasp :rarm :wait t)
   
   (warn "please run (recognition) ~%")
