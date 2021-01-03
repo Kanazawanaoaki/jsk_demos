@@ -4,7 +4,7 @@
   
   (unless (boundp '*pmi*) (setq *pmi* (instance pr2-microwave-interface :init)))
   (send *pmi* :kanazawa-pose)
-
+  
   ;; set global num
   (setq *wait-num* 3)
   (setq *w-time* 2)
