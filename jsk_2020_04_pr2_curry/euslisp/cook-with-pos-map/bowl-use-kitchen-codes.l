@@ -2116,6 +2116,14 @@
   (warn "please go to sink spot ~%")
   )
 
+(defun now-grasp-mcup-with-fail-detection ()
+  ;; (set-pose)
+  (grasp-mcup-with-fail-detection)
+  (carry-mcup-pose)
+  
+  (warn "please go to sink spot ~%")
+  )
+
 (defun now-pour-water (&rest args &key (sleep-time 4) &allow-other-keys)
   (carry-mcup-pose)
   (transfer-mcup)

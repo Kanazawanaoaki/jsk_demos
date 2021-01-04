@@ -394,7 +394,8 @@
   ;; 計量カップを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
   (update-pos)
-  (now-grasp-mcup)
+  ;; (now-grasp-mcup)
+  (now-grasp-mcup-with-fail-detection)
   
   ;; 水を汲んで注ぐのを繰り返す
   (go-to-kitchen-from-stove)  
@@ -423,6 +424,12 @@
            (setq *fetch-flag* t)
            )
          )
+
+  ;; 計量カップを置く
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
+  (update-pos)
+  (put-mcup)
+  (reset-larm)
   
   (send *ri* :speak-jp "移動します")
   (unix:sleep 2)
@@ -431,7 +438,7 @@
   (send *ri* :speak-jp "煮込む調理の準備を行いました．確認して合図をして下さい")
   (curry-ok-wait)
   (send *ri* :speak-jp "次の工程に移ります")
-
+  
   (warn "please run (curry-8) ~%")
   )
 
