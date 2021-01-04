@@ -2,7 +2,6 @@
 (warn "please run (curry-0) or (curry-all)~%")
 
 ;; 最初に換気扇とIHの電源を入れていく，野菜を洗って台の上にセットしておく
-;; TODO それぞれの関数の最後に確認をしてOKといってもらうのを用意する．
 
 ;; add for voice recognition
 (ros::roseus "curry_rec_test" :anonymous t)
@@ -306,7 +305,8 @@
   ;; 油を掛ける
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
   (update-pos)
-  (now-add-oil)
+  ;; (now-add-oil)
+  (now-add-oil-with-fail-detection)
   
   (send *ri* :speak-jp "炒める調理の準備を行いました．確認して合図をして下さい")
   (curry-ok-wait)
