@@ -177,7 +177,7 @@
   )
 
 ;; add for grasp detection
-(defun grasp-fail-detection (&rest args &key (g-thre 10) &allow-other-keys)
+(defun grasp-fail-detection-larm (&rest args &key (g-thre 10) &allow-other-keys)
   (setq *fail-flag* nil)
   (setq gripper-len (send *ri* :state :gripper :larm :position))
   (if (< gripper-len g-thre)
@@ -1428,14 +1428,18 @@
   )
 
 (defun grasp-oil-dispenser-with-fail-detection ()
+  (setq tmp-coords (send *oil-dispenser* :copy-worldcoords))
   (grasp-oil-dispenser)
   
   ;; 失敗を検知する
-  (grasp-fail-detection :g-thre 10)
+  (grasp-fail-detection-larm :g-thre 10)
   (if (equal *failflag* t) ;; 一度失敗したらもう一度挑戦する
       (progn
+        (if (not (eql (send *oil-dispenser* :parent) nil))
+            (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
+        (send *oil-dispenser* :newcoords tmp-coords)
         (grasp-oil-dispenser)
-        (grasp-fail-detection :g-thre 10)
+        (grasp-fail-detection-larm :g-thre 10)
         (if (equal *failflag* t) ;; 二度失敗したら人に助けてもらう
             (progn
               (send *ri* :speak-jp "ディスペンサーの把持が失敗しました，渡す準備をして合図をして下さい")

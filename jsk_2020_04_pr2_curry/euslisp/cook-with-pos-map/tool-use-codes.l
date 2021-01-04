@@ -17,11 +17,11 @@
   
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/spatula.l")
   (setq *spatula* (spatula))
-  (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; tmp 本来は棚の中想定
+  (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords))
 
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/ladle.l")
   (setq *ladle* (ladle))
-  (send *ladle* :newcoords (send *ladle-coords-1* :copy-worldcoords)) ;; tmp 本来は棚の中想定
+  (send *ladle* :newcoords (send *ladle-coords-1* :copy-worldcoords))
   
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/cooking-pot-73b2.l")
   (setq *pot* (cooking-pot))
@@ -99,16 +99,20 @@
     )
   )
 
-(defun ok-grasp ()
+(defun ok-wait ()
   (ros::unsubscribe "/speech_to_text")
   (setq *ok-flag* nil)
   (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
   (until *ok-flag*
          (ros::spin-once)
          (ros::sleep)
-         )
+         )  
   (send *ri* :speak-jp "ありがとうございます")
   (unix:sleep *w-time*)
+  )
+
+(defun ok-grasp ()
+  (ok-wait)
   (send *ri* :start-grasp :rarm :wait t)
   )
 
@@ -131,6 +135,14 @@
   
   (send *ri* :speak-jp "次の行動に移ります")
   (unix:sleep *w-time*)
+  )
+
+;; add for grasp detection
+(defun grasp-fail-detection (&rest args &key (g-thre 10) &allow-other-keys)
+  (setq *fail-flag* nil)
+  (setq gripper-len (send *ri* :state :gripper :rarm :position))
+  (if (< gripper-len g-thre)
+      (setq *fail-flag* t))
   )
 
 
@@ -1394,7 +1406,7 @@
   (send *arrow* :newcoords (send *knife* :copy-worldcoords))
   (send *arrow* :translate #f(-12 0 0))
   (send *arrow* :rotate (deg2rad -90) :x)
-
+  
   ;; つかむ
   (grasp-tool-on-table)  
   (send (send *pr2* :rarm :end-coords) :assoc *knife*)
@@ -1412,7 +1424,7 @@
 
   ;; 手を上げる
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate #f(40 0 150) :world)
+  (send *arrow* :translate #f(60 0 150) :world)
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -1430,6 +1442,28 @@
         :debug-view *debug-flag*)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
+  )
+
+(defun grasp-knife-with-fail-detection ()
+  (setq tmp-coords (send *knife* :copy-worldcoords))
+  (grasp-knife)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection :g-thre 10)
+  (if (equal *failflag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (if (not (eql (send *knife* :parent) nil))
+            (send (send *knife* :parent) :dissoc *knife*))
+        (send *knife* :newcoords tmp-coords)
+        (grasp-knife)
+        (grasp-fail-detection :g-thre 10)
+        (if (equal *failflag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (send *ri* :speak-jp "包丁の把持が失敗しました，渡す準備をして合図をして下さい")
+              (receive-with-dialogue)  
+              (send *ri* :start-grasp :rarm :wait t)
+              ))
+        ))
   )
 
 (defun grasp-peeler ()
@@ -1468,6 +1502,28 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun grasp-peeler-with-fail-detection ()
+  (setq tmp-coords (send *peeler* :copy-worldcoords))
+  (grasp-peeler)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection :g-thre 10)
+  (if (equal *failflag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (if (not (eql (send *peeler* :parent) nil))
+            (send (send *peeler* :parent) :dissoc *peeler*))
+        (send *peeler* :newcoords tmp-coords)
+        (grasp-peeler)
+        (grasp-fail-detection :g-thre 10)
+        (if (equal *failflag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (send *ri* :speak-jp "ピーラーの把持が失敗しました，渡す準備をして合図をして下さい")
+              (receive-with-dialogue)
+              (send *ri* :start-grasp :rarm :wait t)
+              ))
+        ))
+  )
+
 
 (defun grasp-potato-peeler ()
   (up-rarm)
@@ -1503,6 +1559,27 @@
   (send *ri* :wait-interpolation)  
   )
 
+(defun grasp-potato-peeler-with-fail-detection ()
+  (setq tmp-coords (send *potato-peeler* :copy-worldcoords))
+  (grasp-potato-peeler)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection :g-thre 10)
+  (if (equal *failflag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (if (not (eql (send *potato-peeler* :parent) nil))
+            (send (send *potato-peeler* :parent) :dissoc *potato-peeler*))
+        (send *potato-peeler* :newcoords tmp-coords)
+        (grasp-potato-peeler)
+        (grasp-fail-detection :g-thre 10)
+        (if (equal *failflag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (send *ri* :speak-jp "ピーラーの把持が失敗しました，渡す準備をして合図をして下さい")
+              (receive-with-dialogue)
+              (send *ri* :start-grasp :rarm :wait t)
+              ))
+        ))
+  )
 
 (defun grasp-spatula ()
   (up-rarm)
@@ -1549,6 +1626,28 @@
         :debug-view *debug-flag*)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
+  )
+
+(defun grasp-spatula-with-fail-detection ()
+  (setq tmp-coords (send *spatula* :copy-worldcoords))
+  (grasp-spatula)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection :g-thre 10)
+  (if (equal *failflag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (if (not (eql (send *spatula* :parent) nil))
+            (send (send *spatula* :parent) :dissoc *spatula*))
+        (send *spatula* :newcoords tmp-coords)
+        (grasp-spatula)
+        (grasp-fail-detection :g-thre 10)
+        (if (equal *failflag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (send *ri* :speak-jp "ヘラの把持が失敗しました，渡す準備をして合図をして下さい")
+              (receive-with-dialogue)
+              (send *ri* :start-grasp :rarm :wait t)
+              ))
+        ))
   )
 
 (defun grasp-ladle ()
@@ -1600,6 +1699,28 @@
         :debug-view *debug-flag*)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
+  )
+
+(defun grasp-ladle-with-fail-detection ()
+  (setq tmp-coords (send *ladle* :copy-worldcoords))
+  (grasp-ladle)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection :g-thre 10)
+  (if (equal *failflag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (if (not (eql (send *ladle* :parent) nil))
+            (send (send *ladle* :parent) :dissoc *ladle*))
+        (send *ladle* :newcoords tmp-coords)
+        (grasp-ladle)
+        (grasp-fail-detection :g-thre 10)
+        (if (equal *failflag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (send *ri* :speak-jp "おたまの把持が失敗しました，渡す準備をして合図をして下さい")
+              (receive-with-dialogue)
+              (send *ri* :start-grasp :rarm :wait t)
+              ))
+        ))
   )
 
 ;; set codes

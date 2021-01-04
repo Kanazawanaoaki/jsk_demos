@@ -127,7 +127,8 @@
   ;; ピーラーを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
-  (grasp-peeler)
+  ;; (grasp-peeler)
+  (grasp-peeler-with-fail-detection)
   
   ;; 人参の皮剥き
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/peel-carrot-codes.l")
@@ -140,7 +141,8 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
   (put-peeler)
-  (grasp-knife)
+  ;; (grasp-knife)
+  (grasp-knife-with-fail-detection)
   
   ;; 人参切断
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cut-carrot-codes.l")
@@ -193,7 +195,8 @@
   ;; じゃがいもピーラーを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
-  (grasp-potato-peeler)
+  ;; (grasp-potato-peeler)
+  (grasp-potato-peeler-with-fail-detection)
   
   ;; じゃがいも皮剥き
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/peel-potato-codes.l")
@@ -206,7 +209,8 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
   (put-potato-peeler)
-  (grasp-knife)
+  ;; (grasp-knife)
+  (grasp-knife-with-fail-detection)
 
   ;; じゃがいも切断   ;; ここ上手くいかないとおもう
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cut-potato-codes.l")
@@ -262,7 +266,8 @@
   ;; 包丁を掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
-  (grasp-knife)
+  ;; (grasp-knife)
+  (grasp-knife-with-fail-detection)
   
   ;; たまねぎ切断
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cut-onion-codes.l")
@@ -278,7 +283,8 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cutting-board-codes.l")
   (update-pos)
   (now-cutting-board-transfer-set)
-  (grasp-knife)
+  ;; (grasp-knife)
+  (grasp-knife-with-fail-detection)
   (now-cutting-board-transfer)
   (put-knife)
   (reset-rarm)
@@ -322,7 +328,8 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   ;; (now-on-stove)
-  (grasp-spatula)
+  ;; (grasp-spatula)
+  (grasp-spatula-with-fail-detection)
   (now-start-ih :deg -10)
   (grasp-pot-from-below-model)
   (now-spatula-mix-rotate-loop-with-dialogue :times 10)
@@ -461,14 +468,16 @@
   ;; ボウル３を鍋に移し，ヘラを置く
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
   (update-pos)
-  (grasp-spatula)
+  ;; (grasp-spatula)
+  (grasp-spatula-with-fail-detection)
   (now-transfer-3-model)
   (put-spatula-1)
   
   ;; おたまを掴む，コンロ操作，おたまで混ぜる． ;; TODO 少し混ぜながら良さそうか聞いて終わる．
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
-  (grasp-ladle) ;; おたまを掴む 
+  ;; (grasp-ladle) ;; おたまを掴む 
+  (grasp-ladle-with-fail-detection)
   (now-start-ih :deg -30) ;; 弱火にする
   (now-ladle-mix-rotate-loop-with-dialogue)
 
