@@ -283,6 +283,7 @@
   ;; (send *ri* :start-grasp :larm :wait t :gain 0.05)
 
   ;; 掴めなかったらflagをtに
+  (setq *fail-flag* nil)
   (setq gripper-len (send *ri* :state :gripper :larm :position))
   (if (< gripper-len 10)
       (setq *fail-flag* t))

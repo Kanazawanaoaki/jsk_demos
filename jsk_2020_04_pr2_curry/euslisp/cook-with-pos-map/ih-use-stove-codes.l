@@ -1463,7 +1463,7 @@
   (wait-pose-ladle)
   )
 
-(defun spatula-mix-rotate-loop (&rest args &key (times 10) &allow-other-keys) ;; これが本になるのか
+(defun spatula-mix-rotate-loop (&rest args &key (times 10) &allow-other-keys)
   (look-at-pot)
   (rossrv-test)
   (wait-pose-spatula)

@@ -154,6 +154,14 @@
   (unix:sleep *w-time*)
   )
 
+;; add for grasp detection
+(defun grasp-fail-detection (&rest args &key (g-thre 10) &allow-other-keys)
+  (setq *fail-flag* nil)
+  (setq gripper-len (send *ri* :state :gripper :larm :position))
+  (if (< gripper-len g-thre)
+      (setq *fail-flag* t))
+  )
+
 (warn "If you use real robot, run (update-pos) ~%")
 (warn "please run (now-set-bowls) or (set-bowl-1) ~%")
 
@@ -1393,7 +1401,27 @@
   (grasp-bowl-larm)
   
   (set-oil-dispenser)
+  
+  (warn "please run (add-oil-set) ~%")
+  )
 
+(defun grasp-oil-dispenser-with-fail-detection ()
+  (grasp-oil-dispenser)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection :g-thre 10)
+  (if (equal *failflag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (grasp-oil-dispenser)
+        (grasp-fail-detection :g-thre 10)
+        (if (equal *failflag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (send *ri* :speak-jp "ディスペンサーの把持が失敗しました，渡す準備をして合図をして下さい")
+              (receive-with-dialogue-larm)  
+              (send *ri* :start-grasp :larm :wait t)
+              ))
+        ))
+  
   (warn "please run (add-oil-set) ~%")
   )
 
@@ -1948,6 +1976,16 @@
 
 (defun now-add-oil ()
   (grasp-oil-dispenser)
+  (add-oil-set)
+  (add-oil)
+  (after-oil)
+  
+  (put-oil-dispenser)
+  (reset-larm)
+  )
+
+(defun now-add-oil-with-fail-detection ()
+  (grasp-oil-dispenser-with-fail-detection)
   (add-oil-set)
   (add-oil)
   (after-oil)
