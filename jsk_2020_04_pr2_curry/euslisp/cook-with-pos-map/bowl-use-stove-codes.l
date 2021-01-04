@@ -6,25 +6,47 @@
   (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; spatula on the cutting board
   (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
   
-  (load "package://jsk_2020_04_pr2_curry/euslisp/model/measuring-cup-73b2.l")
-  (setq *mcup* (measuring-cup-73b2))
+  (unless (boundp '*mcup*)
+    (progn
+      (load "package://jsk_2020_04_pr2_curry/euslisp/model/measuring-cup-73b2.l")
+      (setq *mcup* (measuring-cup-73b2))
+      ))
   (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
   
-  (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-1.l")
-  (setq *bowl-1* (bowl-1))
-  (send *bowl-1* :newcoords (send *bowl-1-stove-coords* :copy-worldcoords))
+  (unless (boundp '*bowl-1*)
+    (progn
+      (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-1.l")
+      (setq *bowl-1* (bowl-1))
+      ))
+  (send *bowl-1* :newcoords (send *bowl-1-coords* :copy-worldcoords))
 
-  (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-2.l")
-  (setq *bowl-2* (bowl-2))
-  (send *bowl-2* :newcoords (send *bowl-2-stove-coords* :copy-worldcoords))
+  (unless (boundp '*bowl-2*)
+    (progn
+      (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-2.l")
+      (setq *bowl-2* (bowl-2))
+      ))
+  (send *bowl-2* :newcoords (send *bowl-2-coords* :copy-worldcoords))
   
-  (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-3.l")
-  (setq *bowl-3* (bowl-3))
-  (send *bowl-3* :newcoords (send *bowl-3-stove-coords* :copy-worldcoords))
+  (unless (boundp '*bowl-3*)
+    (progn
+      (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-3.l")
+      (setq *bowl-3* (bowl-3))
+      ))
+  (send *bowl-3* :newcoords (send *bowl-3-coords* :copy-worldcoords))
   
-  (load "package://jsk_2020_04_pr2_curry/euslisp/model/dispenser.l")
-  (setq *oil-dispenser* (dispenser))
-  (send *oil-dispenser* :newcoords (send *oil-dispenser-stove-coords* :copy-worldcoords))
+  (unless (boundp '*bowl-4*)
+    (progn
+      (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-4.l")
+      (setq *bowl-4* (bowl-4))
+      ))
+  (send *bowl-4* :newcoords (send *bowl-4-coords* :copy-worldcoords))
+  
+  (unless (boundp '*oil-dispenser*)
+    (progn
+      (load "package://jsk_2020_04_pr2_curry/euslisp/model/dispenser.l")
+      (setq *oil-dispenser* (dispenser))
+      ))
+  (send *oil-dispenser* :newcoords (send *oil-dispenser-coords* :copy-worldcoords))
   
   (objects (list *pr2* *scene* *spatula* *mcup* *ladle* *pot* *bowl-1* *bowl-2* *bowl-3* *oil-dispenser*))
   (update-view)
