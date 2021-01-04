@@ -406,7 +406,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
-  ;; じゃがいもの掴む所に
+  ;; たまねぎの掴む所に
   (send *arrow* :newcoords (send *onion* :copy-worldcoords))
   (send *arrow* :translate #f(-20 0 0))
   (send *arrow* :rotate (deg2rad 45) :y)
@@ -415,16 +415,16 @@
   
   ;;gripperを開く
   (send *ri* :stop-grasp :larm :wait t)
-  (send *arrow* :translate #f(100 0 100) :world)
+  (send *arrow* :translate #f(120 0 120) :world)
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
-        :rotation-axis t
+        :rotation-axis :y
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
-  (send *arrow* :translate #f(-100 0 -100) :world)
+  (send *arrow* :translate #f(-120 0 -120) :world)
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -725,15 +725,19 @@
 
 
 (defun tmp-pose ()
-  (send *arrow* :newcoords (make-coords :pos (float-vector 640 8445 31174) :rpy (float-vector 1.587 0 0)))
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :move-target *potato*
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
-  (send *ri* :wait-interpolation)
-
+  (send *pr2* :angle-vector #f(325.0 38.3741 -14.03 103.019 -73.9878 -22.5035 -57.6245 -80.2373 -75.0 50.0 -110.0 -110.0 20.0 -10.0 -10.0 0.0 50.0))
+  (send *ri* :angle-vector (send *pr2* :angle-vector))
+  
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 640 8445 31174) :rpy (float-vector 1.587 0 0)))
+  ;; (send *pr2* :larm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :move-target *potato*
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
+  ;; (send *viewer* :draw-objects)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
+  ;; (send *ri* :wait-interpolation)
+  
   (warn "please go to sink spot !! ~%")  
   )
+

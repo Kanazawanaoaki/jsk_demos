@@ -1,6 +1,6 @@
 (defun water-init ()
   ;; init
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
   
   ;; set objects
   (setq *veg* (make-cube 100 50 40))
