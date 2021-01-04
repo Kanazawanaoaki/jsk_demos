@@ -391,11 +391,8 @@
   (put-spatula-1)
   (reset-rarm)
   
-  ;; 移し終わったら移動をする
-  (go-to-stove)
-  
   ;; 計量カップを掴む
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
   (update-pos)
   (now-grasp-mcup)
   

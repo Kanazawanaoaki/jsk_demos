@@ -146,7 +146,7 @@
     )
   )
 
-(defun ok-grasp-larm ()
+(defun ok-grasp-larm (&rest args &key (gain 0.01) &allow-other-keys)
   (ros::unsubscribe "/speech_to_text")
   (setq *ok-flag* nil)
   (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
@@ -156,15 +156,15 @@
          )
   (send *ri* :speak-jp "ありがとうございます")
   (unix:sleep *w-time*)
-  (send *ri* :start-grasp :larm :wait t)
+  (send *ri* :start-grasp :larm :wait t :gain gain)
   )
 
-(defun receive-with-dialogue-larm ()
+(defun receive-with-dialogue-larm (&rest args &key (gain 0.01) &allow-other-keys)
   ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
   (setq *yes-flag* nil)
   (until *yes-flag*
          (send *ri* :stop-grasp :larm :wait t)
-         (ok-grasp-larm)
+         (ok-grasp-larm :gain gain)
          (send *ri* :speak-jp "上手く掴めていますか？")
          (dialogue-func)
          (if (equal *data* '("はい"))
@@ -180,6 +180,13 @@
   (unix:sleep *w-time*)
   )
 
+;; add for grasp detection
+(defun grasp-fail-detection-larm (&rest args &key (g-thre 10) &allow-other-keys)
+  (setq *fail-flag* nil)
+  (setq gripper-len (send *ri* :state :gripper :larm :position))
+  (if (< gripper-len g-thre)
+      (setq *fail-flag* t))
+  )
 
 (warn "If you use real robot, run (update-pos) ~%")
 (warn "please run (now-set-bowls) or (set-bowl-1) ~%")
@@ -1165,6 +1172,33 @@
   (warn "please run (carry-mcup-pose) ~%")
   )
 
+
+(defun grasp-mcup-with-fail-detection ()
+  (setq tmp-coords (send *mcup* :copy-worldcoords))
+  (grasp-mcup)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection-larm :g-thre 10)
+  (if (equal *failflag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (if (not (eql (send *mcup* :parent) nil))
+            (send (send *mcup* :parent) :dissoc *mcup*))
+        (send *mcup* :newcoords (send tmp-coords :copy-worldcoords))
+        (grasp-mcup)
+        (grasp-fail-detection-larm :g-thre 10)
+        (if (equal *failflag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (send *ri* :speak-jp "計量カップの把持が失敗しました，渡す準備をして合図をして下さい")
+              (receive-with-dialogue-larm)  
+              (send *ri* :start-grasp :larm :wait t)
+              ))
+        ))
+  
+  (warn "please run (carry-mcup-pose) ~%")
+  )
+
+
+
 (defun put-mcup ()
   ;; mcupを置く位置
   (if (not (eql (send *mcup* :parent) nil))
@@ -1268,12 +1302,24 @@
   
   ;; mcupを受け取る
   (send *ri* :stop-grasp :larm :wait t)
-  (send *ri* :speak-jp "軽量カップを握らせて下さい")
+  (send *ri* :speak-jp "計量カップを握らせて下さい")
   (unix:sleep *s-time*)
   (send *ri* :start-grasp :larm :wait t)
   
   (set-mcup)
   
+  (warn "please run (put-mcup) ~%")
+  )
+
+(defun recieve-mcup-with-dialogue ()
+  (carry-mcup-pose)
+  
+  ;; mcupを受け取る
+  (send *ri* :speak-jp "計量カップを渡す準備をして，合図をして下さい")
+  (receive-with-dialogue-larm :gain 0.1)  
+  (send *ri* :start-grasp :larm :wait t)
+  
+  (set-mcup)
   (warn "please run (put-mcup) ~%")
   )
 
@@ -2053,6 +2099,13 @@
 (defun now-set-mcup ()
   (recieve-mcup)
   (put-mcup)
+  (reset-larm)
+  )
+
+(defun now-set-mcup-with-dialogue ()
+  (recieve-mcup-with-dialogue)
+  (put-mcup)
+  (reset-larm)
   )
 
 (defun now-grasp-mcup ()
@@ -2172,7 +2225,7 @@
   (set-spatula) ;; ヘラは掴んでいる想定で行う
   (squeeze-test-set)
   (squeeze-test)
-
+  
   ;; (rossrv-test)
   
   (avoid-rarm)

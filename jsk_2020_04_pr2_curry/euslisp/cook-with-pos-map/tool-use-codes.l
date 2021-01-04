@@ -2032,6 +2032,23 @@
   (after-close)
   )
 
+;; TODO
+(defun now-set-from-shelf-with-failure-detection ()
+  (open-shelf-set)
+  (open-shelf)
+  (after-open)
+
+  (grasp-spatula-0-with-failure-detection) ;; TODO
+  (put-spatula-1)
+  (grasp-ladle-0-with-failure-detection) ;; TODO
+  (put-ladle-1)
+  
+  (close-shelf-set)
+  (close-shelf)
+  (after-close)
+  )
+
+
 (defun now-set-tool-1 ()
   (now-set-spatula-1)
   (now-set-ladle-1)

@@ -1437,7 +1437,7 @@
       (progn
         (if (not (eql (send *oil-dispenser* :parent) nil))
             (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
-        (send *oil-dispenser* :newcoords tmp-coords)
+        (send *oil-dispenser* :newcoords (send tmp-coords :copy-worldcoords))
         (grasp-oil-dispenser)
         (grasp-fail-detection-larm :g-thre 10)
         (if (equal *failflag* t) ;; 二度失敗したら人に助けてもらう
