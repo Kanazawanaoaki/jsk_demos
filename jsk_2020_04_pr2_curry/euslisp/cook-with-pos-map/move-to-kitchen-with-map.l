@@ -170,12 +170,23 @@
   ;; kitchen spotからsinkに移動する
   (send *ri* :go-pos-unsafe 0 -0.6 0)
   (send *ri* :go-pos-unsafe 0.09 0 0)
+  (move-to-sink-ri)
   (update-pos)
   (update-view)
   (print (send *ri* :state :worldcoords))
   )
 
 (defun go-to-kitchen-from-sink ()
+  ;; sinkからkitchen spotに移動する
+  (send *ri* :go-pos-unsafe -0.09 0 0)  
+  (send *ri* :go-pos-unsafe 0 0.6 0)
+  (move-to-kitchen-ri)
+  (update-pos)
+  (update-view)
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun go-to-kitchen-from-sink-without-map ()
   ;; sinkからkitchen spotに移動する
   (send *ri* :go-pos-unsafe -0.09 0 0)  
   (send *ri* :go-pos-unsafe 0 0.6 0)
@@ -187,6 +198,7 @@
 (defun go-to-stove ()
   ;; kitchen spotからstoveに移動する
   (send *ri* :go-pos-unsafe 0 0.4 0)
+  (move-to-stove-ri)
   (update-pos)
   (update-view)
   (print (send *ri* :state :worldcoords))
@@ -195,6 +207,7 @@
 (defun go-to-kitchen-from-stove ()
   ;; stoveからkitchen spotに移動する
   (send *ri* :go-pos-unsafe 0 -0.4 0)
+  (move-to-kitchen-ri)
   (update-pos)
   (update-view)
   (print (send *ri* :state :worldcoords))
@@ -210,6 +223,7 @@
   ;; arrange spotからsinkに実行する
   (send *ri* :go-pos-unsafe 0 -0.9 0)
   (send *ri* :go-pos-unsafe 0.09 0 0)
+  (move-to-sink-ri)
   (update-pos)
   (update-view)
   (print (send *ri* :state :worldcoords))
@@ -219,6 +233,7 @@
   ;; sinkからarrange spotに移動する
   (send *ri* :go-pos-unsafe -0.09 0 0)  
   (send *ri* :go-pos-unsafe 0 0.9 0)
+  (move-to-arrange-ri)
   (update-pos)
   (update-view)
   (print (send *ri* :state :worldcoords))
@@ -228,6 +243,7 @@
   ;; stoveからsinkに移動する ;; TODO 確認
   (send *ri* :go-pos-unsafe 0 -0.4 0)
   (send *ri* :go-pos-unsafe 0 -0.4 0)
+  (move-to-sink-ri)
   (update-pos)
   (update-view)
   (print (send *ri* :state :worldcoords))  
@@ -237,6 +253,7 @@
   ;; sinkからstoveに移動する
   (send *ri* :go-pos-unsafe 0 0.4 0)
   (send *ri* :go-pos-unsafe 0 0.4 0)
+  (move-to-stove-ri)
   (update-pos)
   (update-view)
   (print (send *ri* :state :worldcoords))  
@@ -313,14 +330,14 @@
   (unix:sleep *w-time*)
   )
 
-(defun go-to-kithen-from-stove-with-speech-after ()
+(defun go-to-kitchen-from-stove-with-speech-after ()
   ;; stoveからkitchen spot(拠点)に移動する
   (go-to-kitchen-from-stove)
   (speech-after-move)
   (unix:sleep *w-time*)
   )
 
-(defun go-to-kithen-from-stove-with-speech-before ()
+(defun go-to-kitchen-from-stove-with-speech-before ()
   ;; stove(拠点)からkitchen spotに移動する
   (speech-before-move)
   (unix:sleep *w-time*)
@@ -335,7 +352,7 @@
   (go-to-sink)  
   )
 
-(defun go-to-kithen-from-sink-with-speech-after ()
+(defun go-to-kitchen-from-sink-with-speech-after ()
   ;; sinkからkitchen spot(拠点)に移動する
   (go-to-kitchen-from-sink)
   (speech-after-move)

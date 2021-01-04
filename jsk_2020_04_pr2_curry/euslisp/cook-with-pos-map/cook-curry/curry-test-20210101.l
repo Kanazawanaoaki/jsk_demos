@@ -81,7 +81,7 @@
   (now-set-mcup-with-dialogue)
   
   ;; キッチンの前に戻る
-  (go-to-kithen-from-stove-with-speech-after)
+  (go-to-kitchen-from-stove-with-speech-after)
   
   ;; まな板をセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cutting-board-codes.l")
@@ -118,7 +118,7 @@
   (now-wash-veg)
   
   ;; キッチンの前に戻る
-  (go-to-kithen-from-sink-with-speech-after)  
+  (go-to-kitchen-from-sink-with-speech-after)  
   
   ;; 人参をまな板に置く
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
@@ -184,7 +184,7 @@
   (now-wash-veg)
   
   ;; キッチンの前に戻る
-  (go-to-kithen-from-sink-with-speech-after)  
+  (go-to-kitchen-from-sink-with-speech-after)  
   
   ;; じゃがいもをまな板に置く
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
@@ -253,7 +253,7 @@
   (now-wash-veg)
   
   ;; キッチンの前に戻る
-  (go-to-kithen-from-sink-with-speech-after)  
+  (go-to-kitchen-from-sink-with-speech-after)  
   
   ;; たまねぎをまな板に置く
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
@@ -375,7 +375,7 @@
   (send *ri* :speak-jp "煮込む調理の準備を開始します")
   
   ;; キッチン前に移動する
-  (go-to-kithen-from-stove-with-speech-before)
+  (go-to-kitchen-from-stove-with-speech-before)
   
   ;; ボウル１を鍋に移す ヘラは掴んでいる前提
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
@@ -393,7 +393,7 @@
   (now-grasp-mcup)
   
   ;; 水を汲んで注ぐのを繰り返す
-  (go-to-kithen-from-stove)  
+  (go-to-kitchen-from-stove)  
   (setq *fetch-flag* nil)
   (until *fetch-flag*
          (go-to-sink)
@@ -403,7 +403,8 @@
          (update-pos)
          (now-fetch-water :sleep-time 2)
          
-         (go-to-kitchen-from-sink)
+         ;; (go-to-kitchen-from-sink)
+         (go-to-kitchen-from-sink-without-map)
          
          ;; 水を注ぐ
          (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
