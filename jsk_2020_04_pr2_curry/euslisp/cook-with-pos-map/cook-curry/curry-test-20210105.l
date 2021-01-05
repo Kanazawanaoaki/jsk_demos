@@ -67,6 +67,11 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
   (update-pos)
   (now-set-1-model-with-dialogue)
+
+  ;; TODO 野菜をセットする？
+  
+  ;; TODO 計量カップはここでセットする？
+  
   
   ;; コンロの前まで移動する
   (go-to-stove-with-speech-before)
