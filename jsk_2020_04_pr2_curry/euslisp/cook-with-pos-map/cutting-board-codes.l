@@ -81,7 +81,7 @@
     )
   )
 
-(defun ok-grasp-larm ()
+(defun ok-wait ()
   (ros::unsubscribe "/speech_to_text")
   (setq *ok-flag* nil)
   (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
@@ -91,15 +91,19 @@
          )
   (send *ri* :speak-jp "ありがとうございます")
   (unix:sleep *w-time*)
-  (send *ri* :start-grasp :larm :wait t)
   )
 
-(defun receive-with-dialogue-larm ()
+(defun ok-grasp-larm (&rest args &key (gain 0.01) &allow-other-keys)
+  (ok-wait)
+  (send *ri* :start-grasp :larm :wait t :gain gain)
+  )
+
+(defun receive-with-dialogue-larm (&rest args &key (gain 0.01) &allow-other-keys)
   ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
   (setq *yes-flag* nil)
   (until *yes-flag*
          (send *ri* :stop-grasp :larm :wait t)
-         (ok-grasp-larm)
+         (ok-grasp-larm :gain gain)
          (send *ri* :speak-jp "上手く掴めていますか？")
          (dialogue-func)
          (if (equal *data* '("はい"))
@@ -510,8 +514,7 @@
   (send *ri* :wait-interpolation)  
   
   (send *ri* :speak-jp "まな板を渡す準備をして，合図をして下さい")
-  (receive-with-dialogue-larm)  
-  (send *ri* :start-grasp :larm :gain 30 :wait t)
+  (receive-with-dialogue-larm :gain 30)  
   
   (warn "please run (put-cutting-board) ~%")
   )

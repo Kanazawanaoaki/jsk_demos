@@ -153,7 +153,7 @@
   (until *ok-flag*
          (ros::spin-once)
          (ros::sleep)
-         )  
+         )
   (send *ri* :speak-jp "ありがとうございます")
   (unix:sleep *w-time*)
   )
