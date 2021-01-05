@@ -169,7 +169,7 @@
 (defun go-to-sink ()
   ;; kitchen spotからsinkに移動する
   (send *ri* :go-pos-unsafe 0 -0.6 0)
-  (send *ri* :go-pos-unsafe 0.09 0 0)
+  ;; (send *ri* :go-pos-unsafe 0.09 0 0)
   (move-to-sink-ri)
   (update-pos)
   (update-view)

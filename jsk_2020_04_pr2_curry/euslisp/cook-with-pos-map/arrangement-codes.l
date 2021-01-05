@@ -349,6 +349,8 @@
 
 (defun squeeze-sato-set ()
   (send *ri* :start-grasp :rarm :gain 30 :wait t)
+
+  ;; TODO ここら辺はヘラを握る所から，bowl-use-kitchenとかを参考に変えていく
   
   ;; (setq *rav0* #f(-20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
   ;; (send *pr2* :rarm :angle-vector *rav0*)
@@ -380,6 +382,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
+  
   ;; 書き出す最初の位置に
   (send *arrow* :newcoords (send (send *sato-rice* :attention-attention0) :copy-worldcoords))
   (send *arrow* :translate #f(-110 0 0))
@@ -389,7 +392,7 @@
   (send *arrow* :translate #f(-100 0 0))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
-        :move-target (car (send *spatula* :attention))
+	:move-target (elt (send *spatula* :attention) 1) ;;(car (send *spatula* :attention))
         :rotation-axis t
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
@@ -408,7 +411,7 @@
   (send *arrow* :translate #f(-100 0 0))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
-        :move-target (car (send *spatula* :attention))
+	:move-target (elt (send *spatula* :attention) 1) ;;(car (send *spatula* :attention))
         :rotation-axis t
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
@@ -495,6 +498,9 @@
 
   (send *arrow* :newcoords (send (elt (send *spatula* :attention) 1) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 30 30) :world)
+
+  (send *arrow* :rotate (deg2rad 30) :y)
+  
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :move-target (elt (send *spatula* :attention) 1)
@@ -511,7 +517,7 @@
   (send *arrow* :translate #f(-100 0 0))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
-        :move-target (car (send *spatula* :attention))
+        :move-target (elt (send *spatula* :attention) 1)
         :rotation-axis t
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
@@ -521,6 +527,8 @@
 
 
 (defun avoid-spatula-sato ()
+  ;; bowl-use-kitchenとかを参考にしてダイレクトでいくやつにする!
+  
   (send *arrow* :newcoords (make-coords :pos (float-vector 550 8400 31150) :rpy (float-vector -1.603 0.03 -0.018)))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -627,7 +635,6 @@
   (after-sato)  
   )
 
-(defun 
 
 ;; TODO 用意する　-with-dialogueも作りたい．
 (defun now-set-sato ()
@@ -641,7 +648,6 @@
   ;; ヘラとおたまを受け取ってセットする
   ()
   )
-
 
 
 (defun set-tmp-pose ()
@@ -659,3 +665,4 @@
   (set-tmp-pose)
   (after-sato)
   )
+

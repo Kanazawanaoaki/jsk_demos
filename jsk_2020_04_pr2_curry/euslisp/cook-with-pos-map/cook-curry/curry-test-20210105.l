@@ -403,7 +403,6 @@
   (now-grasp-mcup-with-fail-detection)
   
   ;; 水を汲んで注ぐのを繰り返す
-  (go-to-kitchen-from-stove)  
   (setq *fetch-flag* nil)
   (until *fetch-flag*
          (go-to-sink)

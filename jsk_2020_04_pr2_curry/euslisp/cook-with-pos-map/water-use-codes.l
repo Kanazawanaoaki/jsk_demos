@@ -120,7 +120,8 @@
   ;; こことかも実はモデルをつくって開ける閉める動作にした方が良いのかな？という感じはする．
   ;; レバーを掴んでいる状態から
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate (float-vector 0 0 30) :world)
+  ;; (send *arrow* :translate (float-vector 0 0 30) :world)
+  (send *arrow* :translate (float-vector 0 0 20) :world)
   (send *pr2* :rarm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
 	:rotation-axis nil
@@ -134,8 +135,10 @@
 
 
 (defun water-off ()
-  (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate (float-vector 0 0 -40) :world)
+  (send *arrow* :newcoords (send *fauset-lever-rarm-coords* :copy-worldcoords))
+
+  (send *arrow* :translate #f(20 0 -50) :world)
+
   (send *pr2* :rarm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
 	:rotation-axis t
@@ -150,7 +153,7 @@
 
 (defun release-lever ()
   ;;グリッパを微妙に開く
-  (send *ri* :move-gripper :rarm 0.05)
+  (send *ri* :move-gripper :rarm 0.04)
   
   (send *arrow* :newcoords (send *fauset-lever-rarm-coords* :copy-worldcoords))
   (send *arrow* :translate #f(100 60 20) :world)
