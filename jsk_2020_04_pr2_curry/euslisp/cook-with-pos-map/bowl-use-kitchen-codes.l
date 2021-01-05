@@ -146,16 +146,20 @@
     )
   )
 
-(defun ok-grasp-larm (&rest args &key (gain 0.01) &allow-other-keys)
+(defun ok-wait ()
   (ros::unsubscribe "/speech_to_text")
   (setq *ok-flag* nil)
   (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
   (until *ok-flag*
          (ros::spin-once)
          (ros::sleep)
-         )
+         )  
   (send *ri* :speak-jp "ありがとうございます")
   (unix:sleep *w-time*)
+  )
+
+(defun ok-grasp-larm (&rest args &key (gain 0.01) &allow-other-keys)
+  (ok-wait)
   (send *ri* :start-grasp :larm :wait t :gain gain)
   )
 

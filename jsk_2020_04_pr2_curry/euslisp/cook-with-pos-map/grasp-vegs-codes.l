@@ -121,10 +121,96 @@
 ;;   )
 
 
-(print 3)
-(setq *cube* (make-cube 10 50 50))
-(send *cube* :set-color :red)
-(send *cube* :locate #f(500 0 1000) :world)
+
+;; add for voice recognition
+(ros::load-ros-manifest "speech_recognition_msgs")
+(setq *data-flag* nil)
+(defun voice-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (setq *data-flag* t)
+    (format t "data: ~A ~%" *data*)
+    )
+  )
+
+(defun dialogue-func ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *data-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+  (until *data-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep 1)
+  )
+
+(setq *ok-flag* nil)
+(defun voice-ok-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (if (equal *data* '("OK"))
+        (progn
+          (format t "了解しました！ ~%" *data*)
+          (setq *ok-flag* t)
+          )
+      (format t "data: ~A ~%" *data*)
+      ) 
+    )
+  )
+
+(defun ok-wait ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *ok-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
+  (until *ok-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )  
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep *w-time*)
+  )
+
+(defun ok-grasp ()
+  (ok-wait)
+  (send *ri* :start-grasp :rarm :wait t)
+  )
+
+(defun ok-grasp-larm (&rest args &key (gain 0.01) &allow-other-keys)
+  (ok-wait)
+  (send *ri* :start-grasp :larm :wait t :gain gain)
+  )
+
+(defun receive-with-dialogue ()
+  ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
+  (setq *yes-flag* nil)
+  (until *yes-flag*
+         (send *ri* :stop-grasp :rarm :wait t)
+         (ok-grasp)
+         (send *ri* :speak-jp "上手く掴めていますか？")
+         (dialogue-func)
+         (if (equal *data* '("はい"))
+             (setq *yes-flag* t)
+           (progn
+             (send *ri* :speak-jp "グリッパを開きます.もう一度お願いします")
+             (unix:sleep *w-time*)
+             )
+           )
+         )
+  
+  (send *ri* :speak-jp "次の行動に移ります")
+  (unix:sleep *w-time*)
+  )
+
+;; add for grasp detection
+(defun grasp-fail-detection-larm (&rest args &key (g-thre 10) &allow-other-keys)
+  (setq *fail-flag* nil)
+  (setq gripper-len (send *ri* :state :gripper :larm :position))
+  (if (< gripper-len g-thre)
+      (setq *fail-flag* t))
+  )
 
 (warn "please run (recognition) or (transfer-all)~%")
 
@@ -261,7 +347,7 @@
   )
 
 
-(defun grasp-potato ()
+(defun before-receive-larm ()
   ;;少し上に
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 250) :world)
@@ -284,7 +370,11 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
+  )
 
+(defun grasp-potato ()
+  (before-receive-larm)
+  
   ;; じゃがいもの掴む所に
   (send *arrow* :newcoords (send *potato* :copy-worldcoords))
   (send *arrow* :translate #f(-20 0 0))
@@ -323,28 +413,7 @@
 
 
 (defun grasp-carrot ()
-  ;;少し上に
-  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate #f(0 0 250) :world)
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis nil
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-  
-  ;;少し前に
-  (send *arrow* :newcoords (make-coords :pos (send (send (send *pr2* :larm :end-coords) :copy-worldcoords) :worldpos)))
-  (send *arrow* :translate #f(-200 50 50) :world)
-  (send *arrow* :rotate (deg2rad 90) :z :world)
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
+  (before-receive-larm)
 
   ;; じゃがいもの掴む所に
   (send *arrow* :newcoords (send *carrot* :copy-worldcoords))
@@ -383,28 +452,7 @@
   )
 
 (defun grasp-onion ()
-  ;;少し上に
-  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate #f(0 0 250) :world)
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis nil
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-  
-  ;;少し前に
-  (send *arrow* :newcoords (make-coords :pos (send (send (send *pr2* :larm :end-coords) :copy-worldcoords) :worldpos)))
-  (send *arrow* :translate #f(-200 50 50) :world)
-  (send *arrow* :rotate (deg2rad 90) :z :world)
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
+  (before-receive-larm)
 
   ;; たまねぎの掴む所に
   (send *arrow* :newcoords (send *onion* :copy-worldcoords))
@@ -671,6 +719,45 @@
   (warn "please run (reset-larm) ~%")  
   )
 
+;; TODO
+(defun receive-potato ()
+  (before-receive-larm)
+  (vegs-carry-pose)
+
+  )
+
+(defun receive-carrot ()
+  (before-receive-larm)
+  (vegs-carry-pose)
+
+  )
+
+(defun receive-onion ()
+  (before-receive-larm)
+  (vegs-carry-pose)
+
+  (send *ri* :stop-grasp :larm :wait t)
+  (send *ri* :speak-jp "たまねぎを握らせて下さい")
+  (unix:sleep *s-time*)
+  (send *ri* :start-grasp :larm :wait t)
+
+  (set-vegs-model *onion*)
+
+  (warn "please run (put-onion-on-stand) ~%")
+  )
+
+(defun receive-onion-with-dialogue ()
+  (before-receive-larm)
+  (vegs-carry-pose)
+  
+  (send *ri* :speak-jp "たまねぎを渡す準備をして，合図をして下さい")
+  (receive-with-dialogue-larm)
+
+  (set-vegs-model *onion*)
+  
+  (warn "please run (put-onion-on-stand) ~%")
+  )
+
 
 ;; defun now-funcs
 (defun now-grasp-potato ()
@@ -722,6 +809,25 @@
   (reset-larm)
   )
 
+;; TODO
+(defun now-set-potato ()
+  )
+
+(defun now-set-carrot ()
+  )
+
+
+(defun now-set-onion ()
+  (receive-onion)
+  (put-onion-on-stand)
+  (reset-larm)
+  )
+
+(defun now-set-onion-with-dialogue ()
+  (receive-onion-with-dialogue)
+  (put-onion-on-stand)
+  (reset-larm)
+  )
 
 
 (defun tmp-pose ()
