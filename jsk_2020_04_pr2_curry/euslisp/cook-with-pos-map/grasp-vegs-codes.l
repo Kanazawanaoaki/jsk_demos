@@ -719,17 +719,56 @@
   (warn "please run (reset-larm) ~%")  
   )
 
-;; TODO
 (defun receive-potato ()
   (before-receive-larm)
   (vegs-carry-pose)
 
+  (send *ri* :stop-grasp :larm :wait t)
+  (send *ri* :speak-jp "じゃがいもを握らせて下さい")
+  (unix:sleep *s-time*)
+  (send *ri* :start-grasp :larm :wait t)
+  
+  (set-vegs-model *potato*)
+
+  (warn "please run (put-potato-on-stand) ~%")
+  )
+
+(defun receive-potato-with-dialogue ()
+  (before-receive-larm)
+  (vegs-carry-pose)
+  
+  (send *ri* :speak-jp "じゃがいもを渡す準備をして，合図をして下さい")
+  (receive-with-dialogue-larm)
+  
+  (set-vegs-model *potato*)
+  
+  (warn "please run (put-potato-on-stand) ~%")
   )
 
 (defun receive-carrot ()
   (before-receive-larm)
   (vegs-carry-pose)
+  
+  (send *ri* :stop-grasp :larm :wait t)
+  (send *ri* :speak-jp "人参を握らせて下さい")
+  (unix:sleep *s-time*)
+  (send *ri* :start-grasp :larm :wait t)
 
+  (set-vegs-model *carrot*)
+  
+  (warn "please run (put-carrot-on-stand) ~%")
+  )
+
+(defun receive-carrot-with-dialogue ()
+  (before-receive-larm)
+  (vegs-carry-pose)
+  
+  (send *ri* :speak-jp "人参を渡す準備をして，合図をして下さい")
+  (receive-with-dialogue-larm)
+
+  (set-vegs-model *carrot*)
+  
+  (warn "please run (put-carrot-on-stand) ~%")
   )
 
 (defun receive-onion ()
@@ -809,13 +848,29 @@
   (reset-larm)
   )
 
-;; TODO
 (defun now-set-potato ()
+  (receive-potato)
+  (put-potato-on-stand)
+  (reset-larm)
+  )
+
+(defun now-set-potato-with-dialogue ()
+  (receive-potato-with-dialogue)
+  (put-potato-on-stand)
+  (reset-larm)
   )
 
 (defun now-set-carrot ()
+  (receive-carrot)
+  (put-carrot-on-stand)
+  (reset-larm)
   )
 
+(defun now-set-carrot-with-dialogue ()
+  (receive-carrot-with-dialogue)
+  (put-carrot-on-stand)
+  (reset-larm)
+  )
 
 (defun now-set-onion ()
   (receive-onion)
@@ -824,6 +879,26 @@
   )
 
 (defun now-set-onion-with-dialogue ()
+  (receive-onion-with-dialogue)
+  (put-onion-on-stand)
+  (reset-larm)
+  )
+
+(defun now-set-vegs ()
+  (receive-potato)
+  (put-potato-on-stand)
+  (receive-carrot)
+  (put-carrot-on-stand)
+  (receive-onion)
+  (put-onion-on-stand)
+  (reset-larm)
+  )
+
+(defun now-set-vegs-with-dialogue ()
+  (receive-potato-with-dialogue)
+  (put-potato-on-stand)
+  (receive-carrot-with-dialogue)
+  (put-carrot-on-stand)
   (receive-onion-with-dialogue)
   (put-onion-on-stand)
   (reset-larm)

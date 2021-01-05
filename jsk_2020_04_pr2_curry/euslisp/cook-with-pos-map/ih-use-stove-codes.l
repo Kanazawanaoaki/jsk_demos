@@ -84,6 +84,72 @@
     )
   )
 
+(defun dialogue-func ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *data-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+  (until *data-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep 1)
+  )
+
+(setq *ok-flag* nil)
+(defun voice-ok-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (if (equal *data* '("OK"))
+        (progn
+          (format t "了解しました！ ~%" *data*)
+          (setq *ok-flag* t)
+          )
+      (format t "data: ~A ~%" *data*)
+      ) 
+    )
+  )
+
+(defun ok-wait ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *ok-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
+  (until *ok-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep *w-time*)
+  )
+
+(defun ok-grasp-larm (&rest args &key (gain 0.01) &allow-other-keys)
+  (ok-wait)
+  (send *ri* :start-grasp :larm :wait t :gain gain)
+  )
+
+(defun receive-with-dialogue-larm (&rest args &key (gain 0.01) &allow-other-keys)
+  ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
+  (setq *yes-flag* nil)
+  (until *yes-flag*
+         (send *ri* :stop-grasp :larm :wait t)
+         (ok-grasp-larm :gain gain)
+         (send *ri* :speak-jp "上手く掴めていますか？")
+         (dialogue-func)
+         (if (equal *data* '("はい"))
+             (setq *yes-flag* t)
+           (progn
+             (send *ri* :speak-jp "グリッパを開きます.もう一度お願いします")
+             (unix:sleep *w-time*)
+             )
+           )
+         )
+  
+  (send *ri* :speak-jp "次の行動に移ります")
+  (unix:sleep *w-time*)
+  )
+
+
 ;; def util-funcs
 (defun reset-rarm ()
   ;; (setq *rav0* #f(-20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
@@ -469,6 +535,24 @@
   (send *ri* :start-grasp :larm :wait t)
   )
 
+(defun grasp-pot-from-below-with-fail-detection ()
+  (grasp-pot-from-below)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection-larm :g-thre 10)
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (grasp-pot-from-below)
+        (grasp-fail-detection-larm :g-thre 10)
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (send *ri* :speak-jp "鍋を掴むのが失敗しました，鍋の柄を掴ませる準備をして合図して下さい")
+              (ok-grasp-larm)
+              ))
+        ))
+  )
+
+
 (defun release-pot-from-below ()
   (send *ri* :stop-grasp :larm :wait t)
 
@@ -532,6 +616,24 @@
 
   (send *ri* :start-grasp :larm :wait t)
   )
+
+(defun grasp-pot-from-below-model-with-fail-detection ()
+  (grasp-pot-from-below-model)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection-larm :g-thre 10)
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (grasp-pot-from-below-model)
+        (grasp-fail-detection-larm :g-thre 10)
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (send *ri* :speak-jp "鍋を掴むのが失敗しました，鍋の柄を掴ませる準備をして合図して下さい")
+              (ok-grasp-larm)
+              ))
+        ))
+  )
+
 
 (defun release-pot-from-below-model ()
   (send *ri* :stop-grasp :larm :wait t)
@@ -1516,19 +1618,6 @@
   (rotate-knob :deg deg) ;;時計回りにdeg度つまみを回す
   (rossrv-test)
   (release-knob) ;;つまみを離す
-  )
-
-
-(defun dialogue-func ()
-  (ros::unsubscribe "/speech_to_text")
-  (setq *data-flag* nil)
-  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
-  (until *data-flag*
-         (ros::spin-once)
-         (ros::sleep)
-         )
-  (send *ri* :speak-jp "ありがとうございます")
-  (unix:sleep 1)
   )
 
 (defun dialogue-test ()

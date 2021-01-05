@@ -1460,7 +1460,7 @@
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
               (send *ri* :speak-jp "包丁の把持が失敗しました，渡す準備をして合図をして下さい")
-              (receive-with-dialogue)  
+              (receive-with-dialogue)
               (send *ri* :start-grasp :rarm :wait t)
               ))
         ))
@@ -1979,6 +1979,31 @@
   (after-open)
   )
 
+(defun now-open-shelf-with-fail-detection ()
+  (setq tmp-coords (send *shelf-door* :copy-worldcoords))
+  (open-shelf-set)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection :g-thre 10)
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (if (not (eql (send *shelf-door* :parent) nil))
+            (send (send *shelf-door* :parent) :dissoc *shelf-door*))
+        (send *shelf-door* :newcoords tmp-coords)
+        (open-shelf-set)
+        (grasp-fail-detection :g-thre 10)
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (send *ri* :speak-の "棚の取手を掴むのが失敗しました，棚を開けて合図をして下さい")
+              (ok-wait)
+              (rarm-middle-pose) ;; 中間姿勢になる
+              (return-from now-open-shelf-with-fail-detection)))
+        ))
+  
+  (open-shelf)
+  (after-open)
+  )
+
 (defun now-close-shelf ()
   (close-shelf-set)
   (close-shelf)
@@ -2038,9 +2063,9 @@
   (open-shelf)
   (after-open)
 
-  (grasp-spatula-0-with-failure-detection) ;; TODO
+  (grasp-spatula-0-with-fail-detection) ;; TODO
   (put-spatula-1)
-  (grasp-ladle-0-with-failure-detection) ;; TODO
+  (grasp-ladle-0-with-fail-detection) ;; TODO
   (put-ladle-1)
   
   (close-shelf-set)

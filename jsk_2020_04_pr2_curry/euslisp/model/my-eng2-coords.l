@@ -27,7 +27,8 @@
 
 ;; kitchenware coords
 ;; (setq *pot-coords* (make-coords :pos (float-vector 450 8100 30840) :rpy (float-vector 3.142 0 0)))
-(setq *pot-coords* (make-coords :pos (float-vector 450 8050 30850) :rpy (float-vector 3.142 0 0)))
+;; (setq *pot-coords* (make-coords :pos (float-vector 450 8050 30850) :rpy (float-vector 3.142 0 0)))
+(setq *pot-coords* (make-coords :pos (float-vector 450 8080 30850) :rpy (float-vector 3.142 0 0)))
 
 ;; (setq *cutting-board-coords* (make-coords :pos (float-vector 530 8420 30840) :rpy (float-vector 0 0 0)))
 (setq *cutting-board-coords* (make-coords :pos (float-vector 560 8420 30840) :rpy (float-vector 0 0 0)))
@@ -76,4 +77,3 @@
 (setq *ih-switch-on-coords* (make-coords :pos (float-vector 680 8171 30750) :rpy (float-vector -3.047 -0.011 1.512)))
 (setq *ih-switch-off-coords* (make-coords :pos (float-vector 680 8161 30750) :rpy (float-vector -3.047 -0.011 1.512)))
 (setq *ih-knob-coords* (make-coords :pos (float-vector 680 8154 30715) :rpy (float-vector -3.047 -0.011 1.512)))
-

@@ -64,14 +64,19 @@
   (now-set-in-shelf-with-dialogue)
   
   ;; ボウル１をセットする
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
   (now-set-1-model-with-dialogue)
-
-  ;; TODO 野菜をセットする？
   
-  ;; TODO 計量カップはここでセットする？
+  ;; 野菜をセットする？
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
+  (update-pos)
+  (now-set-vegs-with-dialogue)
   
+  ;; 計量カップはここでセットする？
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
+  (update-pos)
+  (now-set-mcup-with-dialogue)
   
   ;; コンロの前まで移動する
   (go-to-stove-with-speech-before)
@@ -82,7 +87,7 @@
   (now-set-2-model-with-dialogue)
   (now-set-3-model-with-dialogue)
   (now-set-oil-with-dialogue)
-  (now-set-mcup-with-dialogue)
+  ;; (now-set-mcup-with-dialogue)
   
   ;; キッチンの前に戻る
   (go-to-kitchen-from-stove-with-speech-after)
@@ -336,7 +341,7 @@
   ;; (grasp-spatula)
   (grasp-spatula-with-fail-detection)
   (now-start-ih :deg -10)
-  (grasp-pot-from-below-model)
+  (grasp-pot-from-below-model-with-fail-detection)
   (now-spatula-mix-rotate-loop-with-dialogue :times 10)
 
   ;; 火を止める
@@ -366,7 +371,7 @@
   (update-pos)
   (now-start-ih :deg -10)
   (set-spatula)
-  (grasp-pot-from-below-model)
+  (grasp-pot-from-below-model-with-fail-detection)
   (now-spatula-mix-rotate-loop-with-dialogue :times 10)
   
   ;; 火を止める
@@ -379,7 +384,7 @@
   (send *ri* :speak-jp "肉を炒める調理を行いました．確認して合図をして下さい")
   (curry-ok-wait)
   (send *ri* :speak-jp "次の工程に移ります")
-
+  
   (warn "please run (curry-7) ~%")
   )
 
@@ -418,7 +423,7 @@
          ;; 水を注ぐ
          (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
          (update-pos)
-         (now-pour-water :sleep-time 4)
+         (now-only-pour-water :sleep-time 4)
          
          ;; 水汲みの状態を確認する
          (look-at-pot) 
@@ -438,7 +443,7 @@
   (send *ri* :speak-jp "移動します")
   (unix:sleep 2)
   (go-to-stove-with-speech-after)
-
+  
   (send *ri* :speak-jp "煮込む調理の準備を行いました．確認して合図をして下さい")
   (curry-ok-wait)
   (send *ri* :speak-jp "次の工程に移ります")

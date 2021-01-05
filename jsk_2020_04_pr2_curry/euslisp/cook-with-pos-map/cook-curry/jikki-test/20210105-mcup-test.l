@@ -57,8 +57,8 @@
 
 (defun curry-0 () ;; 最初の準備
   (send *ri* :speak-jp "準備を開始します")
-  
-  ;; TODO 動くのを確認して本家にもこれを移す
+
+  ;; 計量カップをセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
   (update-pos)
   (now-set-mcup-with-dialogue)
@@ -73,8 +73,6 @@
 (defun curry-1 () ;; 人参の下ごしらえ
   (send *ri* :speak-jp "煮込む調理の準備を開始します")
 
-  ;; ケーブルのことを考える必要がある．
-  
   ;; 計量カップを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
   (update-pos)
