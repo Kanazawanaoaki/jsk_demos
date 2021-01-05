@@ -1183,14 +1183,14 @@
   
   ;; 失敗を検知する
   (grasp-fail-detection-larm :g-thre 10)
-  (if (equal *failflag* t) ;; 一度失敗したらもう一度挑戦する
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
       (progn
         (if (not (eql (send *mcup* :parent) nil))
             (send (send *mcup* :parent) :dissoc *mcup*))
         (send *mcup* :newcoords (send tmp-coords :copy-worldcoords))
         (grasp-mcup)
         (grasp-fail-detection-larm :g-thre 10)
-        (if (equal *failflag* t) ;; 二度失敗したら人に助けてもらう
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
               (send *ri* :speak-jp "計量カップの把持が失敗しました，渡す準備をして合図をして下さい")
               (receive-with-dialogue-larm)  

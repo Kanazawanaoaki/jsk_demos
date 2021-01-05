@@ -823,7 +823,7 @@
   (send *ri* :wait-interpolation)
 
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
-  (dotimes (i 3) ;; 4だったり6だったりした．
+  (dotimes (i 2)
     (send *arrow* :rotate (deg2rad 10) :z :world)
     (send *pr2* :larm :inverse-kinematics
 	  (send *arrow* :copy-worldcoords)
@@ -836,7 +836,12 @@
 
   (setq *tmp* (send *pr2* :larm :angle-vector))
   
-  (send *arrow* :newcoords (make-coords :pos (float-vector 602.379 8152.78 31274.974) :rpy (float-vector 2.795 -0.12 1.542)))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 602.379 8152.78 31274.974) :rpy (float-vector 2.795 -0.12 1.542)))
+  ;; (send *pr2* :larm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
+  (send *arrow* :newcoords (make-coords :pos (float-vector 633.158 8012.426 31180.818) :rpy (float-vector 2.748 0.077 1.774)))
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -864,8 +869,9 @@
   (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))  
   (send *arrow* :translate #f(0 0 150))
   (send *arrow* :rotate (deg2rad -30) :z)
-  (send *arrow* :rotate (deg2rad 30) :y)
-
+  ;; (send *arrow* :rotate (deg2rad 30) :y)
+  (send *arrow* :rotate (deg2rad 20) :y)
+  
   (send *arrow* :translate #f(-10 0 0)) 
   
   (send *pr2* :larm :inverse-kinematics
@@ -936,7 +942,12 @@
 
 
 (defun after-transfer-board ()
-  (send *pr2* :larm :move-end-pos #f(-60 100 100) :world)
+  (send *pr2* :larm :move-end-pos #f(-60 100 50) :world)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :move-end-pos #f(-60 100 60) :world)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
@@ -947,7 +958,17 @@
   (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
   (send *arrow* :newcoords (send (send *cutting-board* :handle-handle0) :copy-worldcoords))
   (send *arrow* :translate (float-vector 100 50 200) :world)
-  
+
+  (send *arrow* :translate (float-vector 0 0 100) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *arrow* :translate (float-vector 0 0 -100) :world)
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -1131,6 +1152,15 @@
   (now-cutting-board-transfer-after)
   )
 
+(defun now-cutting-board-transfer-all-with-fail-detection ()
+  (now-cutting-board-transfer-set)
+  (grasp-knife-with-fail-detection)
+  (now-cutting-board-transfer)
+  (put-knife)
+  (reset-rarm)
+  (now-cutting-board-transfer-after)
+  )
+
 
 (defun tmp-test ()
   (set-pose)
@@ -1139,7 +1169,20 @@
 
 
 (defun tmp-pose ()
-  (send *arrow* :newcoords (make-coords :pos (float-vector 755.645 7945.73 31127.555) :rpy (float-vector 3.038 0.241 1.757)))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 755.645 7945.73 31127.555) :rpy (float-vector 3.038 0.241 1.757)))
+  ;; (send *pr2* :larm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
+  
+  (send *pr2* :larm :angle-vector #f(64.922 9.01801 81.1391 -107.534 72.3089 -5.77115 -70.9598))
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun tmp-pose-2 ()
+  (send *arrow* :newcoords (make-coords :pos (float-vector 633.158 8012.426 31180.818) :rpy (float-vector 2.748 0.077 1.774)))
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -1147,6 +1190,11 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
+  )
+
+(defun tmp-pose-3 ()
+  (set-board-model)
+  (transfer-to-pot)
   )
 
 (defun tmp-rarm ()

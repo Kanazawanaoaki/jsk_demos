@@ -1433,14 +1433,14 @@
   
   ;; 失敗を検知する
   (grasp-fail-detection-larm :g-thre 10)
-  (if (equal *failflag* t) ;; 一度失敗したらもう一度挑戦する
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
       (progn
         (if (not (eql (send *oil-dispenser* :parent) nil))
             (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
         (send *oil-dispenser* :newcoords (send tmp-coords :copy-worldcoords))
         (grasp-oil-dispenser)
         (grasp-fail-detection-larm :g-thre 10)
-        (if (equal *failflag* t) ;; 二度失敗したら人に助けてもらう
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
               (send *ri* :speak-jp "ディスペンサーの把持が失敗しました，渡す準備をして合図をして下さい")
               (receive-with-dialogue-larm)  

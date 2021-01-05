@@ -1450,14 +1450,14 @@
   
   ;; 失敗を検知する
   (grasp-fail-detection :g-thre 10)
-  (if (equal *failflag* t) ;; 一度失敗したらもう一度挑戦する
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
       (progn
         (if (not (eql (send *knife* :parent) nil))
             (send (send *knife* :parent) :dissoc *knife*))
         (send *knife* :newcoords tmp-coords)
         (grasp-knife)
         (grasp-fail-detection :g-thre 10)
-        (if (equal *failflag* t) ;; 二度失敗したら人に助けてもらう
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
               (send *ri* :speak-jp "包丁の把持が失敗しました，渡す準備をして合図をして下さい")
               (receive-with-dialogue)  
@@ -1508,14 +1508,14 @@
   
   ;; 失敗を検知する
   (grasp-fail-detection :g-thre 10)
-  (if (equal *failflag* t) ;; 一度失敗したらもう一度挑戦する
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
       (progn
         (if (not (eql (send *peeler* :parent) nil))
             (send (send *peeler* :parent) :dissoc *peeler*))
         (send *peeler* :newcoords tmp-coords)
         (grasp-peeler)
         (grasp-fail-detection :g-thre 10)
-        (if (equal *failflag* t) ;; 二度失敗したら人に助けてもらう
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
               (send *ri* :speak-jp "ピーラーの把持が失敗しました，渡す準備をして合図をして下さい")
               (receive-with-dialogue)
@@ -1565,14 +1565,14 @@
   
   ;; 失敗を検知する
   (grasp-fail-detection :g-thre 10)
-  (if (equal *failflag* t) ;; 一度失敗したらもう一度挑戦する
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
       (progn
         (if (not (eql (send *potato-peeler* :parent) nil))
             (send (send *potato-peeler* :parent) :dissoc *potato-peeler*))
         (send *potato-peeler* :newcoords tmp-coords)
         (grasp-potato-peeler)
         (grasp-fail-detection :g-thre 10)
-        (if (equal *failflag* t) ;; 二度失敗したら人に助けてもらう
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
               (send *ri* :speak-jp "ピーラーの把持が失敗しました，渡す準備をして合図をして下さい")
               (receive-with-dialogue)
@@ -1634,14 +1634,14 @@
   
   ;; 失敗を検知する
   (grasp-fail-detection :g-thre 10)
-  (if (equal *failflag* t) ;; 一度失敗したらもう一度挑戦する
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
       (progn
         (if (not (eql (send *spatula* :parent) nil))
             (send (send *spatula* :parent) :dissoc *spatula*))
         (send *spatula* :newcoords tmp-coords)
         (grasp-spatula)
         (grasp-fail-detection :g-thre 10)
-        (if (equal *failflag* t) ;; 二度失敗したら人に助けてもらう
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
               (send *ri* :speak-jp "ヘラの把持が失敗しました，渡す準備をして合図をして下さい")
               (receive-with-dialogue)
@@ -1707,14 +1707,14 @@
   
   ;; 失敗を検知する
   (grasp-fail-detection :g-thre 10)
-  (if (equal *failflag* t) ;; 一度失敗したらもう一度挑戦する
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
       (progn
         (if (not (eql (send *ladle* :parent) nil))
             (send (send *ladle* :parent) :dissoc *ladle*))
         (send *ladle* :newcoords tmp-coords)
         (grasp-ladle)
         (grasp-fail-detection :g-thre 10)
-        (if (equal *failflag* t) ;; 二度失敗したら人に助けてもらう
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
               (send *ri* :speak-jp "おたまの把持が失敗しました，渡す準備をして合図をして下さい")
               (receive-with-dialogue)
