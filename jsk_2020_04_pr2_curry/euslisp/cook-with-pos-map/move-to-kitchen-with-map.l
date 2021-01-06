@@ -28,6 +28,74 @@
   (setq *debug-flag* nil)
   )
 
+;; add dynamic parmas
+;; c.f https://github.com/knorth55/jsk_demos/blob/5b2a3112cdefb1d53ae04ea0e06d345684386f21/elevator_move_base_pr2/src/utils.l#L1-L145
+(defun call-service (service req)
+  (if (ros::wait-for-service service 0)
+      (ros::service-call service req)
+    nil))
+
+(defun change-dynm-params (&rest args)
+  (ros::set-dynamic-reconfigure-param
+   "/move_base_node/DWAPlannerROS" "xy_goal_tolerance" :double 0.10)
+  (ros::set-dynamic-reconfigure-param
+   "/move_base_node/DWAPlannerROS" "yaw_goal_tolerance" :double 0.087)  ;; 5deg
+  (ros::set-dynamic-reconfigure-param
+   "/move_base_node/global_costmap" "footprint_padding" :double 0.03)
+  (ros::set-dynamic-reconfigure-param
+   "/move_base_node/local_costmap" "footprint_padding" :double 0.03)
+  t)
+
+(defun store-params (&rest args)
+  (defparameter *xy-goal-tolerance*
+    (ros::get-param "/move_base_node/DWAPlannerROS/xy_goal_tolerance"))
+  (defparameter *yaw-goal-tolerance*
+    (ros::get-param "/move_base_node/DWAPlannerROS/yaw_goal_tolerance"))
+  (defparameter *global-footprint-padding*
+    (ros::get-param "/move_base_node/global_costmap/footprint_padding"))
+  (defparameter *local-footprint-padding*
+    (ros::get-param "/move_base_node/local_costmap/footprint_padding"))
+  (defparameter *look-at-human-enabled*
+    (send (one-shot-subscribe "look_at_human/enabled" std_msgs::Bool) :data))
+  (call-service "look_at_human/stop" (instance std_srvs::EmptyRequest :init))
+  t)
+
+(defun restore-params (&rest args)
+  (when (boundp '*xy-goal-tolerance*)
+    (ros::set-dynamic-reconfigure-param
+     "/move_base_node/DWAPlannerROS" "xy_goal_tolerance"
+     :double *xy-goal-tolerance*))
+  (when (boundp '*yaw-goal-tolerance*)
+    (ros::set-dynamic-reconfigure-param
+     "/move_base_node/DWAPlannerROS" "yaw_goal_tolerance"
+     :double *yaw-goal-tolerance*))
+  (when (boundp '*global-footprint-padding*)
+    (ros::set-dynamic-reconfigure-param
+     "/move_base_node/global_costmap" "footprint_padding"
+     :double *global-footprint-padding*))
+  (when (boundp '*local-footprint-padding*)
+    (ros::set-dynamic-reconfigure-param
+     "/move_base_node/local_costmap" "footprint_padding"
+     :double *local-footprint-padding*))
+  (when (and (boundp '*look-at-human-enabled*) *look-at-human-enabled*)
+    (call-service "look_at_human/start" (instance std_srvs::EmptyRequest :init)))
+  t)
+
+(defun set-defalut-params (&rest args)
+  (ros::set-dynamic-reconfigure-param
+   "/move_base_node/DWAPlannerROS" "xy_goal_tolerance"
+   :double 0.2)
+  (ros::set-dynamic-reconfigure-param
+   "/move_base_node/DWAPlannerROS" "yaw_goal_tolerance"
+   :double 0.17)
+  (ros::set-dynamic-reconfigure-param
+   "/move_base_node/global_costmap" "footprint_padding"
+   :double 0.1)
+  (ros::set-dynamic-reconfigure-param
+   "/move_base_node/local_costmap" "footprint_padding"
+   :double 0.1)
+  t)
+
 (defun update-view ()
   (send *pr2* :copy-worldcoords)
   (send *viewer* :draw-objects)
@@ -164,6 +232,50 @@
     )
   (print (send *ri* :state :worldcoords))
   )
+
+
+;; tmp move funcs
+(defun move-to-kitchen-ri-tmp ()
+  (send *ri* :clear-costmap)
+  (send *ri* :move-to (make-coords :pos #f(1200 8500 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
+  ;; (setq local-flag (send *ri* :move-to (make-coords :pos #f(1400 8500 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+  ;; (if (eql local-flag t)
+  ;;     (progn
+  ;;       (send *ri* :go-pos-unsafe 0.2 0 0)
+  ;;       (warn "go-pos unsafe !! ~%")
+  ;;       )
+  ;;   (send *ri* :speak-jp "移動に失敗しました，アシストして下さい")
+  ;;   )
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun move-to-sink-ri-tmp ()
+  ;; コンロまで移動する
+  (send *ri* :clear-costmap)
+  (send *ri* :move-to (make-coords :pos #f(1110 9100 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
+  ;; (setq local-flag (send *ri* :move-to (make-coords :pos #f(1400 9100 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+  ;; (if (eql local-flag t)
+  ;;     (progn   (send *ri* :go-pos-unsafe 0.29 0 0)
+  ;;              )
+  ;;   (send *ri* :speak-jp "移動に失敗しました，アシストして下さい")
+  ;;   )
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun move-to-stove-ri-tmp ()
+  (send *ri* :clear-costmap)
+  (send *ri* :move-to (make-coords :pos #f(1200 8100 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
+  ;; (setq local-flag (send *ri* :move-to (make-coords :pos #f(1400 8100 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+  ;; (if (eql local-flag t)
+  ;;     (progn
+  ;;       (send *ri* :go-pos-unsafe 0.2 0 0)
+  ;;       (warn "go-pos unsafe !! ~%")
+  ;;       )
+  ;;   (send *ri* :speak-jp "移動に失敗しました，アシストして下さい")
+  ;;   )
+  (print (send *ri* :state :worldcoords))
+  )
+
 
 ;; kitchen spotとsink間の移動
 (defun go-to-sink ()

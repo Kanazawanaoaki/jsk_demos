@@ -149,6 +149,14 @@
   (unix:sleep *w-time*)
   )
 
+;; add for grasp detection
+(defun grasp-fail-detection-larm (&rest args &key (g-thre 10) &allow-other-keys)
+  (setq *fail-flag* nil)
+  (setq gripper-len (send *ri* :state :gripper :larm :position))
+  (if (< gripper-len g-thre)
+      (setq *fail-flag* t))
+  )
+
 
 ;; def util-funcs
 (defun reset-rarm ()
@@ -344,7 +352,7 @@
         :debug-view *debug-flag*)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   (push-stove-button)
   
   (send *arrow* :newcoords (send *ih-knob-coords* :copy-worldcoords))
@@ -1005,7 +1013,12 @@
     )
   
   (send *ri* :angle-vector-sequence avs tms)
-  (send *ri* :wait-interpolation)  
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :move-end-pos #f(0 0 -100) :world)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
   )
 
 
@@ -1840,14 +1853,23 @@
 
 
 (defun tmp-test ()
-  (set-ladle)
-  (mix-with-ladle-set)
-  (rotate-mix-with-ladle :times 3)
+  (set-spatula)
+  (rotate-mix-with-spatula :times 5)
+  (squeeze-pot-test-1)
+  (squeeze-pot-test-2)
   (wait-pose-spatula)
+  (move-pot-test)
   )
 
 (defun tmp-set ()
   (update-pos)
-  (set-ladle)
+  (set-spatula)
   )
 
+
+(defun tmp-pose ()
+  (send *pr2* :rarm :angle-vector #f(-24.7324 5.33759 -49.5234 -9.68102 317.721 -106.132 -360.525))
+  (send *ri* :angle-vector (send *pr2* :angle-vector))
+  (send *ri* :wait-interpolation)
+  
+  )
