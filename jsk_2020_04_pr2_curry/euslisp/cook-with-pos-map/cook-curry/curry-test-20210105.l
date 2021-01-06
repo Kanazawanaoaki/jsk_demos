@@ -79,7 +79,8 @@
   (now-set-mcup-with-dialogue)
   
   ;; コンロの前まで移動する
-  (go-to-stove-with-speech-before)
+  ;; (go-to-stove-with-speech-before)
+  (move-to-stove-with-speech-before)
   
   ;; ボウル２・３をセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
@@ -90,7 +91,8 @@
   ;; (now-set-mcup-with-dialogue)
   
   ;; キッチンの前に戻る
-  (go-to-kitchen-from-stove-with-speech-after)
+  ;; (go-to-kitchen-from-stove-with-speech-after)
+  (move-to-kitchen-with-speech-after)
   
   ;; まな板をセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cutting-board-codes.l")
@@ -119,7 +121,8 @@
   (now-grasp-carrot)
   
   ;; シンクの前に移動する
-  (go-to-sink-with-speech-before)
+  ;; (go-to-sink-with-speech-before)
+  (move-to-sink-with-speech-before)
   
   ;; 人参を洗う
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
@@ -127,7 +130,8 @@
   (now-wash-veg)
   
   ;; キッチンの前に戻る
-  (go-to-kitchen-from-sink-with-speech-after)  
+  ;; (go-to-kitchen-from-sink-with-speech-after)  
+  (move-to-kitchen-with-speech-after)
   
   ;; 人参をまな板に置く
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
@@ -187,7 +191,8 @@
   (now-grasp-potato)
   
   ;; シンクの前に移動する
-  (go-to-sink-with-speech-before)
+  ;; (go-to-sink-with-speech-before)
+  (move-to-sink-with-speech-before)
   
   ;; じゃがいもを洗う
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
@@ -195,7 +200,8 @@
   (now-wash-veg)
   
   ;; キッチンの前に戻る
-  (go-to-kitchen-from-sink-with-speech-after)  
+  ;; (go-to-kitchen-from-sink-with-speech-after)  
+  (move-to-kitchen-with-speech-after)
   
   ;; じゃがいもをまな板に置く
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
@@ -258,7 +264,8 @@
   (now-grasp-onion)
   
   ;; シンクの前に移動する
-  (go-to-sink-with-speech-before)
+  ;; (go-to-sink-with-speech-before)
+  (move-to-sink-with-speech-before)
   
   ;; たまねぎを洗う
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
@@ -266,8 +273,9 @@
   (now-wash-veg)
   
   ;; キッチンの前に戻る
-  (go-to-kitchen-from-sink-with-speech-after)  
-  
+  ;; (go-to-kitchen-from-sink-with-speech-after)  
+  (move-to-kitchen-with-speech-after)
+
   ;; たまねぎをまな板に置く
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
@@ -316,7 +324,8 @@
   (now-set-from-shelf)
   
   ;; コンロの前まで移動する
-  (go-to-stove-with-speech-before-and-after)
+  ;; (go-to-stove-with-speech-before-and-after)
+  (move-to-stove-with-speech-before-and-after)
   
   ;; 油を掛ける
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
@@ -392,7 +401,8 @@
   (send *ri* :speak-jp "煮込む調理の準備を開始します")
   
   ;; キッチン前に移動する
-  (go-to-kitchen-from-stove-with-speech-before)
+  ;; (go-to-kitchen-from-stove-with-speech-before)
+  (move-to-kitchen-with-speech-before)
   
   ;; ボウル１を鍋に移す ヘラは掴んでいる前提
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
@@ -442,7 +452,8 @@
   
   (send *ri* :speak-jp "移動します")
   (unix:sleep 2)
-  (go-to-stove-with-speech-after)
+  ;; (go-to-stove-with-speech-after)
+  (move-to-stove-with-speech-after)
   
   (send *ri* :speak-jp "煮込む調理の準備を行いました．確認して合図をして下さい")
   (curry-ok-wait)

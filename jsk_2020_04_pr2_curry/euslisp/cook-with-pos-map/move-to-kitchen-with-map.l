@@ -115,6 +115,8 @@
 
 (init)
 (update-view)
+(store-params)
+(change-dynm-params)
 
 (warn "~% If you use real robot, run (update-pos) ~%")
 (warn "please run (move-to-kitchen-ri) , (move-to-sink-ri) or (move-to-stove-ri) and (set-pose)~%")
@@ -234,45 +236,43 @@
   )
 
 
-;; tmp move funcs
-(defun move-to-kitchen-ri-tmp ()
+;; direct move funcs
+(defun move-to-kitchen-ri-direct ()
   (send *ri* :clear-costmap)
   (send *ri* :move-to (make-coords :pos #f(1200 8500 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
-  ;; (setq local-flag (send *ri* :move-to (make-coords :pos #f(1400 8500 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
-  ;; (if (eql local-flag t)
-  ;;     (progn
-  ;;       (send *ri* :go-pos-unsafe 0.2 0 0)
-  ;;       (warn "go-pos unsafe !! ~%")
-  ;;       )
-  ;;   (send *ri* :speak-jp "移動に失敗しました，アシストして下さい")
-  ;;   )
   (print (send *ri* :state :worldcoords))
   )
 
-(defun move-to-sink-ri-tmp ()
+(defun move-to-sink-ri-direct ()
   ;; コンロまで移動する
   (send *ri* :clear-costmap)
   (send *ri* :move-to (make-coords :pos #f(1110 9100 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
-  ;; (setq local-flag (send *ri* :move-to (make-coords :pos #f(1400 9100 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
-  ;; (if (eql local-flag t)
-  ;;     (progn   (send *ri* :go-pos-unsafe 0.29 0 0)
-  ;;              )
-  ;;   (send *ri* :speak-jp "移動に失敗しました，アシストして下さい")
-  ;;   )
   (print (send *ri* :state :worldcoords))
   )
 
-(defun move-to-stove-ri-tmp ()
+(defun move-to-stove-ri-direct ()
   (send *ri* :clear-costmap)
   (send *ri* :move-to (make-coords :pos #f(1200 8100 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
-  ;; (setq local-flag (send *ri* :move-to (make-coords :pos #f(1400 8100 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
-  ;; (if (eql local-flag t)
-  ;;     (progn
-  ;;       (send *ri* :go-pos-unsafe 0.2 0 0)
-  ;;       (warn "go-pos unsafe !! ~%")
-  ;;       )
-  ;;   (send *ri* :speak-jp "移動に失敗しました，アシストして下さい")
-  ;;   )
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun move-to-microwave-ri-direct ()
+  ;; 電子レンジまで移動する
+  (send *ri* :clear-costmap)
+  (send *ri* :move-to (make-coords :pos #f(1600 9300 351) :rpy (float-vector 0 0 0)) :frame-id "/map")
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun move-to-seasoning-ri-direct ()
+  ;; 調味料まで移動する
+  (send *ri* :clear-costmap)
+  (send *ri* :move-to (make-coords :pos #f(1700 8900 351) :rpy (float-vector 0 0 0)) :frame-id "/map")
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun move-to-arrange-ri-direct ()
+  (send *ri* :clear-costmap)
+  (send *ri* :move-to (make-coords :pos #f(1200 8200 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
   (print (send *ri* :state :worldcoords))
   )
 
@@ -471,5 +471,52 @@
   (unix:sleep *w-time*)
   )
 
-
 ;; TODO stove→microwave， microwave→arrnage
+
+
+
+
+;; move-to call codes
+(defun move-to-kitchen-with-speech-before ()
+  (speech-before-move)
+  (unix:sleep *w-time*)
+  (move-to-kitchen-ri-direct)
+  )
+
+(defun move-to-kitchen-with-speech-after ()
+  (move-to-kitchen-ri-direct)
+  (speech-after-move)
+  (unix:sleep *w-time*)
+  )
+
+(defun move-to-sink-with-speech-before ()
+  (speech-before-move)
+  (unix:sleep *w-time*)
+  (move-to-sink-ri-direct)
+  )
+
+(defun move-to-sink-with-speech-after ()
+  (move-to-sink-ri-direct)
+  (speech-after-move)
+  (unix:sleep *w-time*)
+  )
+
+(defun move-to-stove-with-speech-before ()
+  (speech-before-move)
+  (unix:sleep *w-time*)
+  (move-to-stove-ri-direct)
+  )
+
+(defun move-to-stove-with-speech-after ()
+  (move-to-stove-ri-direct)
+  (speech-after-move)
+  (unix:sleep *w-time*)
+  )
+
+(defun move-to-stove-with-speech-before-and-after ()
+  (speech-before-move)
+  (unix:sleep *w-time*)
+  (move-to-stove-ri-direct)
+  (speech-after-move)
+  (unix:sleep *w-time*)
+  )
