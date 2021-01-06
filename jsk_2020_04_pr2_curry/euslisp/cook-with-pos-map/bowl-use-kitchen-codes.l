@@ -626,7 +626,7 @@
   (unix:sleep *s-time*)
   (send *ri* :start-grasp :rarm :wait t)
 
-  (warn "please run (put-bowl-1-model) ~%")
+  (warn "please run (put-bowl-1-model-rarm) ~%")
   )
 
 
@@ -2468,6 +2468,12 @@
   (reset-larm)
   )
 
+(defun now-set-1-model-rarm-with-dialogue ()
+  (recieve-bowl-1-with-dialogue-rarm)
+  (put-bowl-1-model-rarm)
+  (reset-rarm)
+  )
+
 (defun now-set-3-model ()
   (recieve-bowl-3)
   (put-bowl-3-model)
@@ -2523,6 +2529,36 @@
   (put-bowl-1-model)
   (reset-larm)
   )
+
+(defun now-transfer-1-model-with-change ()
+  ;; 途中でヘラを掴む
+  (grasp-bowl-1-model-rarm)
+
+  (change-hands-bowl-1-set)
+  (change-hands-bowl-1)
+  (reset-rarm)
+  
+  (transfer-bowl-1-to-pot)
+  (grasp-spatula-1)
+  
+  (squeeze-test-set)
+  (squeeze-test)
+  
+  ;; (rossrv-test)
+  
+  (avoid-rarm)
+  (put-spatula-1)
+  
+  (after-transfer)
+
+  (change-hands-bowl-1-set-rarm)
+  (change-hands-bowl-1-rarm)
+  (reset-larm)
+  
+  (put-bowl-1-model-rarm)
+  (reset-rarm)
+  )
+
 
 (defun now-transfer-2-model ()
   (grasp-bowl-2-model)
@@ -2600,6 +2636,7 @@
   (reset-rarm)
   
   (transfer-bowl-1-to-pot)
+  
   (after-transfer)
   
   (change-hands-bowl-1-set-rarm)

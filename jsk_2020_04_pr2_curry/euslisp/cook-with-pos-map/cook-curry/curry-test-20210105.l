@@ -66,7 +66,8 @@
   ;; ボウル１をセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
-  (now-set-1-model-with-dialogue)
+  ;; (now-set-1-model-with-dialogue)
+  (now-set-1-model-rarm-with-dialogue)
   
   ;; 野菜をセットする？
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
@@ -169,7 +170,7 @@
   (put-knife)
   (reset-rarm)
   
-  ;; ボウル１に移す動作
+  ;; ボウル１に移す動作 ;; TODO
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/transfer-vegs-codes.l")
   (update-pos)
   (now-transfer-bowl-1-kitchen)
@@ -243,7 +244,7 @@
   (update-pos)
   (put-knife)
   
-  ;; ボウル１に移す動作
+  ;; ボウル１に移す動作 ;; TODO
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/transfer-vegs-codes.l")
   (update-pos)
   (now-transfer-bowl-1-kitchen)
@@ -390,6 +391,9 @@
   (after-spatula-mix)
   (push-knob)
   
+  (put-spatula-1) ;; ヘラを置く
+  (reset-rarm)
+  
   (send *ri* :speak-jp "肉を炒める調理を行いました．確認して合図をして下さい")
   (curry-ok-wait)
   (send *ri* :speak-jp "次の工程に移ります")
@@ -404,12 +408,17 @@
   ;; (go-to-kitchen-from-stove-with-speech-before)
   (move-to-kitchen-with-speech-before)
   
-  ;; ボウル１を鍋に移す ヘラは掴んでいる前提
+  ;; ;; ボウル１を鍋に移す ヘラは掴んでいる前提
+  ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
+  ;; (update-pos)
+  ;; (now-transfer-1-model) ;; ヘラは掴んでいる前提
+  ;; (put-spatula-1)
+  ;; (reset-rarm)
+  
+  ;; ボウル１を鍋に移す
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
   (update-pos)
-  (now-transfer-1-model) ;; ヘラは掴んでいる前提
-  (put-spatula-1)
-  (reset-rarm)
+  (now-transfer-1-model-with-change)
   
   ;; 計量カップを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
@@ -443,7 +452,7 @@
            (setq *fetch-flag* t)
            )
          )
-
+  
   ;; 計量カップを置く
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
   (update-pos)
@@ -504,7 +513,7 @@
   (grasp-ladle-with-fail-detection)
   (now-start-ih :deg -30) ;; 弱火にする
   (now-ladle-mix-rotate-loop-with-dialogue)
-
+  
   ;; 火を止める
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
