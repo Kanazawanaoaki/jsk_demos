@@ -109,7 +109,7 @@
   (send *ri* :speak-jp "準備を行いました．確認して合図をして下さい")
   (curry-ok-wait)
   (send *ri* :speak-jp "次の工程に移ります")
-
+  
   (warn "please run (curry-1) ~%")
   )
 
@@ -170,11 +170,17 @@
   (put-knife)
   (reset-rarm)
   
-  ;; ボウル１に移す動作 ;; TODO
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/transfer-vegs-codes.l")
+  ;; ;; ボウル１に移す動作
+  ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/transfer-vegs-codes.l")
+  ;; (update-pos)
+  ;; (now-transfer-bowl-1-kitchen)
+  ;; (reset-larm)
+
+  ;; ボウル１に移す動作 まな板を持って移す
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cutting-board-codes.l")
   (update-pos)
-  (now-transfer-bowl-1-kitchen)
-  (reset-larm)
+  (now-cutting-board-transfer-bowl-1-all-with-fail-detection)
+  (reset-rarm)
   
   (send *ri* :speak-jp "人参の調理を行いました．確認して合図をして下さい")
   (curry-ok-wait)
@@ -244,10 +250,17 @@
   (update-pos)
   (put-knife)
   
-  ;; ボウル１に移す動作 ;; TODO
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/transfer-vegs-codes.l")
+  ;; ;; ボウル１に移す動作
+  ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/transfer-vegs-codes.l")
+  ;; (update-pos)
+  ;; (now-transfer-bowl-1-kitchen)
+  ;; (reset-larm)
+
+  ;; ボウル１に移す動作 まな板を持って移す
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cutting-board-codes.l")
   (update-pos)
-  (now-transfer-bowl-1-kitchen)
+  (now-cutting-board-transfer-bowl-1-all-with-fail-detection)
+  (reset-rarm)
   
   (send *ri* :speak-jp "じゃがいもの調理を行いました．確認して合図をして下さい")
   (curry-ok-wait)

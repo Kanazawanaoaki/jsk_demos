@@ -1206,13 +1206,12 @@
   (only-set-board)
   )
 
-;; TODO
 (defun now-cutting-board-transfer-bowl-1-all-with-fail-detection ()
   (now-board)
-
+  
   (grasp-knife-with-fail-detection)
   (wait-for-bowl-1-rarm)
-
+  
   (transfer-to-bowl-1-set)
   (transfer-to-bowl-1)
 
