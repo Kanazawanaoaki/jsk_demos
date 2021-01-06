@@ -204,6 +204,27 @@
   (unix:sleep *w-time*)
   )
 
+(defun receive-with-dialogue-larm ()
+  ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
+  (setq *yes-flag* nil)
+  (until *yes-flag*
+         (send *ri* :stop-grasp :larm :wait t)
+         (ok-grasp-larm)
+         (send *ri* :speak-jp "上手く掴めていますか？")
+         (dialogue-func)
+         (if (equal *data* '("はい"))
+             (setq *yes-flag* t)
+           (progn
+             (send *ri* :speak-jp "グリッパを開きます.もう一度お願いします")
+             (unix:sleep *w-time*)
+             )
+           )
+         )
+  
+  (send *ri* :speak-jp "次の行動に移ります")
+  (unix:sleep *w-time*)
+  )
+
 ;; add for grasp detection
 (defun grasp-fail-detection-larm (&rest args &key (g-thre 10) &allow-other-keys)
   (setq *fail-flag* nil)
@@ -373,8 +394,6 @@
   )
 
 (defun grasp-potato ()
-  (before-receive-larm)
-  
   ;; じゃがいもの掴む所に
   (send *arrow* :newcoords (send *potato* :copy-worldcoords))
   (send *arrow* :translate #f(-20 0 0))
@@ -411,10 +430,29 @@
   (warn "please run (after-grasp-vegs) ~%")
   )
 
+(defun grasp-potato-with-fail-detection ()
+  (setq tmp-coords (send *potato* :copy-worldcoords))
+  (grasp-potato)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection-larm :g-thre 10)
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (if (not (eql (send *potato* :parent) nil))
+            (send (send *potato* :parent) :dissoc *potato*))
+        (send *potato* :newcoords tmp-coords)
+        (grasp-potato)
+        (grasp-fail-detection-larm :g-thre 10)
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (send *ri* :speak-jp "じゃがいもの把持が失敗しました，渡す準備をして合図をして下さい")
+              (receive-with-dialogue-larm)
+              (send *ri* :start-grasp :rarm :wait t)
+              ))
+        ))
+  )
 
 (defun grasp-carrot ()
-  (before-receive-larm)
-
   ;; じゃがいもの掴む所に
   (send *arrow* :newcoords (send *carrot* :copy-worldcoords))
   (send *arrow* :translate #f(-20 0 0))
@@ -451,9 +489,29 @@
   (warn "please run (after-grasp-vegs) ~%")
   )
 
-(defun grasp-onion ()
-  (before-receive-larm)
+(defun grasp-carrot-with-fail-detection ()
+  (setq tmp-coords (send *carrot* :copy-worldcoords))
+  (grasp-carrot)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection-larm :g-thre 10)
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (if (not (eql (send *carrot* :parent) nil))
+            (send (send *carrot* :parent) :dissoc *carrot*))
+        (send *carrot* :newcoords tmp-coords)
+        (grasp-carrot)
+        (grasp-fail-detection-larm :g-thre 10)
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (send *ri* :speak-jp "人参の把持が失敗しました，渡す準備をして合図をして下さい")
+              (receive-with-dialogue-larm)
+              (send *ri* :start-grasp :rarm :wait t)
+              ))
+        ))
+  )
 
+(defun grasp-onion ()
   ;; たまねぎの掴む所に
   (send *arrow* :newcoords (send *onion* :copy-worldcoords))
   (send *arrow* :translate #f(-20 0 0))
@@ -489,6 +547,29 @@
   
   (warn "please run (after-grasp-vegs) ~%")
   )
+
+(defun grasp-onion-with-fail-detection ()
+  (setq tmp-coords (send *onion* :copy-worldcoords))
+  (grasp-onion)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection-larm :g-thre 10)
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (if (not (eql (send *onion* :parent) nil))
+            (send (send *onion* :parent) :dissoc *onion*))
+        (send *onion* :newcoords tmp-coords)
+        (grasp-onion)
+        (grasp-fail-detection-larm :g-thre 10)
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (send *ri* :speak-jp "たまねぎの把持が失敗しました，渡す準備をして合図をして下さい")
+              (receive-with-dialogue-larm)
+              (send *ri* :start-grasp :rarm :wait t)
+              ))
+        ))
+  )
+
 
 (defun after-grasp-vegs ()
   ;; 左手を少しあげる
@@ -800,23 +881,46 @@
 
 ;; defun now-funcs
 (defun now-grasp-potato ()
+  (before-receive-larm)
   (grasp-potato)
   (after-grasp-vegs)
   (vegs-carry-pose)
   )
 
 (defun now-grasp-carrot ()
+  (before-receive-larm)
   (grasp-carrot)
   (after-grasp-vegs)
   (vegs-carry-pose)  
   )
 
 (defun now-grasp-onion ()
+  (before-receive-larm)
   (grasp-onion)
   (after-grasp-vegs)
   (vegs-carry-pose)
   )
 
+(defun now-grasp-potato-with-fail-detection ()
+  (before-receive-larm)
+  (grasp-potato-with-fail-detection)
+  (after-grasp-vegs)
+  (vegs-carry-pose)
+  )
+
+(defun now-grasp-carrot-with-fail-detection ()
+  (before-receive-larm)
+  (grasp-carrot-with-fail-detection)
+  (after-grasp-vegs)
+  (vegs-carry-pose)  
+  )
+
+(defun now-grasp-onion-with-fail-detection ()
+  (before-receive-larm)
+  (grasp-onion-with-fail-detection)
+  (after-grasp-vegs)
+  (vegs-carry-pose)
+  )
 
 (defun now-put-potato-on-board ()
   (put-potato-on-board)

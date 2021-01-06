@@ -1,7 +1,7 @@
 (defun tool-init ()
   ;; init
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/move-to-kitchen-with-map.l")
-
+  
   ;; set tools
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/knife-new-attention.l")
   (setq *knife* (knife))

@@ -119,7 +119,8 @@
   ;; 人参を掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
-  (now-grasp-carrot)
+  ;; (now-grasp-carrot)
+  (now-grasp-carrot-with-fail-detection)
   
   ;; シンクの前に移動する
   ;; (go-to-sink-with-speech-before)
@@ -195,7 +196,8 @@
   ;; じゃがいもを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
-  (now-grasp-potato)
+  ;; (now-grasp-potato)
+  (now-grasp-carrot-with-fail-detection)
   
   ;; シンクの前に移動する
   ;; (go-to-sink-with-speech-before)
@@ -275,7 +277,8 @@
   ;; たまねぎを掴む？？
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
-  (now-grasp-onion)
+  ;; (now-grasp-onion)
+  (now-grasp-onion-with-fail-detection)
   
   ;; シンクの前に移動する
   ;; (go-to-sink-with-speech-before)
