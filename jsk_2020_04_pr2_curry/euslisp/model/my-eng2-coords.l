@@ -41,7 +41,8 @@
 (setq *bowl-4-coords* (make-coords :pos (float-vector 480 7845 30840) :rpy (float-vector -0.175 0 0)))
 
 (setq *bowl-1-stove-coords* (make-coords :pos (float-vector 330 8661 30840) :rpy (float-vector -0.423 0 0)))
-(setq *bowl-1-kitchen-coords* (make-coords :pos (float-vector 278.869 8746.841 30822.995) :rpy (float-vector -0.021 -0.056 0.025)))
+;; (setq *bowl-1-kitchen-coords* (make-coords :pos (float-vector 279 8747 30823) :rpy (float-vector -0.021 -0.056 0.025)))
+(setq *bowl-1-kitchen-coords* (make-coords :pos (float-vector 279 8747 30823) :rpy (float-vector 0 0 0)))
 (setq *bowl-2-stove-coords* (make-coords :pos (float-vector 480 7845 30850) :rpy (float-vector -0.175 0 0)))
 (setq *bowl-3-stove-coords* (make-coords :pos (float-vector 555 7585 30840) :rpy (float-vector 1.048 0 0)))
 

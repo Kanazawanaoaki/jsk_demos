@@ -62,6 +62,9 @@
   ;; (setq *bowl-1-grasp-coords* (make-coords :pos (float-vector 383 8425 30889) :rpy (float-vector 2.892 1.01 1.404))) 
   (setq *bowl-1-grasp-coords* (make-coords :pos (float-vector 379.901 8646.113 30889.23) :rpy (float-vector 2.699 0.835 -1.841)))
 
+  (setq *bowl-1-change-rarm-coords* (make-coords :pos (float-vector 506.328 8618.878 31080.768) :rpy (float-vector -1.592 1.41 1.516)))
+  (setq *bowl-1-change-larm-coords* (make-coords :pos (float-vector 482.945 8455.349 31079.694) :rpy (float-vector 1.626 1.32 1.482)))
+  
   (setq *bowl-2-grasp-coords* (make-coords :pos (float-vector 344 8616 30880) :rpy (float-vector 3.016 0.995 1.718)))
   (setq *bowl-2-grasp-set-coords* (make-coords :pos (float-vector 558.94 8455.526 30890.992) :rpy (float-vector -2.649 1.102 1.301)))
   (setq *bowl-2-grasp-set-larm-coords* (make-coords :pos (float-vector 550.455 8389.4 30870.472) :rpy (float-vector 3.006 0.965 1.642)))
@@ -628,7 +631,7 @@
 
 
 (defun recieve-bowl-1-with-dialogue-rarm ()
-  (before-recieve-larm)
+  (before-recieve-rarm)
   
   (send *ri* :speak-jp "ボウル１を渡す準備をして，合図をして下さい")
   (receive-with-dialogue)  
@@ -1752,7 +1755,8 @@
   ;; ボウル１を置く位置
   (if (not (eql (send *bowl-1* :parent) nil))
       (send (send *bowl-1* :parent) :dissoc *bowl-1*))
-  (send *bowl-1* :newcoords (send *bowl-1-stove-coords* :copy-worldcoords))
+  ;; (send *bowl-1* :newcoords (send *bowl-1-stove-coords* :copy-worldcoords))
+  (send *bowl-1* :newcoords (send *bowl-1-kitchen-coords* :copy-worldcoords))
   (send *arrow* :newcoords (send (send *bowl-1* :handle-handle0) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
   
@@ -1763,12 +1767,134 @@
   (setq *target* (make-coords))
   (send *target* :newcoords (send (send *bowl-1* :handle-handle0) :copy-worldcoords))
   
-  (grasp-bowl-larm)
+  (grasp-bowl-rarm)
   
   (set-bowl-1-model-rarm)
   
-  (warn "please run (transfer-bowl-1-to-pot) ~%")  
+  (warn "please run (change-hands-bowl-1-set) ~%")
   )
+
+(defun change-hands-bowl-1-set ()
+  ;; 右手を移す位置にセット．
+  (send *arrow* :newcoords (send *bowl-1-change-rarm-coords* :copy-worldcoords))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 560.034 8577.882 31185.353) :rpy (float-vector -2.002 1.143 1.229)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)  
+  
+  (before-recieve-larm)
+
+  (send *ri* :stop-grasp :larm :wait t)
+  
+  (send *arrow* :newcoords (send *bowl-1-change-larm-coords* :copy-worldcoords))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 545.456 8412.86 31175.915) :rpy (float-vector 1.639 1.248 1.599)))
+  (send *arrow* :translate #f(0 -80 80) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)  
+
+  (warn "please run (change-hands-bowl-1) ~%")
+  )
+
+(defun change-hands-bowl-1 ()
+  ;; 左手を位置にセット．
+  (send *arrow* :newcoords (send *bowl-1-change-larm-coords* :copy-worldcoords))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 545.456 8412.86 31175.915) :rpy (float-vector 1.639 1.248 1.599)))
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)  
+
+  (send *ri* :start-grasp :larm :wait t)
+  (unix:sleep 2)
+  (send *ri* :stop-grasp :rarm :wait t)
+
+  (send *arrow* :newcoords (send *bowl-1-change-rarm-coords* :copy-worldcoords))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 560.034 8577.882 31185.353) :rpy (float-vector -2.002 1.143 1.229)))
+  (send *arrow* :translate #f(0 80 80) :world)
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (set-bowl-1-model)
+
+  (warn "please run (reset-rarm) ~%")
+  )
+
+(defun change-hands-bowl-1-set-rarm () ;;左手から右手に移す
+  ;; 左手を移す位置にセット．
+  (send *arrow* :newcoords (send *bowl-1-change-larm-coords* :copy-worldcoords))
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)  
+  
+  (before-recieve-rarm)
+  
+  (send *ri* :stop-grasp :rarm :wait t)
+  
+  (send *arrow* :newcoords (send *bowl-1-change-rarm-coords* :copy-worldcoords))
+  (send *arrow* :translate #f(0 80 80) :world)
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)  
+
+  (warn "please run (change-hands-bowl-1) ~%")
+  )
+
+(defun change-hands-bowl-1-rarm ()
+  ;; 左手を位置にセット．
+  (send *arrow* :newcoords (send *bowl-1-change-rarm-coords* :copy-worldcoords))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)  
+
+  (send *ri* :start-grasp :rarm :wait t)
+  (unix:sleep 2)
+  (send *ri* :stop-grasp :larm :wait t)
+  
+  (send *arrow* :newcoords (send *bowl-1-change-larm-coords* :copy-worldcoords))
+  (send *arrow* :translate #f(0 -80 80) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (set-bowl-1-model-rarm)
+  
+  (warn "please run (reset-larm) ~%")
+  )
+
+
 
 
 (defun set-bowl-2-model ()
@@ -2467,14 +2593,20 @@
 
 
 (defun tmp-test ()
-  (grasp-bowl-1-model)
-    
+  (grasp-bowl-1-model-rarm)
+  
+  (change-hands-bowl-1-set)
+  (change-hands-bowl-1)
+  (reset-rarm)
+  
   (transfer-bowl-1-to-pot)
-
-  (warn "please run (after-transfer) ~%")
-  ;; (after-transfer)
-  ;; (put-bowl-1-model)
-  ;; (reset-larm)
+  (after-transfer)
+  
+  (change-hands-bowl-1-set-rarm)
+  (change-hands-bowl-1-rarm)
+  (reset-larm)
+  
+  (put-bowl-1-model-rarm)
   )
 
 (defun show-arrow ()
