@@ -6,6 +6,15 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/cutting-board.l")
   (setq *cutting-board* (cutting-board))
   (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
+
+  (unless (boundp '*bowl-1*)
+    (progn
+      (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-1.l")
+      (setq *bowl-1* (bowl-1))
+      ))
+  (if (not (eql (send *bowl-1* :parent) nil))
+      (send (send *bowl-1* :parent) :dissoc *bowl-1*))
+  (send *bowl-1* :newcoords (send *bowl-1-kitchen-coords* :copy-worldcoords))
   
   ;; def global-coords
   (setq *slide-rarm-coords* (make-coords :pos (float-vector 430.297 8421.198 30852.165) :rpy (float-vector -3.086 1.155 3.132)))
@@ -13,7 +22,7 @@
   (setq *grasp-larm-coords* (make-coords :pos (float-vector 679.695 8281.493 30832.711) :rpy (float-vector 1.882 0.065 1.548)))  
   
   (move-to-kitchen-irt)
-  (objects (list *pr2* *scene* *cutting-board* *knife* *pot*))
+  (objects (list *pr2* *scene* *cutting-board* *knife* *pot* *bowl-1*))
   (update-view)  
   )
 
@@ -942,16 +951,6 @@
 
 
 (defun after-transfer-board ()
-  (send *pr2* :larm :move-end-pos #f(-60 100 50) :world)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)
-
-  (send *pr2* :larm :move-end-pos #f(-60 100 60) :world)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)
-  
   ;; まな板を置く位置
   (if (not (eql (send *cutting-board* :parent) nil))
       (send (send *cutting-board* :parent) :dissoc *cutting-board*))
@@ -976,6 +975,20 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)  
+  )
+
+(defun after-transfer-board-pot ()
+  (send *pr2* :larm :move-end-pos #f(-60 100 50) :world)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :move-end-pos #f(-60 100 60) :world)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  
+  (after-transfer-board)
   )
 
 ;; knife codes
@@ -1139,7 +1152,7 @@
   )
 
 (defun now-cutting-board-transfer-after ()
-  (after-transfer-board)
+  (after-transfer-board-pot)
   (only-set-board)
   )
 
@@ -1163,26 +1176,94 @@
 
 
 (defun tmp-test ()
-  (set-pose)
-  (now-cutting-board-transfer-set)
+  (tmp-grasp)
+  (lift-board)  
+  
+  (transfer-to-bowl-1-set)
+  )
+
+(defun tmp-devel ()
+  ;; (now-board)
+  (tmp-grasp)
+  (lift-board)  
+
+  (wait-for-bowl-1-rarm)
+  
+  (transfer-to-bowl-1-set)
+  (transfer-to-bowl-1)
+
+  (set-knife-model)
+
+  (knife-slide-transfer-set-bowl-1)
+  (knife-slide-transfer)
+
+  (rarm-up-60)
+  (knife-slide-transfer-set-bowl-1)
+  (wait-for-bowl-1-rarm)
+
+  (after-transfer-board)
+  
+  (only-set-board)
+  )
+
+;; TODO
+(defun now-cutting-board-transfer-bowl-1-all-with-fail-detection ()
+  (now-board)
+
+  (grasp-knife-with-fail-detection)
+  (wait-for-bowl-1-rarm)
+
+  (transfer-to-bowl-1-set)
+  (transfer-to-bowl-1)
+
+  (knife-slide-transfer-set-bowl-1)
+  (knife-slide-transfer)
+  
+  (rarm-up-60)
+  (knife-slide-transfer-set-bowl-1)
+  (wait-for-bowl-1-rarm)
+  (after-transfer-board)
+  (put-knife)
+  (reset-rarm)
+  
+  (only-set-board)
   )
 
 
-(defun tmp-pose ()
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 755.645 7945.73 31127.555) :rpy (float-vector 3.038 0.241 1.757)))
-  ;; (send *pr2* :larm :inverse-kinematics
-  ;;       (send *arrow* :copy-worldcoords)
-  ;;       :rotation-axis t
-  ;;       :debug-view *debug-flag*)
-  
-  (send *pr2* :larm :angle-vector #f(64.922 9.01801 81.1391 -107.534 72.3089 -5.77115 -70.9598))
+(defun rarm-up-60 ()
+  (send *pr2* :rarm :move-end-pos #f(0 0 60) :world)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)  
+  )
+
+(defun wait-for-bowl-1-rarm ()
+  (send *arrow* :newcoords (make-coords :pos (float-vector 618.498 9129.367 31114.439) :rpy (float-vector 3.063 0.052 -0.106)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
   )
 
-(defun tmp-pose-2 ()
-  (send *arrow* :newcoords (make-coords :pos (float-vector 633.158 8012.426 31180.818) :rpy (float-vector 2.748 0.077 1.774)))
+(defun knife-slide-transfer-set-bowl-1 ()
+  ;; 必要なら座標を作って書く必要がある!
+  (send *arrow* :newcoords (make-coords :pos (float-vector 509.792 8837.244 31240.433) :rpy (float-vector -2.534 -0.077 -1.369)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (warn "please run (knife-slide-transfer) ~%")
+  )
+
+(defun transfer-to-bowl-1-set ()
+  (send *arrow* :newcoords (make-coords :pos (float-vector 482.438 8422.731 31090) :rpy (float-vector 2.39 -0.155 1.501)))
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -1192,14 +1273,22 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun tmp-pose-3 ()
-  (set-board-model)
-  (transfer-to-pot)
-  )
-
-(defun tmp-rarm ()
-  (setq *rav0* #f(-20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
-  (send *pr2* :rarm :angle-vector *rav0*)
+(defun transfer-to-bowl-1 ()
+  (send *arrow* :newcoords (send (send *bowl-1* :attention-attention1) :copy-worldcoords))  
+  (send *arrow* :translate #f(0 0 100) :world)
+  (send *arrow* :rotate (deg2rad 135) :z)
+  
+  (send *arrow* :rotate (deg2rad -10) :y)
+  
+  (send *arrow* :translate #f(-20 0 0)) 
+  
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+	:move-target (send *cutting-board* :attention-attention2)
+	:rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
   )
+

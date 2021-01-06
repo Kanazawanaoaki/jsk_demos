@@ -3,6 +3,7 @@
   :slots (
       handle0
       attention0
+      attention1
       ))
 
 (defmethod bowl-1-object
@@ -49,6 +50,8 @@
      ;; definition of :attention
      (setq attention0 (make-cascoords :pos (float-vector -90 0 65) :rpy (float-vector 3.142 -1.571  0) :name "attention0"))
      (send link1 :assoc attention0)
+     (setq attention1 (make-cascoords :pos (float-vector 0 0 65) :rpy (float-vector 0 0  0) :name "attention1"))
+     (send link1 :assoc attention1)
      
      ;; init-ending 
      (setq links (list link1))
@@ -60,8 +63,9 @@
   
   (:handle (&rest args) (forward-message-to-all (list handle0) args))
   (:handle-handle0 (&rest args) (forward-message-to handle0 args))
-  (:attention (&rest args) (forward-message-to-all (list attention0) args))
+  (:attention (&rest args) (forward-message-to-all (list attention0 attention1) args))
   (:attention-attention0 (&rest args) (forward-message-to-all attention0 args))
+  (:attention-attention1 (&rest args) (forward-message-to-all attention1 args))
   )
 
 (defun bowl-1 (&rest args) (instance* bowl-1-object :init args))
