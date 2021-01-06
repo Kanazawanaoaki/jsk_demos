@@ -18,28 +18,28 @@
       (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-1.l")
       (setq *bowl-1* (bowl-1))
       ))
-  (send *bowl-1* :newcoords (send *bowl-1-coords* :copy-worldcoords))
+  (send *bowl-1* :newcoords (send *bowl-1-stove-coords* :copy-worldcoords))
 
   (unless (boundp '*bowl-2*)
     (progn
       (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-2.l")
       (setq *bowl-2* (bowl-2))
       ))
-  (send *bowl-2* :newcoords (send *bowl-2-coords* :copy-worldcoords))
+  (send *bowl-2* :newcoords (send *bowl-2-stove-coords* :copy-worldcoords))
   
   (unless (boundp '*bowl-3*)
     (progn
       (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-3.l")
       (setq *bowl-3* (bowl-3))
       ))
-  (send *bowl-3* :newcoords (send *bowl-3-coords* :copy-worldcoords))
+  (send *bowl-3* :newcoords (send *bowl-3-stove-coords* :copy-worldcoords))
   
-  (unless (boundp '*bowl-4*)
-    (progn
-      (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-4.l")
-      (setq *bowl-4* (bowl-4))
-      ))
-  (send *bowl-4* :newcoords (send *bowl-4-coords* :copy-worldcoords))
+  ;; (unless (boundp '*bowl-4*)
+  ;;   (progn
+  ;;     (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-4.l")
+  ;;     (setq *bowl-4* (bowl-4))
+  ;;     ))
+  ;; (send *bowl-4* :newcoords (send *bowl-4-coords* :copy-worldcoords))
   
   (unless (boundp '*oil-dispenser*)
     (progn

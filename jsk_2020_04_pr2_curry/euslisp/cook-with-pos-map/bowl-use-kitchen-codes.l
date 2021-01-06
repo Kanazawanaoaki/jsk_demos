@@ -11,6 +11,8 @@
       (load "package://jsk_2020_04_pr2_curry/euslisp/model/measuring-cup-73b2.l")
       (setq *mcup* (measuring-cup-73b2))
       ))
+  (if (not (eql (send *mcup* :parent) nil))
+      (send (send *mcup* :parent) :dissoc *mcup*))
   (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
   
   (unless (boundp '*bowl-1*)
@@ -18,29 +20,34 @@
       (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-1.l")
       (setq *bowl-1* (bowl-1))
       ))
-  (send *bowl-1* :newcoords (send *bowl-1-coords* :copy-worldcoords))
-
-  (unless (boundp '*bowl-2*)
-    (progn
-      (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-2.l")
-      (setq *bowl-2* (bowl-2))
-      ))
-  (send *bowl-2* :newcoords (send *bowl-2-coords* :copy-worldcoords))
+  (if (not (eql (send *bowl-1* :parent) nil))
+      (send (send *bowl-1* :parent) :dissoc *bowl-1*))
+  ;; (send *bowl-1* :newcoords (send *bowl-1-stove-coords* :copy-worldcoords))
+  (send *bowl-1* :newcoords (send *bowl-1-kitchen-coords* :copy-worldcoords))
   
-  (unless (boundp '*bowl-3*)
-    (progn
-      (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-3.l")
-      (setq *bowl-3* (bowl-3))
-      ))
-  (send *bowl-3* :newcoords (send *bowl-3-coords* :copy-worldcoords))
+  ;; (unless (boundp '*bowl-2*)
+  ;;   (progn
+  ;;     (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-2.l")
+  ;;     (setq *bowl-2* (bowl-2))
+  ;;     ))
+  ;; (send *bowl-2* :newcoords (send *bowl-2-coords* :copy-worldcoords))
   
-  (unless (boundp '*bowl-4*)
-    (progn
-      (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-4.l")
-      (setq *bowl-4* (bowl-4))
-      ))
-  (send *bowl-4* :newcoords (send *bowl-4-coords* :copy-worldcoords))
+  ;; (unless (boundp '*bowl-3*)
+  ;;   (progn
+  ;;     (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-3.l")
+  ;;     (setq *bowl-3* (bowl-3))
+  ;;     ))
+  ;; (send *bowl-3* :newcoords (send *bowl-3-coords* :copy-worldcoords))
   
+  ;; (unless (boundp '*bowl-4*)
+  ;;   (progn
+  ;;     (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-4.l")
+  ;;     (setq *bowl-4* (bowl-4))
+  ;;     ))
+  ;; (send *bowl-4* :newcoords (send *bowl-4-coords* :copy-worldcoords))
+  
+  (if (not (eql (send *oil-dispenser* :parent) nil))
+      (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
   (unless (boundp '*oil-dispenser*)
     (progn
       (load "package://jsk_2020_04_pr2_curry/euslisp/model/dispenser.l")
@@ -48,11 +55,13 @@
       ))
   (send *oil-dispenser* :newcoords (send *oil-dispenser-coords* :copy-worldcoords))
   
-  (objects (list *pr2* *scene* *spatula* *mcup* *ladle* *pot* *bowl-1* *bowl-2* *bowl-3* *oil-dispenser*))
+  (objects (list *pr2* *scene* *spatula* *mcup* *ladle* *pot* *bowl-1* *oil-dispenser*))
   (update-view)
   
   ;; def bowl grasp coords
-  (setq *bowl-1-grasp-coords* (make-coords :pos (float-vector 383 8425 30889) :rpy (float-vector 2.892 1.01 1.404))) 
+  ;; (setq *bowl-1-grasp-coords* (make-coords :pos (float-vector 383 8425 30889) :rpy (float-vector 2.892 1.01 1.404))) 
+  (setq *bowl-1-grasp-coords* (make-coords :pos (float-vector 379.901 8646.113 30889.23) :rpy (float-vector 2.699 0.835 -1.841)))
+
   (setq *bowl-2-grasp-coords* (make-coords :pos (float-vector 344 8616 30880) :rpy (float-vector 3.016 0.995 1.718)))
   (setq *bowl-2-grasp-set-coords* (make-coords :pos (float-vector 558.94 8455.526 30890.992) :rpy (float-vector -2.649 1.102 1.301)))
   (setq *bowl-2-grasp-set-larm-coords* (make-coords :pos (float-vector 550.455 8389.4 30870.472) :rpy (float-vector 3.006 0.965 1.642)))
@@ -170,12 +179,38 @@
   (send *ri* :start-grasp :larm :wait t :gain gain)
   )
 
+(defun ok-grasp ()
+  (ok-wait)
+  (send *ri* :start-grasp :rarm :wait t)
+  )
+
 (defun receive-with-dialogue-larm (&rest args &key (gain 0.01) &allow-other-keys)
   ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
   (setq *yes-flag* nil)
   (until *yes-flag*
          (send *ri* :stop-grasp :larm :wait t)
          (ok-grasp-larm :gain gain)
+         (send *ri* :speak-jp "上手く掴めていますか？")
+         (dialogue-func)
+         (if (equal *data* '("はい"))
+             (setq *yes-flag* t)
+           (progn
+             (send *ri* :speak-jp "グリッパを開きます.もう一度お願いします")
+             (unix:sleep *w-time*)
+             )
+           )
+         )
+  
+  (send *ri* :speak-jp "次の行動に移ります")
+  (unix:sleep *w-time*)
+  )
+
+(defun receive-with-dialogue ()
+  ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
+  (setq *yes-flag* nil)
+  (until *yes-flag*
+         (send *ri* :stop-grasp :rarm :wait t)
+         (ok-grasp)
          (send *ri* :speak-jp "上手く掴めていますか？")
          (dialogue-func)
          (if (equal *data* '("はい"))
@@ -578,6 +613,27 @@
   (send *ri* :start-grasp :larm :wait t)
   
   (warn "please run (put-bowl-1-model) ~%")
+  )
+
+(defun recieve-bowl-1-rarm ()
+  (before-recieve-rarm)
+  
+  (send *ri* :stop-grasp :rarm :wait t)
+  (send *ri* :speak-jp "ボウル１を握らせて下さい")
+  (unix:sleep *s-time*)
+  (send *ri* :start-grasp :rarm :wait t)
+
+  (warn "please run (put-bowl-1-model) ~%")
+  )
+
+
+(defun recieve-bowl-1-with-dialogue-rarm ()
+  (before-recieve-larm)
+  
+  (send *ri* :speak-jp "ボウル１を渡す準備をして，合図をして下さい")
+  (receive-with-dialogue)  
+  
+  (warn "please run (put-bowl-1-model-rarm) ~%")
   )
 
 (defun put-bowl-1 ()
@@ -1677,6 +1733,43 @@
   
   (warn "please run (transfer-bowl-1-to-pot) ~%")  
   )
+
+(defun set-bowl-1-model-rarm ()
+  (if (not (eql (send *bowl-1* :parent) nil))
+      (send (send *bowl-1* :parent) :dissoc *bowl-1*))
+  (let (local-cds)
+    (setq local-cds (make-cascoords))
+    (send local-cds :newcoords (send (send *bowl-1* :handle-handle0) :copy-worldcoords))
+    (send local-cds :assoc *bowl-1*)
+    (send local-cds :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+    (send local-cds :dissoc *bowl-1*)
+    )
+  (send *viewer* :draw-objects)
+  (send (send *pr2* :rarm :end-coords) :assoc *bowl-1*)
+  )
+
+(defun put-bowl-1-model-rarm ()
+  ;; ボウル１を置く位置
+  (if (not (eql (send *bowl-1* :parent) nil))
+      (send (send *bowl-1* :parent) :dissoc *bowl-1*))
+  (send *bowl-1* :newcoords (send *bowl-1-stove-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *bowl-1* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 200) :world)
+  
+  (put-bowl-rarm)
+  )
+
+(defun grasp-bowl-1-model-rarm ()
+  (setq *target* (make-coords))
+  (send *target* :newcoords (send (send *bowl-1* :handle-handle0) :copy-worldcoords))
+  
+  (grasp-bowl-larm)
+  
+  (set-bowl-1-model-rarm)
+  
+  (warn "please run (transfer-bowl-1-to-pot) ~%")  
+  )
+
 
 (defun set-bowl-2-model ()
   (if (not (eql (send *bowl-2* :parent) nil))

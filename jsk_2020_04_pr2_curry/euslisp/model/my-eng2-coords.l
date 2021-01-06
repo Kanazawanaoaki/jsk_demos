@@ -7,10 +7,12 @@
 (setq *arrange-spot* (make-coords :pos (float-vector 1200 8200 30000) :rpy (float-vector pi 0 0)))
 
 ;; tool coords
-(setq *knife-coords* (make-coords :pos (float-vector 580 8715 30857) :rpy (float-vector 3.14 0.073 1.498))) ;; 包丁
+;; (setq *knife-coords* (make-coords :pos (float-vector 580 8715 30857) :rpy (float-vector 3.14 0.073 1.498))) ;; 包丁
+(setq *knife-coords* (make-coords :pos (float-vector 600 8715 30857) :rpy (float-vector 3.14 0.073 1.498))) ;; 包丁
 (setq *peeler-coords* (make-coords :pos (float-vector 580 8815 30870) :rpy (float-vector 3.14 0.049 1.51))) ;; ピーラー
 (setq *potato-peeler-coords* (make-coords :pos (float-vector 580 8915 30865) :rpy (float-vector 3.14 0.013 1.545))) ;; じゃがいもピーラー
-(setq *spatula-coords-1* (make-coords :pos (float-vector 592 8549 30872) :rpy (float-vector 3.084 -0.042 1.542))) ;; ヘラ，平置き
+;; (setq *spatula-coords-1* (make-coords :pos (float-vector 592 8549 30872) :rpy (float-vector 3.084 -0.042 1.542))) ;; ヘラ，平置き
+(setq *spatula-coords-1* (make-coords :pos (float-vector 630 8549 30872) :rpy (float-vector 3.084 -0.042 1.542))) ;; ヘラ，平置き
 ;; (setq *ladle-coords-1* (make-coords :pos (float-vector 599 8313 30877) :rpy (float-vector 3.128 -0.098 1.514))) ;; おたま，平置き
 (setq *ladle-coords-1* (make-coords :pos (float-vector 630 8313 30877) :rpy (float-vector 3.128 -0.098 1.514))) ;; おたま，平置き
 
@@ -39,6 +41,7 @@
 (setq *bowl-4-coords* (make-coords :pos (float-vector 480 7845 30840) :rpy (float-vector -0.175 0 0)))
 
 (setq *bowl-1-stove-coords* (make-coords :pos (float-vector 330 8661 30840) :rpy (float-vector -0.423 0 0)))
+(setq *bowl-1-kitchen-coords* (make-coords :pos (float-vector 278.869 8746.841 30822.995) :rpy (float-vector -0.021 -0.056 0.025)))
 (setq *bowl-2-stove-coords* (make-coords :pos (float-vector 480 7845 30850) :rpy (float-vector -0.175 0 0)))
 (setq *bowl-3-stove-coords* (make-coords :pos (float-vector 555 7585 30840) :rpy (float-vector 1.048 0 0)))
 
