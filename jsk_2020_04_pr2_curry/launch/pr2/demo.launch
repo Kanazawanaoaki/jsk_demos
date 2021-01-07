@@ -18,7 +18,10 @@
   
   <!-- <include file="$(find jsk_2020_04_pr2_curry)/launch/sift/detect_microwave.launch"/> -->
 
+  <!-- これを使っていた -->
   <!-- <include file="$(find jsk_2020_04_pr2_curry)/launch/pr2/dual_arm_wrench_and_pose.launch"/> -->
-  <include file="$(find jsk_2020_04_pr2_curry)/launch/data_collection_prosilica.launch"/>
+  <!-- <include file="$(find jsk_2020_04_pr2_curry)/launch/data_collection_prosilica.launch"/> -->
   
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/data_collection_kinect_and_prosilica_each.launch"/>
+
 </launch>

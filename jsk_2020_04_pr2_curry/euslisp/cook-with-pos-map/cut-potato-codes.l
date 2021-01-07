@@ -1215,7 +1215,7 @@
 ;; 右半分を回転する
 (defun now-right-rotate ()
   (recognition-right-rotate)
-  (grasp-potato-half-right-rotate)
+  (grasp-potato-right-rotate)
   (put-potato-right-rotate)
   (reset-larm)
   )

@@ -372,7 +372,7 @@
   (now-start-ih-with-fail-detection :deg -10)
   (grasp-pot-from-below-model-with-fail-detection)
   (now-spatula-mix-rotate-loop-with-dialogue :times 10)
-
+  
   ;; 火を止める
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
