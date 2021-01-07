@@ -163,6 +163,14 @@
   (send *viewer* :draw-objects)
   )
 
+(defun look-at-shelf ()
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :head :look-at (send (send (send *shelf-door* :handle-handle0) :copy-worldcoords) :worldpos))
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+  )
+
 
 (defun receive-knife ()
   ;; knifeの位置
@@ -1246,7 +1254,10 @@
   (send *ri* :wait-interpolation)
 
   ;;グリッパを微妙に開く
-  (send *ri* :move-gripper :rarm 0.07)
+  (setq tmp-gripper (* 0.001 (send *ri* :state :gripper :rarm :position)))
+  (send *ri* :move-gripper :rarm (+ 0.025 tmp-gripper))
+  ;; (send *ri* :move-gripper :rarm 0.07)
+
   (send *pr2* :rarm :end-coords :dissoc *spatula*)
 
   (send *arrow* :translate #f(60 0 30) :world)
@@ -1329,7 +1340,10 @@
   (send *ri* :wait-interpolation)
 
   ;;グリッパを微妙に開く
-  (send *ri* :move-gripper :rarm 0.07)
+  (setq tmp-gripper (* 0.001 (send *ri* :state :gripper :rarm :position)))
+  (send *ri* :move-gripper :rarm (+ 0.025 tmp-gripper))
+  ;; (send *ri* :move-gripper :rarm 0.07)
+  
   (send *pr2* :rarm :end-coords :dissoc *ladle*)
 
   (send *arrow* :translate #f(60 0 30) :world)
@@ -2070,6 +2084,8 @@
   )
 
 (defun now-set-from-shelf ()
+  (look-at-shelf)
+  
   (open-shelf-set)
   (open-shelf)
   (after-open)
@@ -2089,6 +2105,8 @@
   )
 
 (defun now-set-from-shelf-with-failure-detection ()
+  (look-at-shelf)
+  
   (open-shelf-set)
   (open-shelf)
   (after-open)
