@@ -46,13 +46,14 @@
   ;;     ))
   ;; (send *bowl-4* :newcoords (send *bowl-4-coords* :copy-worldcoords))
   
-  (if (not (eql (send *oil-dispenser* :parent) nil))
-      (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
+  
   (unless (boundp '*oil-dispenser*)
     (progn
       (load "package://jsk_2020_04_pr2_curry/euslisp/model/dispenser.l")
       (setq *oil-dispenser* (dispenser))
       ))
+  (if (not (eql (send *oil-dispenser* :parent) nil))
+      (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
   (send *oil-dispenser* :newcoords (send *oil-dispenser-coords* :copy-worldcoords))
   
   (objects (list *pr2* *scene* *spatula* *mcup* *ladle* *pot* *bowl-1* *oil-dispenser*))

@@ -57,7 +57,7 @@
 
 (defun curry-0 () ;; 最初の準備
   (send *ri* :speak-jp "準備を開始します")
-
+  
   ;; 計量カップをセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
   (update-pos)
@@ -72,7 +72,7 @@
 
 (defun curry-1 () ;; 人参の下ごしらえ
   (send *ri* :speak-jp "煮込む調理の準備を開始します")
-
+  
   ;; 計量カップを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
   (update-pos)
@@ -84,12 +84,13 @@
   ;; 水を汲んで注ぐのを繰り返す
   (setq *fetch-flag* nil)
   (until *fetch-flag*
-         (go-to-sink)
+         ;; (go-to-sink)
+	 (move-to-sink-ri-direct)
          
          ;; 水を汲む
          (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
          (update-pos)
-         (now-fetch-water :sleep-time 2)
+         (now-fetch-water :sleep-time 1)
          
          ;; (go-to-kitchen-from-sink)
          (go-to-kitchen-from-sink-without-map)
@@ -126,12 +127,14 @@
 
   (send *ri* :speak-jp "移動します")
   (unix:sleep 2)
-  (go-to-stove-with-speech-after)
+  ;; (go-to-stove-with-speech-after)
+  (move-to-stove-with-speech-after)
   
   ;; コンロ操作，沸騰しているか見る
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
-  (now-start-ih :deg -30)
+  (now-start-ih-with-fail-detection :deg -10)
+  ;; (now-start-ih :deg -30)
   (now-boil-with-dialogue)
   
   ;; 火を止める

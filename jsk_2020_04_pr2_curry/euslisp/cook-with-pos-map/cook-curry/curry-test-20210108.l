@@ -449,8 +449,9 @@
   ;; 水を汲んで注ぐのを繰り返す
   (setq *fetch-flag* nil)
   (until *fetch-flag*
-         (go-to-sink)
-         
+         ;; (go-to-sink)
+         (move-to-sink-ri-direct)
+	 
          ;; 水を汲む
          (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
          (update-pos)
@@ -497,7 +498,8 @@
   ;; コンロ操作，沸騰しているか見る
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
-  (now-start-ih :deg -30)
+  ;; (now-start-ih :deg -30)
+  (now-start-ih-with-fail-detection :deg -30)
   (now-boil-with-dialogue)
   
   ;; 火を止める

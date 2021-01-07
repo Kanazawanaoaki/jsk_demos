@@ -171,15 +171,16 @@
 ;; measuring cup funcs
 (defun mcup-water-set ()
   (send *pr2* :torso_lift_joint :joint-angle 325)
+  (set-head)
   (carry-mcup-pose)
-
+  
   ;; スライドさせて行く
   (send *pr2* :larm :move-end-pos #f(0 100 0) :world)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
   (send *pr2* :larm :move-end-pos #f(0 0 -100) :world)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
   ;; 蛇口の位置
@@ -193,7 +194,7 @@
 	:rotation-axis t
 	:debug-view *debug-flag*)
   (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)  
 
   (send *arrow* :translate #f(-100 0 -100) :world)
@@ -203,7 +204,7 @@
 	:rotation-axis t
 	:debug-view *debug-flag*)
   (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)  
   
   (send *arrow* :translate #f(0 100 0) :world)
@@ -213,13 +214,13 @@
 	:rotation-axis t
 	:debug-view *debug-flag*)
   (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)  
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
   
   (warn "please run (grasp-lever) ~%")
   )
 
-(defun after-mcup-water ()
+(defun slide-mcup ()
   ;; 蛇口の位置
   (send *arrow* :newcoords (send *fauset-coords* :copy-worldcoords))
   (send *arrow* :translate #f(0 -100 0) :world)
@@ -231,7 +232,12 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)  
-  
+  )
+
+(defun after-mcup-water ()
+  ;; 蛇口の位置
+  (send *arrow* :newcoords (send *fauset-coords* :copy-worldcoords))
+  (send *arrow* :translate #f(0 -100 0) :world)
   (send *arrow* :translate #f(100 0 100) :world)
   (send *pr2* :larm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
@@ -241,7 +247,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)  
-
+  
   (send *pr2* :larm :move-end-pos #f(0 0 100) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -436,6 +442,7 @@
   (water-off)
   (release-lever)
   
+  (slide-mcup)
   (after-mcup-water)
   )
 
@@ -457,7 +464,8 @@
   (water-on)
   
   (unix:sleep 3)
-  
+
+  (slide-mcup)
   (water-off)
   (release-lever)
   
@@ -465,7 +473,7 @@
   )
 
 
-(defun now-fetch-water (&rest args &key (sleep-time 2) &allow-other-keys)
+(defun now-fetch-water (&rest args &key (sleep-time 1) &allow-other-keys)
   (set-mcup)
   (mcup-water-set)
  
@@ -475,6 +483,7 @@
   ;; 本当はここで認識をする
   (unix:sleep sleep-time)
   
+  (slide-mcup)
   (water-off)
   (release-lever)
   

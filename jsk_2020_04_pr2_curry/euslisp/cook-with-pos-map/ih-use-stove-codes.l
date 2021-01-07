@@ -60,6 +60,12 @@
 
 
 (defun rossrv-test ()
+  ;; (ros::service-call "after_stow_data_collection_kinect/save_request" req t)
+  (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
+  )
+
+(defun rossrv-test-double ()
+  (ros::service-call "after_stow_data_collection_kinect/save_request" req t)
   (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
   )
 
@@ -1650,6 +1656,7 @@
   (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
       (progn
         (release-knob)
+	(push-knob)
         (grasp-knob)
         (grasp-fail-detection-larm :g-thre 10)
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
