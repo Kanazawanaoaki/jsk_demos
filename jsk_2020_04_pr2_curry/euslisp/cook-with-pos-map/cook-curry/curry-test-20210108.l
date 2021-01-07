@@ -367,7 +367,8 @@
   ;; (now-on-stove)
   ;; (grasp-spatula)
   (grasp-spatula-with-fail-detection)
-  (now-start-ih :deg -10)
+  ;; (now-start-ih :deg -10)
+  (now-start-ih-with-fail-detection :deg -10)
   (grasp-pot-from-below-model-with-fail-detection)
   (now-spatula-mix-rotate-loop-with-dialogue :times 10)
 
@@ -396,7 +397,8 @@
   ;; コンロ操作をする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
-  (now-start-ih :deg -10)
+  ;; (now-start-ih :deg -10)
+  (now-start-ih-with-fail-detection :deg -10)
   (set-spatula)
   (grasp-pot-from-below-model-with-fail-detection)
   (now-spatula-mix-rotate-loop-with-dialogue :times 10)
@@ -528,7 +530,8 @@
   (update-pos)
   ;; (grasp-ladle) ;; おたまを掴む 
   (grasp-ladle-with-fail-detection)
-  (now-start-ih :deg -30) ;; 弱火にする
+  ;; (now-start-ih :deg -30) ;; 弱火にする
+  (now-start-ih-with-fail-detection :deg -30) ;; 弱火にする
   (now-ladle-mix-rotate-loop-with-dialogue)
   
   ;; 火を止める
