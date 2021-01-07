@@ -1056,9 +1056,8 @@
   )
 
 (defun grasp-spatula-0 ()  
-  ;; 中間姿勢になる
-  (rarm-middle-pose)
-
+  (if (not (eql (send *spatula* :parent) nil))
+      (send (send *spatula* :parent) :dissoc *spatula*))
   (send *spatula* :newcoords (send *spatula-coords-0* :copy-worldcoords))
   (send *arrow* :newcoords (send *spatula* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad -90) :x)
@@ -1102,16 +1101,29 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
   
-  ;; 中間姿勢になる
-  (rarm-middle-pose)
-
   (warn "please run (put-spatula-1) ~%")
   )
 
-(defun grasp-ladle-0 ()
-  ;; 中間姿勢になる
-  (rarm-middle-pose)
+(defun grasp-spatula-0-with-fail-detection ()
+  (grasp-spatula-0)
   
+  ;; 失敗を検知する
+  (grasp-fail-detection :g-thre 10)
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (grasp-spatula-0)
+        (grasp-fail-detection :g-thre 10)
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (send *ri* :speak-jp "ヘラの把持が失敗しました，渡す準備をして合図をして下さい")
+              (receive-with-dialogue)
+              (send *ri* :start-grasp :rarm :wait t)
+              ))
+        ))
+  )
+
+
+(defun grasp-ladle-0 ()
   (send *ladle* :newcoords (send *ladle-coords-0* :copy-worldcoords))
   (send *arrow* :newcoords (send *ladle* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad -90) :x)
@@ -1155,10 +1167,25 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
   
-  ;; 中間姿勢になる
-  (rarm-middle-pose)
-
   (warn "please run (put-ladle-1) ~%")  
+  )
+
+(defun grasp-ladle-0-with-fail-detection ()
+  (grasp-ladle-0)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection :g-thre 10)
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (grasp-ladle-0)
+        (grasp-fail-detection :g-thre 10)
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (send *ri* :speak-jp "おたまの把持が失敗しました，渡す準備をして合図をして下さい")
+              (receive-with-dialogue)
+              (send *ri* :start-grasp :rarm :wait t)
+              ))
+        ))
   )
 
 (defun put-spatula-0 ()
@@ -2047,9 +2074,13 @@
   (open-shelf)
   (after-open)
 
+  (rarm-middle-pose)
   (grasp-spatula-0)
+  (rarm-middle-pose)
   (put-spatula-1)
+  (rarm-middle-pose)
   (grasp-ladle-0)
+  (rarm-middle-pose)
   (put-ladle-1)
   
   (close-shelf-set)
@@ -2057,15 +2088,18 @@
   (after-close)
   )
 
-;; TODO
 (defun now-set-from-shelf-with-failure-detection ()
   (open-shelf-set)
   (open-shelf)
   (after-open)
-
-  (grasp-spatula-0-with-fail-detection) ;; TODO
+  
+  (rarm-middle-pose)
+  (grasp-spatula-0-with-fail-detection)
+  (rarm-middle-pose)
   (put-spatula-1)
-  (grasp-ladle-0-with-fail-detection) ;; TODO
+  (rarm-middle-pose)
+  (grasp-ladle-0-with-fail-detection)
+  (rarm-middle-pose)
   (put-ladle-1)
   
   (close-shelf-set)

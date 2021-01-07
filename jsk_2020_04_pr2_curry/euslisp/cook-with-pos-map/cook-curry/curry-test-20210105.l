@@ -338,7 +338,8 @@
   ;; ヘラとおたまを棚から取り出す 
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
-  (now-set-from-shelf)
+  ;; (now-set-from-shelf)
+  (now-set-from-shelf-with-failure-detection)
   
   ;; コンロの前まで移動する
   ;; (go-to-stove-with-speech-before-and-after)
