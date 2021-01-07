@@ -800,6 +800,102 @@
   (warn "or please run (set-cut-2) ~%")
   )
 
+(defun cut-test-m ()
+  (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 100) :world)
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis nil
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+
+  ;; 少し上に包丁を
+  (send *arrow* :newcoords (send *cut-point-1* :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 (* *height* 1)))
+  
+  ;;調整
+  ;; (send *arrow* :translate #f(0 10 0))
+  (send *arrow* :translate (float-vector 0 adj 0))
+  
+  ;; (look-at-arrow)
+  ;; (rossrv-test)
+  
+  ;; 少し上にするために
+  (setq offset 50)
+  
+  (send *arrow* :translate (float-vector 0 0 offset))  
+  (send *pr2* :rarm :inverse-kinematics
+        *arrow*
+        :move-target (car (send *knife* :attention))
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (send *arrow* :translate (float-vector 0 0 (* offset -0.5)))  
+  (send *pr2* :rarm :inverse-kinematics
+        *arrow*
+        :move-target (car (send *knife* :attention))
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *arrow* :translate (float-vector 0 0 (* offset -0.5)))  
+  (send *pr2* :rarm :inverse-kinematics
+        *arrow*
+        :move-target (car (send *knife* :attention))
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  ;; TODO ここを室岡さんのに変える!!
+  (setq avs (list))
+  (setq tms (list))
+  
+  (setq interval 10)
+  (dotimes (i (+ (round (/ *height* interval)) 1))
+    (send *arrow* :translate (float-vector (* interval 2) 0 (/ interval -2)))
+    (send *pr2* :rarm :inverse-kinematics
+          *arrow*
+          :move-target (car (send *knife* :attention))
+          :rotation-axis t
+          :debug-view nil)
+    (setq av (send *pr2* :angle-vector))
+    (setq avs (append avs (list av)))
+    (setq tms (append tms (list 600)))
+    
+    (send *arrow* :translate (float-vector (* interval -2) 0 (/ interval -2)))
+    (send *pr2* :rarm :inverse-kinematics
+          *arrow*
+          :move-target (car (send *knife* :attention))
+          :rotation-axis t
+          :debug-view nil)
+    (setq av (send *pr2* :angle-vector))
+    (setq avs (append avs (list av)))
+    (setq tms (append tms (list 600)))
+    
+    )
+
+  (send *ri* :angle-vector-sequence avs tms)
+  (send *ri* :wait-interpolation)
+  
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))  
+  
+  ;; (rossrv-test)
+  
+  (warn "you can retry (cut-test), (continue-cut 4) or you want to finish please run (finish-pose)  ~%")
+  (warn "or please run (set-cut-2) ~%")
+  )
+
+
 (defun continue-cut (num)
   (setq interval 10)
   (dotimes (i num)

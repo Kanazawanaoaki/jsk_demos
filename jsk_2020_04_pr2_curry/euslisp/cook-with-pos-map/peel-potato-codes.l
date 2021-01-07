@@ -310,7 +310,22 @@
   (warn "please run (peel-test) ~%")
   )
 
-(defun peel-test ()  
+(defun set-potato-peeler ()
+  ;; ピーラーをセットする．
+  (setq *potato-peeler* (potato-peeler))
+  (send *potato-peeler* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+  (send *potato-peeler* :rotate (deg2rad 90) :x)
+  (send *pr2* :rarm :end-coords :assoc *potato-peeler*)
+
+  (objects (list *potato* *pr2* *cutting-board* *scene* *potato-peeler*))
+  (send *irtviewer* :look-all
+        (geo::make-bounding-box 
+         (flatten (send-all (send *pr2* :bodies) :vertices))))
+
+  (warn "please run (peel-test) ~%")
+  )
+
+(defun peel-test (peeler)  
   (look-at-left-hand)
   
   ;; 右手を上げる
@@ -338,10 +353,10 @@
   (send *c* :translate (float-vector 0 adj 0))
 
   (send *c* :translate (float-vector adj2 0 0))
-
+  
   (send *pr2* :rarm :inverse-kinematics
         *c*
-        :move-target (car (send *peeler* :attention))
+        :move-target (car (send peeler :attention))
         :rotation-axis t
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
@@ -351,7 +366,7 @@
   (send *c* :translate (float-vector 0 -80 -80) :world)
   (send *pr2* :rarm :inverse-kinematics
         *c*
-        :move-target (car (send *peeler* :attention))
+        :move-target (car (send peeler :attention))
         :rotation-axis t
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
@@ -374,7 +389,7 @@
     (send *c* :translate (float-vector 0 0 (* interval -1)) :world)
     (send *pr2* :rarm :inverse-kinematics
           *c*
-          :move-target (car (send *peeler* :attention))
+          :move-target (car (send peeler :attention))
           :rotation-axis t
           :debug-view nil)
     
@@ -401,7 +416,7 @@
       
       (send *pr2* :rarm :inverse-kinematics
             *c*
-            :move-target (car (send *peeler* :attention))
+            :move-target (car (send peeler :attention))
             :rotation-axis t
             :debug-view *debug-flag*)
       (send *viewer* :draw-objects)
@@ -421,15 +436,15 @@
   
   (send *pr2* :rarm :inverse-kinematics
         *c*
-        :move-target (car (send *peeler* :attention))
+        :move-target (car (send peeler :attention))
         :rotation-axis t
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   (ros::unsubscribe "/right_endeffector/wrench")
-
+  
   (warn "fail cancel !! ~%")
   (warn "you can retry (peel-test) or (finish-pose-peel) , (set-carrot-2)~%")
   )
@@ -466,7 +481,7 @@
   )
 
 (defun peel-test-1 ()
-  (peel-test)
+  (peel-test *potato-peeler*)
   ;; (rossrv-test)
   (warn "please run  (set-potato-1) ~%")  
   )
@@ -489,7 +504,7 @@
   )
 
 (defun peel-test-2 ()
-  (peel-test)
+  (peel-test *potato-peeler*)
   (rossrv-test)
   (warn "please run  (set-potato-3) ~%")  
   )
@@ -512,7 +527,7 @@
   )
 
 (defun peel-test-3 ()
-  (peel-test)
+  (peel-test *potato-peeler*)
   (rossrv-test)
   (warn "please run  (set-potato-4) ~%")  
   )
@@ -535,7 +550,7 @@
   )
 
 (defun peel-test-4 ()
-  (peel-test)
+  (peel-test *potato-peeler*)
   (rossrv-test)
   (warn "please run  (set-potato-5) ~%")  
   )
@@ -558,7 +573,7 @@
   )
 
 (defun peel-test-5 ()
-  (peel-test)
+  (peel-test *potato-peeler*)
   (rossrv-test)
   (warn "please run  (set-potato-6) ~%")  
   )
@@ -581,7 +596,7 @@
   )
 
 (defun peel-test-6 ()
-  (peel-test)
+  (peel-test *potato-peeler*)
   (rossrv-test)
   (warn "please run  (set-potato-7) ~%")  
   )
@@ -604,7 +619,7 @@
   )
 
 (defun peel-test-7 ()
-  (peel-test)
+  (peel-test *potato-peeler*)
   (rossrv-test)
   (warn "please run  (set-potato-8) ~%")  
   )
@@ -627,7 +642,7 @@
   )
 
 (defun peel-test-8 ()
-  (peel-test)
+  (peel-test *potato-peeler*)
   (rossrv-test)
   (warn "please run  (finish-pose-peel) ~%")  
   )
@@ -1069,7 +1084,8 @@
         (reset-larm)
         (now-set)
         (return-from now-peel)))
-  (set-peeler)
+  ;; (set-peeler)
+  (set-potato-peeler)
   (set-potato-1)
   (set-potato-1-2)
   (fail-check)
