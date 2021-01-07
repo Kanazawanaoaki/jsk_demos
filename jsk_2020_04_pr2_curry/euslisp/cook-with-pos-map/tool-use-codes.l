@@ -2021,7 +2021,7 @@
         (grasp-fail-detection :g-thre 10)
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
-              (send *ri* :speak-の "棚の取手を掴むのが失敗しました，棚を開けて合図をして下さい")
+              (send *ri* :speak-jp "棚の取手を掴むのに失敗しました，棚を開けて合図をして下さい")
               (ok-wait)
               (rarm-middle-pose) ;; 中間姿勢になる
               (return-from now-open-shelf-with-fail-detection)))

@@ -1640,6 +1640,33 @@
   (set-pose-3)
   )
 
+(defun now-start-ih-with-fail-detection (&rest args &key (deg -10) &allow-other-keys)
+  (set-pose-3)
+  (push-knob)
+
+  (grasp-knob)
+  ;; 失敗を検知する
+  (grasp-fail-detection-larm :g-thre 10)
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (release-knob)
+        (grasp-knob)
+        (grasp-fail-detection-larm :g-thre 10)
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (release-knob)
+              (set-pose-3)
+              (send *ri* :speak-jp "IHコンロのつまみの操作に失敗しました，コンロをつけて合図をして下さい")
+              (ok-wait)
+              (return-from now-start-ih-with-fail-detection)))
+        ))
+  
+  (rotate-knob :deg 30)
+  (rotate-knob :deg deg)
+  (release-knob)
+  (set-pose-3)
+  )
+
 
 (defun knob-test (&rest args &key (deg 30) &allow-other-keys)
   ;;つまみが出ている状態で調節する
