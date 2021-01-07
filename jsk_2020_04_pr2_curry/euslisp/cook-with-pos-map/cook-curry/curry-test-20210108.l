@@ -61,7 +61,8 @@
   ;; 棚の中にヘラとおたまをセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
-  (now-set-in-shelf-with-dialogue)
+  ;; (now-set-in-shelf-with-dialogue)
+  (now-set-in-shelf-with-dialogue-and-fail-detection)
   
   ;; ボウル１をセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")

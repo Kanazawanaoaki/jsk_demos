@@ -143,6 +143,12 @@
   (send *pr2* :move-to (send *kitchen-spot* :copy-worldcoords) :world)
   (update-view)
   )
+
+(defun move-to-shelf-irt ()
+  (send *pr2* :move-to (send *shelf-spot* :copy-worldcoords) :world)
+  (update-view)
+  )
+
 (defun move-to-sink-irt ()
   (send *pr2* :move-to (send *sink-spot* :copy-worldcoords) :world)
   (update-view)
@@ -240,6 +246,12 @@
 (defun move-to-kitchen-ri-direct ()
   (send *ri* :clear-costmap)
   (send *ri* :move-to (make-coords :pos #f(1200 8500 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun move-to-shelf-ri-direct ()
+  (send *ri* :clear-costmap)
+  (send *ri* :move-to (make-coords :pos #f(1110 8500 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
   (print (send *ri* :state :worldcoords))
   )
 
@@ -389,7 +401,13 @@
   (send *ri* :wait-interpolation)
   )
 
-
+(defun set-head ()
+  (send *pr2* :head :neck-p :joint-angle 50)
+  (send *pr2* :head :neck-y :joint-angle 0.0)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+  )
 
 ;; move with speech
 (defun speech-before-move ()
@@ -485,6 +503,18 @@
 
 (defun move-to-kitchen-with-speech-after ()
   (move-to-kitchen-ri-direct)
+  (speech-after-move)
+  (unix:sleep *w-time*)
+  )
+
+(defun move-to-shelf-with-speech-before ()
+  (speech-before-move)
+  (unix:sleep *w-time*)
+  (move-to-shelf-ri-direct)
+  )
+
+(defun move-to-shelf-with-speech-after ()
+  (move-to-shelf-ri-direct)
   (speech-after-move)
   (unix:sleep *w-time*)
   )

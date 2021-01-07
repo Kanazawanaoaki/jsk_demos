@@ -32,6 +32,8 @@
   (setq *shelf-door* (shelf-door))
   (send *shelf-door* :newcoords (send *shelf-door-coords* :copy-worldcoords))
 
+  (setq *shelf-look-coords* (send (send *shelf-door* :handle-handle0) :copy-worldcoords))
+
   (move-to-kitchen-irt)
   (objects (list *pr2* *peeler* *knife* *potato-peeler* *scene* *spatula* *ladle* *shelf-door*))
   (update-view)
@@ -165,12 +167,11 @@
 
 (defun look-at-shelf ()
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-  (send *pr2* :head :look-at (send (send (send *shelf-door* :handle-handle0) :copy-worldcoords) :worldpos))
+  (send *pr2* :head :look-at (send *shelf-look-coords* :worldpos))
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
   )
-
 
 (defun receive-knife ()
   ;; knifeの位置
@@ -427,7 +428,7 @@
   (send *ri* :speak-jp "じゃがいもピーラーを渡す準備をして，合図をして下さい")
   (receive-with-dialogue)  
   (send *ri* :start-grasp :rarm :wait t :gain 100)
-
+  
   (send *potato-peeler* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *potato-peeler* :rotate (deg2rad 90) :x)
   (send *pr2* :rarm :end-coords :assoc *potato-peeler*)
@@ -489,19 +490,8 @@
 
 
 (defun receive-spatula ()
-  ;; spatulaの位置
-  (send *arrow* :newcoords (send *spatula-coords-1* :copy-worldcoords))
-  (send *arrow* :rotate (deg2rad -90) :x)
+  (rarm-middle-pose)
   
-  (send *arrow* :translate #f(60 0 100) :world)
-  (send *pr2* :rarm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
   (send *ri* :stop-grasp :rarm)
   (send *ri* :speak-jp "ヘラを握らせて下さい")
 
@@ -517,18 +507,7 @@
   )
 
 (defun receive-spatula-with-dialogue ()
-  ;; spatulaの位置
-  (send *arrow* :newcoords (send *spatula-coords-1* :copy-worldcoords))
-  (send *arrow* :rotate (deg2rad -90) :x)
-  
-  (send *arrow* :translate #f(60 0 100) :world)
-  (send *pr2* :rarm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
+  (rarm-middle-pose)
   
   (send *ri* :speak-jp "ヘラを渡す準備をして，合図をして下さい")
   (receive-with-dialogue)  
@@ -645,19 +624,8 @@
 
 
 (defun receive-ladle ()
-  ;; ladleの位置
-  (send *arrow* :newcoords (send *ladle-coords-1* :copy-worldcoords))
-  (send *arrow* :rotate (deg2rad -90) :x)
+  (rarm-middle-pose)
   
-  (send *arrow* :translate #f(60 0 100) :world)
-  (send *pr2* :rarm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
   (send *ri* :stop-grasp :rarm)
   (send *ri* :speak-jp "おたまを握らせて下さい")
 
@@ -673,19 +641,8 @@
   )
 
 (defun receive-ladle-with-dialogue ()
-  ;; ladleの位置
-  (send *arrow* :newcoords (send *ladle-coords-1* :copy-worldcoords))
-  (send *arrow* :rotate (deg2rad -90) :x)
+  (rarm-middle-pose)
   
-  (send *arrow* :translate #f(60 0 100) :world)
-  (send *pr2* :rarm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
   (send *ri* :speak-jp "おたまを渡す準備をして，合図をして下さい")
   (receive-with-dialogue)  
   (send *ri* :start-grasp :rarm :wait t :gain 100)
@@ -1132,6 +1089,8 @@
 
 
 (defun grasp-ladle-0 ()
+  (if (not (eql (send *ladle* :parent) nil))
+      (send (send *ladle* :parent) :dissoc *ladle*))
   (send *ladle* :newcoords (send *ladle-coords-0* :copy-worldcoords))
   (send *arrow* :newcoords (send *ladle* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad -90) :x)
@@ -2035,9 +1994,9 @@
         (grasp-fail-detection :g-thre 10)
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
+              (rarm-middle-pose) ;; 中間姿勢になる
               (send *ri* :speak-jp "棚の取手を掴むのに失敗しました，棚を開けて合図をして下さい")
               (ok-wait)
-              (rarm-middle-pose) ;; 中間姿勢になる
               (return-from now-open-shelf-with-fail-detection)))
         ))
   
@@ -2053,6 +2012,8 @@
 
 (defun now-set-in-shelf ()
   ;; 棚の中におたまとヘラをセットする．
+  (look-at-shelf)
+  
   (open-shelf-set)
   (open-shelf)
   (after-open)
@@ -2065,22 +2026,54 @@
   (close-shelf-set)
   (close-shelf)
   (after-close)
+
+  (set-head)
   )
 
 (defun now-set-in-shelf-with-dialogue ()
+  (look-at-shelf)
+
   ;; 棚の中におたまとヘラをセットする．
   (open-shelf-set)
   (open-shelf)
   (after-open)
   
+  (set-head)
   (receive-spatula-with-dialogue)
+  (look-at-shelf)
   (put-spatula-0)
+  (set-head)
   (receive-ladle-with-dialogue)
+  (look-at-shelf)
   (put-ladle-0)
   
   (close-shelf-set)
   (close-shelf)
   (after-close)
+
+  (set-head)
+  )
+
+(defun now-set-in-shelf-with-dialogue-and-fail-detection ()
+  ;; 棚の中におたまとヘラをセットする．
+  (look-at-shelf)
+  
+  (now-open-shelf-with-fail-detection)
+  
+  (set-head)
+  (receive-spatula-with-dialogue)
+  (look-at-shelf)
+  (put-spatula-0)
+  (set-head)
+  (receive-ladle-with-dialogue)
+  (look-at-shelf)
+  (put-ladle-0)
+  
+  (close-shelf-set)
+  (close-shelf)
+  (after-close)
+
+  (set-head)
   )
 
 (defun now-set-from-shelf ()
@@ -2089,12 +2082,14 @@
   (open-shelf-set)
   (open-shelf)
   (after-open)
-
+  
   (rarm-middle-pose)
   (grasp-spatula-0)
+  (set-head)
   (rarm-middle-pose)
   (put-spatula-1)
   (rarm-middle-pose)
+  (look-at-shelf)
   (grasp-ladle-0)
   (rarm-middle-pose)
   (put-ladle-1)
@@ -2102,14 +2097,14 @@
   (close-shelf-set)
   (close-shelf)
   (after-close)
+
+  (set-head)
   )
 
 (defun now-set-from-shelf-with-failure-detection ()
   (look-at-shelf)
   
-  (open-shelf-set)
-  (open-shelf)
-  (after-open)
+  (now-open-shelf-with-fail-detection)
   
   (rarm-middle-pose)
   (grasp-spatula-0-with-fail-detection)
@@ -2123,6 +2118,8 @@
   (close-shelf-set)
   (close-shelf)
   (after-close)
+
+  (set-head)
   )
 
 
