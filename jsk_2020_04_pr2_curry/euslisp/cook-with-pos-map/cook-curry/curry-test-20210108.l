@@ -603,7 +603,7 @@
   (send *ri* :speak-jp "肉を炒める調理を行いました．確認して合図をして下さい")
   (curry-ok-wait)
   (send *ri* :speak-jp "次の工程に移ります")
-
+  
   (unix:sleep 2)
   (curry-7) ;; 煮込む調理の準備
   (unix:sleep 2)

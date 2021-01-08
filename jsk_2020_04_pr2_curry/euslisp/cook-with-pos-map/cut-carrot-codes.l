@@ -206,7 +206,7 @@
   (setq *height* h)
   
   (setq *carrot* (carrot :w w :l l :h h))
-  (send *carrot* :transform (make-coords :pos (float-vector 500.0 8500.0 (+ 30850.0 (/ h 2))) :rot #2f((0.0 -1.0 0.0) (1.0 0.0 0.0) (0.0 0.0 1.0))))
+  (send *carrot* :transform (make-coords :pos (float-vector 450.0 8400.0 (+ 30850.0 (/ h 2))) :rot #2f((0.0 -1.0 0.0) (1.0 0.0 0.0) (0.0 0.0 1.0))))
   (send *carrot* :cut)
   
   (objects (list *scene* *pr2* *cutting-board* *carrot*))
@@ -684,11 +684,14 @@
   
   (setq l-y (+ (elt (send (send (send *pr2* :larm :end-coords) :copy-worldcoords) :worldpos) 1) 20))
   (setq leng (- acc-y l-y))
+
+  (set-m)
   
   ;; (dotimes (i (- (round (/ leng tmp)) 1))
   (dotimes (i (round (/ leng tmp)) )
     (setq adj (+ adj tmp))
-    (cut-test)
+    ;; (cut-test)
+    (cut-test-m)
     )
   )
 
@@ -799,6 +802,10 @@
   (warn "you can retry (cut-test), (continue-cut 4) or you want to finish please run (finish-pose)  ~%")
   (warn "or please run (set-cut-2) ~%")
   )
+(defun set-m ()
+  (load "package://jsk_kitchen_knife_pr2/euslisp/pr2-kitchen_knife-interface.l")
+  (setq *pkki* (instance pr2-kitchen_knife-interface :init))
+  )
 
 (defun cut-test-m ()
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
@@ -856,38 +863,40 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
-  ;; TODO ここを室岡さんのに変える!!
-  (setq avs (list))
-  (setq tms (list))
+  ;; 室岡さんの切るやつ
+  (send *pkki* :cut-once *arrow* *height* :controller :nn)
   
-  (setq interval 10)
-  (dotimes (i (+ (round (/ *height* interval)) 1))
-    (send *arrow* :translate (float-vector (* interval 2) 0 (/ interval -2)))
-    (send *pr2* :rarm :inverse-kinematics
-          *arrow*
-          :move-target (car (send *knife* :attention))
-          :rotation-axis t
-          :debug-view nil)
-    (setq av (send *pr2* :angle-vector))
-    (setq avs (append avs (list av)))
-    (setq tms (append tms (list 600)))
+  ;; (setq avs (list))
+  ;; (setq tms (list))
+  
+  ;; (setq interval 10)
+  ;; (dotimes (i (+ (round (/ *height* interval)) 1))
+  ;;   (send *arrow* :translate (float-vector (* interval 2) 0 (/ interval -2)))
+  ;;   (send *pr2* :rarm :inverse-kinematics
+  ;;         *arrow*
+  ;;         :move-target (car (send *knife* :attention))
+  ;;         :rotation-axis t
+  ;;         :debug-view nil)
+  ;;   (setq av (send *pr2* :angle-vector))
+  ;;   (setq avs (append avs (list av)))
+  ;;   (setq tms (append tms (list 600)))
     
-    (send *arrow* :translate (float-vector (* interval -2) 0 (/ interval -2)))
-    (send *pr2* :rarm :inverse-kinematics
-          *arrow*
-          :move-target (car (send *knife* :attention))
-          :rotation-axis t
-          :debug-view nil)
-    (setq av (send *pr2* :angle-vector))
-    (setq avs (append avs (list av)))
-    (setq tms (append tms (list 600)))
+  ;;   (send *arrow* :translate (float-vector (* interval -2) 0 (/ interval -2)))
+  ;;   (send *pr2* :rarm :inverse-kinematics
+  ;;         *arrow*
+  ;;         :move-target (car (send *knife* :attention))
+  ;;         :rotation-axis t
+  ;;         :debug-view nil)
+  ;;   (setq av (send *pr2* :angle-vector))
+  ;;   (setq avs (append avs (list av)))
+  ;;   (setq tms (append tms (list 600)))
     
-    )
+  ;;   )
 
-  (send *ri* :angle-vector-sequence avs tms)
-  (send *ri* :wait-interpolation)
+  ;; (send *ri* :angle-vector-sequence avs tms)
+  ;; (send *ri* :wait-interpolation)
   
-  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))  
+  ;; (send *pr2* :angle-vector (send *ri* :state :potentio-vector))  
   
   ;; (rossrv-test)
   
@@ -1098,4 +1107,11 @@
   (cut-all)
   (avoid-pose)
   (reset-larm)
+  )
+
+
+(defun tmp-set ()
+  (set-carrot-cut)
+  (set-knife)
+  (set-m)
   )
