@@ -852,16 +852,16 @@
     (send *viewer* :draw-objects)
     (setq av (send *pr2* :angle-vector))
     (setq *rs-avs* (append *rs-avs* (list av)))
-    (setq *rs-tms* (append *rs-tms* (list 600)))
+    (setq *rs-tms* (append *rs-tms* (list 400)))
     )
 
   (setq cnt1 0)
   (dotimes (i times)
     (send *ri* :angle-vector-sequence *rs-avs* *rs-tms*)
     (send *ri* :wait-interpolation)
-
+    
     (setq cnt1 (+ cnt1 1))
-    (if (oddp cnt)
+    (if (oddp cnt1)
         (progn
           (squeeze-pot-test-1)
           (squeeze-pot-test-2)
@@ -945,10 +945,10 @@
   ;; (send *viewer* :draw-objects)
   ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   ;; (send *ri* :wait-interpolation)
-
+  
   (setq avs (list))
   (setq tms (list))
-
+  
   ;; 最初の位置
   (send *arrow* :newcoords (make-coords :pos (send (send (send (send *pot* :attention-attention0) :copy-worldcoords) :translate #f(0 0 60) :world) :worldpos) :rpy (float-vector -2.288 0.713 0.075)))
   (send *pr2* :rarm :inverse-kinematics
@@ -1048,9 +1048,9 @@
   ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   ;; (send *ri* :wait-interpolation)
   
-  ;; (setq avs (list))
-  ;; (setq tms (list))
-
+  (setq avs (list))
+  (setq tms (list))
+  
   ;; todo
   ;; 最初の位置
   (send *arrow* :newcoords (make-coords :pos (send (send (send (send *pot* :attention-attention0) :copy-worldcoords) :translate #f(0 0 60) :world) :worldpos) :rpy (float-vector -2.288 0.713 0.075)))
@@ -1380,7 +1380,56 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
+  )
 
+(defun mix-with-ladle-test-1 ()
+  ;; 最初の位置  
+  (send *arrow* :newcoords (make-coords :pos (float-vector 417.495 8067.248 30861.184) :rpy (float-vector 1.772 1.446 1.068)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (elt (send *ladle* :attention) 1)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (setq avs (list))
+  (setq tms (list))
+
+  (send *arrow* :newcoords (make-coords :pos (float-vector 417.495 8067.248 30861.184) :rpy (float-vector 1.772 1.446 1.068)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (elt (send *ladle* :attention) 1)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (setq av (send *pr2* :angle-vector))
+  (setq avs (append avs (list av)))
+  (setq tms (append tms (list 400)))
+  
+  (send *arrow* :newcoords (make-coords :pos (float-vector 540.829 8145.059 30854.487) :rpy (float-vector 0.509 0.96 -0.306)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (elt (send *ladle* :attention) 1)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (setq av (send *pr2* :angle-vector))
+  (setq avs (append avs (list av)))
+  (setq tms (append tms (list 400)))
+  
+  (send *arrow* :newcoords (make-coords :pos (float-vector 485.52 8113.658 30870.807) :rpy (float-vector 0.77 1.155 -0.115)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (elt (send *ladle* :attention) 1)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (setq av (send *pr2* :angle-vector))
+  (setq avs (append avs (list av)))
+  (setq tms (append tms (list 400)))
+
+  (send *ri* :angle-vector-sequence avs tms)
+  (send *ri* :wait-interpolation)
+  
   (warn "please run (mix-with-ladle) again or (wait-pose-ladle) ~%")
   )
 
@@ -1417,8 +1466,8 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)  
   
-  (setq avs (list))
-  (setq tms (list))
+  (setq *rl-avs* (list))
+  (setq *rl-tms* (list))
 
   (setq cnt0 0)
   
@@ -1442,13 +1491,20 @@
           ))
     (send *viewer* :draw-objects)
     (setq av (send *pr2* :angle-vector))
-    (setq avs (append avs (list av)))
-    (setq tms (append tms (list 600)))
+    (setq *rl-avs* (append *rl-avs* (list av)))
+    (setq *rl-tms* (append *rl-tms* (list 400)))
     )
 
+  (setq cnt1 0)
   (dotimes (i times)
-    (send *ri* :angle-vector-sequence avs tms)
+    (send *ri* :angle-vector-sequence *rl-avs* *rl-tms*)
     (send *ri* :wait-interpolation)
+    
+    (setq cnt1 (+ cnt1 1))
+    (if (oddp cnt1)
+        (progn
+	  (mix-with-ladle-test-1)
+          ))
     )
   
   (send *arrow* :newcoords (make-coords :pos (send (send (send (send *pot* :attention-attention0) :copy-worldcoords) :translate #f(0 0 60) :world) :worldpos) :rpy (float-vector 0.251 1.492 -0.625)))
@@ -1460,10 +1516,10 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
-
+  
   (setq avs (list))
   (setq tms (list))
-
+  
   (dotimes (i 3)
     (send *pr2* :rarm :move-end-pos #f(0 0 30) :world)
     (setq av (send *pr2* :angle-vector))
@@ -1956,7 +2012,7 @@
   (setq *yes-flag* nil)
   (until *yes-flag*
          (rotate-mix-with-ladle :times times)
-         (wait-pose-spatula)
+         (wait-pose-ladle)
          (send *ri* :speak-jp "画像を記録します")
          ;; (rossrv-test)
          (rossrv-test-double)
@@ -2014,3 +2070,5 @@
   (send *ri* :wait-interpolation)
   
   )
+
+  

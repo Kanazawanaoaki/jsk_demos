@@ -39,15 +39,19 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun set-state ()
+  (send *pr2* :torso_lift_joint :joint-angle 325)
+  (set-head)
+  )
 
 (defun before-recieve-larm ()
   ;;少し上に
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 250) :world)
   (send *pr2* :larm :inverse-kinematics
-    (send *arrow* :copy-worldcoords)
-    :rotation-axis nil
-    :debug-view *debug-flag*)
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis nil
+	:debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -59,8 +63,9 @@
   (send *ri* :wait-interpolation) 
   )
 
+
 ;; water funcs
-(defun grasp-lever ()
+(defun grasp-lever (&rest args &key (adjust 0) &allow-other-keys)
   ;;少し上に
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 250) :world)
@@ -94,6 +99,7 @@
 
   ;; 水道のレバーの位置
   (send *arrow* :newcoords (send *fauset-lever-rarm-coords* :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 adjust 0) :world)
   
   (send *arrow* :translate #f(100 60 20) :world)
   (send *pr2* :rarm :inverse-kinematics
@@ -116,12 +122,71 @@
   (warn "please run (water-on) ~%") 
   )
 
+(defun before-lever ()
+  ;;少し上に
+  (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 250) :world)
+  (send *pr2* :rarm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis nil
+	:debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  ;;少し前に
+  (send *arrow* :newcoords (make-coords :pos (send (send (send *pr2* :rarm :end-coords) :copy-worldcoords) :worldpos)))
+  (send *arrow* :translate (float-vector -200 50 40) :world)
+  (send *arrow* :rotate (deg2rad -90) :z :world)
+  (send *arrow* :rotate (deg2rad 90) :x)
+  (send *arrow* :rotate (deg2rad 60) :x :world)
+
+  (setq *tmp* (send *arrow* :copy-worldcoords))
+  
+  (send *pr2* :rarm :inverse-kinematics
+      (send *arrow* :copy-worldcoords)
+      :rotation-axis t
+      :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun grasp-lever-tmp (&rest args &key (adjust 0) &allow-other-keys)
+  ;;グリッパを微妙に開く
+  (send *ri* :move-gripper :rarm 0.05)
+
+  ;; 水道のレバーの位置
+  (send *arrow* :newcoords (send *fauset-lever-rarm-coords* :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 adjust 0) :world)
+  
+  (send *arrow* :translate #f(100 60 20) :world)
+  (send *pr2* :rarm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *arrow* :translate #f(-100 -60 -20) :world)
+  (send *pr2* :rarm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (send *ri* :start-grasp :rarm :wait t)
+  
+  (warn "please run (water-on) ~%") 
+  )
+
 (defun water-on ()
   ;; こことかも実はモデルをつくって開ける閉める動作にした方が良いのかな？という感じはする．
   ;; レバーを掴んでいる状態から
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  ;; (send *arrow* :translate (float-vector 0 0 30) :world)
-  (send *arrow* :translate (float-vector 0 0 20) :world)
+  (send *arrow* :translate (float-vector 0 0 30) :world)
+  ;; (send *arrow* :translate (float-vector 0 0 20) :world)
   (send *pr2* :rarm :inverse-kinematics
 	(send *arrow* :copy-worldcoords)
 	:rotation-axis nil
@@ -167,11 +232,24 @@
   (reset-rarm)
   )
 
+(defun release-lever-tmp ()
+  ;;グリッパを微妙に開く
+  (send *ri* :move-gripper :rarm 0.04)
+  
+  (send *arrow* :newcoords (send *fauset-lever-rarm-coords* :copy-worldcoords))
+  (send *arrow* :translate #f(100 60 20) :world)
+  (send *pr2* :rarm :inverse-kinematics
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  )
+
 
 ;; measuring cup funcs
 (defun mcup-water-set ()
-  (send *pr2* :torso_lift_joint :joint-angle 325)
-  (set-head)
   (carry-mcup-pose)
   
   ;; スライドさせて行く
@@ -474,9 +552,10 @@
 
 
 (defun now-fetch-water (&rest args &key (sleep-time 1) &allow-other-keys)
+  (set-state)
   (set-mcup)
   (mcup-water-set)
- 
+  
   (grasp-lever)
   (water-on)
   
@@ -486,6 +565,85 @@
   (slide-mcup)
   (water-off)
   (release-lever)
+  
+  (after-mcup-water)
+  )
+
+(defun now-fetch-water-with-fail-detection-old (&rest args &key (sleep-time 1) &allow-other-keys)
+  (set-state)
+  (set-mcup)
+  (mcup-water-set)
+  
+  (grasp-lever)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection :g-thre 10)
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+	(release-lever)
+	(grasp-lever :adjust -20)
+        (grasp-fail-detection :g-thre 10)
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+	      (release-lever)
+              (send *ri* :speak-jp "水道の操作に失敗しました，水を汲んで合図をして下さい")
+              (ok-wait)
+	      
+	      (slide-mcup)
+	      (after-mcup-water)
+	      
+              (return-from now-fetch-water-with-fail-detection)))
+        ))
+  
+  (water-on)
+  
+  ;; 本当はここで認識をする
+  (unix:sleep sleep-time)
+  
+  (slide-mcup)
+  (water-off)
+  (release-lever)
+  
+  (after-mcup-water)
+  )
+
+(defun now-fetch-water-with-fail-detection (&rest args &key (sleep-time 1) &allow-other-keys)
+  (set-state)
+  (set-mcup)
+  (mcup-water-set)
+  
+  (before-lever)
+  (grasp-lever-tmp)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection :g-thre 10)
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+	(release-lever-tmp)
+	(grasp-lever-tmp :adjust -20)
+        (grasp-fail-detection :g-thre 10)
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+	      (release-lever-tmp)
+	      (reset-rarm)
+              (send *ri* :speak-jp "水道の操作に失敗しました，水を汲んで合図をして下さい")
+              (ok-wait)
+	      
+	      (slide-mcup)
+	      (after-mcup-water)
+	      
+              (return-from now-fetch-water-with-fail-detection)))
+        ))
+  
+  (water-on)
+  
+  ;; 本当はここで認識をする
+  (unix:sleep sleep-time)
+  
+  (slide-mcup)
+  (water-off)
+  (release-lever-tmp)
+  (reset-rarm)
   
   (after-mcup-water)
   )
@@ -522,6 +680,7 @@
   )
 
 (defun now-wash-veg (&rest args &key (sleep-time 3) &allow-other-keys)
+  (set-state)
   (wash-veg-set)
   
   (grasp-lever)

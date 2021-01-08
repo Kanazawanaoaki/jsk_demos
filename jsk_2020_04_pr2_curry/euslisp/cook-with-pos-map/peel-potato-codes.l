@@ -312,7 +312,10 @@
 
 (defun set-potato-peeler ()
   ;; ピーラーをセットする．
-  (setq *potato-peeler* (potato-peeler))
+  (load "package://jsk_2020_04_pr2_curry/euslisp/model/potato-peeler.l")
+  (setq *potato-peeler* (peeler))
+  
+  ;; (setq *potato-peeler* (potato-peeler)) ;;絶対こっちの方がよい！！
   (send *potato-peeler* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *potato-peeler* :rotate (deg2rad 90) :x)
   (send *pr2* :rarm :end-coords :assoc *potato-peeler*)

@@ -269,7 +269,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   ;;gripperを閉じる
   (send *ri* :start-grasp :larm :wait t)
   

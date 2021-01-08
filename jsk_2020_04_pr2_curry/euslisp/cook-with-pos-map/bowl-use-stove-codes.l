@@ -46,7 +46,7 @@
       (load "package://jsk_2020_04_pr2_curry/euslisp/model/dispenser.l")
       (setq *oil-dispenser* (dispenser))
       ))
-  (send *oil-dispenser* :newcoords (send *oil-dispenser-coords* :copy-worldcoords))
+  (send *oil-dispenser* :newcoords (send *oil-dispenser-stove-coords* :copy-worldcoords))
   
   (objects (list *pr2* *scene* *spatula* *mcup* *ladle* *pot* *bowl-1* *bowl-2* *bowl-3* *oil-dispenser*))
   (update-view)

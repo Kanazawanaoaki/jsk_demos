@@ -65,13 +65,13 @@
   (now-set-in-shelf-with-dialogue-and-fail-detection)
   
   ;; ボウル１をセットする
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
   (update-pos)
   ;; (now-set-1-model-with-dialogue)
   (now-set-1-model-rarm-with-dialogue)
   
   ;; 野菜をセットする？
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
   (now-set-vegs-with-dialogue)
   
@@ -182,7 +182,6 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cutting-board-codes.l")
   (update-pos)
   (now-cutting-board-transfer-bowl-1-all-with-fail-detection)
-  (reset-rarm)
   
   (send *ri* :speak-jp "人参の調理を行いました．確認して合図をして下さい")
   (curry-ok-wait)
@@ -198,7 +197,7 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
   ;; (now-grasp-potato)
-  (now-grasp-carrot-with-fail-detection)
+  (now-grasp-potato-with-fail-detection)
   
   ;; シンクの前に移動する
   ;; (go-to-sink-with-speech-before)
@@ -263,7 +262,6 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cutting-board-codes.l")
   (update-pos)
   (now-cutting-board-transfer-bowl-1-all-with-fail-detection)
-  (reset-rarm)
   
   (send *ri* :speak-jp "じゃがいもの調理を行いました．確認して合図をして下さい")
   (curry-ok-wait)
@@ -379,6 +377,7 @@
   (set-spatula)
   (after-spatula-mix)
   (push-knob)
+  (set-pose-3)
   
   (send *ri* :speak-jp "たまねぎを炒める調理を行いました．確認して合図をして下さい")
   (curry-ok-wait)
@@ -410,6 +409,7 @@
   (set-spatula)
   (after-spatula-mix)
   (push-knob)
+  (set-pose-3)
   
   (put-spatula-1) ;; ヘラを置く
   (reset-rarm)
@@ -423,6 +423,7 @@
 
 (defun curry-7 () ;; 野菜を入れる
   (send *ri* :speak-jp "煮込む調理の準備を開始します")
+  (unix:sleep 2)
   
   ;; キッチン前に移動する
   ;; (go-to-kitchen-from-stove-with-speech-before)
@@ -455,7 +456,8 @@
          ;; 水を汲む
          (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
          (update-pos)
-         (now-fetch-water :sleep-time 2)
+         ;; (now-fetch-water :sleep-time 1)
+         (now-fetch-water-with-fail-detection :sleep-time 1)
          
          ;; (go-to-kitchen-from-sink)
          (go-to-kitchen-from-sink-without-map)
@@ -499,7 +501,7 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   ;; (now-start-ih :deg -30)
-  (now-start-ih-with-fail-detection :deg -30)
+  (now-start-ih-with-fail-detection :deg 0)
   (now-boil-with-dialogue)
   
   ;; 火を止める
@@ -535,6 +537,7 @@
   (grasp-ladle-with-fail-detection)
   ;; (now-start-ih :deg -30) ;; 弱火にする
   (now-start-ih-with-fail-detection :deg -30) ;; 弱火にする
+  (grasp-pot-from-below-model-with-fail-detection)
   (now-ladle-mix-rotate-loop-with-dialogue)
   
   ;; 火を止める
@@ -554,16 +557,16 @@
 
 ;; defun util funcs
 (defun tmp-func ()
-  ;; かき混ぜる　ヘラは掴んでいる前提
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
-
+  
   (look-at-pot)
   (dotimes (i 10)
     (unix:sleep 30)
     (send *ri* :speak-jp "画像を記録します")
     (unix:sleep 2)
-    (rossrv-test)
+    ;; (rossrv-test)
+    (rossrv-test-double)
     (send *ri* :speak-jp "記録しました")
     )
   )
@@ -593,21 +596,21 @@
 
 
 (defun tmp-curry ()
+  ;; おたまを掴む，コンロ操作，おたまで混ぜる． ;; TODO 少し混ぜながら良さそうか聞いて終わる．
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
+  (update-pos)
+  (set-ladle)
+  (now-ladle-mix-rotate-loop-with-dialogue)
+  
   ;; 火を止める
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
-  (set-spatula)
-  (after-spatula-mix)
+  (after-ladle-mix)
   (push-knob)
+  (put-ladle-1)  
   
-  (send *ri* :speak-jp "肉を炒める調理を行いました．確認して合図をして下さい")
+  ;; ここでひとまず完成にする！！！　今回は！！ ;; TODO 対話を入れる
+  (send *ri* :speak-jp "カレールーを入れる工程を行いました．確認して合図をして下さい")
   (curry-ok-wait)
-  (send *ri* :speak-jp "次の工程に移ります")
-  
-  (unix:sleep 2)
-  (curry-7) ;; 煮込む調理の準備
-  (unix:sleep 2)
-  (curry-8) ;; 煮込む調理
-  (unix:sleep 2)
-  (curry-9) ;; カレールーを入れる
+  (send *ri* :speak-jp "カレーが完成しました")
   )
