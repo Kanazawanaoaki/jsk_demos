@@ -117,14 +117,45 @@
 
 (init)
 (update-view)
-(store-params)
-(change-dynm-params)
+
+(if (send *ri* :simulation-modep)
+    (progn
+      (update-view)
+      )
+  (progn
+    (update-pos)
+    (store-params)
+    (change-dynm-params)
+    )
+  )
 
 (warn "~% If you use real robot, run (update-pos) ~%")
 (warn "please run (move-to-kitchen-ri) , (move-to-sink-ri) or (move-to-stove-ri) and (set-pose)~%")
 
 ;; add for voice recognition
 (ros::load-ros-manifest "speech_recognition_msgs")
+(setq *data-flag* nil)
+(defun voice-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (setq *data-flag* t)
+    (format t "data: ~A ~%" *data*)
+    )
+  )
+
+(defun dialogue-func ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *data-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+  (until *data-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep 1)
+  )
+
 (setq *ok-flag* nil)
 (defun voice-ok-cb (msg)
   (when msg
@@ -138,6 +169,85 @@
       (format t "data: ~A ~%" *data*)
       ) 
     )
+  )
+
+(defun ok-wait ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *ok-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
+  (until *ok-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )  
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep *w-time*)
+  )
+
+(defun ok-grasp-larm (&rest args &key (gain 0.01) &allow-other-keys)
+  (ok-wait)
+  (send *ri* :start-grasp :larm :wait t :gain gain)
+  )
+
+(defun ok-grasp (&rest args &key (gain 0.01) &allow-other-keys)
+  (ok-wait)
+  (send *ri* :start-grasp :rarm :wait t :gain gain)
+  )
+
+(defun receive-with-dialogue-larm (&rest args &key (gain 0.01) &allow-other-keys)
+  ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
+  (setq *yes-flag* nil)
+  (until *yes-flag*
+         (send *ri* :stop-grasp :larm :wait t)
+         (ok-grasp-larm :gain gain)
+         (send *ri* :speak-jp "上手く掴めていますか？")
+         (dialogue-func)
+         (if (equal *data* '("はい"))
+             (setq *yes-flag* t)
+           (progn
+             (send *ri* :speak-jp "グリッパを開きます.もう一度お願いします")
+             (unix:sleep *w-time*)
+             )
+           )
+         )
+  
+  (send *ri* :speak-jp "次の行動に移ります")
+  (unix:sleep *w-time*)
+  )
+
+(defun receive-with-dialogue (&rest args &key (gain 0.01) &allow-other-keys)
+  ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
+  (setq *yes-flag* nil)
+  (until *yes-flag*
+         (send *ri* :stop-grasp :rarm :wait t)
+         (ok-grasp :gain gain)
+         (send *ri* :speak-jp "上手く掴めていますか？")
+         (dialogue-func)
+         (if (equal *data* '("はい"))
+             (setq *yes-flag* t)
+           (progn
+             (send *ri* :speak-jp "グリッパを開きます.もう一度お願いします")
+             (unix:sleep *w-time*)
+             )
+           )
+         )
+  
+  (send *ri* :speak-jp "次の行動に移ります")
+  (unix:sleep *w-time*)
+  )
+
+;; add for grasp detection
+(defun grasp-fail-detection (&rest args &key (g-thre 10) &allow-other-keys)
+  (setq *fail-flag* nil)
+  (setq gripper-len (send *ri* :state :gripper :rarm :position))
+  (if (< gripper-len g-thre)
+      (setq *fail-flag* t))
+  )
+
+(defun grasp-fail-detection-larm (&rest args &key (g-thre 10) &allow-other-keys)
+  (setq *fail-flag* nil)
+  (setq gripper-len (send *ri* :state :gripper :larm :position))
+  (if (< gripper-len g-thre)
+      (setq *fail-flag* t))
   )
 
 ;; wait until movable
@@ -510,54 +620,61 @@
 
 
 
-
 ;; move-to call codes
 (defun move-to-kitchen-with-speech-before ()
   (speech-before-move)
   (unix:sleep *w-time*)
   (move-to-kitchen-ri-direct)
+  (after-move)
   )
 
 (defun move-to-kitchen-with-speech-after ()
   (move-to-kitchen-ri-direct)
   (speech-after-move)
   (unix:sleep *w-time*)
+  (after-move)
   )
 
 (defun move-to-shelf-with-speech-before ()
   (speech-before-move)
   (unix:sleep *w-time*)
   (move-to-shelf-ri-direct)
+  (after-move)
   )
 
 (defun move-to-shelf-with-speech-after ()
   (move-to-shelf-ri-direct)
   (speech-after-move)
   (unix:sleep *w-time*)
+  (after-move)
   )
 
 (defun move-to-sink-with-speech-before ()
   (speech-before-move)
   (unix:sleep *w-time*)
   (move-to-sink-ri-direct)
+  (after-move)
   )
 
 (defun move-to-sink-with-speech-after ()
   (move-to-sink-ri-direct)
   (speech-after-move)
   (unix:sleep *w-time*)
+  (after-move)
   )
 
 (defun move-to-stove-with-speech-before ()
   (speech-before-move)
   (unix:sleep *w-time*)
   (move-to-stove-ri-direct)
+  (after-move)
   )
 
 (defun move-to-stove-with-speech-after ()
   (move-to-stove-ri-direct)
   (speech-after-move)
   (unix:sleep *w-time*)
+  (after-move)
   )
 
 (defun move-to-stove-with-speech-before-and-after ()
@@ -566,4 +683,35 @@
   (move-to-stove-ri-direct)
   (speech-after-move)
   (unix:sleep *w-time*)
+  (after-move)
   )
+
+
+(defun move-to-microwave-with-speech-before ()
+  (speech-before-move)
+  (unix:sleep *w-time*)
+  (move-to-microwave-ri-direct)
+  (after-move)
+  )
+
+(defun move-to-microwave-with-speech-after ()
+  (move-to-microwave-ri-direct)
+  (speech-after-move)
+  (unix:sleep *w-time*)
+  (after-move)
+  )
+
+(defun move-to-arrange-with-speech-before ()
+  (speech-before-move)
+  (unix:sleep *w-time*)
+  (move-to-arrange-ri-direct)
+  (after-move)
+  )
+
+(defun move-to-arrange-with-speech-after ()
+  (move-to-arrange-ri-direct)
+  (speech-after-move)
+  (unix:sleep *w-time*)
+  (after-move)
+  )
+

@@ -1,6 +1,7 @@
 (defun arrangement-init ()
   ;; init
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
+  ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-codes.l")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   
   ;; set objects
   (load "package://jsk_2020_04_pr2_curry/euslisp/model/curry-dish.l")
@@ -24,16 +25,62 @@
 
 
 ;; util funcs
-(defun reset-rarm ()
+(defun reset-rarm () ;; TODO
+  (setq *rav0* #f(-20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
+  (send *pr2* :rarm :angle-vector *rav0*)
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 628.029 8828.539 31050.217) :rpy (float-vector -3.14 0.18 -0.086)))
+  ;; (send *pr2* :rarm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)  
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  
+  (setq *rav2* #f(-30.0303 1.63624 -169.166 -116.783 100.843 -98.3015 -58.1037))
+  (send *pr2* :rarm :angle-vector *rav2*)
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 800.186 8689.105 30866.677) :rpy (float-vector -2.341 -0.222 -0.482)))
+  ;; (send *pr2* :rarm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)  
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  
+  (setq *rav3* #f(-75.0 50.0 -110.0 -110.0 20.0 -10.0 -10.0))
+  (send *pr2* :rarm :angle-vector *rav3*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
   )
 
-(defun reset-larm ()
+(defun reset-larm () ;; TODO
+  
+  
   )
 
 
 (defun look-at-dish ()
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
   (send *pr2* :head :look-at (send (send *curry-dish* :copy-worldcoords) :worldpos))
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun look-at-pot ()
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :head :look-at (send (send (send *pot* :attention-attention0) :copy-worldcoords) :worldpos))
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun look-at-ih-panel ()
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :head :look-at (send (send *ih-panel-coords* :copy-worldcoords) :worldpos))
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
@@ -257,6 +304,58 @@
     )
   (send *viewer* :draw-objects)
   (send (send *pr2* :larm :end-coords) :assoc *sato-rice*)
+  )
+
+
+(defun recieve-sato-rice-rarm-set ()
+  ;;少し上に
+  (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 250) :world)
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis nil
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  ;;少し前に
+  (send *arrow* :newcoords (make-coords :pos (send (send (send *pr2* :rarm :end-coords) :copy-worldcoords) :worldpos)))
+  (send *arrow* :translate (float-vector -200 50 40) :world)
+  (send *arrow* :rotate (deg2rad -90) :z :world)
+  (send *arrow* :rotate (deg2rad 90) :x)
+  (send *arrow* :rotate (deg2rad 60) :x :world)
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  )
+
+(defun recieve-sato-rice-rarm ()
+  (recieve-sato-rice-rarm-set)
+  
+  ;; ご飯を受け取る
+  (send *ri* :stop-grasp :rarm :wait t)
+  (send *ri* :speak-jp "サトウのごはんを握らせて下さい")
+  (unix:sleep *s-time*)
+  (send *ri* :start-grasp :rarm :wait t)
+  
+  (set-sato-rice)
+  )
+
+
+(defun recieve-sato-rice-rarm-with-dialogue ()
+  (recieve-sato-rice-rarm-set)
+  
+  ;; ご飯を受け取る
+  (send *ri* :speak-jp "サトウのごはんを渡す準備をして，合図をして下さい")
+  (receive-with-dialogue)  
+  
+  (set-sato-rice)
   )
 
 
@@ -637,16 +736,20 @@
 
 
 ;; TODO 用意する　-with-dialogueも作りたい．
-(defun now-set-sato ()
+(defun now-set-sato-rarm ()
   ;; 右腕でサトウのごはんを受け取ってセットする
   (resieve-sato-rice-rarm)
   (put-sato-rice-rarm)
   (reset-rarm)
   )
 
+
 (defun now-set-tools-a ()
   ;; ヘラとおたまを受け取ってセットする
   ()
+  )
+
+(defun now-grasp-sato-rarm ()
   )
 
 

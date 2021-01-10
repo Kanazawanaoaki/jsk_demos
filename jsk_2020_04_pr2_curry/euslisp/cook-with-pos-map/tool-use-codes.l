@@ -62,92 +62,6 @@
         (format t "x: ~A ~%" x))
       )))
 
-;; add for voice recognition
-(ros::load-ros-manifest "speech_recognition_msgs")
-(setq *data-flag* nil)
-(defun voice-cb (msg)
-  (when msg
-    (setq *msg* msg)
-    (setq *data* (send *msg* :transcript))
-    (setq *data-flag* t)
-    (format t "data: ~A ~%" *data*)
-    )
-  )
-
-(defun dialogue-func ()
-  (ros::unsubscribe "/speech_to_text")
-  (setq *data-flag* nil)
-  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
-  (until *data-flag*
-         (ros::spin-once)
-         (ros::sleep)
-         )
-  (send *ri* :speak-jp "ありがとうございます")
-  (unix:sleep 1)
-  )
-
-(setq *ok-flag* nil)
-(defun voice-ok-cb (msg)
-  (when msg
-    (setq *msg* msg)
-    (setq *data* (send *msg* :transcript))
-    (if (equal *data* '("OK"))
-        (progn
-          (format t "了解しました！ ~%" *data*)
-          (setq *ok-flag* t)
-          )
-      (format t "data: ~A ~%" *data*)
-      ) 
-    )
-  )
-
-(defun ok-wait ()
-  (ros::unsubscribe "/speech_to_text")
-  (setq *ok-flag* nil)
-  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
-  (until *ok-flag*
-         (ros::spin-once)
-         (ros::sleep)
-         )  
-  (send *ri* :speak-jp "ありがとうございます")
-  (unix:sleep *w-time*)
-  )
-
-(defun ok-grasp ()
-  (ok-wait)
-  (send *ri* :start-grasp :rarm :wait t)
-  )
-
-(defun receive-with-dialogue ()
-  ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
-  (setq *yes-flag* nil)
-  (until *yes-flag*
-         (send *ri* :stop-grasp :rarm :wait t)
-         (ok-grasp)
-         (send *ri* :speak-jp "上手く掴めていますか？")
-         (dialogue-func)
-         (if (equal *data* '("はい"))
-             (setq *yes-flag* t)
-           (progn
-             (send *ri* :speak-jp "グリッパを開きます.もう一度お願いします")
-             (unix:sleep *w-time*)
-             )
-           )
-         )
-  
-  (send *ri* :speak-jp "次の行動に移ります")
-  (unix:sleep *w-time*)
-  )
-
-;; add for grasp detection
-(defun grasp-fail-detection (&rest args &key (g-thre 10) &allow-other-keys)
-  (setq *fail-flag* nil)
-  (setq gripper-len (send *ri* :state :gripper :rarm :position))
-  (if (< gripper-len g-thre)
-      (setq *fail-flag* t))
-  )
-
-
 ;; set codes
 (warn "~%  If you use real robot, run (update-pos) ~%")
 (warn "please run (now-set-tools) or (set-knife) ~%")
@@ -512,7 +426,7 @@
   (send *ri* :speak-jp "ヘラを渡す準備をして，合図をして下さい")
   (receive-with-dialogue)  
   (send *ri* :start-grasp :rarm :wait t :gain 100)
-
+  
   (send *spatula* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *spatula* :rotate (deg2rad 90) :x)
   (send *pr2* :rarm :end-coords :assoc *spatula*)
