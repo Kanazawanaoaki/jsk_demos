@@ -110,7 +110,8 @@
   ;; サトウのごはんを盛り付ける ;;TODO ヘラを 
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/arrangement-codes.l")
   (update-pos)
-  (grasp-spatula)
+  ;; (grasp-spatula)
+  (grasp-spatula-with-fail-detection)
   (now-arrange-sato)
   (put-spatula)
   
@@ -119,7 +120,8 @@
   ;; カレーを盛り付ける
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/arrangement-codes.l")
   (update-pos)
-  (grasp-ladle)
+  ;; (grasp-ladle)
+  (grasp-ladle-with-fail-detection)
   (now-arrange-curry)
   (put-ladle)
   
@@ -127,6 +129,5 @@
   (send *ri* :speak-jp "盛り付ける工程を行いました．確認して合図をして下さい")
   (curry-ok-wait)
   (send *ri* :speak-jp "カレーライスが完成しました")
-  
   )
 
