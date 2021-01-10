@@ -1127,8 +1127,10 @@
   (send *ri* :wait-interpolation)
 
   ;;グリッパを微妙に開く
-  (setq tmp-gripper (* 0.001 (send *ri* :state :gripper :rarm :position)))
-  (send *ri* :move-gripper :rarm (+ 0.025 tmp-gripper))
+  (release-object :g-num 0.025)
+  ;; (setq tmp-gripper (* 0.001 (send *ri* :state :gripper :rarm :position)))
+  ;; (send *ri* :move-gripper :rarm (+ 0.025 tmp-gripper))
+
   ;; (send *ri* :move-gripper :rarm 0.07)
 
   (send *pr2* :rarm :end-coords :dissoc *spatula*)
