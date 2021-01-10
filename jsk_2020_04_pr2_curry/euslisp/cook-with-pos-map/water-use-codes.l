@@ -39,11 +39,6 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun set-state ()
-  (send *pr2* :torso_lift_joint :joint-angle 325)
-  (set-head)
-  )
-
 (defun before-recieve-larm ()
   ;;少し上に
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
@@ -552,7 +547,7 @@
 
 
 (defun now-fetch-water (&rest args &key (sleep-time 1) &allow-other-keys)
-  (set-state)
+  (after-move)
   (set-mcup)
   (mcup-water-set)
   
@@ -570,7 +565,7 @@
   )
 
 (defun now-fetch-water-with-fail-detection-old (&rest args &key (sleep-time 1) &allow-other-keys)
-  (set-state)
+  (after-move)
   (set-mcup)
   (mcup-water-set)
   
@@ -608,7 +603,7 @@
   )
 
 (defun now-fetch-water-with-fail-detection (&rest args &key (sleep-time 1) &allow-other-keys)
-  (set-state)
+  (after-move)
   (set-mcup)
   (mcup-water-set)
   
@@ -680,7 +675,7 @@
   )
 
 (defun now-wash-veg (&rest args &key (sleep-time 3) &allow-other-keys)
-  (set-state)
+  (after-move)
   (wash-veg-set)
   
   (grasp-lever)

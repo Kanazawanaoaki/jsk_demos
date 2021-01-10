@@ -96,6 +96,8 @@
    :double 0.1)
   t)
 
+
+;; def utils
 (defun update-view ()
   (send *pr2* :copy-worldcoords)
   (send *viewer* :draw-objects)
@@ -137,6 +139,16 @@
       ) 
     )
   )
+
+;; wait until movable
+(defun wait-cable ()
+  (setq *cable* t)
+  (while *cable*
+    (let ((msg (one-shot-subscribe "/power_state" pr2_msgs::PowerState)))
+      (setq *cable* (<= 0 (send msg :AC_present)))
+      (unix::sleep 1)))
+  )
+
 
 ;; IRT上の移動
 (defun move-to-kitchen-irt ()
@@ -407,6 +419,11 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
+  )
+
+(defun after-move ()
+  (send *pr2* :torso_lift_joint :joint-angle 325)
+  (set-head)
   )
 
 ;; move with speech
