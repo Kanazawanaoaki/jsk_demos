@@ -184,6 +184,114 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun grasp-obj-rarm ()
+  (send *ri* :stop-grasp :rarm :wait t)
+  
+  ;; targetの位置
+  (send *arrow* :newcoords (send *target* :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 200) :world)
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (send *arrow* :translate (float-vector 0 0 -100) :world)
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *arrow* :translate (float-vector 0 0 -100) :world)
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *ri* :start-grasp :rarm :wait t)
+
+  (send *arrow* :translate (float-vector 0 0 100) :world)
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *arrow* :translate (float-vector 0 0 100) :world)
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)  
+  )
+
+(defun grasp-obj-larm ()
+  (send *ri* :stop-grasp :larm :wait t)
+  
+  ;; targetの位置
+  (send *arrow* :newcoords (send *target* :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 200) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (send *arrow* :translate (float-vector 0 0 -100) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *arrow* :translate (float-vector 0 0 -100) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *ri* :start-grasp :larm :wait t)
+
+  (send *arrow* :translate (float-vector 0 0 100) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *arrow* :translate (float-vector 0 0 100) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)  
+  )
+
+
+
 ;; curry codes
 (defun scoop-up-curry-1 ()
   ;; (send *arrow* :newcoords (make-coords :pos (float-vector 391.83 8092.564 30820) :rpy (float-vector -1.135 0.805 -1.056)))
@@ -205,9 +313,9 @@
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-  
+  (send *ri* :wait-interpolation)  
   )
+
 
 (defun scoop-up-curry-2 ()
   ;; (send *arrow* :newcoords (make-coords :pos (float-vector 420 8065 30870) :rpy (float-vector -1.525 0.066 -0.424)))
@@ -436,7 +544,7 @@
   )
 
 
-(defun recieve-sato-rice ()
+(defun recieve-sato-rice-set ()
   ;;少し上に
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 250) :world)
@@ -467,6 +575,10 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
+  )
+
+(defun recieve-sato-rice ()  
+  (recieve-sato-rice-set)
   
   ;; ご飯を受け取る
   (send *ri* :stop-grasp :larm :wait t)
@@ -475,6 +587,66 @@
   (send *ri* :start-grasp :larm :wait t)
   
   (set-sato-rice)
+  )
+
+(defun recieve-sato-rice-with-dialogue ()  
+  (recieve-sato-rice-set)
+  
+  ;; ご飯を受け取る
+  (send *ri* :speak-jp "サトウのごはんを握らせる準備をして，合図をして下さい")
+  (receive-with-dialogue)
+  
+  (set-sato-rice)
+  )
+
+(defun grasp-sato-rice ()
+  (setq *target* (make-coords))
+  (send *target* :newcoords (send (send *sato-rice* :handle-handle0) :copy-worldcoords))
+  
+  (grasp-obj-larm) ;; TODO
+  
+  (set-sato-rice)
+  
+  (warn "please run (after-grasp-sato) ~%")  
+  )
+
+(defun grasp-sato-rice-rarm ()
+  (setq *target* (make-coords))
+  (send *target* :newcoords (send (send *sato-rice* :handle-handle0) :copy-worldcoords))
+  
+  (grasp-obj-rarm) ;; TODO
+  
+  (set-sato-rice-rarm)
+  
+  (warn "please run (after-grasp-sato-rarm) ~%")  
+  )
+
+(defun after-grasp-sato ()
+  (send *arrow* :newcoords (make-coords :pos (float-vector 557 8260 31125) :rpy (float-vector 2.356 0.785 1.571)))
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (warn "please run (transfer-sato-set) ~%")
+  )
+
+
+(defun after-grasp-sato-rarm () ;; TODO
+  ;; サトウのごはんを運ぶポーズになる
+  (send *arrow* :newcoords (make-coords :pos (float-vector 557 8260 31125) :rpy (float-vector 2.356 0.785 1.571)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  
+  (warn "please run (transfer-sato-set) ~%")
   )
 
 (defun transfer-sato-set ()
@@ -753,8 +925,6 @@
   (put-obj-larm)
   )
 
-
-
 (defun now-devel ()
   (set-pose)
   (recieve-sato-rice)
@@ -812,30 +982,32 @@
   )
 
 
-;; TODO 用意する　-with-dialogueも作りたい．
 (defun now-set-sato-rarm ()
   ;; 右腕でサトウのごはんを受け取ってセットする
-  (resieve-sato-rice-rarm)
+  (recieve-sato-rice-rarm)
   (put-sato-rice-rarm)
   (reset-rarm)
   )
 
 (defun now-set-sato-rarm-with-dialogue ()
   ;; 右腕でサトウのごはんを受け取ってセットする
-  (resieve-sato-rice-rarm-dialogue)
+  (recieve-sato-rice-rarm-dialogue)
   (put-sato-rice-rarm)
   (reset-rarm)
   )
 
-(defun now-set-tools-a ()
-  ;; ヘラとおたまを受け取ってセットする
-  ()
-  )
 
 (defun now-grasp-sato-rarm ()
-  
+  (recieve-sato-rice-rarm-set)
+  (grasp-sato-rice-rarm)
+  (after-grasp-sato-rarm) ;; TODO
   )
 
+(defun now-grasp-sato ()
+  (recieve-sato-rice-set)
+  (grasp-sato-rice)
+  (after-grasp-sato)
+  )
 
 (defun set-tmp-pose ()
   (send *pr2* :rarm :angle-vector #f(-38.3949 -2.90787 -80.2822 -11.5856 -8.70289 -113.777 -356.552))

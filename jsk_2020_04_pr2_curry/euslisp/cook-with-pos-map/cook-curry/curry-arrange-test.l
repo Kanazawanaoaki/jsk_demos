@@ -56,11 +56,15 @@
 (defun curry-a-0 () ;;最初に準備をする
   (send *ri* :speak-jp "準備を開始します")
   
-  ;; サトウのごはんとおたまとへらを用意するのかな
+  ;; サトウのごはんを用意する
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/arrangement-codes.l")
   (update-pos)
-  (now-set-sato) ;; TODO
-  (now-set-tools-a)
+  (now-set-sato-rarm-with-dialogue)
+  
+  ;; おたまとヘラを用意する
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/arrangement-codes.l")
+  (update-pos)
+  (now-set-tools-a-with-dialogue)
   
   (send *ri* :speak-jp "準備を行いました．確認して合図をして下さい")
   (curry-ok-wait)

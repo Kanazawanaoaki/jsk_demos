@@ -2046,3 +2046,37 @@
   (recieve-pot)
   (put-pot)
   )
+
+
+
+(defun now-set-spatula-a ()
+  (up-rarm)
+  (receive-spatula)
+  (put-spatula-a)
+  )
+
+(defun now-set-ladle-a ()
+  (up-rarm)
+  (receive-ladle)
+  (put-ladle-a)
+  )
+
+(defun now-set-tools-a ()
+  ;; ヘラとおたまを受け取ってセットする
+  (up-rarm)
+  (receive-spatula)
+  (put-spatula-a)
+  (receive-ladle)
+  (put-ladle-a)
+  (reset-rarm)
+  )
+
+(defun now-set-tools-a-with-dialogue ()
+  ;; ヘラとおたまを受け取ってセットする
+  (up-rarm)
+  (receive-spatula-with-dialogue)
+  (put-spatula-a)
+  (receive-ladle-with-dialogue)
+  (put-ladle-a)
+  (reset-rarm)
+  )
