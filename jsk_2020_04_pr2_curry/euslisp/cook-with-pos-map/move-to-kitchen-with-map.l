@@ -250,6 +250,14 @@
       (setq *fail-flag* t))
   )
 
+;; release gripper
+(defun release-object (&rest args &key (g-num 0.025) &allow-other-keys)
+  (let (tmp-gripper)
+    ;;グリッパを微妙に開く
+    (setq tmp-gripper (* 0.001 (send *ri* :state :gripper :rarm :position)))
+    (send *ri* :move-gripper :rarm (+ g-num tmp-gripper))
+    ))
+
 ;; wait until movable
 (defun wait-cable ()
   (setq *cable* t)
