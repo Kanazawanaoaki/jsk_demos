@@ -79,7 +79,7 @@
   (send *arrow* :rotate (deg2rad 90) :x)
   (send *arrow* :rotate (deg2rad 60) :x :world)
 
-  (setq *tmp* (send *arrow* :copy-worldcoords))
+  (setq *tmp* (send *arrow* :copy-worldcoords)) ;; TODO 座標ベースにしたい
   
   (send *pr2* :rarm :inverse-kinematics
       (send *arrow* :copy-worldcoords)

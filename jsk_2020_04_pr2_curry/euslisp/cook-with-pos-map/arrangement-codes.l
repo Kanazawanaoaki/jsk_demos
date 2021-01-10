@@ -135,6 +135,55 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun put-obj-rarm ()
+  ;; (send *arrow* :translate (float-vector 0 0 200) :world) ;; がしてある状態で使う
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (send *arrow* :translate (float-vector 0 0 -100) :world)
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *arrow* :translate (float-vector 0 0 -100) :world)
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *ri* :stop-grasp :rarm :wait t)
+
+  (send *arrow* :translate (float-vector 0 0 100) :world)
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *arrow* :translate (float-vector 0 0 100) :world)
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view nil)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  )
+
 ;; curry codes
 (defun scoop-up-curry-1 ()
   ;; (send *arrow* :newcoords (make-coords :pos (float-vector 391.83 8092.564 30820) :rpy (float-vector -1.135 0.805 -1.056)))
@@ -306,8 +355,22 @@
   (send (send *pr2* :larm :end-coords) :assoc *sato-rice*)
   )
 
+(defun set-sato-rice-rarm ()
+  (if (not (eql (send *sato-rice* :parent) nil))
+      (send (send *sato-rice* :parent) :dissoc *sato-rice*))
+  (let (local-cds)
+    (setq local-cds (make-cascoords))
+    (send local-cds :newcoords (send (send *sato-rice* :handle-handle0) :copy-worldcoords))
+    (send local-cds :assoc *sato-rice*)
+    (send local-cds :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+    (send local-cds :dissoc *sato-rice*)
+    )
+  (send *viewer* :draw-objects)
+  (send (send *pr2* :rarm :end-coords) :assoc *sato-rice*)
+  )
 
-(defun recieve-sato-rice-rarm-set ()
+
+(defun recieve-sato-rice-rarm-set () ;; TODO 座標ベースにしたい
   ;;少し上に
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 250) :world)
@@ -325,6 +388,9 @@
   (send *arrow* :rotate (deg2rad -90) :z :world)
   (send *arrow* :rotate (deg2rad 90) :x)
   (send *arrow* :rotate (deg2rad 60) :x :world)
+
+  (setq *tmp* (send *arrow* :copy-worldcoords))
+  
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -344,7 +410,7 @@
   (unix:sleep *s-time*)
   (send *ri* :start-grasp :rarm :wait t)
   
-  (set-sato-rice)
+  (set-sato-rice-rarm)
   )
 
 
@@ -355,7 +421,18 @@
   (send *ri* :speak-jp "サトウのごはんを渡す準備をして，合図をして下さい")
   (receive-with-dialogue)  
   
-  (set-sato-rice)
+  (set-sato-rice-rarm)
+  )
+
+(defun put-sato-rice-rarm ()
+  ;; ボウル１を置く位置
+  (if (not (eql (send *sato-rice* :parent) nil))
+      (send (send *sato-rice* :parent) :dissoc *sato-rice*))
+  (send *sato-rice* :newcoords (send *sato-rice-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *sato-rice* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 200) :world)
+  
+  (put-bowl-rarm)
   )
 
 
@@ -743,6 +820,12 @@
   (reset-rarm)
   )
 
+(defun now-set-sato-rarm-with-dialogue ()
+  ;; 右腕でサトウのごはんを受け取ってセットする
+  (resieve-sato-rice-rarm-dialogue)
+  (put-sato-rice-rarm)
+  (reset-rarm)
+  )
 
 (defun now-set-tools-a ()
   ;; ヘラとおたまを受け取ってセットする
@@ -750,6 +833,7 @@
   )
 
 (defun now-grasp-sato-rarm ()
+  
   )
 
 
