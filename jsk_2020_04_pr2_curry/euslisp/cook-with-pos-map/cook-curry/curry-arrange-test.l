@@ -88,14 +88,14 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/microwave-codes.l")
   (update-pos)
   (now-sato-rice-micro) ;; TODO用意する
-   
+  
   ;; サトウのごはんを持ってキッチンまで行く 
   (move-to-arrange-with-speech-after)
   
   ;; サトウのごはんを置く，(移動先で受け取る？持ったまま移動して左手に渡すか？) 
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/arrangement-codes.l")
   (update-pos)
-  (now-put-sato-rarm) ;; TODO
+  (now-put-sato-rarm)
   
   (send *ri* :speak-jp "ごはんを温める調理を行いました．確認して合図をして下さい")
   (curry-ok-wait)
@@ -105,7 +105,7 @@
   )
 
 (defun curry-a-2 ()
-  (send *ri* :speak-jp "カレーを盛り付ける調理を開始します")
+  (send *ri* :speak-jp "盛り付ける調理を開始します")
   
   ;; サトウのごはんを盛り付ける ;;TODO ヘラを 
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/arrangement-codes.l")
@@ -124,7 +124,7 @@
   (put-ladle)
   
   ;;完成！！
-  (send *ri* :speak-jp "カレーを盛り付ける工程を行いました．確認して合図をして下さい")
+  (send *ri* :speak-jp "盛り付ける工程を行いました．確認して合図をして下さい")
   (curry-ok-wait)
   (send *ri* :speak-jp "カレーライスが完成しました")
   

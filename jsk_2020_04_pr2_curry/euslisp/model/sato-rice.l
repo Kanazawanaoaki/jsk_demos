@@ -2,6 +2,7 @@
   :super cascaded-link
   :slots (
           handle0
+          handle1
           attention0
           ))
 
@@ -30,6 +31,8 @@
      ;; definition of :handle
      (setq handle0 (make-cascoords :pos #f(57 -75 35) :rpy #f(2.356 0.785 1.571) :name "handle0"))
      (send link1 :assoc handle0)
+     (setq handle1 (make-cascoords :pos #f(57 75 35) :rpy #f(-2.356 0.785 1.571) :name "handle1"))
+     (send link1 :assoc handle1)
      
      ;; definition of :attention
      (setq attention0 (make-cascoords :pos #f(0 75 35) :rpy #f(1.571 0 0) :name "attention0"))
@@ -43,8 +46,9 @@
      
      self))
   
-  (:handle (&rest args) (forward-message-to-all (list  handle0) args))
+  (:handle (&rest args) (forward-message-to-all (list  handle0 handle1) args))
   (:handle-handle0 (&rest args) (forward-message-to handle0 args))
+  (:handle-handle1 (&rest args) (forward-message-to handle1 args))
   (:attention (&rest args) (forward-message-to-all (list  attention0) args))
   (:attention-attention0 (&rest args) (forward-message-to attention0 args))
   )

@@ -468,7 +468,7 @@
       (send (send *sato-rice* :parent) :dissoc *sato-rice*))
   (let (local-cds)
     (setq local-cds (make-cascoords))
-    (send local-cds :newcoords (send (send *sato-rice* :handle-handle0) :copy-worldcoords))
+    (send local-cds :newcoords (send (send *sato-rice* :handle-handle1) :copy-worldcoords))
     (send local-cds :assoc *sato-rice*)
     (send local-cds :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
     (send local-cds :dissoc *sato-rice*)
@@ -491,14 +491,13 @@
   (send *ri* :wait-interpolation)
   
   ;;少し前に
-  (send *arrow* :newcoords (make-coords :pos (send (send (send *pr2* :rarm :end-coords) :copy-worldcoords) :worldpos)))
-  (send *arrow* :translate (float-vector -200 50 40) :world)
-  (send *arrow* :rotate (deg2rad -90) :z :world)
-  (send *arrow* :rotate (deg2rad 90) :x)
-  (send *arrow* :rotate (deg2rad 60) :x :world)
-
-  (setq *tmp* (send *arrow* :copy-worldcoords))
-  
+  ;; (send *arrow* :newcoords (make-coords :pos (send (send (send *pr2* :rarm :end-coords) :copy-worldcoords) :worldpos)))
+  ;; (send *arrow* :translate (float-vector -200 50 40) :world)
+  ;; (send *arrow* :rotate (deg2rad -90) :z :world)
+  ;; (send *arrow* :rotate (deg2rad 90) :x)
+  ;; (send *arrow* :rotate (deg2rad 60) :x :world)
+  ;; (setq *tmp* (send *arrow* :copy-worldcoords))
+  (send *arrow* :newcoords (make-coords :pos (float-vector 600.191 8439.105 31156.677) :rpy (float-vector -1.571 1.047 1.571)))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -507,6 +506,15 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 557.0 8260.0 31125.0) :rpy (float-vector 2.356 0.785 1.571)))
+  ;; (send *pr2* :rarm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
+  ;; (send *viewer* :draw-objects)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  ;; (send *ri* :wait-interpolation)
+  (sato-receive-pose)
   )
 
 (defun recieve-sato-rice-rarm ()
@@ -537,7 +545,7 @@
   (if (not (eql (send *sato-rice* :parent) nil))
       (send (send *sato-rice* :parent) :dissoc *sato-rice*))
   (send *sato-rice* :newcoords (send *sato-rice-coords* :copy-worldcoords))
-  (send *arrow* :newcoords (send (send *sato-rice* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *sato-rice* :handle-handle1) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
   
   (put-bowl-rarm)
@@ -603,7 +611,7 @@
   (setq *target* (make-coords))
   (send *target* :newcoords (send (send *sato-rice* :handle-handle0) :copy-worldcoords))
   
-  (grasp-obj-larm) ;; TODO
+  (grasp-obj-larm)
   
   (set-sato-rice)
   
@@ -612,9 +620,9 @@
 
 (defun grasp-sato-rice-rarm ()
   (setq *target* (make-coords))
-  (send *target* :newcoords (send (send *sato-rice* :handle-handle0) :copy-worldcoords))
+  (send *target* :newcoords (send (send *sato-rice* :handle-handle1) :copy-worldcoords))
   
-  (grasp-obj-rarm) ;; TODO
+  (grasp-obj-rarm)
   
   (set-sato-rice-rarm)
   
@@ -635,9 +643,28 @@
   )
 
 
-(defun after-grasp-sato-rarm () ;; TODO
-  ;; サトウのごはんを運ぶポーズになる
-  (send *arrow* :newcoords (make-coords :pos (float-vector 557 8260 31125) :rpy (float-vector 2.356 0.785 1.571)))
+(defun after-grasp-sato-rarm () ;; これanlge-vectorベースでも良いのでは？
+  (sato-receive-pose)
+  (sato-carry-pose)
+  
+  (warn "please run (sato-carry-pose) ~%")
+  )
+
+(defun sato-receive-pose ()
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 557.0 8410.0 31125.0) :rpy (float-vector -2.356 0.785 1.571)))
+  ;; (send *pr2* :rarm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
+  (send *pr2* :rarm :angle-vector #f(-41.6641 -20.2466 -93.4183 -81.7703 296.105 -44.9155 -97.8979))
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  
+  )
+
+(defun sato-carry-pose () ;; TODO!!
+  (send *arrow* :newcoords (make-coords :pos (float-vector 557.0 8260.0 31125.0) :rpy (float-vector 2.356 0.785 1.571)))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -645,9 +672,20 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
-  
-  (warn "please run (transfer-sato-set) ~%")
   )
+
+(defun put-sato-rice-rarm ()
+  ;; サトウのごはんを置く位置
+  (if (not (eql (send *sato-rice* :parent) nil))
+      (send (send *sato-rice* :parent) :dissoc *sato-rice*))
+  (send *sato-rice* :newcoords (send *sato-rice-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *sato-rice* :handle-handle1) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 200) :world)
+  (put-obj-rarm)
+  )
+
+
+
 
 (defun transfer-sato-set ()
   (send *arrow* :newcoords (make-coords :pos (float-vector 557 8260 31125) :rpy (float-vector 2.356 0.785 1.571)))
@@ -876,7 +914,6 @@
 
 (defun avoid-spatula-sato ()
   ;; bowl-use-kitchenとかを参考にしてダイレクトでいくやつにする!
-  
   (send *arrow* :newcoords (make-coords :pos (float-vector 550 8400 31150) :rpy (float-vector -1.603 0.03 -0.018)))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -906,6 +943,16 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun put-sato-rice ()
+  ;; サトウのごはんを置く位置
+  (if (not (eql (send *sato-rice* :parent) nil))
+      (send (send *sato-rice* :parent) :dissoc *sato-rice*))
+  (send *sato-rice* :newcoords (send *sato-rice-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *sato-rice* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 200) :world)
+  (put-obj-larm)
+  )
+
 (defun after-sato ()
   (send *arrow* :newcoords (make-coords :pos (float-vector 557 8260 31125) :rpy (float-vector 2.356 0.785 1.571)))
   (send *pr2* :larm :inverse-kinematics
@@ -915,14 +962,9 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
   (send *ri* :wait-interpolation)
-  
-  ;; サトウのごはんを置く位置
-  (if (not (eql (send *sato-rice* :parent) nil))
-      (send (send *sato-rice* :parent) :dissoc *sato-rice*))
-  (send *sato-rice* :newcoords (send *sato-rice-coords* :copy-worldcoords))
-  (send *arrow* :newcoords (send (send *sato-rice* :handle-handle0) :copy-worldcoords))
-  (send *arrow* :translate (float-vector 0 0 200) :world)
-  (put-obj-larm)
+
+  (put-sato-rice)
+  (reset-larm)
   )
 
 (defun now-devel ()
@@ -972,6 +1014,16 @@
   )
 
 (defun now-arrange-sato ()
+  (now-grasp-sato)
+  (transfer-sato-set)
+  (set-spatula)
+  (squeeze-sato-set)
+  (squeeze-sato)
+  (avoid-spatula-sato)
+  (after-sato)  
+  )
+
+(defun now-arrange-sato-receive ()
   (recieve-sato-rice)
   (transfer-sato-set)
   (set-spatula)
@@ -996,7 +1048,6 @@
   (reset-rarm)
   )
 
-
 (defun now-grasp-sato-rarm ()
   (recieve-sato-rice-rarm-set)
   (grasp-sato-rice-rarm)
@@ -1007,6 +1058,17 @@
   (recieve-sato-rice-set)
   (grasp-sato-rice)
   (after-grasp-sato)
+  )
+
+(defun now-put-sato-rarm ()
+  (recieve-sato-pose)
+  (put-sato-rice-rarm)
+  (reset-rarm)
+  )
+
+(defun now-put-sato ()
+  (put-sato-rice)
+  (reset-larm)
   )
 
 (defun set-tmp-pose ()
