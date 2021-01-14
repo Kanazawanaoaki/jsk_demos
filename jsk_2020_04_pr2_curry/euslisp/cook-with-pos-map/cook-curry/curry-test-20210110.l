@@ -70,12 +70,12 @@
   ;; (now-set-1-model-with-dialogue)
   (now-set-1-model-rarm-with-dialogue)
   
-  ;; 野菜をセットする？
+  ;; 野菜をセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
   (now-set-vegs-with-dialogue)
   
-  ;; 計量カップはここでセットする？
+  ;; 計量カップをセットする
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
   (update-pos)
   (now-set-mcup-with-dialogue)
@@ -273,7 +273,7 @@
 (defun curry-3 ()
   (send *ri* :speak-jp "たまねぎの調理を開始します")
   
-  ;; たまねぎを掴む？？
+  ;; たまねぎを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
   ;; (now-grasp-onion)
@@ -360,7 +360,7 @@
 (defun curry-5 () ;; 玉ねぎを炒める
   (send *ri* :speak-jp "たまねぎを炒める調理を開始します")
   
-  ;; コンロ操作をする
+  ;; コンロ操作をして炒める
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   ;; (now-on-stove)
@@ -394,7 +394,7 @@
   (update-pos)
   (now-transfer-2-model)
   
-  ;; コンロ操作をする
+  ;; コンロ操作をして炒める
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
   (update-pos)
   ;; (now-start-ih :deg -10)

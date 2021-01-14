@@ -421,7 +421,7 @@
   (warn "please run (curry-7) ~%")
   )
 
-(defun curry-7 () ;; 野菜を入れる
+(defun curry-7 () ;; 煮込む調理の準備
   (send *ri* :speak-jp "煮込む調理の準備を開始します")
   (unix:sleep 2)
   
