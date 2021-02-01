@@ -1,7 +1,12 @@
-state Rotate{
-  [*] -right-> OFF
-  OFF -right-> 0s
-  0s -right-> 500w
-  500w -right-> [*]
+state Microwave{
+  OFF -right-> Open : Open the door
+  Open -right-> 0s : Close the door
+  0s -right-> 500w : Push microwave button
+  500w -up-> 1min : Push 1min button 
+  1min -up-> 2min : Push 1min button
+  2min -up-> 3min : Push 1min button
+  1min -right-> Start : Push start button
+  2min -right-> Start : Push start button
+  3min -right-> Start : Push start button
+  Start -right-> 0s : Wait time
 }
-
