@@ -1,0 +1,7 @@
+state Rotate{
+  [*] -right-> OFF
+  OFF -right-> 0s
+  0s -right-> 500w
+  500w -right-> [*]
+}
+
