@@ -54,7 +54,7 @@
      (setq handle0 (make-cascoords :pos #f(0 0 0) :name "handle0"))
      (send link1 :assoc handle0)
      (setq handle1 (make-cascoords :pos #f(0 0 0) :name "handle1"))
-     (send handle1 :rotate (deg2rad -90) :x)
+     (send handle1 :rotate (deg2rad 90) :x)
      (send link1 :assoc handle1)
 
      ;; definition of :attention
