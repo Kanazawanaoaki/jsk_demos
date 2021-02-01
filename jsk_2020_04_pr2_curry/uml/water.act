@@ -1,0 +1,4 @@
+state Water{
+  water_Off -right-> water_On : up lever
+  water_On -left-> water_Off : down lever
+}

@@ -1,0 +1,4 @@
+state Water{
+  Closed -right-> Open : Open the door
+  Open -left-> Closed : Close the door
+}
