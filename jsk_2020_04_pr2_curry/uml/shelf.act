@@ -1,4 +1,4 @@
-state Water{
+state Shelf{
   Closed -right-> Open : Open the door
   Open -left-> Closed : Close the door
 }
