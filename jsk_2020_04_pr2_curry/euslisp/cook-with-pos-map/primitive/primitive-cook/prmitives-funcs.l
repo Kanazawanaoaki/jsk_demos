@@ -22,6 +22,9 @@
   
   (objects (list *scene* *pr2*))
 
+
+  ;; todo 色々物体を読み込む必要がある？？
+
   ;; set global variables
   (setq *s-time* 3)
   (setq *w-time* 2)
@@ -249,31 +252,25 @@
       (setq *fail-flag* t))
   )
 
-;; grasp object grasp primitive
-(defun grasp-object (&rest args &key (gain 0.01) &allow-other-keys)
-  (send *ri* :start-grasp :rarm :wait t)
-  (unix:sleep 1)
-  )
+;; add for force recognition
+(setq *x-thre* -15)
 
-(defun grasp-object-larm (&rest args &key (gain 0.01) &allow-other-keys)
-  (send *ri* :start-grasp :larm :wait t)
-  (unix:sleep 1)
-  )
+(ros::roseus "stove_rec_test" :anonymous t)
+(setq *topic-name* "/right_endeffector/wrench")
+(ros::load-ros-manifest "geometry_msgs")
+(setq *cb-flag* nil)
+(defun wrench-x-cb (msg)
+  (when msg
+    (let ((x nil))
+      (setq x (send msg :wrench :force :x))
+      (if (< x *x-thre*)
+          (progn 
+            (setq *cb-flag* t)
+            (format t "OK!! x: ~A ~%" x)
+            )
+        (format t "x: ~A ~%" x))
+      )))
 
-;; release gripper release primitive
-(defun release-object (&rest args &key (g-num 0.025) &allow-other-keys)
-  (let (tmp-gripper)
-    ;;グリッパを微妙に開く
-    (setq tmp-gripper (* 0.001 (send *ri* :state :gripper :rarm :position)))
-    (send *ri* :move-gripper :rarm (+ g-num tmp-gripper))
-    ))
-
-(defun release-object-larm (&rest args &key (g-num 0.025) &allow-other-keys)
-  (let (tmp-gripper)
-    ;;グリッパを微妙に開く
-    (setq tmp-gripper (* 0.001 (send *ri* :state :gripper :larm :position)))
-    (send *ri* :move-gripper :larm (+ g-num tmp-gripper))
-    ))
 
 
 ;; このあたりから怪しい．
@@ -352,13 +349,13 @@
 
 
 ;; move-base
-;; IRT上の移動
+;; IRT上の移動 適当
 (defun move-to-spot-irt (spot)
   (send *pr2* :move-to (send spot :copy-worldcoords) :world)
   (update-view)
   )
 
-;; 実機の移動 move-base primitive
+;; 実機の移動 move-base primitive　適当
 (defun move-base-to-coords-ri-direct (coords)
   (send *ri* :clear-costmap)
   ;; (send *ri* :move-to (make-coords :pos #f(1200 8500 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
@@ -366,7 +363,7 @@
   (print (send *ri* :state :worldcoords))
   )
 
-(defun move-base-go-pos-unsafe (x y deg)
+(defun move-base-go-pos-unsafe (x y deg) ;; 適当
   (send *ri* :go-pos-unsafe x y deg)
   (update-pos)
   (update-view)
@@ -384,12 +381,15 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun move-arm-seq (avs tms)
+  (send *ri* :angle-vector-sequence avs tms)
+  (send *ri* :wait-interpolation)
+  )
 
 ;; move-gripper
 (defun move-gripper-rarm (pos)
   (send *ri* :move-gripper :rarm pos)
   )
-
 
 ;; move-head
 (defun move-head-look-at-coords (coords)
@@ -400,6 +400,16 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun move-head-set-angle (neck-p neck-y sec)
+  (send *pr2* :head :neck-p :joint-angle neck-p)
+  (send *pr2* :head :neck-y :joint-angle neck-y)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) sec)
+  (send *ri* :wait-interpolation)
+  )
+
+
+
 ;; move-torso
 
 
@@ -407,9 +417,44 @@
 
 ;; move-object
 
+
 ;; push-object
 
 ;; grasp-object
+(defun grasp-object-rarm (&rest args &key (gain 0.01) &allow-other-keys)
+  (send *ri* :start-grasp :rarm :wait t :gain gain)
+  )
+
+(defun grasp-object-larm (&rest args &key (gain 0.01) &allow-other-keys)
+  (send *ri* :start-grasp :larm :wait t :gain gain)
+  )
+
+;; release gripper release primitive
+(defun release-object-rarm-little (&rest args &key (g-num 0.025) &allow-other-keys)
+  (let (tmp-gripper)
+    ;;グリッパを微妙に開く
+    (setq tmp-gripper (* 0.001 (send *ri* :state :gripper :rarm :position)))
+    (send *ri* :move-gripper :rarm (+ g-num tmp-gripper))
+    ))
+
+(defun release-object-larm-little (&rest args &key (g-num 0.025) &allow-other-keys)
+  (let (tmp-gripper)
+    ;;グリッパを微妙に開く
+    (setq tmp-gripper (* 0.001 (send *ri* :state :gripper :larm :position)))
+    (send *ri* :move-gripper :larm (+ g-num tmp-gripper))
+    ))
+
+(defun release-object-rarm ()
+  (send *ri* :stop-grasp :rarm :wait t)  
+  )
+
+(defun release-object-larm ()
+  (send *ri* :stop-grasp :larm :wait t)  
+  )
+
+
+;; ここまで適当
+
 
 ;; release-object
 
@@ -429,8 +474,31 @@
 
 
 ;; touch-object
-
-
+(defun touch-object-rarm-seq-x (avs tms x-thre)
+  (send *ri* :angle-vector-sequence avs tms)
+  
+  (setq *x-thre* x-thre)
+  
+  (ros::unsubscribe "/right_endeffector/wrench")
+  (setq *topic-name* "/right_endeffector/wrench")
+  (setq *cb-flag* nil)
+  (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-x-cb)
+  
+  (while (some #'identity (send *ri* :wait-interpolation nil 0.01))
+    (when (progn
+            (ros::spin-once)
+            (if *cb-flag* t)
+            )
+      (send *ri* :cancel-angle-vector)
+      (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+      (ros::unsubscribe "/right_endeffector/wrench")
+      (warn "cancel!!! ~%")
+      )
+    )
+  
+  (ros::unsubscribe "/right_endeffector/wrench")
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))  
+  )
 
 
 
