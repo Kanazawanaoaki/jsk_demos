@@ -7,6 +7,7 @@
 
 (defun init ()
   (warn "init! ~%")
+  )
 
 (defun curry-2-1 ()
   (unix:sleep 1)

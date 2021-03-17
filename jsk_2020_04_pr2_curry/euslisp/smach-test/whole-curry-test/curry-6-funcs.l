@@ -9,18 +9,28 @@
   (warn "init! ~%")
   )
 
-(defun curry-5-1 ()
+(defun curry-6-1 ()
+  (unix:sleep 1)
+  (warn "肉の鍋に移す ~%")
+  )
+
+(defun curry-6-2 ()
   (unix:sleep 1)
   (warn "火を着ける ~%")
   )
 
-(defun curry-5-2 ()
+(defun curry-6-3 ()
   (unix:sleep 1)
   (warn "炒める ~%")
   )
 
-(defun curry-5-3 ()
+(defun curry-6-4 ()
   (unix:sleep 1)
   (warn "火を止める ~%")
+  )
+
+(defun curry-6-5 ()
+  (unix:sleep 1)
+  (warn "ヘラを置く ~%")
   )
 
