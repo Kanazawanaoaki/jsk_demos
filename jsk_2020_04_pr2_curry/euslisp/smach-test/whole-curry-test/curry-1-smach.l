@@ -37,7 +37,7 @@
              (:peel-carrot '(lambda (&rest args) (curry-1-7) :success))
              (:replace-tool '(lambda (&rest args) (curry-1-8) :success))
              (:cut-carrot '(lambda (&rest args) (curry-1-9) :success))
-             (:put-knife '(lambda (&rest args) (curry-1-11) :success))
+             (:put-knife '(lambda (&rest args) (curry-1-10) :success))
              (:transfer-to-bowl-1 '(lambda (&rest args) (curry-1-11) :success))
              )
            ;; initial state
