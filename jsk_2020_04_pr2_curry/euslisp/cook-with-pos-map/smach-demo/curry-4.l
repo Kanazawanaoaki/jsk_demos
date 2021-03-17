@@ -4,14 +4,14 @@
 
 (defun curry-4 () ;; 準備をする．  
   
-  ;; ヘラとおたまを棚から取り出す
+  ;; ヘラとおたまを棚から取り出す ;;特殊
   (curry-4-1-set-from-shelf)
   
-  ;; コンロの前まで移動する
+  ;; コンロの前まで移動する ;;move
   (curry-4-2-move-to-stove)
   
-  ;; 油を掛ける
-  (curry-4-3-add-oil)  
+  ;; 油を掛ける ;;特殊？
+  (curry-4-3-add-oil)
   )
 
 

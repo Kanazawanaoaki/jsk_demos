@@ -4,43 +4,44 @@
 
 (defun curry-2 () ;; 準備をする．  
   
-  ;; じゃがいもを掴む
+  ;; じゃがいもを掴む ;;pap
   (curry-2-1-grasp-potato)
   
-  ;; シンクの前に移動する
+  ;; シンクの前に移動する ;;move
   (curry-2-2-move-to-sink)
   
-  ;; じゃがいもを洗う
+  ;; じゃがいもを洗う ;;特殊
   (curry-2-3-wash-potato)
   
-  ;; キッチンの前に戻る
+  ;; キッチンの前に戻る ;;move
   (curry-2-4-move-to-kitchen)
   
-  ;; じゃがいもをまな板に置く
+  ;; じゃがいもをまな板に置く ;;pap
   (curry-2-5-put-potato-on-board)
   
-  ;; じゃがいもピーラーを掴む
+  ;; じゃがいもピーラーを掴む ;;pap
   (curry-2-6-grasp-potato-peeler)
   
-  ;; じゃがいもの皮剥き
+  ;; じゃがいもの皮剥き ;;特殊
   (curry-2-7-peel-potato)
   
-  ;; じゃがいもピーラーを置く，包丁を掴む
+  ;; じゃがいもピーラーを置く，包丁を掴む ;;pap
   (curry-2-8-replace-tool)
   
-  ;; じゃがいも切断
+  ;; じゃがいも切断 ;;特殊
   (curry-2-9-cut-potato)
 
-  ;; 包丁を置く
+  ;; 包丁を置く ;;pap
   (curry-2-10-put-knife)
   
-  ;; ボウル１に移す動作
+  ;; ボウル１に移す動作 ;;特殊
   (curry-2-11-transfer-to-bowl-1)  
   )
 
 
 ;; じゃがいもを掴む
 (defun curry-2-1-grasp-potato ()
+  
   )
 
 ;; シンクの前に移動する

@@ -4,31 +4,31 @@
 
 (defun curry-3 () ;; 準備をする．  
   
-  ;; たまねぎを掴む
+  ;; たまねぎを掴む ;;pap
   (curry-3-1-grasp-onion)
   
-  ;; シンクの前に移動する
+  ;; シンクの前に移動する ;;move
   (curry-3-2-move-to-sink)
   
-  ;; たまねぎを洗う
+  ;; たまねぎを洗う ;;特殊
   (curry-3-3-wash-onion)
   
-  ;; キッチンの前に戻る
+  ;; キッチンの前に戻る ;;move
   (curry-3-4-move-to-kitchen)
   
-  ;; たまねぎをまな板に置く
+  ;; たまねぎをまな板に置く ;;pap
   (curry-3-5-put-onion-on-board)
   
-  ;; 包丁を掴む
+  ;; 包丁を掴む ;;pap
   (curry-3-6-grasp-knife)
   
-  ;; たまねぎ切断
+  ;; たまねぎ切断 ;;特殊
   (curry-3-7-cut-onion)
   
-  ;; 包丁を置く
+  ;; 包丁を置く ;;pap
   (curry-3-8-put-knife)
   
-  ;; 鍋に移す動作
+  ;; 鍋に移す動作 ;;特殊
   (curry-3-9-transfer-to-pot)
   )
 
