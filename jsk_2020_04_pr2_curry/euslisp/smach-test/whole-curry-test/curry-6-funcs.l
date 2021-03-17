@@ -11,7 +11,7 @@
 
 (defun curry-6-1 ()
   (unix:sleep 1)
-  (warn "肉の鍋に移す ~%")
+  (warn "肉を鍋に移す ~%")
   )
 
 (defun curry-6-2 ()
