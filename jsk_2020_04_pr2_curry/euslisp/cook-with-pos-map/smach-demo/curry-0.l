@@ -4,7 +4,7 @@
 ;; (warn "please run (curry-0) or (curry-all)~%")
 
 (defun curry-0 () ;; 準備をする．  
-
+  
   ;; 棚の中にヘラとおたまをセットする ;;重要
   (curry-0-1-set-in-shelf)
   

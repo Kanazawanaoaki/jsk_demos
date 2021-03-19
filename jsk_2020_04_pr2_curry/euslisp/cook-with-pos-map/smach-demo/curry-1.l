@@ -44,6 +44,15 @@
   ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   ;; (update-pos)
   ;; (now-grasp-carrot-with-fail-detection)
+  
+  ;; このgraspをsmachでやってみる？
+
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
+  (update-pos)
+  (before-receive-larm) ;; 中間姿勢になる
+  (grasp-carrot-with-fail-detection) ;;失敗検知をしながら掴む
+  (after-grasp-vegs) ;; 持ち上げる
+  (vegs-carry-pose)   ;; 運ぶ姿勢になる  
   )
 
 ;; シンクの前に移動する ;;transition
