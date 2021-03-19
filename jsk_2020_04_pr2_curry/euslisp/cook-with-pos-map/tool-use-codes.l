@@ -1972,23 +1972,28 @@
 
 (defun now-set-in-shelf-with-dialogue-and-fail-detection ()
   ;; 棚の中におたまとヘラをセットする．
+
+  ;; 棚の扉を開ける
   (look-at-shelf)
-  
   (now-open-shelf-with-fail-detection)
-  
+
+  ;; ヘラをセットする
   (set-head)
   (receive-spatula-with-dialogue)
   (look-at-shelf)
   (put-spatula-0)
+
+  ;; おたまをセットする
   (set-head)
   (receive-ladle-with-dialogue)
   (look-at-shelf)
   (put-ladle-0)
   
+  ;; 棚の扉を閉める
   (close-shelf-set)
   (close-shelf)
   (after-close)
-
+  
   (set-head)
   )
 
@@ -2018,19 +2023,23 @@
   )
 
 (defun now-set-from-shelf-with-failure-detection ()
+  ;; 棚の扉を開ける
   (look-at-shelf)
-  
   (now-open-shelf-with-fail-detection)
-  
+
+  ;; ヘラをセットする
   (rarm-middle-pose)
   (grasp-spatula-0-with-fail-detection)
   (rarm-middle-pose)
   (put-spatula-1)
+
+  ;; おたまをセットする
   (rarm-middle-pose)
   (grasp-ladle-0-with-fail-detection)
   (rarm-middle-pose)
   (put-ladle-1)
-  
+
+  ;; 棚の扉を閉める
   (close-shelf-set)
   (close-shelf)
   (after-close)
