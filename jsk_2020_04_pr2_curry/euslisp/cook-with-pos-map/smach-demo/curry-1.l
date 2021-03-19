@@ -46,7 +46,7 @@
   ;; (now-grasp-carrot-with-fail-detection)
   
   ;; このgraspをsmachでやってみる？
-
+  
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/grasp-vegs-codes.l")
   (update-pos)
   (before-receive-larm) ;; 中間姿勢になる
@@ -63,7 +63,7 @@
 ;; 人参を洗う
 (defun curry-1-3-wash-carrot ()
   ;;; TODO 大事 野菜をせっと，水道操作，野菜を動かす　などの複数の手順が必要である．
-
+  
   ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
   ;; (update-pos)
   ;; (now-wash-veg)
