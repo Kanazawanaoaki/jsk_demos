@@ -5,35 +5,35 @@
 (defun curry-5 () ;; 準備をする．  
 
   ;; ヘラを掴む
-  ;; TODO これを追加する必要がある．
+  (curry-5-1-grasp-spatula)
   
   ;; 火を着ける
-  (curry-5-1-set-fire)
+  (curry-5-2-set-fire)
   
   ;; 炒める
-  (curry-5-2-stir-fry)
+  (curry-5-3-stir-fry)
   
   ;; 火を止める
-  (curry-5-3-turn-off-fire)  
+  (curry-5-4-turn-off-fire)  
   )
 
 
 ;; ヘラを掴む
-;; (defun grasp-spatula ()
+(defun curry-5-1-grasp-spatula ()
   
-;;   )
+  )
 
 ;; 火を着ける
-(defun curry-5-1-set-fire ()
+(defun curry-5-2-set-fire ()
   ;; 火を着ける?　TODO ここをsmachでさらに失敗こみで書く．
   
   )
 
 ;; 炒める
-(defun curry-5-2-stir-fry ()
+(defun curry-5-3-stir-fry ()
   )
 
 ;; 火を止める
-(defun curry-5-3-turn-off-fire ()
+(defun curry-5-4-turn-off-fire ()
   )
 

@@ -11,15 +11,20 @@
 
 (defun curry-5-1 ()
   (unix:sleep 1)
-  (warn "火を着ける ~%")
+  (warn "ヘラを掴む ~%")
   )
 
 (defun curry-5-2 ()
   (unix:sleep 1)
-  (warn "炒める ~%")
+  (warn "火を着ける ~%")
   )
 
 (defun curry-5-3 ()
+  (unix:sleep 1)
+  (warn "炒める ~%")
+  )
+
+(defun curry-5-4 ()
   (unix:sleep 1)
   (warn "火を止める ~%")
   )

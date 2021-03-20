@@ -13,16 +13,18 @@
           (make-state-machine
            ;; define graph,  list of (<from-node> <transition> <to-node>)
            ;; if <transition> is ->, it corresponds when node returns t and !-> for nil.
-           '((:init :success :set-fire)
+           '((:init :success :grasp-spatula)
+             (:grasp-spatula :success :set-fire)
              (:set-fire :success :stir-fry)
              (:stir-fry :success :turn-off-fire)
              (:turn-off-fire :success :done)
              )
            ;; define function map
            '((:init '(lambda (&rest args) (init) :success))
-             (:set-fire '(lambda (&rest args) (curry-5-1) :success))
-             (:stir-fry '(lambda (&rest args) (curry-5-2) :success))
-             (:turn-off-fire '(lambda (&rest args) (curry-5-3) :success))
+             (:grasp-spatula '(lambda (&rest args) (curry-5-1) :success))
+             (:set-fire '(lambda (&rest args) (curry-5-2) :success))
+             (:stir-fry '(lambda (&rest args) (curry-5-3) :success))
+             (:turn-off-fire '(lambda (&rest args) (curry-5-4) :success))
              )
            ;; initial state
            '(:init)
