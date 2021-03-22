@@ -126,6 +126,7 @@
   (warn "please run (curry-1) ~%")
   )
 
+(defun curry-1 () ;; 人参の下ごしらえ
   (send *ri* :speak-jp "人参の調理を開始します")
   
   ;; 人参を掴む
@@ -1132,32 +1133,57 @@
 
 (defun curry-8-5 ()
   (warn "火を消す ~%")
-  
+  ;; 火を止める
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
+  (update-pos)
+  (push-knob)
   )
 
 ;; curry-9
 (defun curry-9-1 ()
-  (unix:usleep *s-time*)
   (warn "カレールーを鍋に入れる ~%")
+  ;; ボウル３を鍋に移す
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
+  (update-pos)
+  ;; (grasp-spatula)
+  (grasp-spatula-with-fail-detection)
+  (now-transfer-3-model)
   )
 
 (defun curry-9-2 ()
-  (unix:usleep *s-time*)
   (warn "ヘラを置く ~%")
+  ;; ヘラを置く
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
+  (update-pos)
+  (put-spatula-1)
   )
 
 (defun curry-9-3 ()
-  (unix:usleep *s-time*)
   (warn "おたまを掴んで火を着ける ~%")
+  ;; おたまを掴む，コンロ操作，おたまで混ぜる． ;; TODO 少し混ぜながら良さそうか聞いて終わる．
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
+  (update-pos)
+  ;; (grasp-ladle) ;; おたまを掴む 
+  (grasp-ladle-with-fail-detection)
+  ;; (now-start-ih :deg -30) ;; 弱火にする
+  (now-start-ih-with-fail-detection :deg -30) ;; 弱火にする
   )
 
 (defun curry-9-4 ()
-  (unix:usleep *s-time*)
   (warn "煮込む ~%")
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
+  (update-pos)
+  (grasp-pot-from-below-model-with-fail-detection)
+  (now-ladle-mix-rotate-loop-with-dialogue)
   )
 
 (defun curry-9-5 ()
-  (unix:usleep *s-time*)
   (warn "火を消す ~%")
+  ;; 火を止める
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
+  (update-pos)
+  (after-ladle-mix)
+  (push-knob)
+  (put-ladle-1)  
   )
 
