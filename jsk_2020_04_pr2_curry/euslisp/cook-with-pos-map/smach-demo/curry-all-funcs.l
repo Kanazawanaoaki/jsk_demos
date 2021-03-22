@@ -568,6 +568,11 @@
 
 
 ;; curry-0
+(defun curry-0-0 ()
+  (warn "curry-0-0 準備のinit! ~%")
+  (send *ri* :speak-jp "準備を開始します")
+  )
+
 (defun curry-0-1 ()
   (warn "curry-0-1 棚の中にヘラとおたまをセットする ~%")
   ;; 棚の中にヘラとおたまをセットする
@@ -644,8 +649,20 @@
   (reset-rarm)
   )
 
+(defun curry-0-end ()
+  (warn "curry-0-end 準備のend! ~%")
+  (send *ri* :speak-jp "準備を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+  )
+
 
 ;; curry-1
+(defun curry-1-0 ()
+  (warn "curry-1-0 人参の下ごしらえのinit! ~%")
+  (send *ri* :speak-jp "人参の下ごしらえを開始します")
+  )
+
 (defun curry-1-1 ()
   (warn "人参を掴む ~%")
   ;; 人参を掴む
@@ -740,8 +757,19 @@
   (now-cutting-board-transfer-bowl-1-all-with-fail-detection)
   )
 
+(defun curry-1-end ()
+  (warn "curry-1-end 人参の調理のend! ~%")
+  (send *ri* :speak-jp "人参の調理を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+  )
 
 ;; curry-2
+(defun curry-2-0 ()
+  (warn "curry-2-0 じゃがいもの下ごしらえのinit! ~%")
+  (send *ri* :speak-jp "じゃがいもの下ごしらえを開始します")
+  )
+
 (defun curry-2-1 ()
   (warn "じゃがいもを掴む ~%")
   ;; じゃがいもを掴む
@@ -839,7 +867,20 @@
   (now-cutting-board-transfer-bowl-1-all-with-fail-detection)
   )
 
+(defun curry-2-end ()
+  (warn "curry-2-end じゃがいもの調理のend! ~%")
+  (send *ri* :speak-jp "じゃがいもの調理を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+  )
+
+
 ;; curry-3
+(defun curry-3-0 ()
+  (warn "curry-3-0 たまねぎの下ごしらえのinit! ~%")
+  (send *ri* :speak-jp "たまねぎの下ごしらえを開始します")
+  )
+
 (defun curry-3-1 ()
   (warn "たまねぎを掴む ~%")
   ;; たまねぎを掴む？？
@@ -918,7 +959,20 @@
   (now-cutting-board-transfer-after)
   )
 
+(defun curry-3-end ()
+  (warn "curry-3-end たまねぎの調理のend! ~%")
+  (send *ri* :speak-jp "たまねぎの調理を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+  )
+
+
 ;; curry-4
+(defun curry-4-0 ()
+  (warn "curry-4-0 炒める調理の準備のinit! ~%")
+  (send *ri* :speak-jp "炒める調理の準備を開始します")
+  )
+
 (defun curry-4-1 ()
   (warn "ヘラとおたまを棚から取り出す ~%")
   ;; ヘラとおたまを棚から取り出す 
@@ -944,7 +998,19 @@
   (now-add-oil-with-fail-detection)
   )
 
+(defun curry-4-end ()
+  (warn "curry-4-end 炒める調理の準備のend! ~%")
+  (send *ri* :speak-jp "炒める調理の準備を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+  )
+
 ;; curry-5
+(defun curry-5-0 ()
+  (warn "curry-5-0 たまねぎを炒める調理のinit! ~%")
+  (send *ri* :speak-jp "たまねぎを炒める調理を開始します")
+  )
+
 (defun curry-5-1 ()
   (warn "ヘラを掴む ~%")
   ;; ヘラを掴んで置く
@@ -981,7 +1047,19 @@
   (set-pose-3)
   )
 
+(defun curry-5-end ()
+  (warn "curry-5-end たまねぎを炒める調理のend! ~%")
+  (send *ri* :speak-jp "たまねぎを炒める調理を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+  )
+
 ;; curry-6
+(defun curry-6-0 ()
+  (warn "curry-6-0 肉を炒める調理のinit! ~%")
+  (send *ri* :speak-jp "肉を炒める調理を開始します")
+  )
+
 (defun curry-6-1 ()
   (warn "肉を鍋に移す ~%")
   ;; ボウル２を鍋に移す ヘラは掴んでいる前提
@@ -1028,7 +1106,19 @@
   (reset-rarm)
   )
 
+(defun curry-6-end ()
+  (warn "curry-6-end 肉を炒める調理のend! ~%")
+  (send *ri* :speak-jp "肉を炒める調理を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+  )
+
 ;; curry-7
+(defun curry-7-0 ()
+  (warn "curry-7-0 煮込む調理の準備のinit! ~%")
+  (send *ri* :speak-jp "煮込む調理の準備を開始します")
+  )
+
 (defun curry-7-1 ()
   (warn "キッチン前に移動する ~%")
   ;; キッチン前に移動する
@@ -1102,7 +1192,19 @@
   (move-to-stove-with-speech-after)
   )
 
+(defun curry-7-end ()
+  (warn "curry-7-end 煮込む調理の準備のend! ~%")
+  (send *ri* :speak-jp "煮込む調理の準備を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+  )
+
 ;; curry-8
+(defun curry-8-0 ()
+  (warn "curry-8-0 煮込む調理のinit! ~%")
+  (send *ri* :speak-jp "煮込む調理を開始します")
+  )
+
 (defun curry-8-1 ()
   (warn "火を着ける ~%")
   ;; コンロ操作，沸騰しているか見る
@@ -1139,7 +1241,19 @@
   (push-knob)
   )
 
+(defun curry-8-end ()
+  (warn "curry-8-end 煮込む調理のend! ~%")
+  (send *ri* :speak-jp "煮込む調理を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+  )
+
 ;; curry-9
+(defun curry-9-0 ()
+  (warn "curry-9-0 カレールーを入れる工程のinit! ~%")
+  (send *ri* :speak-jp "カレールーを入れる工程を開始します")
+  )
+
 (defun curry-9-1 ()
   (warn "カレールーを鍋に入れる ~%")
   ;; ボウル３を鍋に移す
@@ -1187,3 +1301,9 @@
   (put-ladle-1)  
   )
 
+(defun curry-9-end ()
+  (warn "curry-9-end カレールーを入れる工程のend! ~%")
+  (send *ri* :speak-jp "カレールーを入れる工程を行いました．確認して合図をして下さい")
+  (curry-ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+  )
