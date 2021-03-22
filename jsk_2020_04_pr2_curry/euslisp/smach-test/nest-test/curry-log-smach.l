@@ -11,6 +11,13 @@
         (sm-sub-0 (instance state-machine :init))        
         (sm-sub-1 (instance state-machine :init))
         (sm-sub-2 (instance state-machine :init))
+        (sm-sub-3 (instance state-machine :init))
+        (sm-sub-4 (instance state-machine :init))
+        (sm-sub-5 (instance state-machine :init))
+        (sm-sub-6 (instance state-machine :init))
+        (sm-sub-7 (instance state-machine :init))
+        (sm-sub-8 (instance state-machine :init))
+        (sm-sub-9 (instance state-machine :init))
         )
     ;; state instance can include other state-machine like function
     (send sm-top :add-node (instance state :init "PREPARATION" sm-sub-0))
@@ -19,8 +26,10 @@
     ;; (send sm-top :add-node (instance state :init "CARROT-PREPARATION" '(lambda (&rest args) (curry-1) :success)))
     (send sm-top :add-node (instance state :init "POTATO-PREPARATION" sm-sub-2))
     ;; (send sm-top :add-node (instance state :init "POTATO-PREPARATION" '(lambda (&rest args) (curry-2) :success)))
-    (send sm-top :add-node (instance state :init "ONION-PREPARATION" '(lambda (&rest args) (curry-3) :success)))
-    (send sm-top :add-node (instance state :init "FRY-PREPARATION" '(lambda (&rest args) (curry-4) :success)))
+    (send sm-top :add-node (instance state :init "ONION-PREPARATION" sm-sub-3))
+    ;; (send sm-top :add-node (instance state :init "ONION-PREPARATION" '(lambda (&rest args) (curry-3) :success)))
+    (send sm-top :add-node (instance state :init "FRY-PREPARATION" sm-sub-4))
+    ;; (send sm-top :add-node (instance state :init "FRY-PREPARATION" '(lambda (&rest args) (curry-4) :success)))
     (send sm-top :add-node (instance state :init "FRY-ONION" '(lambda (&rest args) (curry-5) :success)))
     (send sm-top :add-node (instance state :init "FRY-MEAT" '(lambda (&rest args) (curry-6) :success)))
     (send sm-top :add-node (instance state :init "STEW-PREPARATION" '(lambda (&rest args) (curry-7) :success)))
@@ -40,6 +49,7 @@
     (send sm-top :add-transition "CURRY-ROUX" :done :success)
     
     ;; node instance can be args of :add-node, :start-state, :add-transition
+    ;; sm-sub-0 ;;curry-0 preparation
     (let ((set-in-shelf-node (instance state :init "SET-IN-SHELF" '(lambda (&rest args) (curry-0-1) :success)))
           (set-bowl-1 (instance state :init "SET-BOWL-1" '(lambda (&rest args) (curry-0-2) :success)))
           (set-vegs (instance state :init "SET-VEGS" '(lambda (&rest args) (curry-0-3) :success)))
@@ -74,6 +84,7 @@
       (send sm-sub-0 :add-transition set-tools-on-table :success :success)      
       )
     
+    ;; sm-sub-1 ;;curry-1 carrot-preparation
     (let ((grasp-carrot-node (instance state :init "GRASP-CARROT" '(lambda (&rest args) (curry-1-1) :success)))
           (move-to-sink-node (instance state :init "MOVE-TO-SINK" '(lambda (&rest args) (curry-1-2) :success)))
           (wash-carrot-node (instance state :init "WASH-CARROT" '(lambda (&rest args) (curry-1-3) :success)))
@@ -114,6 +125,7 @@
       (send sm-sub-1 :add-transition transfer-to-bowl-1-node :success :success)
       )
 
+    ;; sm-sub-2 ;;curry-2 potato-preparation
     (let ((grasp-potato-node (instance state :init "GRASP-POTATO" '(lambda (&rest args) (curry-2-1) :success)))
           (move-to-sink-node (instance state :init "MOVE-TO-SINK" '(lambda (&rest args) (curry-2-2) :success)))
           (wash-potato-node (instance state :init "WASH-POTATO" '(lambda (&rest args) (curry-2-3) :success)))
@@ -153,6 +165,59 @@
       (send sm-sub-2 :add-transition put-knife-node transfer-to-bowl-1-node :success)
       (send sm-sub-2 :add-transition transfer-to-bowl-1-node :success :success)      
       )
+    
+    ;; sm-sub-3 ;;curry-3 onion-preparation
+    (let ((grasp-onion-node (instance state :init "GRASP-ONION" '(lambda (&rest args) (curry-3-1) :success)))
+          (move-to-sink-node (instance state :init "MOVE-TO-SINK" '(lambda (&rest args) (curry-3-2) :success)))
+          (wash-onion-node (instance state :init "WASH-ONION" '(lambda (&rest args) (curry-3-3) :success)))
+          (move-to-kitchen-node (instance state :init "MOVE-TO-KITCHEN" '(lambda (&rest args) (curry-3-4) :success)))
+          (put-onion-on-board-node (instance state :init "PUT-ONION-ON-BOARD" '(lambda (&rest args) (curry-3-5) :success)))
+          (grasp-knife-node (instance state :init "GRASP-KNIFE" '(lambda (&rest args) (curry-3-6) :success)))
+          (cut-onion-node (instance state :init "CUT-ONION" '(lambda (&rest args) (curry-3-7) :success)))
+          (put-knife-node (instance state :init "PUT-KNIFE" '(lambda (&rest args) (curry-3-8) :success)))
+          (transfer-to-pot-node (instance state :init "TRANSFER-TO-POT" '(lambda (&rest args) (curry-3-9) :success)))
+          )
+      (send sm-sub-3 :add-node grasp-onion-node)
+      (send sm-sub-3 :add-node move-to-sink-node)
+      (send sm-sub-3 :add-node wash-onion-node)
+      (send sm-sub-3 :add-node move-to-kitchen-node)
+      (send sm-sub-3 :add-node put-onion-on-board-node)
+      (send sm-sub-3 :add-node grasp-knife-node)
+      (send sm-sub-3 :add-node cut-onion-node)
+      (send sm-sub-3 :add-node put-knife-node)
+      (send sm-sub-3 :add-node transfer-to-pot-node)
+      
+      (send sm-sub-3 :goal-state :success)
+      
+      (send sm-sub-3 :start-state grasp-onion-node)
+      (send sm-sub-3 :add-transition grasp-onion-node move-to-sink-node :success)
+      (send sm-sub-3 :add-transition move-to-sink-node wash-onion-node :success)
+      (send sm-sub-3 :add-transition wash-onion-node move-to-kitchen-node :success)
+      (send sm-sub-3 :add-transition move-to-kitchen-node put-onion-on-board-node :success)
+      (send sm-sub-3 :add-transition put-onion-on-board-node grasp-knife-node :success)
+      (send sm-sub-3 :add-transition grasp-knife-node cut-onion-node :success)
+      (send sm-sub-3 :add-transition cut-onion-node put-knife-node :success)
+      (send sm-sub-3 :add-transition put-knife-node transfer-to-pot-node :success)
+      (send sm-sub-3 :add-transition transfer-to-pot-node :success :success)      
+      )
+
+    ;; sm-sub-4 ;;curry-4 fry-preparation
+    (let ((set-from-shelf-node (instance state :init "SET-FROM-SHELF" '(lambda (&rest args) (curry-4-1) :success)))
+          (move-to-stove-node (instance state :init "MOVE-TO-STOVE" '(lambda (&rest args) (curry-4-2) :success)))
+          (add-oil-node (instance state :init "ADD-OIL" '(lambda (&rest args) (curry-4-3) :success)))
+          )
+      (send sm-sub-4 :add-node set-from-shelf-node)
+      (send sm-sub-4 :add-node move-to-stove-node)
+      (send sm-sub-4 :add-node add-oil-node)
+      
+      (send sm-sub-4 :goal-state :success)
+      
+      (send sm-sub-4 :start-state set-from-shelf-node)
+      (send sm-sub-4 :add-transition set-from-shelf-node move-to-stove-node :success)
+      (send sm-sub-4 :add-transition move-to-stove-node add-oil-node :success)
+      (send sm-sub-4 :add-transition add-oil-node :success :success)
+      )
+    
     
     sm-top))
 

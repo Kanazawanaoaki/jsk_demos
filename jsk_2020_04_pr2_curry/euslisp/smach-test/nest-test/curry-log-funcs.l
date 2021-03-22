@@ -241,3 +241,64 @@
   (warn "ボウル１に移す動作 ~%")
   )
 
+;; curry-3
+(defun curry-3-1 ()
+  (unix:sleep 1)
+  (warn "たまねぎを掴む ~%")
+  )
+
+(defun curry-3-2 ()
+  (unix:sleep 1)
+  (warn "シンクの前に移動する ~%")
+  )
+
+(defun curry-3-3 ()
+  (unix:sleep 1)
+  (warn "たまねぎを洗う ~%")
+  )
+
+(defun curry-3-4 ()
+  (unix:sleep 1)
+  (warn "キッチンの前に戻る ~%")
+  )
+
+(defun curry-3-5 ()
+  (unix:sleep 1)
+  (warn "たまねぎをまな板に置く ~%")
+  )
+
+(defun curry-3-6 ()
+  (unix:sleep 1)
+  (warn "包丁を掴む ~%")
+  )
+
+(defun curry-3-7 ()
+  (unix:sleep 1)
+  (warn "たまねぎ切断 ~%")
+  )
+
+(defun curry-3-8 ()
+  (unix:sleep 1)
+  (warn "包丁を置く ~%")
+  )
+
+(defun curry-3-9 ()
+  (unix:sleep 1)
+  (warn "鍋に移す動作 ~%")
+  )
+
+;; curry-4
+(defun curry-4-1 ()
+  (unix:sleep 1)
+  (warn "ヘラとおたまを棚から取り出す ~%")
+  )
+
+(defun curry-4-2 ()
+  (unix:sleep 1)
+  (warn "コンロの前まで移動する ~%")
+  )
+
+(defun curry-4-3 ()
+  (unix:sleep 1)
+  (warn "油を掛ける ~%")
+  )
