@@ -364,6 +364,7 @@
         (send sm-sub-7-4 :add-transition move-to-kitchen-node pour-water-node :success)
         (send sm-sub-7-4 :add-transition pour-water-node check-water-state-node :success)
         (send sm-sub-7-4 :add-transition check-water-state-node :success :success)
+        (send sm-sub-7-4 :add-transition check-water-state-node move-to-sink-node :fail)
         )
       )
     
