@@ -274,12 +274,14 @@
           (grasp-mcup-node (instance state :init "GRASP-MCUP" '(lambda (&rest args) (curry-7-3) :success)))
           (fetch-water-node (instance state :init "FETCH-WATER" '(lambda (&rest args) (curry-7-4) :success)))
           (put-mcup-node (instance state :init "PUT-MCUP" '(lambda (&rest args) (curry-7-5) :success)))
+          (move-to-stove-node (instance state :init "MOVE-TO-STOVE" '(lambda (&rest args) (curry-7-6) :success)))
           )
       (send sm-sub-7 :add-node move-to-kitchen-node)
       (send sm-sub-7 :add-node transfer-to-pot-node)
       (send sm-sub-7 :add-node grasp-mcup-node)
       (send sm-sub-7 :add-node fetch-water-node)
       (send sm-sub-7 :add-node put-mcup-node)
+      (send sm-sub-7 :add-node move-to-stove-node)
       
       (send sm-sub-7 :goal-state :success)
       
@@ -288,7 +290,8 @@
       (send sm-sub-7 :add-transition transfer-to-pot-node grasp-mcup-node :success)
       (send sm-sub-7 :add-transition grasp-mcup-node fetch-water-node :success)
       (send sm-sub-7 :add-transition fetch-water-node put-mcup-node :success)
-      (send sm-sub-7 :add-transition put-mcup-node :success :success)
+      (send sm-sub-7 :add-transition put-mcup-node move-to-stove-node :success)
+      (send sm-sub-7 :add-transition move-to-stove-node :success :success)
       )
     
     ;; sm-sub-8 ;;curry-8 stew

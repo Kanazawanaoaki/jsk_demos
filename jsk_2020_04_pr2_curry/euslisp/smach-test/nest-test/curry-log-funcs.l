@@ -380,6 +380,11 @@
   (warn "計量カップを置く ~%")
   )
 
+(defun curry-7-6 ()
+  (unix:usleep *s-time*)
+  (warn "コンロの前まで移動する ~%")
+  )
+
 
 ;; curry-8
 (defun curry-8-1 ()
