@@ -1175,6 +1175,51 @@
          )
   )
 
+
+(defun curry-7-4-1 ()
+  (warn "水道まで移動する ~%")
+  (setq *fetch-flag* nil)
+  ;; (go-to-sink)
+  (move-to-sink-ri-direct)
+  )
+
+(defun curry-7-4-2 ()
+  (warn "水を汲む ~%")
+  ;; 水を汲む
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
+  (update-pos)
+  ;; (now-fetch-water :sleep-time 1)
+  (now-fetch-water-with-fail-detection :sleep-time 1)
+  )
+
+(defun curry-7-4-3 ()
+  (warn "キッチンに移動する ~%")
+  ;; (go-to-kitchen-from-sink)
+  (go-to-kitchen-from-sink-without-map)
+  )
+
+(defun curry-7-4-4 ()
+  (warn "水を注ぐ ~%")
+  ;; 水を注ぐ
+  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
+  (update-pos)
+  (now-only-pour-water :sleep-time 4)
+  )
+
+(defun curry-7-4-5 ()
+  (warn "水汲みの状態を確認する ~%")
+  ;; 水汲みの状態を確認する
+  (look-at-pot) 
+  (send *ri* :speak-jp "まだ水が必要ですか？")
+  (curry-dialogue)
+  (unless (equal *data* '("はい"))
+    (setq *fetch-flag* t)
+    )
+  )
+)
+
+
+
 (defun curry-7-5 ()
   (warn "計量カップを置く ~%")
   ;; 計量カップを置く
