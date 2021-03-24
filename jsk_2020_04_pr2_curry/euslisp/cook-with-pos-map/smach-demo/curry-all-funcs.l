@@ -616,7 +616,7 @@
 
 (defun curry-0-6 ()
   (warn "curry-0-6 ボウル２・３をセットする ~%")
-  ;; ボウル２・３をセットする
+  ;; ボウル２・３をセットする 油ディスペンサーも
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-stove-codes.l")
   (update-pos)
   (now-set-2-model-with-dialogue)
