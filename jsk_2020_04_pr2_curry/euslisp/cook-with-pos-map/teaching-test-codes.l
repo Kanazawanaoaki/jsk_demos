@@ -41,11 +41,12 @@
 
 
 (defun replay-test ()
-  (let (l-len (length *avs*))
-
+  (let ((l-len (length *avs*)))
+    
     ;; tms のリストを作成
+    (print l-len)
     (dotimes (i l-len)
-      (setq *tms* (append *tms* 100))
+      (setq *tms* (append *tms* (list 100)))
       )
 
     ;; 初期姿勢のセット

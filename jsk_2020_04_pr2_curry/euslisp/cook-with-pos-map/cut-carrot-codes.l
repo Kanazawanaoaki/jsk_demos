@@ -195,6 +195,14 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun look-at-left-hand ()
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :head :look-at (send (send (send *pr2* :larm :end-coords) :copy-worldcoords) :worldpos))
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
+  )
+
 
 ;; cut funcs
 (defun set-carrot-cut (&rest args &key (w 160) (l 40) (h 40) &allow-other-keys)
