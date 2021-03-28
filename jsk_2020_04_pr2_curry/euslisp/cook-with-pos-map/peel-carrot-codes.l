@@ -564,6 +564,12 @@
   (warn "please run (peel-test) or (put-carrot) ~%")  
   )
 
+(defun now-set ()
+  (recognition)
+  (grasp-carrot-peel)
+  (put-carrot)
+  (reset-larm)
+  )
 
 ;; rotate funcs
 (defun grasp-carrot-rotate ()

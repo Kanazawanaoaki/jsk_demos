@@ -872,7 +872,8 @@
   (send *ri* :wait-interpolation)
 
   ;; 室岡さんの切るやつ
-  (send *pkki* :cut-once *arrow* *height* :controller :nn)
+  ;; (send *pkki* :cut-once *arrow* *height* :controller :nn)
+  (send *pkki* :cut-once *arrow* (- (elt (send (send *knife* :attention-attention0) :worldpos) 2) 30880) :controller :nn)
   
   ;; (setq avs (list))
   ;; (setq tms (list))
@@ -912,6 +913,76 @@
   (warn "or please run (set-cut-2) ~%")
   )
 
+
+;; テストする為のプログラム
+(defun cut-m-set ()
+  (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 100) :world)
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis nil
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+
+  ;; 少し上に包丁を
+  (send *arrow* :newcoords (send *cut-point-1* :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 (* *height* 1)))
+  
+  ;;調整
+  ;; (send *arrow* :translate #f(0 10 0))
+  (send *arrow* :translate (float-vector 0 adj 0))
+  
+  ;; (look-at-arrow)
+  ;; (rossrv-test)
+  
+  ;; 少し上にするために
+  (setq offset 50)
+  
+  (send *arrow* :translate (float-vector 0 0 offset))  
+  (send *pr2* :rarm :inverse-kinematics
+        *arrow*
+        :move-target (car (send *knife* :attention))
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (send *arrow* :translate (float-vector 0 0 (* offset -0.5)))  
+  (send *pr2* :rarm :inverse-kinematics
+        *arrow*
+        :move-target (car (send *knife* :attention))
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *arrow* :translate (float-vector 0 0 (* offset -0.5)))  
+  (send *pr2* :rarm :inverse-kinematics
+        *arrow*
+        :move-target (car (send *knife* :attention))
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  (warn "please run (cut-m-set) or (cut-m-2) ~%")
+  )
+
+(defun cut-m ()
+  ;; 室岡さんの切るやつ
+  (send *pkki* :cut-once *arrow* *height* :controller :nn)
+  )
+
+(defun cut-m-2 ()
+  ;; 室岡さんの切るやつ
+  ;; (send *pkki* :cut-once *arrow* (- (elt (send *arrow* :worldpos) 2) 30870) :controller :nn)
+  (send *pkki* :cut-once *arrow* (- (elt (send (send *knife* :attention-attention0) :worldpos) 2) 30880) :controller :nn)
+  )
 
 (defun continue-cut (num)
   (setq interval 10)
