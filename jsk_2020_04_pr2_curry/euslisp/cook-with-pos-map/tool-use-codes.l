@@ -2072,6 +2072,15 @@
   (put-ladle-a)
   )
 
+(defun now-set-ladle-a-with-dialogue ()
+  ;; おたまを受け取ってセットする
+  (up-rarm)
+  (receive-ladle-with-dialogue)
+  (put-ladle-a)
+  (reset-rarm)
+  )
+
+
 (defun now-set-tools-a ()
   ;; ヘラとおたまを受け取ってセットする
   (up-rarm)
