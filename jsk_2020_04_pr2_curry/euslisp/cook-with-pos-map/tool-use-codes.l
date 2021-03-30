@@ -2100,3 +2100,15 @@
   (put-ladle-a)
   (reset-rarm)
   )
+
+
+;; ;; tmp
+;; (warn "please run (tmp-test-1) ~%")
+
+;; (defun tmp-test-1 ()
+;;   (set-pose)
+;;   (set-spatula)
+;;   (put-spatula-0)
+;;   )
+
+
