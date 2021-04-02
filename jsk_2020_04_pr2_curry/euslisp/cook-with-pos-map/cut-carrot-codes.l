@@ -873,7 +873,8 @@
 
   ;; 室岡さんの切るやつ
   ;; (send *pkki* :cut-once *arrow* *height* :controller :nn)
-  (send *pkki* :cut-once *arrow* (- (elt (send (send *knife* :attention-attention0) :worldpos) 2) 30880) :controller :nn)
+  ;; (send *pkki* :cut-once *arrow* (- (elt (send (send *knife* :attention-attention0) :worldpos) 2) 30880) :controller :nn)
+  (send *pkki* :cut-once *arrow* 30892 :controller :nn)
   
   ;; (setq avs (list))
   ;; (setq tms (list))
