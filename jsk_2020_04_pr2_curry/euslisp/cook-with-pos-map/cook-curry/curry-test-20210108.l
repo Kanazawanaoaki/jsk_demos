@@ -596,21 +596,32 @@
 
 
 (defun tmp-curry ()
-  ;; おたまを掴む，コンロ操作，おたまで混ぜる． ;; TODO 少し混ぜながら良さそうか聞いて終わる．
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
-  (update-pos)
-  (set-ladle)
-  (now-ladle-mix-rotate-loop-with-dialogue)
-  
-  ;; 火を止める
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/ih-use-stove-codes.l")
-  (update-pos)
-  (after-ladle-mix)
-  (push-knob)
-  (put-ladle-1)  
-  
-  ;; ここでひとまず完成にする！！！　今回は！！ ;; TODO 対話を入れる
-  (send *ri* :speak-jp "カレールーを入れる工程を行いました．確認して合図をして下さい")
-  (curry-ok-wait)
-  (send *ri* :speak-jp "カレーが完成しました")
+  ;; 水を汲んで注ぐのを繰り返す
+  (setq *fetch-flag* nil)
+  (until *fetch-flag*
+         ;; (go-to-sink)
+         (move-to-sink-ri-direct)
+	 
+         ;; 水を汲む
+         (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
+         (update-pos)
+         ;; (now-fetch-water :sleep-time 1)
+         (now-fetch-water-with-fail-detection :sleep-time 1)
+         
+         ;; (go-to-kitchen-from-sink)
+         (go-to-kitchen-from-sink-without-map)
+         
+         ;; 水を注ぐ
+         (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
+         (update-pos)
+         (now-only-pour-water :sleep-time 4)
+         
+         ;; 水汲みの状態を確認する
+         (look-at-pot) 
+         (send *ri* :speak-jp "まだ水が必要ですか？")
+         (curry-dialogue)
+         (unless (equal *data* '("はい"))
+           (setq *fetch-flag* t)
+           )
+         )
   )
