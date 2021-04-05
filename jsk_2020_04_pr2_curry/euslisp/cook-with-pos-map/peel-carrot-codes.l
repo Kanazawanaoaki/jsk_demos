@@ -94,8 +94,8 @@
   
   (objects (list *carrot* *pr2* *cutting-board* *scene*))
   (send *irtviewer* :look-all
-    (geo::make-bounding-box 
-     (flatten (send-all (send *pr2* :bodies) :vertices))))
+	(geo::make-bounding-box 
+	 (flatten (send-all (send *pr2* :bodies) :vertices))))
   
   (setq interval *height*)
   
@@ -107,25 +107,25 @@
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 250) :world)
   (send *pr2* :larm :inverse-kinematics
-    (send *arrow* :copy-worldcoords)
-    :rotation-axis nil
-    :debug-view *debug-flag*)
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis nil
+	:debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   ;;少し前に
   (send *arrow* :newcoords (make-coords :pos (send (send (send *pr2* :larm :end-coords) :copy-worldcoords) :worldpos)))
   (send *arrow* :translate #f(-200 50 50) :world)
   (send *arrow* :rotate (deg2rad 90) :z :world)
   (send *pr2* :larm :inverse-kinematics
-      (send *arrow* :copy-worldcoords)
-      :rotation-axis t
-      :debug-view *debug-flag*)
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   ;; 人参の掴む所に
   (send *arrow* :newcoords (send *carrot* :copy-worldcoords))
   (send *arrow* :translate #f(-30 0 0))
@@ -138,18 +138,18 @@
   (send *ri* :stop-grasp :larm :wait t)
   (send *arrow* :translate #f(0 -100 100) :world)
   (send *pr2* :larm :inverse-kinematics
-      (send *arrow* :copy-worldcoords)
-    :rotation-axis t
-    :debug-view *debug-flag*)
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
   (send *arrow* :translate #f(0 100 -100) :world)
   (send *pr2* :larm :inverse-kinematics
-      (send *arrow* :copy-worldcoords)
-    :rotation-axis t
-    :debug-view *debug-flag*)
+	(send *arrow* :copy-worldcoords)
+	:rotation-axis t
+	:debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
@@ -175,7 +175,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   ;; 人参を位置に．
   (send *pr2* :larm :inverse-kinematics
 	(send *p-arrow* :copy-worldcoords)
@@ -193,11 +193,11 @@
   (send *peeler* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *peeler* :rotate (deg2rad 90) :x)
   (send *pr2* :rarm :end-coords :assoc *peeler*)
-
+  
   (objects (list *carrot* *pr2* *cutting-board* *scene* *peeler*))
   (send *irtviewer* :look-all
-    (geo::make-bounding-box 
-     (flatten (send-all (send *pr2* :bodies) :vertices))))
+	(geo::make-bounding-box 
+	 (flatten (send-all (send *pr2* :bodies) :vertices))))
   
   (warn "please run (peel-test) ~%")
   )
@@ -233,7 +233,7 @@
 
 (defun peel-test-c-1 ()
   (peel-test *peeler*)
-  (rossrv-test)
+  ;; (rossrv-test) :: tmp-imadake
   (warn "please run  (set-carrot-1) ~%")  
   )
 
@@ -255,7 +255,7 @@
 
 (defun peel-test-c-2 ()
   (peel-test *peeler*)
-  (rossrv-test)
+  ;; (rossrv-test) :: tmp-imadake
   (warn "please run  (set-carrot-3) ~%")  
   )
 
@@ -277,7 +277,7 @@
 
 (defun peel-test-c-3 ()
   (peel-test *peeler*)
-  (rossrv-test)
+  ;; (rossrv-test) :: tmp-imadake
   (warn "please run  (set-carrot-4) ~%")  
   )
 
@@ -299,7 +299,7 @@
 
 (defun peel-test-c-4 ()
   (peel-test *peeler*)
-  (rossrv-test)
+  ;; (rossrv-test) :: tmp-imadake
   (warn "please run  (set-carrot-5) ~%")  
   )
 
@@ -321,7 +321,7 @@
 
 (defun peel-test-c-5 ()
   (peel-test *peeler*)
-  (rossrv-test)
+  ;; (rossrv-test) :: tmp-imadake
   (warn "please run  (set-carrot-6) ~%")  
   )
 
@@ -343,7 +343,7 @@
 
 (defun peel-test-c-6 ()
   (peel-test *peeler*)
-  (rossrv-test)
+  ;; (rossrv-test) :: tmp-imadake
   (warn "please run  (set-carrot-7) ~%")  
   )
 
@@ -365,7 +365,7 @@
 
 (defun peel-test-c-7 ()
   (peel-test *peeler*)
-  (rossrv-test)
+  ;; (rossrv-test) :: tmp-imadake
   (warn "please run  (set-carrot-8) ~%")  
   )
 
@@ -387,7 +387,7 @@
 
 (defun peel-test-c-8 ()
   (peel-test *peeler*)
-  (rossrv-test)
+  ;; (rossrv-test) :: tmp-imadaken
   (warn "please run  (finish-pose-peel) ~%")  
   )
 
@@ -934,3 +934,102 @@
   (rotate-carrot)
   (reset-larm)
   )
+
+
+
+(defun tmp-start ()
+  (recognition)
+  (grasp-carrot-peel)
+  (fail-check)
+  (if (eql *fail-flag* t)
+      (progn
+        (reset-larm)
+        (now-set)
+        (return-from now-peel)))
+  (set-peeler)
+  (set-potato-1)
+  (set-potato-1-2)
+  (fail-check)
+  (if (eql *fail-flag* t)
+      (progn
+        (reset-larm)
+        (now-set)
+        (return-from now-peel)))
+  (warn "please run (tmp-after) ~%")
+  )
+
+(defun tmp-after ()
+  (send *ri* :speak-jp "皮むきを開始します")
+  
+  (setq adj (+ adj 10))
+  (peel-test-c-1)
+  (setq adj (- adj 10))
+  (set-potato-1)
+  (set-potato-2)
+  (fail-check)
+  (if (eql *fail-flag* t)
+      (progn
+        (reset-larm)
+        (finish-pose-peel)
+        (now-set)
+        (return-from now-peel)))
+  (peel-test-c-2)
+  (set-potato-3)
+  (fail-check)
+  (if (eql *fail-flag* t)
+      (progn
+        (reset-larm)
+        (finish-pose-peel)
+        (now-set)
+        (return-from now-peel)))
+  (peel-test-c-3)
+  (set-potato-4)
+  (fail-check)
+  (if (eql *fail-flag* t)
+      (progn
+        (reset-larm)
+        (finish-pose-peel)
+        (now-set)
+        (return-from now-peel)))
+  (peel-test-c-4)
+  (set-potato-5)
+  (fail-check)
+  (if (eql *fail-flag* t)
+      (progn
+        (reset-larm)
+        (finish-pose-peel)
+        (now-set)
+        (return-from now-peel)))
+  (peel-test-c-5)
+  (set-potato-6)
+  (fail-check)
+  (if (eql *fail-flag* t)
+      (progn
+        (reset-larm)
+        (finish-pose-peel)
+        (now-set)
+        (return-from now-peel)))
+  (peel-test-c-6)
+  (set-potato-7)
+  (fail-check)
+  (if (eql *fail-flag* t)
+      (progn
+        (reset-larm)
+        (finish-pose-peel)
+        (now-set)
+        (return-from now-peel)))
+  (peel-test-c-7)
+  (set-potato-8)
+  (fail-check)
+  (if (eql *fail-flag* t)
+      (progn
+        (reset-larm)
+        (finish-pose-peel)
+        (now-set)
+        (return-from now-peel)))
+  (peel-test-c-8)
+  (finish-pose-peel)
+  (put-carrot)
+  (reset-larm)  
+  )
+

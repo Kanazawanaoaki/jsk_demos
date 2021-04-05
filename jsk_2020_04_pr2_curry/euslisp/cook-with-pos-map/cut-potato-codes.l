@@ -619,6 +619,11 @@
   (warn "you can retry (cut-test), (continue-cut 4) or you want to finish please run (finish-pose)  ~%")
   )
 
+(defun set-m ()
+  (load "package://jsk_kitchen_knife_pr2/euslisp/pr2-kitchen_knife-interface.l")
+  (setq *pkki* (instance pr2-kitchen_knife-interface :init))
+  )
+
 (defun cut-test-m ()
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 100) :world)
@@ -790,7 +795,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
   (send *ri* :wait-interpolation)
-
+  
   (send *arrow* :newcoords (send (car (send *knife* :attention)) :copy-worldcoords))
   (send *arrow* :translate (float-vector -30 30 50) :world)
   (send *pr2* :rarm :inverse-kinematics
@@ -1298,7 +1303,7 @@
   (put-potato-left-rotate)
   (reset-larm)
   )
-    
+
 ;; 左半分を切る
 (defun now-cut-left ()
   (recognition-left)
@@ -1309,6 +1314,7 @@
 
 (defun demo-cut-tmp ()
   (update-pos)
+  (set-m) ;; TODO これが必要!!
   (now-cut-half)
   (now-right-set)
   (now-right-rotate)

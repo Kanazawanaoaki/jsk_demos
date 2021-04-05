@@ -340,7 +340,8 @@
         :rotation-axis nil
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
   ;; 剥く位置
@@ -363,7 +364,8 @@
         :rotation-axis t
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
   (send *c* :translate (float-vector 0 -80 -80) :world)
@@ -373,7 +375,8 @@
         :rotation-axis t
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
   
   (setq *tmp-rav-0* (send *pr2* :rarm :angle-vector))
@@ -425,13 +428,13 @@
       (send *viewer* :draw-objects)
       (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
       (send *ri* :wait-interpolation)
-
+      
       (ros::unsubscribe "/right_endeffector/wrench")
       
       (warn "you can retry (peel-test) or (finish-pose-peel) , (set-carrot-2)~%")
       (return-from peel-test t))
     )
-
+  
   ;; 剥き終わり
   (send *c* :rotate (deg2rad -30) :y)
   (send *c* :translate (float-vector (* (+ *width* 20) -1) 0 0) )
@@ -456,7 +459,7 @@
   (setq *p-arrow* (arrow))
   (send *p-arrow* :newcoords (send (make-coords :pos (float-vector 570.0 8500.0 31100) :rot #2f((0.0 -1.0 0.0) (1.0 0.0 0.0) (0.0 0.0 1.0))) :copy-worldcoords))
   ;; (set-potato)
-
+  
   (before-set)
   (setq *pav1* #f(21.8662 -20.2347 104.555 -67.1948 27.259 -58.1598 -118.836))
   (send *pr2* :larm :angle-vector *pav1*)
