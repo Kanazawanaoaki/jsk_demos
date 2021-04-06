@@ -102,7 +102,7 @@
       (setq x (send msg :wrench :force :x))
       (setq y (send msg :wrench :force :y))
       (setq z (send msg :wrench :force :z))
-      (setq n (norm (float-vector x  y z)))
+      (setq n (norm (float-vector x y z)))
       (unless (list-check n *lis* *sigma*)
         (setq *wrench-flag* t))
       (format t "norm: ~A ~%" n)
