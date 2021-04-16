@@ -11,7 +11,7 @@
   
   (move-to-sink-irt)
   
-  (objects (list *veg* *pr2* *scene* *mcup*))
+  (objects (list *veg* *pr2* *scene* *mcup* *rcup*))
   (update-view)
   )
 
@@ -71,7 +71,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   ;;少し前に
   (send *arrow* :newcoords (make-coords :pos (send (send (send *pr2* :rarm :end-coords) :copy-worldcoords) :worldpos)))
   (send *arrow* :translate (float-vector -200 50 40) :world)
@@ -335,13 +335,122 @@
   )
 
 ;; add for rcup
-(defun carry-rcup-pose-tmp ()
-  (send *pr2* :angle-vector #f(100.161 75.0006 49.9994 109.993 -109.995 -19.9972 -10.0007 -9.99948 -40.1721 59.1602 -68.2551 -119.512 165.852 -64.9736 -220.86 -0.005299 51.906))
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+(defun carry-rcup-pose ()
+  (setq *lav-cr* #f(35.8506 12.483 60.1599 -62.038 32.47 -72.8116 -200.04))
+  (send *pr2* :larm :angle-vector *lav-cr*)
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 604.833 8300.101 31079.393) :rpy (float-vector 3.141 0.75 0.0))) ;; ここの座標は違う
+  ;; (send *pr2* :larm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
   (send *ri* :wait-interpolation)
   )
 
+(defun set-rcup ()
+  (if (not (eql (send *rcup* :parent) nil))
+      (send (send *rcup* :parent) :dissoc *rcup*))
+  (let (local-cds)
+    (setq local-cds (make-cascoords))
+    (send local-cds :newcoords (send (send *rcup* :handle-handle0) :copy-worldcoords))
+    (send local-cds :assoc *rcup*)
+    (send local-cds :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+    (send local-cds :dissoc *rcup*)
+    )
+  (send *viewer* :draw-objects)
+  (send (send *pr2* :larm :end-coords) :assoc *rcup*)
+  )
 
+(defun rcup-water-set ()
+  (carry-rcup-pose)
+  
+  ;; スライドさせて行く
+  (send *pr2* :larm :move-end-pos #f(0 100 0) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :move-end-pos #f(0 0 -100) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  ;; 蛇口の位置
+  (send *arrow* :newcoords (send *fauset-coords* :copy-worldcoords))
+  (send *arrow* :translate #f(0 -100 0) :world)
+  (send *arrow* :translate #f(100 0 100) :world)
+  
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (elt (send *rcup* :attention) 1)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)  
+
+  (send *arrow* :translate #f(-100 0 -100) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (elt (send *rcup* :attention) 1)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)  
+  
+  (send *arrow* :translate #f(0 100 0) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (elt (send *rcup* :attention) 1)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+  
+  (warn "please run (grasp-lever) ~%")
+  )
+
+(defun slide-rcup ()
+  ;; 蛇口の位置
+  (send *arrow* :newcoords (send *fauset-coords* :copy-worldcoords))
+  (send *arrow* :translate #f(0 -100 0) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (elt (send *rcup* :attention) 1)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)  
+  )
+
+(defun after-rcup-water ()
+  ;; 蛇口の位置
+  (send *arrow* :newcoords (send *fauset-coords* :copy-worldcoords))
+  (send *arrow* :translate #f(0 -100 0) :world)
+  (send *arrow* :translate #f(100 0 100) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (elt (send *rcup* :attention) 1)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)  
+  
+  (send *pr2* :larm :move-end-pos #f(0 0 100) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :move-end-pos #f(0 -100 0) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (carry-rcup-pose)
+
+  (warn "please return to kitchen spot! ~%")
+  )
 
 
 ;; wash vegitable funcs
@@ -704,4 +813,55 @@
 (defun tmp-exec ()
   (after-wash)
   (vegs-carry-pose)
+  )
+
+
+;; tmp red-cup
+(defun now-fetch-water-rcup-with-fail-detection (&rest args &key (sleep-time 1) &allow-other-keys)
+  (after-move)
+  (set-rcup)
+  (rcup-water-set)
+  
+  (before-lever)
+  (grasp-lever-tmp)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection :g-thre 10)
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (release-lever-tmp)
+        (grasp-lever-tmp :adjust -20)
+        (grasp-fail-detection :g-thre 10)
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (release-lever-tmp)
+              (reset-rarm)
+              (send *ri* :speak-jp "水道の操作に失敗しました，水を汲んで合図をして下さい")
+              (ok-wait)
+              
+              (slide-mcup)
+              (after-mcup-water)
+              
+              (return-from now-fetch-water-rcup-with-fail-detection)))
+        ))
+  
+  (water-on)
+  
+  ;; 本当はここで認識をする
+  (unix:sleep sleep-time)
+  
+  (slide-rcup)
+  (water-off)
+  (release-lever-tmp)
+  (reset-rarm)
+  
+  (after-rcup-water)
+  )
+
+
+(defun now-set-rcup-water ()
+  (after-move)
+  (set-rcup)
+  (rcup-water-set)
+  (warn "please run (now-on-water)")
   )

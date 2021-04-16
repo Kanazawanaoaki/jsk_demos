@@ -14,6 +14,15 @@
   (if (not (eql (send *mcup* :parent) nil))
       (send (send *mcup* :parent) :dissoc *mcup*))
   (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
+
+  (unless (boundp '*rcup*)
+    (progn
+      (load "package://jsk_2020_04_pr2_curry/euslisp/model/red-cup.l")
+      (setq *rcup* (red-cup))
+      ))
+  (if (not (eql (send *rcup* :parent) nil))
+      (send (send *rcup* :parent) :dissoc *rcup*))
+  (send *rcup* :newcoords (send *rcup-coords* :copy-worldcoords))
   
   (unless (boundp '*bowl-1*)
     (progn
@@ -56,7 +65,7 @@
       (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
   (send *oil-dispenser* :newcoords (send *oil-dispenser-coords* :copy-worldcoords))
   
-  (objects (list *pr2* *scene* *spatula* *mcup* *ladle* *pot* *bowl-1* *oil-dispenser*))
+  (objects (list *pr2* *scene* *spatula* *mcup* *rcup* *ladle* *pot* *bowl-1* *oil-dispenser*))
   (update-view)
   
   ;; def bowl grasp coords
