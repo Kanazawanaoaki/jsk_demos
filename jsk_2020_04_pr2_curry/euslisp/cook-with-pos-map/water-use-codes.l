@@ -335,33 +335,6 @@
   )
 
 ;; add for rcup
-(defun carry-rcup-pose ()
-  (setq *lav-cr* #f(35.8506 12.483 60.1599 -62.038 32.47 -72.8116 -200.04))
-  (send *pr2* :larm :angle-vector *lav-cr*)
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 604.833 8300.101 31079.393) :rpy (float-vector 3.141 0.75 0.0))) ;; ここの座標は違う
-  ;; (send *pr2* :larm :inverse-kinematics
-  ;;       (send *arrow* :copy-worldcoords)
-  ;;       :rotation-axis t
-  ;;       :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
-  (send *ri* :wait-interpolation)
-  )
-
-(defun set-rcup ()
-  (if (not (eql (send *rcup* :parent) nil))
-      (send (send *rcup* :parent) :dissoc *rcup*))
-  (let (local-cds)
-    (setq local-cds (make-cascoords))
-    (send local-cds :newcoords (send (send *rcup* :handle-handle0) :copy-worldcoords))
-    (send local-cds :assoc *rcup*)
-    (send local-cds :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
-    (send local-cds :dissoc *rcup*)
-    )
-  (send *viewer* :draw-objects)
-  (send (send *pr2* :larm :end-coords) :assoc *rcup*)
-  )
-
 (defun rcup-water-set ()
   (carry-rcup-pose)
   
@@ -423,6 +396,32 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)  
+  )
+
+(defun rcup-nigasu ()
+  (send *arrow* :newcoords (send (elt (send *rcup* :attention) 1) :copy-worldcoords))
+  (send *arrow* :rotate (deg2rad 10) :y)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (elt (send *rcup* :attention) 1)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (unix:sleep 1)
+
+  (send *arrow* :rotate (deg2rad -10) :y)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (elt (send *rcup* :attention) 1)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  
   )
 
 (defun after-rcup-water ()
@@ -855,8 +854,10 @@
   (release-lever-tmp)
   (reset-rarm)
   
+  (rcup-nigasu)
   (after-rcup-water)
   )
+
 
 
 (defun now-set-rcup-water ()

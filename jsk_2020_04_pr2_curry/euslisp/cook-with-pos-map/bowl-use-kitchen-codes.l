@@ -1410,6 +1410,117 @@
   (warn "please run (after-mcup) ~%")
   )
 
+;; add for rcup
+(defun carry-rcup-pose ()
+  (setq *lav-cr* #f(35.8506 12.483 60.1599 -62.038 32.47 -72.8116 -200.04))
+  (send *pr2* :larm :angle-vector *lav-cr*)
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 604.833 8300.101 31079.393) :rpy (float-vector 3.141 0.75 0.0))) ;; ここの座標は違う
+  ;; (send *pr2* :larm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun set-rcup ()
+  (if (not (eql (send *rcup* :parent) nil))
+      (send (send *rcup* :parent) :dissoc *rcup*))
+  (let (local-cds)
+    (setq local-cds (make-cascoords))
+    (send local-cds :newcoords (send (send *rcup* :handle-handle0) :copy-worldcoords))
+    (send local-cds :assoc *rcup*)
+    (send local-cds :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+    (send local-cds :dissoc *rcup*)
+    )
+  (send *viewer* :draw-objects)
+  (send (send *pr2* :larm :end-coords) :assoc *rcup*)
+  )
+
+(defun transfer-rcup-set ()
+  (set-rcup)
+  
+  ;; スライドさせて行く
+  (send *pr2* :larm :move-end-pos #f(0 0 100) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :move-end-pos #f(0 -100 0) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (send *pr2* :larm :move-end-pos #f(0 -100 0) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  ;; (send *pr2* :larm :move-end-pos #f(100 0 0) :world)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  ;; (send *ri* :wait-interpolation)
+  )
+
+(defun transfer-rcup-model ()  
+  ;; 移し始める座標
+  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
+  ;; (send *arrow* :translate #f(0 0 200) :world)
+  (send *arrow* :translate #f(-30 0 300) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (car (send *rcup* :attention))
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)  
+  
+  ;; 傾けていく
+  (setq avs (list))
+  (setq tms (list))
+  
+  (dotimes (i 7)
+    (send *arrow* :rotate (deg2rad 10) :y)
+    (send *pr2* :larm :inverse-kinematics
+          *arrow*
+          :move-target (car (send *rcup* :attention))
+          :rotation-axis t
+          :debug-view nil)
+    
+    (setq av (send *pr2* :angle-vector))
+    
+    (setq avs (append avs (list av)))
+    (setq tms (append tms (list 600)))
+    )
+  
+  (send *ri* :angle-vector-sequence avs tms)
+  (send *ri* :wait-interpolation)
+  
+  ;; 移し終わったかどうか等を判定する？
+  
+  (warn "please run (after-mcup) ~%")
+  )
+
+(defun after-rcup-model ()
+  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
+  ;; (send *arrow* :translate #f(0 30 200) :world)
+  (send *arrow* :translate #f(0 30 300) :world)
+  
+  (send *arrow* :translate #f(0 100 100) :world)
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (car (send *rcup* :attention))
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (carry-rcup-pose)
+  
+  (warn "please run (put-mcup) ~%")
+  )
+
+
+
 (defun after-mcup ()
   (send *arrow* :newcoords (make-coords :pos (float-vector 510 8100 31080) :rpy (float-vector 3.14 0 0)))
   (send *pr2* :larm :inverse-kinematics
@@ -2663,11 +2774,27 @@
   (update-view)
   )
 
-(defun tmp-coords ()
-  (send *arrow* :newcoords (send (make-coords :pos (float-vector 510 8100 31080) :rpy (float-vector 3.14 0 0)) :copy-worldcoords))
-  )
-
 (defun pot-coords ()
   (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
   (send *arrow* :translate #f(0 30 180) :world)
+  )
+
+
+;; add for rcup
+(defun now-only-pour-rcup-water (&rest args &key (sleep-time 4) &allow-other-keys)
+  (carry-rcup-pose)
+  (transfer-rcup-set)
+  (transfer-rcup-model)
+  (unix:sleep sleep-time)
+  (after-rcup-model)
+  (carry-rcup-pose)  
+  )
+
+
+(defun tmp-pose ()
+  (setq *lav-tmp* #f(39.7876 -2.21469 55.1528 -30.5089 25.4099 -103.025 -199.346))
+  (send *pr2* :larm :angle-vector *lav-tmp*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
+  (send *ri* :wait-interpolation)
   )
