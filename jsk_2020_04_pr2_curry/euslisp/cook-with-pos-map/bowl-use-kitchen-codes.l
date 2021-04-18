@@ -1463,7 +1463,8 @@
   ;; 移し始める座標
   (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
   ;; (send *arrow* :translate #f(0 0 200) :world)
-  (send *arrow* :translate #f(-30 0 300) :world)
+  (send *arrow* :translate #f(0 0 250) :world)
+  ;; (send *arrow* :translate #f(-30 0 300) :world)
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :move-target (car (send *rcup* :attention))
