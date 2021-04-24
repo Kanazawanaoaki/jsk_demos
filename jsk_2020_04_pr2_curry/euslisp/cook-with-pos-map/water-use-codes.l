@@ -825,11 +825,13 @@
   (grasp-lever-tmp)
   
   ;; 失敗を検知する
+  (unix:sleep 1) ;; tmp  
   (grasp-fail-detection :g-thre 10)
   (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
       (progn
         (release-lever-tmp)
         (grasp-lever-tmp :adjust -20)
+	(unix:sleep 1) ;; tmp  
         (grasp-fail-detection :g-thre 10)
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
@@ -838,8 +840,9 @@
               (send *ri* :speak-jp "水道の操作に失敗しました，水を汲んで合図をして下さい")
               (ok-wait)
               
-              (slide-mcup)
-              (after-mcup-water)
+              (slide-rcup)
+	      (rcup-nigasu)
+              (after-rcup-water)
               
               (return-from now-fetch-water-rcup-with-fail-detection)))
         ))
@@ -847,7 +850,8 @@
   (water-on)
   
   ;; 本当はここで認識をする
-  (unix:sleep sleep-time)
+  ;; (unix:sleep sleep-time)
+  (unix:sleep 3)
   
   (slide-rcup)
   (water-off)
