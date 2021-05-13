@@ -835,9 +835,7 @@ Visualization Manager:
           Marker Topic: /spots_marker_array
           Name: Spot
           Namespaces:
-            pin_body: true
-            pin_head: true
-            pin_label: true
+            {}
           Queue Size: 100
           Value: true
       Enabled: true
@@ -852,6 +850,7 @@ Visualization Manager:
           auto color change: false
           background color: 0; 0; 0
           backround alpha: 0
+          clockwise rotate direction: false
           foreground alpha: 0.699999988079071
           foreground alpha 2: 0.4000000059604645
           foreground color: 25; 255; 240
@@ -871,6 +870,7 @@ Visualization Manager:
           auto color change: false
           background color: 0; 0; 0
           backround alpha: 0
+          clockwise rotate direction: false
           foreground alpha: 0.699999988079071
           foreground alpha 2: 0.4000000059604645
           foreground color: 25; 255; 240
@@ -890,6 +890,7 @@ Visualization Manager:
           auto color change: false
           background color: 0; 0; 0
           backround alpha: 0
+          clockwise rotate direction: false
           foreground alpha: 0.699999988079071
           foreground alpha 2: 0.4000000059604645
           foreground color: 25; 255; 240
@@ -909,6 +910,7 @@ Visualization Manager:
           auto color change: false
           background color: 0; 0; 0
           backround alpha: 0
+          clockwise rotate direction: false
           foreground alpha: 0.699999988079071
           foreground alpha 2: 0.4000000059604645
           foreground color: 25; 255; 240
@@ -963,13 +965,13 @@ Visualization Manager:
       Arrow Width: 0.5
       Class: rviz/WrenchStamped
       Enabled: true
-      Force Arrow Scale: 0.029999999329447746
+      Force Arrow Scale: 0.5
       Force Color: 204; 51; 51
       Hide Small Values: false
       History Length: 1
       Name: WrenchStamped
-      Topic: /right_endeffector/wrench
-      Torque Arrow Scale: 0.10000000149011612
+      Topic: /left_endeffector/wrench
+      Torque Arrow Scale: 0.5
       Torque Color: 204; 204; 51
       Unreliable: false
       Value: true
@@ -1052,7 +1054,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 5.034373760223389
+      Distance: 7.137499809265137
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -1067,10 +1069,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.33496105670928955
+      Pitch: 0.22996121644973755
       Target Frame: base_link
       Value: Orbit (rviz)
-      Yaw: 1.977037787437439
+      Yaw: 3.1170389652252197
     Saved: ~
 Window Geometry:
   Camera:
