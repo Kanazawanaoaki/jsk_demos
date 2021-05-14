@@ -23,15 +23,30 @@
 
 ;; check mizukumi func
 (setq *mizukumi-flag* nil)
-(defun check-mizukumi ()
-  ;; virtual force の値を取得する
-  ;; (one-shot-sub)
+;; (setq *mizukumi-thre* -2) ;; mcup
+(setq *mizukumi-thre* 2) ;; rcup
 
-  ;; 変換する
-  (send (send *pr2* :larm :end-coords) :rotate-vector *vec*) ;;sこれで変換できる!
-  
-  ;; 判定する
-  
+(defun check-mizukumi ()
+  (let (msg force z)
+    ;; virtual force の値を取得する
+    (setq msg (one-shot-subscribe "/left_endeffector/wrench" geometry_msgs::WrenchStamped))
+    (setq force (send msg :wrench :force))
+    
+    (setq *vec* (float-vector (send force :x) (send force :y) (send force :Z)))
+    
+    ;; 変換する
+    (send (send *pr2* :larm :end-coords) :rotate-vector *vec*) ;;これで変換できる
+    (setq z (elt *vec* 2))
+    (format t "z force is ~A ~%" z)
+    
+    ;; 判定する
+    (if (< z *mizukumi-thre*)
+        (progn 
+          (setq *mizukumi-flag* t)
+          (warn "mizukumi seikou")
+          )
+      )
+    )  
   )
 
 
