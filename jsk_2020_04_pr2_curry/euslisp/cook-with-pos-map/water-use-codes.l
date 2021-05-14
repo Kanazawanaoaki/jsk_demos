@@ -21,7 +21,10 @@
 (warn "please run (grasp-lever) ~%")
 
 
-;; check mizukumi func
+;; check mizukumi rec
+(ros::roseus "bowl_transfer_test" :anonymous t)
+(ros::load-ros-manifest "geometry_msgs")
+
 (setq *mizukumi-flag* nil)
 ;; (setq *mizukumi-thre* -2) ;; mcup
 (setq *mizukumi-thre* 2) ;; rcup
