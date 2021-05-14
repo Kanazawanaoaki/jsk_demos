@@ -21,6 +21,20 @@
 (warn "please run (grasp-lever) ~%")
 
 
+;; check mizukumi func
+(setq *mizukumi-flag* nil)
+(defun check-mizukumi ()
+  ;; virtual force の値を取得する
+  ;; (one-shot-sub)
+
+  ;; 変換する
+  (send (send *pr2* :larm :end-coords) :rotate-vector *vec*) ;;sこれで変換できる!
+  
+  ;; 判定する
+  
+  )
+
+
 ;; def util-funcs
 (defun reset-rarm ()
   (setq *rav0* (float-vector -25.6468 7.87241 -48.2704 -85.3763 253.675 -77.8887 -147.102))
