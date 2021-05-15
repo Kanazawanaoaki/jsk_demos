@@ -27,7 +27,7 @@
 
 (setq *mizukumi-flag* nil)
 ;; (setq *mizukumi-thre* -2) ;; mcup
-(setq *mizukumi-thre* 2) ;; rcup
+(setq *mizukumi-thre* 1) ;; rcup
 
 (defun check-mizukumi ()
   (let (msg force z)
@@ -38,19 +38,80 @@
     (setq *vec* (float-vector (send force :x) (send force :y) (send force :Z)))
     
     ;; 変換する
-    (send (send *pr2* :larm :end-coords) :rotate-vector *vec*) ;;これで変換できる
-    (setq z (elt *vec* 2))
+    (send *pr2* :angle-vector (send *ri* :state :potentiove-vector))
+    (setq *t-vec* (send (send *pr2* :larm :end-coords) :rotate-vector *vec*)) ;;これで変換できる
+    (setq z (elt *t-vec* 2))
     (format t "z force is ~A ~%" z)
     
     ;; 判定する
     (if (< z *mizukumi-thre*)
         (progn 
           (setq *mizukumi-flag* t)
-          (warn "mizukumi seikou")
+          (warn "mizukumi seikou ~%")
+	  (send *ri* :speak-jp "水をくめています")
           )
+      (send *ri* :speak-jp "水をくめていません")
       )
     )  
   )
+
+
+(ros::load-ros-manifest "speech_recognition_msgs")
+(setq *data-flag* nil)
+(defun voice-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (setq *data-flag* t)
+    (format t "data: ~A ~%" *data*)
+    )
+  )
+
+(setq *ok-flag* nil)
+(defun voice-ok-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (if (equal *data* '("OK"))
+        (progn
+          (format t "了解しました！ ~%" *data*)
+          (setq *ok-flag* t)
+          )
+      (format t "data: ~A ~%" *data*)
+      ) 
+    )
+  )
+
+(defun curry-dialogue ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *data-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+  (until *data-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep 1)  
+  )
+
+(defun wait-speech ()
+  (do-until-key
+   (curry-dialogue)
+   (if (equal *data* '("どう"))
+       (check-mizukumi)
+     (progn
+       (if (equal *data* '("開いて"))
+	   (send *ri* :stop-grasp :larm)
+	 (progn
+	   (if (equal *data* '("閉じて"))
+	       (send *ri* :start-grasp :larm)
+	     )
+	   )
+	 )
+       )
+     )
+   )
+  ) ;; cond文かcase文で書き換えたい
 
 
 ;; def util-funcs
