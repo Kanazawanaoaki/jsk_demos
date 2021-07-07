@@ -1,0 +1,19 @@
+<launch>
+  <arg name="gui" default="true"/>
+  <arg name="pcd" default="$(find jsk_2020_04_pr2_curry)/pcd/watch_potato.pcd" />
+
+  <node name="pcd_to_pointcloud"
+        pkg="pcl_ros" type="pcd_to_pointcloud"
+        args="$(arg pcd) 0.1">
+    <remap from="cloud_pcd" to="~output"/>
+    <rosparam>
+      frame_id: head_mount_kinect_rgb_optical_frame
+    </rosparam>
+  </node>
+
+  <group if="$(arg gui)">
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2020_04_pr2_curry)/config/pcd_to_ptcloud.rviz"/>
+  </group>
+</launch>

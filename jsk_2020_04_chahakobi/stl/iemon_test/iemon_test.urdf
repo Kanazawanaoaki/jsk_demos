@@ -1,0 +1,21 @@
+<robot name="my_model_name">
+1;5202;0c  <link name="root">
+    <inertial>
+     <origin xyz="0 0 0.5" rpy="0 0 0"/>
+     <mass value="1"/>
+     <inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
+    </inertial>
+    <visual>
+     <origin xyz="0 0 0" rpy="0 0 0" />
+     <geometry>
+       <mesh filename="file:///home/kanazawa/semi_ws/src/jsk_demos/jsk_2020_04_chahakobi/stl/iemon_test/iemon_test.stl" />
+     </geometry>
+    </visual>
+    <collision>
+     <origin xyz="0 0 0" rpy="0 0 0"/>
+     <geometry>
+       <mesh filename="file:///home/kanazawa/semi_ws/src/jsk_demos/jsk_2020_04_chahakobi/stl/iemon_test/iemon_test.stl" />
+     </geometry>
+    </collision>
+  </link>
+</robot>

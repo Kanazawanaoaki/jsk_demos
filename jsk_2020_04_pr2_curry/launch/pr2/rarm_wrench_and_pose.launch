@@ -1,0 +1,6 @@
+<launch>
+
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/pr2/endcoords_rarm_publisher.launch"/>
+
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/pr2/right_virtual_force_publisher.launch"/>
+</launch>

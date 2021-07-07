@@ -1,0 +1,15 @@
+<launch>
+  <arg name="INPUT" default="/pcd_to_pointcloud/output" />
+
+  <node name="pointcloud_to_pcd" type="nodelet" pkg="nodelet"
+        args="standalone jsk_pcl_utils/PointCloudToPCD" output="screen" >
+    <remap from="~input" to="$(arg INPUT)" />
+    <rosparam subst_value="true">
+      prefix: $(find jsk_2020_04_chahakobi)/pcd/fixed_test/fixed_frame_
+      duration: 0.5
+      binary: false
+      compressed: false
+      fixed_frame: reference
+    </rosparam>
+  </node>
+</launch>

@@ -1,0 +1,76 @@
+<launch>
+  <arg name="manager" default="pointcloud" />
+
+  <arg name="ROBOT" default="$(optenv ROBOT sim)"/>
+  <include file="$(find pr2_machine)/$(arg ROBOT).machine" />
+
+  <group ns="pcl_nodelet">
+    <node name="$(arg manager)" pkg="nodelet" type="nodelet" args="manager"
+            output="screen" machine="c2"/>
+
+
+    <node name="boxfilter_pre" pkg="nodelet" type="nodelet"
+      args="load jsk_pcl/AttentionClipper $(arg manager)" output="screen" machine="c2">
+      <!-- remap from="~input/points" to="/passthrough_points/output"/ -->
+      <remap from="~input/points" to="/kinect_head/depth_registered/points" />
+      <rosparam>
+        use_multiple_attention: false
+        initial_pos: [0.4, -0.04, 0.5]
+        initial_rot: [0, 0, 0]
+        dimension_x: 0.3
+        dimension_y: 0.3
+        dimension_z: 0.3
+        frame_id: base_footprint
+      </rosparam>
+    </node>
+
+    <node name="ExtractIndices" pkg="nodelet" type="nodelet"
+      args="load jsk_pcl/ExtractIndices $(arg manager)" output="screen" machine="c2">
+      <remap from="~input" to="/passthrough_points/output"/>
+      <remap from="~indices" to="/pcl_nodelet/boxfilter_pre/output/point_indices"/>
+      <rosparam>
+        keep_organized: true
+      </rosparam>
+    </node>
+
+    <node name="BowlPositions" pkg="jsk_2019_10_spatula" type="merge_bowl_positions.py" machine="c2">
+    </node>
+
+    <node name="hsi_filter_white" pkg="nodelet" type="nodelet"
+      args="load jsk_pcl/HSIColorFilter $(arg manager)" 
+      output="screen" machine="c2">
+      <remap from="~input" to="/pcl_nodelet/point_cloud_sequence_merged" />
+      <rosparam>
+        use_indices: false
+        keep_organized: false
+      </rosparam>
+      <param name="h_limit_max" value="127" />
+      <param name="h_limit_min" value="-128" />
+      <param name="s_limit_max" value="38" />
+      <param name="s_limit_min" value="0" />
+      <param name="i_limit_max" value="255" />
+      <param name="i_limit_min" value="127" />
+    </node>
+
+    <node name="hsi_filter_brown" pkg="nodelet" type="nodelet"
+      args="load jsk_pcl/HSIColorFilter $(arg manager)" 
+      output="screen" machine="c2">
+      <remap from="~input" to="/pcl_nodelet/point_cloud_sequence_merged" />
+      <rosparam>
+        use_indices: false
+        keep_organized: false
+      </rosparam>
+      <param name="h_limit_max" value="18" />
+      <param name="h_limit_min" value="5" />
+      <param name="s_limit_max" value="255" />
+      <param name="s_limit_min" value="102" />
+      <param name="i_limit_max" value="179" />
+      <param name="i_limit_min" value="43" />
+    </node>
+
+    <node name="LabelDirt" pkg="jsk_2019_10_spatula" type="detect_dirt.py" machine="c2">
+    </node>
+
+  </group>
+
+</launch>

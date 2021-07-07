@@ -1,0 +1,22 @@
+<launch>
+  <arg name="gui" default="true"/>
+
+  <node name="referene_tf_publisher"
+        pkg="tf" type="static_transform_publisher"
+        args="0 0.13 1.22 -1.57 2.48 0 map reference 10" />
+  
+  <node name="pcd_to_pointcloud"
+        pkg="pcl_ros" type="pcd_to_pointcloud"
+        args="$(find jsk_2020_04_chahakobi)/pcd/kettle_attention.pcd 0.1">
+    <remap from="cloud_pcd" to="~output"/>
+    <rosparam>
+      frame_id: map
+    </rosparam>
+  </node>
+
+  <group if="$(arg gui)">
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+	  args="-d $(find jsk_2020_04_chahakobi)/config/fixed_test.rviz" />
+  </group>
+</launch>

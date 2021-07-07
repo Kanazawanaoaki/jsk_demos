@@ -1,0 +1,7 @@
+state Rotate{
+  [*] -right-> Rec_Rot
+  Rec_Rot -right-> Grasp_Rot
+  Grasp_Rot -right-> Put_Rot
+  Put_Rot -right-> [*]
+}
+

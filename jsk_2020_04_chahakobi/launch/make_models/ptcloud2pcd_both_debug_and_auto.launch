@@ -1,0 +1,27 @@
+<launch>
+  <arg name="INPUT1" default="/pcl_nodelet/point_cloud_one_look" />
+  <arg name="INPUT2" default="/pcl_nodelet/point_cloud_sequence_merged" />
+
+  <node name="pointcloud_to_pcd_debug" type="nodelet" pkg="nodelet"
+        args="standalone jsk_pcl_utils/PointCloudToPCD" output="screen" >
+    <remap from="~input" to="$(arg INPUT1)" />
+    <rosparam subst_value="true">
+      prefix: $(find jsk_2020_04_chahakobi)/pcd/iemon/iemon_debug_pcd_
+      duration: 0.5
+      binary: false
+      compressed: false
+    </rosparam>
+  </node>
+
+  <node name="pointcloud_to_pcd_merged" type="nodelet" pkg="nodelet"
+        args="standalone jsk_pcl_utils/PointCloudToPCD" output="screen" >
+    <remap from="~input" to="$(arg INPUT2)" />
+    <rosparam subst_value="true">
+      prefix: $(find jsk_2020_04_chahakobi)/pcd/iemon/iemon_merged_
+      duration: 0.5
+      binary: false
+      compressed: false
+    </rosparam>
+  </node>
+
+</launch>

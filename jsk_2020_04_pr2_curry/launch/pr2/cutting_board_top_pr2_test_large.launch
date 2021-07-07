@@ -1,0 +1,179 @@
+<launch>
+  <machine name="localhost" address="localhost" />
+  
+  <arg name="manager" default="pr2_cutting_board_nodelet_manager" />
+  <arg name="rosbag" default="false" />
+
+  <arg name="run_decompress" value="false" if="$(arg rosbag)" />
+  <arg name="RGB_CAMERA_INFO" value="/kinect_head/rgb/throttled/camera_info" if="$(arg rosbag)" />
+  <arg name="RGB_IMAGE" value="/kinect_head/rgb/throttled/image_rect_color" if="$(arg rosbag)" />
+  <arg name="RGB_REMOTE_IMAGE" value="/kinect_head/rgb/throttled/image_rect_color" if="$(arg rosbag)" />
+  <arg name="DEPTH_CAMERA_INFO" value="/kinect_head/depth_registered/throttled/camera_info" if="$(arg rosbag)" />
+  <arg name="DEPTH_IMAGE" value="/kinect_head/depth_registered/throttled/image_rect" if="$(arg rosbag)" />
+  <arg name="DEPTH_REMOTE_IMAGE" value="/kinect_head/depth_registered/throttled/image_rect" if="$(arg rosbag)" />
+  <arg name="CLOUD" value="/kinect_head/depth_registered/throttled/points" if="$(arg rosbag)" />
+  <arg name="CLOUD_INFO" value="/kinect_head/depth_registered/throttled/camera_info" if="$(arg rosbag)" />
+
+  <arg name="run_decompress" value="true" unless="$(arg rosbag)" />
+  <arg name="RGB_CAMERA_INFO" value="/kinect_head/rgb/camera_info" unless="$(arg rosbag)" />
+  <arg name="RGB_IMAGE" value="/kinect_head/rgb/image_rect_color" unless="$(arg rosbag)" />
+  <arg name="RGB_REMOTE_IMAGE" value="/kinect_head_remote/rgb/image_rect_color" unless="$(arg rosbag)" />
+  <arg name="DEPTH_CAMERA_INFO" value="/kinect_head/depth_registered/camera_info" unless="$(arg rosbag)" />
+  <arg name="DEPTH_IMAGE" value="/kinect_head/depth_registered/image_rect" unless="$(arg rosbag)" />
+  <arg name="DEPTH_REMOTE_IMAGE" value="/kinect_head_remote/depth_registered/image_rect" unless="$(arg rosbag)" />
+  <arg name="CLOUD" value="/kinect_head_remote/depth_registered/points" unless="$(arg rosbag)" />
+  <arg name="CLOUD_INFO" value="/kinect_head/depth_registered/camera_info" unless="$(arg rosbag)" />
+
+  <arg name="run_rviz" default="true" />
+  <arg name="publish_objects_tf" default="true" />
+  <arg name="machine" default="localhost" />
+  <arg name="load_machine" default="true" />
+
+  <arg name="input" value="/extract_indices/output" />
+  <arg name="sensor_frame" value="/head_mount_kinect_rgb_optical_frame" />
+  <arg name="launch_manager" default="true" />
+  <arg name="publish_tf" value="$(arg publish_objects_tf)" />
+
+  <node name="$(arg manager)" pkg="nodelet" type="nodelet" args="manager"
+        machine="$(arg machine)" if="$(arg launch_manager)"
+        output="screen" />
+
+  <!-- decompress -->
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/pr2/pr2_decompress.launch" if="$(arg run_decompress)">
+    <arg name="manager" value="$(arg manager)" />
+    <arg name="RGB_CAMERA_INFO" value="$(arg RGB_CAMERA_INFO)" />
+    <arg name="RGB_IMAGE" value="$(arg RGB_IMAGE)" />
+    <arg name="RGB_REMOTE_IMAGE" value="$(arg RGB_REMOTE_IMAGE)" />
+    <arg name="DEPTH_CAMERA_INFO" value="$(arg DEPTH_CAMERA_INFO)" />
+    <arg name="DEPTH_IMAGE" value="$(arg DEPTH_IMAGE)"  />
+    <arg name="DEPTH_REMOTE_IMAGE" value="$(arg DEPTH_REMOTE_IMAGE)" />
+    <arg name="CLOUD" value="$(arg CLOUD)" />
+  </include>
+
+  <!-- extract pointcloud around cuttinb board  -->
+  <node name="attention_clipper"
+        pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl/AttentionClipper">
+    <remap from="~input/points" to="$(arg CLOUD)" />
+    <remap from="~input" to="$(arg CLOUD_INFO)" />
+    <rosparam>
+      initial_pos: [0.7, 0, 0.8]
+      initial_rot: [0, 0, 0]
+      <!-- dimension_x: 0.5 -->
+      dimension_x: 0.25
+      dimension_y: 0.4
+      dimension_z: 0.5
+      frame_id: base_link
+      use_multiple_attention: false
+    </rosparam>
+  </node>
+
+  <node name="extract_indices" pkg="nodelet" type="nodelet"
+	  args="standalone jsk_pcl/ExtractIndices" output="screen">
+      <remap from="~input" to="$(arg CLOUD)" />
+      <remap from="~indices" to="attention_clipper/output/point_indices" />
+      <rosparam>
+        keep_organized: true
+      </rosparam>
+  </node>
+
+  <!-- tabletop object detection -->
+  <node name="input_relay" pkg="nodelet" type="nodelet"
+        args="load jsk_topic_tools/Relay $(arg manager)"
+        machine="$(arg machine)">
+    <remap from="~input" to="$(arg input)" />
+  </node>
+  <node name="multi_plane_estimate" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/OrganizedMultiPlaneSegmentation $(arg manager)"
+        output="screen"
+        if="$(arg launch_manager)"
+        machine="$(arg machine)">
+    <remap from="~input" to="input_relay/output" />
+    <rosparam>
+      max_curvature: 0.01
+      estimate_normal: true
+    </rosparam>
+  </node>
+  <node name="polygon_magnifier" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl_utils/PolygonMagnifier $(arg manager)"
+        output="screen"
+        machine="$(arg machine)">
+    <remap from="~input" to="multi_plane_estimate/output_refined_polygon" />
+  </node>
+  <node name="plane_extraction" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/MultiPlaneExtraction $(arg manager)"
+        output="screen"
+        machine="$(arg machine)">
+    <remap from="~input" to="input_relay/output" />
+    <remap from="~indices" to="multi_plane_estimate/output_refined" />
+    <remap from="~input_polygons" to="multi_plane_estimate/output_refined_polygon" />
+    <remap from="~input_coefficients" to="multi_plane_estimate/output_refined_coefficients" />
+    <rosparam subst_value="true">
+      use_sensor_frame: true
+      sensor_frame: $(arg sensor_frame)
+      min_height: 0.03
+      <!-- min_height: 0.02 -->
+    </rosparam>
+  </node>
+  <node name="euclidean_clustering" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/EuclideanClustering $(arg manager)"
+        output="screen"
+        machine="$(arg machine)">
+    <remap from="~input" to="plane_extraction/output" />
+    <rosparam>
+      tolerance: 0.02
+      min_size: 100
+    </rosparam>
+  </node>
+  <node name="throttle_segmentation" pkg="nodelet" type="nodelet"
+        args="load jsk_topic_tools/LightweightThrottle $(arg manager)"
+        output="screen"
+        machine="$(arg machine)">
+    <remap from="~input" to="euclidean_clustering/output" />
+    <remap from="~output" to="euclidean_clustering/output_throttle" />
+  </node>
+  <node name="segmentation_decomposer" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/ClusterPointIndicesDecomposer $(arg manager)"
+        output="screen"
+        machine="$(arg machine)"
+	clear_params="true">
+    <remap from="~input" to="plane_extraction/output" />
+    <remap from="~target" to="euclidean_clustering/output_throttle" />
+    <remap from="~align_planes" to="multi_plane_estimate/output_refined_polygon" />
+    <remap from="~align_planes_coefficients"
+           to="multi_plane_estimate/output_refined_coefficients" />
+    <rosparam subst_value="true">
+      align_boxes: true
+      use_pca: true
+      publish_clouds: false
+      publish_tf: $(arg publish_tf)
+      sort_by: -cloud_size
+    </rosparam>
+  </node>
+
+  <!-- interactive -->
+  <node name="bounding_box_marker" pkg="jsk_interactive_marker" type="bounding_box_marker"
+        output="screen"
+        machine="$(arg machine)">
+    <remap from="~bounding_box_array" to="segmentation_decomposer/boxes" />
+  </node>
+  <node name="selected_cloud" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/SelectedClusterPublisher $(arg manager)"
+        output="screen"
+        machine="$(arg machine)">
+    <remap from="~input" to="plane_extraction/output" />
+    <remap from="~indices" to="euclidean_clustering/output" />
+    <remap from="~selected_index" to="bounding_box_marker/selected_index" />
+    <remap from="~output" to="selected_pointcloud" />
+  </node>
+  
+  <group if="$(arg run_rviz)">
+    <node if="$(arg rosbag)"
+          pkg="rviz" name="pr2_rviz" type="rviz"
+          args="-d $(find jsk_2020_04_pr2_curry)/config/tabletop_pr2_cutting_test_rosbag.rviz" />
+    <node unless="$(arg rosbag)"
+          pkg="rviz" name="pr2_rviz" type="rviz"
+          args="-d $(find jsk_2020_04_pr2_curry)/config/tabletop_pr2_cutting_test.rviz" />
+  </group>
+  
+</launch>

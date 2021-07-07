@@ -1,0 +1,14 @@
+<launch>
+  <arg name="INPUT" default="/kinect_head/depth_registered/throttled/points" />
+
+  <node name="pointcloud_to_pcd" type="nodelet" pkg="nodelet"
+        args="standalone jsk_pcl_utils/PointCloudToPCD" output="screen" >
+    <remap from="~input" to="$(arg INPUT)" />
+    <rosparam subst_value="true">
+      prefix: $(find jsk_2020_04_chahakobi)/pcd/sample_pcd_
+      duration: 0.5
+      binary: false
+      compressed: false
+    </rosparam>
+  </node>
+</launch>

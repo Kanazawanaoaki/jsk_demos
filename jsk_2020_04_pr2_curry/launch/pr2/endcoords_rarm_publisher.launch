@@ -1,0 +1,8 @@
+<launch>
+
+  <node name="endcoords_publisher"
+	pkg="kitchen_recognition"
+	type="pr2-end-coords-publisher.l">
+  </node>
+
+</launch>

@@ -1,0 +1,4 @@
+<launch>
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/pr2/larm_wrench_and_pose.launch"/>
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/pr2/rarm_wrench_and_pose.launch"/>
+</launch>

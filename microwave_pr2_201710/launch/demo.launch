@@ -1,0 +1,4 @@
+<launch>
+  <include file="$(find microwave_pr2_201710)/launch/detect_microwave.launch"/>
+	<node pkg="microwave_pr2_201710" type="dummy.py" name="dummy"/>
+</launch>

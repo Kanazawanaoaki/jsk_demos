@@ -1,0 +1,27 @@
+<launch>
+  <arg name="gui" default="true"/>
+  <arg name="pcd" default="$(find jsk_2020_04_pr2_curry)/pcd/potato_on_board_0708.pcd" />
+
+  <node name="pcd_to_pointcloud"
+        pkg="pcl_ros" type="pcd_to_pointcloud"
+        args="$(arg pcd) 0.1">
+    <remap from="cloud_pcd" to="~output"/>
+    <rosparam>
+      frame_id: head_mount_kinect_rgb_optical_frame
+    </rosparam>
+  </node>
+
+  
+  <include file="$(find jsk_pr2_startup)/jsk_pr2_lifelog/rosbag_play.launch">
+    <arg name="rosbag" value="/home/kanazawa/Desktop/rosbags/PR2/20200708_kanazawa_kitchen/20200708_kitchen_02.bag" />
+    <arg name="gui" value="false" />
+  </include>
+    
+
+  <group if="$(arg gui)">
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2020_04_pr2_curry)/config/pcd_with_rosbag.rviz"/>
+  </group>
+  
+</launch>

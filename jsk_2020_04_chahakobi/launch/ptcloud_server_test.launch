@@ -1,0 +1,26 @@
+<launch>
+  <arg name="gui" default="true"/>
+  
+  <node name="static_tf_publisher_map_to_bunny"
+        pkg="tf" type="static_transform_publisher"
+        args="0 -0.63 1.05 0 0 -2.49 map sample_pcd_1587574563157844 10"/>
+
+
+  <node name="pointcloud_database_server_single"
+        pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl/PointcloudDatabaseServer" >
+    <rosparam subst_value="true">
+      models: [
+        "$(find jsk_2020_04_chahakobi)/test_data/sample_pcd_1587574563157844.pcd",
+      ]
+      duration: 1.0
+      use_array: false
+    </rosparam>
+  </node>
+
+  <group if="$(arg gui)">
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_pcl_ros)/sample/rviz/pointcloud_database_server.rviz"/>
+  </group>
+</launch>

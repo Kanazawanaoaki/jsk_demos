@@ -1,0 +1,33 @@
+<launch>
+  <arg name="gui" default="true"/>
+
+  <arg name="input" default="/kinect_head/depth_registered/throttled/points" />
+  
+  <node name="coffee_cup_tf_publisher"
+        pkg="tf" type="static_transform_publisher"
+        args="0 -0.63 1.05 0 0 -2.49 map kettle_test 10" />
+
+  
+  <arg name="manager" value="icp_manager" />
+  <node name="$(arg manager)" pkg="nodelet" type="nodelet" args="manager" />
+
+
+  <!-- reference cloud -->
+  <node name="pointcloud_database_server" pkg="nodelet" type="nodelet"
+    args="load jsk_pcl/PointcloudDatabaseServer $(arg manager)" output="screen">
+    <rosparam subst_value="true">
+      models: ["$(find jsk_2020_04_chahakobi)/pcd/kettle_test.pcd",
+      ]
+      duration: 0.05
+      use_array: false
+    </rosparam>
+  </node>
+
+  <node name="icp_registration"
+        pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/ICPRegistration /$(arg manager)"
+        output="screen">
+    <remap from="~input" to="$(arg input)" />
+    <remap from="~input_reference" to="pointcloud_database_server/cloud" />
+  </node>
+</launch>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+  <!-- <arg name="cloud_machine" default="localhost" -->
+  <!--      doc="point cloud processor machine" /> -->
+  
+  <arg name="launch_rviz" default="true" />
+ 
+  <!-- add for screenpoint -->
+  <arg name="inpoints" default="/head_mount_kinect/depth_registered/points"/>
+  <arg name="image" default="/head_mount_kinect/rgb"/>
+  <arg name="image_type" default="image_raw"/>
+  <arg name="USE_SYNC" default="false"/>
+  <arg name="PUBLISH_POINTS" default="false"/>
+  <arg name="manager" default="pr2_nodelet_manager"/>
+
+  <!-- 2d food coords to 3d coords -->
+  <node name="pointcloud_screenpoint_nodelet" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/PointcloudScreenpoint $(arg manager)"
+        output="screen" clear_params="true" respawn="true">
+        <!-- machine="localhost"> -->
+        <!-- machine="$(arg cloud_machine)"> -->
+    <remap from="~points" to="$(arg inpoints)" />
+    <remap from="~point" to="$(arg image)/$(arg image_type)/screenpoint" />
+    <rosparam>
+      queue_size: 10
+      crop_size: 10
+      search_size: 16
+    </rosparam>
+    <param name="use_sync" value="$(arg USE_SYNC)" />
+  </node>
+
+  <!-- Visualization -->
+  <group if="$(arg launch_rviz)">
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+	  args="-d $(find jsk_2020_04_pr2_curry)/config/icp.rviz">
+    </node>
+  </group>
+
+</launch>

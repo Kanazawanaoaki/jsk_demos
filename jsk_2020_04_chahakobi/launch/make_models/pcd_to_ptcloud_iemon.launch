@@ -1,0 +1,20 @@
+<launch>
+  <arg name="gui" default="true"/>
+  <arg name="INPUT" default="$(find jsk_2020_04_chahakobi)/pcd/iemon/iemon_with_glp.pcd 0.1" />
+
+  <node name="pcd_to_pointcloud"
+        pkg="pcl_ros" type="pcd_to_pointcloud"
+        args="$(arg INPUT)">
+    <remap from="cloud_pcd" to="~output"/>
+    <rosparam>
+      frame_id: map
+    </rosparam>
+  </node>
+
+  <group if="$(arg gui)">
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_pcl_ros_utils)/sample/config/sample_pointcloud_relative_from_pose.rviz"/>
+  </group>
+
+</launch>

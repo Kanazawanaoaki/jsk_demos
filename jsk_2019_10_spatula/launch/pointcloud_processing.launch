@@ -1,0 +1,134 @@
+<launch>
+  <arg name="manager" default="pointcloud" />
+
+  <group ns="pcl_nodelet">
+    <node name="$(arg manager)" pkg="nodelet" type="nodelet" args="manager"
+            output="screen" />
+
+
+    <node name="boxfilter_pre" pkg="nodelet" type="nodelet"
+      args="load jsk_pcl/AttentionClipper $(arg manager)" output="screen">
+      <remap from="~input/points" to="/passthrough_points/output"/>
+      <rosparam>
+        use_multiple_attention: false
+        initial_pos: [0.4, -0.04, 0.5]
+        initial_rot: [0, 0, 0]
+        dimension_x: 0.3
+        dimension_y: 0.3
+        dimension_z: 0.3
+        frame_id: base_footprint
+      </rosparam>
+    </node>
+
+    <node name="ExtractIndices" pkg="nodelet" type="nodelet"
+      args="load jsk_pcl/ExtractIndices $(arg manager)" output="screen">
+      <remap from="~input" to="/passthrough_points/output"/>
+      <remap from="~indices" to="/pcl_nodelet/boxfilter_pre/output/point_indices"/>
+      <rosparam>
+        keep_organized: true
+      </rosparam>
+    </node>
+
+    <node pkg="nodelet" type="nodelet" name="euclidean_clustering"
+      args="load jsk_pcl/EuclideanClustering $(arg manager)" output="screen">
+      <remap from="~input" to="/pcl_nodelet/ExtractIndices/output" />
+      <rosparam>
+        tolerance: 0.02
+        min_size: 50
+        max_size: 100000
+      </rosparam>
+    </node>
+
+    <node pkg="nodelet" type="nodelet"
+         name="cluster_decomposer"
+         args="load jsk_pcl/ClusterPointIndicesDecomposerZAxis $(arg manager)"
+         output="screen" clear_params="true">
+     <remap from="~input" to="/pcl_nodelet/ExtractIndices/output" />
+     <remap from="~target" to="/pcl_nodelet/euclidean_clustering/output" />
+     <rosparam>
+     </rosparam>
+    </node>
+
+
+
+    <node name="hsi_filter" pkg="nodelet" type="nodelet"
+      args="load jsk_pcl/HSIColorFilter $(arg manager)" 
+      output="screen">
+      <remap from="~input" to="/pcl_nodelet/ExtractIndices/output" />
+      <rosparam>
+        use_indices: false
+        keep_organized: false
+      </rosparam>
+      <param name="h_limit_max" value="127" />
+      <param name="h_limit_min" value="-128" />
+      <param name="s_limit_max" value="77" />
+      <param name="s_limit_min" value="0" />
+      <param name="i_limit_max" value="255" />
+      <param name="i_limit_min" value="127" />
+    </node>
+
+    <node pkg="nodelet" type="nodelet" name="euclidean_clustering2"
+      args="load jsk_pcl/EuclideanClustering $(arg manager)" output="screen">
+      <remap from="~input" to="/pcl_nodelet/hsi_filter/output" />
+      <rosparam>
+        tolerance: 0.02
+        min_size: 50
+        max_size: 100000
+      </rosparam>
+    </node>
+
+    <node pkg="nodelet" type="nodelet"
+         name="cluster_decomposer2"
+         args="load jsk_pcl/ClusterPointIndicesDecomposerZAxis $(arg manager)"
+         output="screen" clear_params="true">
+     <remap from="~input" to="/pcl_nodelet/hsi_filter/output" />
+     <remap from="~target" to="/pcl_nodelet/euclidean_clustering2/output" />
+     <rosparam>
+     </rosparam>
+    </node>
+
+
+
+
+
+    <node name="hsi_filter_brown" pkg="nodelet" type="nodelet"
+      args="load jsk_pcl/HSIColorFilter $(arg manager)" 
+      output="screen">
+      <remap from="~input" to="/pcl_nodelet/ExtractIndices/output" />
+      <rosparam>
+        use_indices: false
+        keep_organized: false
+      </rosparam>
+      <param name="h_limit_max" value="18" />
+      <param name="h_limit_min" value="5" />
+      <param name="s_limit_max" value="255" />
+      <param name="s_limit_min" value="25" />
+      <param name="i_limit_max" value="179" />
+      <param name="i_limit_min" value="43" />
+    </node>
+
+    <node pkg="nodelet" type="nodelet" name="euclidean_clustering3"
+      args="load jsk_pcl/EuclideanClustering $(arg manager)" output="screen">
+      <remap from="~input" to="/pcl_nodelet/hsi_filter_brown/output" />
+      <rosparam>
+        tolerance: 0.02
+        min_size: 50
+        max_size: 100000
+      </rosparam>
+    </node>
+
+    <node pkg="nodelet" type="nodelet"
+         name="cluster_decomposer3"
+         args="load jsk_pcl/ClusterPointIndicesDecomposerZAxis $(arg manager)"
+         output="screen" clear_params="true">
+     <remap from="~input" to="/pcl_nodelet/hsi_filter_brown/output" />
+     <remap from="~target" to="/pcl_nodelet/euclidean_clustering3/output" />
+     <rosparam>
+     </rosparam>
+    </node>
+
+
+
+  </group>
+
+</launch>

@@ -1,0 +1,6 @@
+<launch>
+
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/pr2/endcoords_larm_publisher.launch"/>
+
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/pr2/left_virtual_force_publisher.launch"/>
+</launch>

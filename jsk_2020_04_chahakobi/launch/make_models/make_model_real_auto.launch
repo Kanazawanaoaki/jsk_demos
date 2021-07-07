@@ -1,0 +1,53 @@
+<launch>
+  <arg name="manager" default="pointcloud" />
+  <arg name="gui" default="true" />
+  <arg name="INPUT" default="/kinect_head_remote/depth_registered/points" />
+  
+  <node name="$(arg manager)" pkg="nodelet" type="nodelet" args="manager"
+        output="screen" />
+        <!-- machine="$(arg machine)" if="$(arg launch_manager)" -->
+        <!-- output="screen" /> -->
+
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/pr2/pr2_decompress.launch" >
+        <arg name="manager" value="$(arg manager)" />
+  </include>  
+
+  <group ns="pcl_nodelet">
+    <node name="$(arg manager)" pkg="nodelet" type="nodelet" args="manager"
+            output="screen" />
+
+
+    <node name="boxfilter_pre" pkg="nodelet" type="nodelet"
+	  args="standalone jsk_pcl/AttentionClipper" output="screen">
+      <remap from="~input/points" to="$(arg INPUT)" />
+      <rosparam>
+        use_multiple_attention: false
+        initial_pos: [0.4, -0.04, 0.8]
+        initial_rot: [0, 0, 0]
+        dimension_x: 0.25
+        dimension_y: 0.25
+        dimension_z: 0.25
+        frame_id: base_footprint
+      </rosparam>
+    </node>
+
+    <node name="ExtractIndices" pkg="nodelet" type="nodelet"
+	  args="standalone jsk_pcl/ExtractIndices" output="screen">
+      <remap from="~input" to="$(arg INPUT)" />
+      <remap from="~indices" to="boxfilter_pre/output/point_indices"/>
+      <rosparam>
+        keep_organized: true
+      </rosparam>
+    </node>
+
+    <node name="make_models" pkg="jsk_2020_04_chahakobi" type="merge_pointcloud_from_tf_test.py">
+      <remap from="~input" to="ExtractIndices/output" />
+    </node>
+  </group>
+
+  <group if="$(arg gui)">
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2020_04_chahakobi)/config/make_models.rviz"/>
+  </group>
+</launch>

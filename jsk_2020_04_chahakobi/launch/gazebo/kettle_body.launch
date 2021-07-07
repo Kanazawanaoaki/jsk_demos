@@ -1,0 +1,64 @@
+<launch>
+  <arg name="gui" default="true" />
+  <arg name="physics" default="ode" />
+
+  <arg name="launch_pr2_base_trajectory_action" default="false"
+       doc="launch pr2_base_trajectory_action for debugging" />
+
+  <!-- load scene in gazebo -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="world_name" value="$(find jsk_2020_04_chahakobi)/worlds/kettle_body.world" />
+    <arg name="physics" value="$(arg physics)" />
+  </include>
+  <include file="$(find pr2_gazebo)/launch/pr2.launch">
+    <arg name="KINECT1" value="true" />
+    <arg name="KINECT2" value="false" />
+  </include>
+
+  <node name="kinect_throttled_points" pkg="topic_tools" type="throttle"
+        args="messages /head_mount_kinect/depth_registered/points 5.0 /kinect_head/depth_registered/throttled/points">
+    <rosparam>
+      lazy: true
+    </rosparam>
+  </node>
+
+  <!-- for :move-to and :go-velocity tests -->
+  <node pkg="fake_localization" type="fake_localization" name="fake_localization" >
+    <param name="~odom_frame_id" value="odom_combined" />
+  </node>
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find pr2eus)/test/blank_map.yaml"/>
+
+  <node pkg="move_base" type="move_base" name="move_base_node" output="screen">
+    <remap from="odom" to="base_odometry/odom" />
+    <remap from="cmd_vel" to="base_controller/command" />
+
+    <!-- Use the dwa local planner for the PR2 -->
+    <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
+
+    <!-- Load common configuration files -->
+    <rosparam file="$(find pr2_navigation_config)/move_base/move_base_params.yaml" command="load" />
+    <rosparam file="$(find pr2_navigation_config)/move_base/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find pr2_navigation_config)/move_base/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find pr2_navigation_config)/move_base/dwa_local_planner.yaml" command="load" ns="DWAPlannerROS" />
+    <rosparam file="$(find pr2_navigation_config)/move_base/recovery_behaviors.yaml" command="load" />
+
+    <!-- Load slam navigation specific parameters -->
+    <rosparam file="$(find pr2_navigation_slam)/config/move_base_params.yaml" command="load" />
+    <rosparam file="$(find pr2_navigation_slam)/config/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find pr2_navigation_slam)/config/local_costmap_params.yaml" command="load"  />
+    <rosparam>
+      global_costmap:
+        observation_sources: base_scan
+      local_costmap:
+        observation_sources: base_scan
+    </rosparam>
+  </node>
+  <node name="tf_world_publisher" pkg="tf" type="static_transform_publisher"
+	args="0 0 0 0 0 0 /world /map 100" />
+
+  <include if="$(arg launch_pr2_base_trajectory_action)"
+           file="$(find pr2_base_trajectory_action)/launch/pr2_base_trajectory_action.launch" />
+
+  
+</launch>

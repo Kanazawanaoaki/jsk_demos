@@ -1,0 +1,23 @@
+<launch>
+  <arg name="INPUT" value="/kinect_head/depth_registered/throttled/points" />
+
+  <node name="attention_clipper"
+        pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl/AttentionClipper">
+    <remap from="~input/points" to="$(arg INPUT)" />
+    <rosparam>
+      initial_pos: [0.78, 0, 0.76]
+      initial_rot: [0, 0, 0]
+      dimension_x: 0.2
+      dimension_y: 0.2
+      dimension_z: 0.21
+      frame_id: base_link
+    </rosparam>
+  </node>
+
+  <node name="extract_indices"
+        pkg="jsk_pcl_ros" type="extract_indices">
+    <remap from="~input" to="$(arg INPUT)" />
+    <remap from="~indices" to="attention_clipper/output/point_indices" />
+  </node>
+</launch>

@@ -1,0 +1,27 @@
+<launch>
+  <arg name="INPUT" value="/pcd_to_pointcloud/output" />
+
+  <node name="attention_clipper"
+        pkg="nodelet" type="nodelet"
+	args="standalone jsk_pcl/AttentionClipper" output="screen">
+    <remap from="~input/points" to="$(arg INPUT)" />
+    <rosparam>
+      initial_pos: [0.02, 0, 0]
+      initial_rot: [0, 0, 0]
+      dimension_x: 0.03
+      dimension_y: 0.07
+      dimension_z: 0.51
+      frame_id: map
+    </rosparam>
+  </node>
+  
+  <node name="ExtractIndices" pkg="nodelet" type="nodelet"
+	args="standalone jsk_pcl/ExtractIndices" output="screen">
+    <remap from="~input" to="$(arg INPUT)" />
+    <remap from="~indices" to="attention_clipper/output/point_indices" />
+    <rosparam>
+      keep_organized: true
+    </rosparam>
+  </node>
+
+</launch>

@@ -1,0 +1,58 @@
+<launch>
+  <arg name="manager" default="pointcloud" />
+  <arg name="gui" default="true" />
+  <arg name="INPUT" default="/kinect_head/depth_registered/throttled/points" />
+
+  <group ns="pcl_nodelet">
+    <node name="$(arg manager)" pkg="nodelet" type="nodelet" args="manager"
+          output="screen" />
+
+    <node name="$(anon self_filter)"
+        pkg="robot_self_filter" type="self_filter"
+        clear_params="true" respawn="true">
+    <remap from="robot_description" to="/robot_description" />
+    <remap from="cloud_in" to="$(arg INPUT)" />
+    <remap from="cloud_out" to="robot_self_filtered_points" />
+    <rosparam>
+      use_rgb: true
+      keep_organized: true
+      subsample_value: 0.0
+    </rosparam>
+    <rosparam command="load"
+              file="$(find jsk_2020_04_chahakobi)/config/self_filter.yaml" />
+  </node>
+
+    <node name="boxfilter_pre" pkg="nodelet" type="nodelet"
+	  args="standalone jsk_pcl/AttentionClipper" output="screen">
+      <remap from="~input/points" to="/pcl_nodelet/robot_self_filtered_points" />
+      <rosparam>
+        use_multiple_attention: false
+        initial_pos: [0, 0, 0]
+        initial_rot: [0, 0, 0]
+        dimension_x: 0.3
+        dimension_y: 0.2
+        dimension_z: 0.2
+        frame_id: r_gripper_tool_frame
+      </rosparam>
+    </node>
+
+    <node name="ExtractIndices" pkg="nodelet" type="nodelet"
+	  args="standalone jsk_pcl/ExtractIndices" output="screen">
+      <remap from="~input" to="$(arg INPUT)" />
+      <remap from="~indices" to="/pcl_nodelet/boxfilter_pre/output/point_indices"/>
+      <rosparam>
+        keep_organized: true
+      </rosparam>
+    </node>
+
+    <node name="make_models" pkg="jsk_2020_04_chahakobi" type="merge_pointcloud_right_test.py">
+      <remap from="~input" to="/pcl_nodelet/ExtractIndices/output" />
+    </node>
+  </group>
+
+  <group if="$(arg gui)">
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2020_04_chahakobi)/config/make_models.rviz"/>
+  </group>
+</launch>

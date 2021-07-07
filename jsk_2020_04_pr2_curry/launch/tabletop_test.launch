@@ -1,0 +1,26 @@
+<launch>
+
+  <arg name="INPUT" default="/head_mount_kinect/depth_registered/points" />
+  <arg name="run_rviz" default="true" />
+  <arg name="publish_objects_tf" default="true" />
+  <arg name="launch_tracking" default="false" />
+  <arg name="manager" default="pr2_tabletop_object_detector_nodelet_manager"/>
+  <arg name="machine" default="localhost" />
+  <arg name="load_machine" default="true" />
+  
+  <include file="$(find jsk_pcl_ros)/sample/tabletop_object_detector.launch">
+    <arg name="input" value="$(arg INPUT)" />
+    <arg name="sensor_frame" value="/head_mount_kinect_rgb_optical_frame" />
+    <arg name="manager" value="$(arg manager)" />
+    <arg name="machine" value="$(arg machine)" />
+    <arg name="launch_openni" value="false" />
+    <arg name="launch_tracking" value="$(arg launch_tracking)" />
+    <arg name="launch_rviz" value="false" />
+    <arg name="publish_tf" value="$(arg publish_objects_tf)" />
+  </include>
+
+  <node if="$(arg run_rviz)"
+        pkg="rviz" name="pr2_rviz" type="rviz"
+        args="-d $(find jsk_2020_04_pr2_curry)/config/tabletop_test.rviz" />
+  
+</launch>

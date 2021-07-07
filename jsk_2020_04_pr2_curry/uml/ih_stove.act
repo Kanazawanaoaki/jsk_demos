@@ -1,0 +1,36 @@
+state IH_Stove{
+  OFF -right-> ON : Push on switch
+  ON -right-> knob_on : Push knob
+  knob_on -up-> F_7 : Rotate knob
+  F_1 -right-> F_2 : Rotate knob
+  F_2 -right-> F_3 : Rotate knob
+  F_3 -right-> F_4 : Rotate knob
+  F_4 -right-> F_5 : Rotate knob
+  F_5 -right-> F_6 : Rotate knob
+  F_6 -right-> F_7 : Rotate knob
+  F_7 -right-> F_8 : Rotate knob
+  F_8 -right-> F_9 : Rotate knob
+  F_9 -right-> F_10 : Rotate knob
+  F_10 -left-> F_9 : Rotate knob
+  F_9 -left-> F_8 : Rotate knob
+  F_8 -left-> F_7 : Rotate knob
+  F_7 -left-> F_6 : Rotate knob
+  F_6 -left-> F_5 : Rotate knob
+  F_5 -left-> F_4 : Rotate knob
+  F_4 -left-> F_3 : Rotate knob
+  F_3 -left-> F_2 : Rotate knob
+  F_2 -left-> F_1 : Rotate knob
+  knob_on -left-> ON : Push knob
+  ON -left-> OFF : Push off switch
+
+  F_10 -down-> ON : Push konb
+  F_9 -down-> ON : Push konb
+  F_8 -down-> ON : Push konb
+  F_7 -down-> ON : Push konb
+  F_6 -down-> ON : Push konb
+  F_5 -down-> ON : Push konb
+  F_4 -down-> ON : Push konb
+  F_3 -down-> ON : Push konb
+  F_2 -down-> ON : Push konb
+  F_1 -down-> ON : Push konb
+}

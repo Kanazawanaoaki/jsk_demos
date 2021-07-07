@@ -1,0 +1,14 @@
+<launch>
+  <arg name="INPUT" default="/pcl_nodelet/point_cloud_one_look" />
+
+  <node name="pointcloud_to_pcd" type="nodelet" pkg="nodelet"
+        args="standalone jsk_pcl_utils/PointCloudToPCD" output="screen" >
+    <remap from="~input" to="$(arg INPUT)" />
+    <rosparam subst_value="true">
+      prefix: $(find jsk_2020_04_chahakobi)/pcd/knife/knife_debug_
+      duration: 0.5
+      binary: false
+      compressed: false
+    </rosparam>
+  </node>
+</launch>
