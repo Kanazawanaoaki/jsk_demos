@@ -4,6 +4,9 @@
   (load "package://eus_qp/optmotiongen/euslisp/inverse-kinematics-wrapper.l")
   (load "package://eus_qp/optmotiongen/euslisp/discrete-kinematics-configuration-task.l")
   (load "package://eus_qp/optmotiongen/euslisp/sqp-msc-optimization.l")
+
+  (setq *obstacle* (send (send (send *scene* :object "/eng2/7f") :object "/eng2/7f/73b2") :object "room73b2-kitchen"))
+  
   )
 
 (optmotiongen-init)
@@ -20,10 +23,10 @@
   (send *pr2*
         :inverse-kinematics-optmotiongen
         (send *arrow* :copy-worldcoords)
-        :link-list (send *pr2* :link-list (send (send *pr2* :rarm :end-coords) :parent))
+        ;; :link-list (send *pr2* :link-list (send (send *pr2* :rarm :end-coords) :parent))
         :move-target (send *pr2* :rarm :end-coords)
         :translation-axis t
-        :rotation-axis nil
+        :rotation-axis t
         :debug-view t
         :collision-avoidance-link-pair (mapcar #'(lambda (l) (list l *obstacle*)) (append (send *pr2* :link-list (send *pr2* :rarm :end-coords :parent)) (list (send *pr2* :r_forearm_link_lk) (send *pr2* :r_upper_arm_link_lk) (send *pr2* :r_gripper_palm_link_lk) (send *pr2* :r_gripper_r_finger_link_lk) (send *pr2* :r_gripper_l_finger_link_lk) (send *pr2* :r_gripper_r_finger_tip_link_lk) (send *pr2* :r_gripper_l_finger_tip_link_lk))))
         )  
