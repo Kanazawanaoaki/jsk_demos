@@ -709,20 +709,20 @@
   (dotimes (i num)
     (send *arrow* :translate (float-vector (* interval 2) 0 (/ interval -2)))
     (send *pr2* :rarm :inverse-kinematics
-      *arrow*
-      :move-target (car (send *knife* :attention))
-      :rotation-axis t
-      :debug-view *debug-flag*)
+          *arrow*
+          :move-target (car (send *knife* :attention))
+          :rotation-axis t
+          :debug-view *debug-flag*)
     (send *viewer* :draw-objects)
     (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
     (send *ri* :wait-interpolation)
 
     (send *arrow* :translate (float-vector (* interval -2) 0 (/ interval -2)))
     (send *pr2* :rarm :inverse-kinematics
-      *arrow*
-      :move-target (car (send *knife* :attention))
-      :rotation-axis t
-      :debug-view *debug-flag*)
+          *arrow*
+          :move-target (car (send *knife* :attention))
+          :rotation-axis t
+          :debug-view *debug-flag*)
     (send *viewer* :draw-objects)
     (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
     (send *ri* :wait-interpolation))
@@ -745,7 +745,7 @@
   
   ;; 置く
   (send *arrow* :move-to (make-coords :pos (float-vector 500.0 8400.0 30850.0) :rot #2f((1.0 0.0 0.0) (0.0 0.0 -1.0) (0.0 1.0 0.0))) :world)
-
+  
   (send *arrow* :translate #f(0 0 80) :world)
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -755,7 +755,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   (send *arrow* :translate #f(0 0 -80) :world)
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
