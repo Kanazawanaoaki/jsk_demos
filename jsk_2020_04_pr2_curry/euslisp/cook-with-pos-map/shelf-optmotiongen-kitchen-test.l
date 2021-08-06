@@ -14,12 +14,22 @@
 
 (warn "please run (shelf-with-optmotiongen-1) ~%")
 
+(defun hen-pose ()
+  (send *arrow* :newcoords (make-coords :pos (float-vector 807.411 8629.439 30567.735) :rpy (float-vector -2.248 0.433 -2.951)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :debug-view t
+        )
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  )
+
 (defun shelf-with-optmotiongen-1 ()
   (send *arrow* :newcoords (send (car (send *shelf-door* :handle)) :copy-worldcoords))
   
   (send *arrow* :translate (float-vector 100 0 -100) :world)
 
-  (setq *obstacle* (make-cube 250 250 250))
+  (setq *obstacle* (send (send (send *scene* :object "/eng2/7f") :object "/eng2/7f/73b2") :object "room73b2-kitchen"))
   (send *pr2*
         :inverse-kinematics-optmotiongen
         (send *arrow* :copy-worldcoords)
@@ -29,7 +39,7 @@
         :rotation-axis t
         :debug-view t
         :collision-avoidance-link-pair (mapcar #'(lambda (l) (list l *obstacle*)) (append (send *pr2* :link-list (send *pr2* :rarm :end-coords :parent)) (list (send *pr2* :r_forearm_link_lk) (send *pr2* :r_upper_arm_link_lk) (send *pr2* :r_gripper_palm_link_lk) (send *pr2* :r_gripper_r_finger_link_lk) (send *pr2* :r_gripper_l_finger_link_lk) (send *pr2* :r_gripper_r_finger_tip_link_lk) (send *pr2* :r_gripper_l_finger_tip_link_lk))))
-        )  
+        )
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   
   ;; (send *pr2* :rarm :inverse-kinematics
