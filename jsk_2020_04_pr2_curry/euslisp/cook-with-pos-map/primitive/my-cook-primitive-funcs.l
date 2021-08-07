@@ -365,21 +365,89 @@
 
 
 ;; 残りのプリミティブを用意する
-
-;; move-object
-(defun move-object-ik (coords rotate-flag)
-  (send *pr2* :rarm :inverse-kinematics
+;; move-arm primitive
+(defun move-arm-ik (coords &key (rotate-flag t) (arm :rarm) (times 3000))
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* arm :inverse-kinematics
         coords
         :rotation-axis rotate-flag
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) times)
+  (send *ri* :wait-interpolation)
+  )
+
+;; move-gripper primitive
+(defun move-gripper-func (pos &key (arm :rarm)) ;; どのくらいの値がちょうど良いのだろうか．．．
+  (send *ri* :move-gripper arm pos)
+  )
+
+;; move-head primitive
+(defun move-head-func (&key (p-val 0.0) (y-val 0.0) (times 3000))
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :head :neck-p :joint-angle p-val)
+  (send *pr2* :head :neck-y :joint-angle y-val)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) times)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun move-head-look-at (pos &key (times 3000)) ;; ex. (move-head-look-at (send (send *arrow* :copy-worldcoords) :worldpos))
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :head :look-at pos)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) times)
+  (send *ri* :wait-interpolation)
+  )
+
+;; move-torso primitive
+(defun move-torso-func (val &key (times 3000)) ;; ex. (move-torso-func 325)
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :torso_lift_joint :joint-angle val)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) times)
+  (send *ri* :wait-interpolation)
+  )
+
+
+;; move-object  primitive
+(defun move-object-ik (coords &key (rotate-flag t) (arm :rarm) (target (send *pr2* :rarm :end-coords)) (times 3000))
+  (send *pr2* arm :inverse-kinematics
+        coords
+        :move-target target
+        :rotation-axis rotate-flag
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) times)
   (send *ri* :wait-interpolation)
   )
 
 (defun move-object-av-sequence ()
-  
   )
 
 
-;; 
+;; push-object primitive
+
+
+
+;; peel primitive
+
+
+;; cut primitive
+
+
+;; mix primitive
+
+
+;; scrape primitive
+
+
+;; scoop primitive
+
+
+;; pour primitive
+
+
+;; push-button primitive
+
+
