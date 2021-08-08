@@ -427,14 +427,223 @@
 
 
 ;; push-object primitive
-
+(defun push-object-primitive (slide-length &key (rotate-flag t) (arm :rarm) (target (send *pr2* :rarm :end-coords)) (times 600) (trans (float-vector 0 -10 -3)))
+  (setq avs (list))
+  (setq tms (list))
+  
+  (send *arrow* :newcoords (send target :copy-worldcoords))
+  
+  (dotimes (i (+ (/ slide-length 10) 1))
+    (send *arrow* :translate trans)
+    (send *pr2* arm :inverse-kinematics
+          (send *arrow* :copy-worldcoords)
+          :move-target target
+          :rotation-axis t
+          :debug-view *debug-flag*)
+    (setq av (send *pr2* :angle-vector))
+    (setq avs (append avs (list av)))
+    (setq tms (append tms (list times)))
+    )
+  
+  (send *ri* :angle-vector-sequence avs tms)
+  (send *ri* :wait-interpolation)
+  )
 
 
 ;; peel primitive
+(defun peel-primitive (peeler height width)
+  
+  ;; 右手を上げる
+  (setq *c* (make-coords))
+  (send *c* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+  (send *c* :translate #f(0 0 200) :world)
+  (send *pr2* :rarm :inverse-kinematics
+        (send *c* :copy-worldcoords)
+        :rotation-axis nil
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  ;; 剥く位置
+  (send *c* :newcoords (make-coords :pos (send (send (send *pr2* :larm :end-coords) :copy-worldcoords) :worldpos)))
+  (send *c* :translate #f(0 15 0) :world)
+  (send *c* :rotate (deg2rad -90) :z :world)
+
+  (send *c* :translate (float-vector 0 0 (* 1 height)) :world)
+  (send *c* :rotate (deg2rad 30) :y)
+  (send *c* :translate (float-vector 0 80 80) :world)
+
+  ;;調整
+  (send *c* :translate (float-vector 0 adj 0))
+
+  (send *c* :translate (float-vector adj2 0 0))
+  
+  (send *pr2* :rarm :inverse-kinematics
+        *c*
+        :move-target (car (send peeler :attention))
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *c* :translate (float-vector 0 -80 -80) :world)
+  (send *pr2* :rarm :inverse-kinematics
+        *c*
+        :move-target (car (send peeler :attention))
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+  
+  (setq *tmp-rav-0* (send *pr2* :rarm :angle-vector))
+  
+  ;; 皮剥き始める所
+  (ros::unsubscribe "/right_endeffector/wrench")
+  (setq *cb-flag* nil)
+  (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-y-cb)
+  
+  (setq interval 10)
+  
+  (setq avs (list))
+  (setq tms (list))
+  
+  (dotimes (i (+ (round (/ (* height 2) interval)) 1))
+    (send *c* :translate (float-vector 0 0 (* interval -1)) :world)
+    (send *pr2* :rarm :inverse-kinematics
+          *c*
+          :move-target (car (send peeler :attention))
+          :rotation-axis t
+          :debug-view nil)
+    
+    (setq av (send *pr2* :angle-vector))
+    
+    (setq avs (append avs (list av)))
+    (setq tms (append tms (list 600)))
+    )
+
+  (send *ri* :angle-vector-sequence avs tms)
+
+  (while (some #'identity (send *ri* :wait-interpolation nil 0.1))
+    (when (progn
+            (ros::spin-once)
+            (if *cb-flag* t)
+            )
+      (send *ri* :cancel-angle-vector)
+      (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+      
+      ;; 剥き終わり
+      (send *c* :rotate (deg2rad -30) :y)
+      (send *c* :translate (float-vector (* (+ width 20) -1) 0 0) )
+      (send *c* :rotate (deg2rad 30) :y)
+      
+      (send *pr2* :rarm :inverse-kinematics
+            *c*
+            :move-target (car (send peeler :attention))
+            :rotation-axis t
+            :debug-view *debug-flag*)
+      (send *viewer* :draw-objects)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+      (send *ri* :wait-interpolation)
+      
+      (ros::unsubscribe "/right_endeffector/wrench")
+      
+      (warn "you can retry (peel-test) or (finish-pose-peel) , (set-carrot-2)~%")
+      (return-from peel-test t))
+    )
+  
+  ;; 剥き終わり
+  (send *c* :rotate (deg2rad -30) :y)
+  (send *c* :translate (float-vector (* (+ width 20) -1) 0 0) )
+  (send *c* :rotate (deg2rad 30) :y)
+  
+  (send *pr2* :rarm :inverse-kinematics
+        *c*
+        :move-target (car (send peeler :attention))
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (ros::unsubscribe "/right_endeffector/wrench")
+  
+  (warn "fail cancel !! ~%")
+  (warn "you can retry (peel-test) or (finish-pose-peel) , (set-carrot-2)~%")
+  )
 
 
 ;; cut primitive
+(defun cut-primitive (coords height &key (adj 0)) ;; ex. (cut-primitive (send *cut-point-1* :copy-worldcoords) *height*)
+  (unless (boundp '*pkki*)
+    (progn      
+      (load "package://jsk_kitchen_knife_pr2/euslisp/pr2-kitchen_knife-interface.l")
+      (setq *pkki* (instance pr2-kitchen_knife-interface :init))
+      ))
+  
+  (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 100) :world)
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis nil
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
 
+  ;; 少し上に包丁を
+  (send *arrow* :newcoords (send coords :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 (* height 1)))
+  
+  ;;調整
+  (send *arrow* :translate (float-vector 0 adj 0))
+  
+  ;; (look-at-arrow)
+  ;; (rossrv-test)
+  
+  ;; 少し上にするために
+  (setq offset 50)
+  
+  (send *arrow* :translate (float-vector 0 0 offset))  
+  (send *pr2* :rarm :inverse-kinematics
+        *arrow*
+        :move-target (car (send *knife* :attention))
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  
+  (send *arrow* :translate (float-vector 0 0 (* offset -0.5)))  
+  (send *pr2* :rarm :inverse-kinematics
+        *arrow*
+        :move-target (car (send *knife* :attention))
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *arrow* :translate (float-vector 0 0 (* offset -0.5)))  
+  (send *pr2* :rarm :inverse-kinematics
+        *arrow*
+        :move-target (car (send *knife* :attention))
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  ;; 室岡さんの切るやつ
+  (send *pkki* :cut-once *arrow* 30892 :controller :nn) ;; 新しいVer.用
+  
+  )
 
 ;; mix primitive
 
