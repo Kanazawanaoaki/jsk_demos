@@ -2661,7 +2661,7 @@
   (reset-rarm)
   
   (transfer-bowl-1-to-pot)
-
+  
   ;; TODOここを分けていい感じに書く
   (grasp-spatula)
   
