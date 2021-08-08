@@ -890,7 +890,7 @@
   ;;   (setq av (send *pr2* :angle-vector))
   ;;   (setq avs (append avs (list av)))
   ;;   (setq tms (append tms (list 600)))
-    
+  
   ;;   (send *arrow* :translate (float-vector (* interval -2) 0 (/ interval -2)))
   ;;   (send *pr2* :rarm :inverse-kinematics
   ;;         *arrow*
@@ -900,7 +900,7 @@
   ;;   (setq av (send *pr2* :angle-vector))
   ;;   (setq avs (append avs (list av)))
   ;;   (setq tms (append tms (list 600)))
-    
+  
   ;;   )
 
   ;; (send *ri* :angle-vector-sequence avs tms)
