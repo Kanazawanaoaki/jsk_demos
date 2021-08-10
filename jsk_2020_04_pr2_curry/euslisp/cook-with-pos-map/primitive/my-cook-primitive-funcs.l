@@ -291,10 +291,10 @@
   )
 
 ;; 実機の移動 move-base primitive
-(defun move-base-to-coords-ri-direct (coords)
+(defun move-base-to-coords-ri-direct (coord)
   (send *ri* :clear-costmap)
   ;; (send *ri* :move-to (make-coords :pos #f(1200 8500 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
-  (send *ri* :move-to coords :frame-id "/map")
+  (send *ri* :move-to coord :frame-id "/map")
   (print (send *ri* :state :worldcoords))
   )
 
@@ -366,10 +366,10 @@
 
 ;; 残りのプリミティブを用意する
 ;; move-arm primitive
-(defun move-arm-ik (coords &key (rotate-flag t) (arm :rarm) (times 3000))
+(defun move-arm-ik (coord &key (rotate-flag t) (arm :rarm) (times 3000))
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
   (send *pr2* arm :inverse-kinematics
-        coords
+        coord
         :rotation-axis rotate-flag
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
@@ -411,9 +411,9 @@
 
 
 ;; move-object  primitive
-(defun move-object-ik (coords &key (rotate-flag t) (arm :rarm) (target (send *pr2* :rarm :end-coords)) (times 3000))
+(defun move-object-ik (coord &key (rotate-flag t) (arm :rarm) (target (send *pr2* :rarm :end-coords)) (times 3000))
   (send *pr2* arm :inverse-kinematics
-        coords
+        coord
         :move-target target
         :rotation-axis rotate-flag
         :debug-view *debug-flag*)
@@ -579,7 +579,7 @@
 
 
 ;; cut primitive
-(defun cut-primitive (coords height knife &key (adj 0)) ;; ex. (cut-primitive (send *cut-point-1* :copy-worldcoords) *height* *knife*)
+(defun cut-primitive (coord height knife &key (adj 0)) ;; ex. (cut-primitive (send *cut-point-1* :copy-worldcoords) *height* *knife*)
   (unless (boundp '*pkki*)
     (progn      
       (load "package://jsk_kitchen_knife_pr2/euslisp/pr2-kitchen_knife-interface.l")
@@ -598,7 +598,7 @@
   
 
   ;; 少し上に包丁を
-  (send *arrow* :newcoords (send coords :copy-worldcoords))
+  (send *arrow* :newcoords (send coord :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 (* height 1)))
   
   ;;調整
@@ -891,18 +891,29 @@
   )
 
 ;; scoop primitive
-(defun scoop-primitive ()
+(defun scoop-primitive (coord) ;; ex. (sccop-primitive (make-coords :pos (v+ (send (send *pot* :attention-attention0) :worldpos) #f(-24.0 -41.0 -21.0)) :rpy (float-vector -0.74 0.613 -1.132)) )
+  
+  ;; (send *arrow* :newcoords (make-coords :pos (v+ (send coord :worldpos) #f(44.999 131.0 236.0)) :rpy (float-vector -1.606 1.047 3.138)))
+  ;; (send *pr2* :rarm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :move-target (car (send *ladle* :attention))
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
+  ;; (send *viewer* :draw-objects)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  ;; (send *ri* :wait-interpolation)
   (send *arrow* :newcoords (make-coords :pos (float-vector 471 8170 31070) :rpy (float-vector -1.603 0.0 3.14))) ;; wait-pose
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
-        :move-target (car (send *ladle* :attention))
+        :move-target (elt (send *ladle* :attention) 1)
         :rotation-axis t
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
+    
   
-  (send *arrow* :newcoords (make-coords :pos (float-vector 426 8039 30834) :rpy (float-vector -0.74 0.613 -1.132)))
+  (send *arrow* :newcoords (send coord :copy-worldcoords))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :move-target (elt (send *ladle* :attention) 1)
@@ -932,7 +943,8 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
   
-  (send *arrow* :newcoords (make-coords :pos (float-vector 479 8064 30870) :rpy (float-vector -1.296 0.242 -0.152)))
+  (send *arrow* :newcoords (make-coords :pos (v+ (send coord :worldpos) #f(53.0 25.0 36.0)) :rpy (float-vector -1.296 0.242 -0.152)))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 479 8064 30870) :rpy (float-vector -1.296 0.242 -0.152)))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :move-target (elt (send *ladle* :attention) 1)
