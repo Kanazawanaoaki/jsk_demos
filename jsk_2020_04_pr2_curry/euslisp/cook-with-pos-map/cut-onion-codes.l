@@ -195,6 +195,13 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun look-at-left-hand ()
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :head :look-at (send (send (send *pr2* :larm :end-coords) :copy-worldcoords) :worldpos))
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
+  )
 
 ;; cut funcs
 (defun set-onion-cut (&rest args &key (w 160) (l 40) (h 40) &allow-other-keys)
@@ -691,6 +698,8 @@
 
 (defun cut-all-m ()
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+
+  (set-m)
   
   ;; 薄切りする間隔
   (setq tmp 15)
@@ -705,7 +714,7 @@
   ;; (dotimes (i (- (round (/ leng tmp)) 1))
   (dotimes (i (round (/ leng tmp)) )
     (setq adj (+ adj tmp))
-    (cut-test)
+    (cut-test-m)
     )
   )
 
@@ -1192,7 +1201,7 @@
   (touch-test)
   (up-knife)
   (slide-knife)
-  (cut-all)
+  (cut-all-m)
   (avoid-pose)
   (reset-larm)
   )
