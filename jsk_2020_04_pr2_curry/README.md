@@ -51,3 +51,39 @@ roslaunch jsk_2020_04_pr2_curry tabletop_test.launch
 roscd jsk_2020_04_pr2_curry/euslisp/
 rlwrap roseus gazebo-test.l 
 ```
+
+# 実機で行う時
+
+## ハードウェアの準備
+PR2のグリッパを替える  
+PR2の移動  
+PR2の手袋+グリッパ部分のカバー  
+PR2の
+
+
+### ソフトウェアの準備
+
+```
+roslaunch jsk_2020_04_pr2_curry cutting_board_top_pr2_test.launch 
+```
+
+遠隔でやったときは
+```
+roslaunch jsk_2020_04_pr2_curry rviz_cutting_board_top_pr2_test.launch 
+```
+でRvizを見るなど
+
+
+ものによってはdata_collection_serverが必要
+```
+roslaunch jsk_2020_04_pr2_curry data_collection_prosilica.launch
+```
+```
+roslaunch jsk_2020_04_pr2_curry data_collection_kinect_and_prosilica_each.launch
+```
+
+
+室岡さんの切るやつを使う時
+```
+roslaunch jsk_kitchen_knife_pr2 execute.launch
+```
