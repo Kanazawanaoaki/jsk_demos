@@ -28,6 +28,141 @@
   (setq *debug-flag* nil)
   )
 
+;; add for recognition
+
+(setq *y-thre* -11)
+(setq *x-thre* -15)
+
+;; トピックを定義
+(setq *bbox-topic-name* "/segmentation_decomposer/boxes")
+
+;; ros init
+(ros::roseus "vegs_rec_test" :anonymous t)
+(ros::load-ros-manifest "jsk_recognition_msgs")
+(setq *l* (instance ros::transform-listener :init))
+(setq found-obj nil)
+(print 0)
+
+;; define cb
+(defun object-pose-cb (msg)
+  (setq *msg* msg)
+  (setq *bbox* (car (send msg :boxes)))
+  ;; (print 1)
+  (when msg
+    (when (send *msg* :boxes)
+      (let ((cam-coords nil))
+        (setq tm2 (send *l* :get-latest-common-time "base_footprint" "head_mount_kinect_rgb_optical_frame"))    
+        (setq *dim* (send *bbox* :dimensions))
+        (setq width (* (send *dim* :x) 1000))
+        (setq length (* (send *dim* :y) 1000))
+        (setq height (* (send *dim* :z) 1000))
+        (setq *pose* (send *bbox* :pose))
+        (setq cam->obj-coords (ros::tf-pose->coords *pose*))
+        (when (send *l* :wait-for-transform  "base_footprint" "head_mount_kinect_rgb_optical_frame" tm2 10)
+          (setq cam-coords (send (send *pr2* :copy-worldcoords) :transform 
+                                 (send *l* :lookup-transform "base_footprint" "head_mount_kinect_rgb_optical_frame" tm2))))
+        (when cam-coords
+          (setq obj-coord (send cam-coords :transform cam->obj-coords))
+          (setq tmp (- (+ (elt (send obj-coord :pos) 2) (/ height 2)) (+ (elt (send *cutting-board* :worldpos) 2) 10)))
+          (send obj-coord :translate (float-vector 0 0 (- (/ height 2) (/ tmp 2))) :world)
+          (setq height tmp)
+          
+          (setq obj-pos (scale 0.001 (send obj-coord :worldpos)))
+          (if (> width 0)
+              (progn
+                (setq found-obj t)
+                (setq *width* width)
+                (setq *length* length)
+                (setq *height* height)
+                (setq *obj-coord* obj-coord)
+                ))
+          (print (list 'found? found-obj obj-pos)))
+        obj-pos))))
+
+(defun recognition () ;; 物体認識部分のみ
+  (setq found-obj nil)
+  (setq cnt 0)
+  (ros::unsubscribe *bbox-topic-name*)
+  (until found-obj
+         (print 4)
+         (x::window-main-one) ;; IRT viewerの視点を変えられる。見にくければ変えよう
+
+         (setq msg (one-shot-subscribe *bbox-topic-name* jsk_recognition_msgs::BoundingBoxArray :timeout 2000))
+         (when msg
+           (object-pose-cb msg)
+
+           ;; 中身が空なら抜ける
+           (unless (send *msg* :boxes) 
+             (progn
+               (setq *end-flag* t)
+               (return-from recognition)
+               ))
+           ;; 中身が0だったらカウントする
+           (if (= *width* 0)
+               (progn
+                 (setq cnt (+ cnt 1))
+                 ))
+           ;; カウントが５以上になったら抜ける
+           (if (>= cnt 5)
+               (progn
+                 (setq *end-flag* t)
+                 (return-from recognition)
+                 ))
+           )
+         ;; メッセージが来ていなかったら抜ける
+         (unless msg
+           (progn
+             (setq *end-flag* t)
+             (return-from recognition)
+             ))
+         )
+  )
+
+
+(ros::load-ros-manifest "geometry_msgs")
+(setq *cb-flag* nil)
+(defun wrench-y-cb (msg)
+  (when msg
+    (let ((y nil))
+      (setq y (send msg :wrench :force :y))
+      (if (< y *y-thre*)
+          (progn 
+            (setq *cb-flag* t)
+            (format t "OK!! y: ~A ~%" y)
+            )
+        (format t "y: ~A ~%" y))
+      )))
+
+(defun wrench-x-cb (msg)
+  (when msg
+    (let ((x nil))
+      (setq x (send msg :wrench :force :x))
+      (if (< x *x-thre*)
+          (progn 
+            (setq *cb-flag* t)
+            (format t "OK!! x: ~A ~%" x)
+            )
+        (format t "x: ~A ~%" x))
+      )))
+
+
+;; add for rosservice
+(ros::load-ros-manifest "std_srvs")
+(ros::wait-for-service "after_stow_data_collection/save_request")
+(setq req (instance std_srvs::TriggerRequest :init))
+
+
+(defun rossrv-test ()
+  ;; (ros::service-call "after_stow_data_collection_kinect/save_request" req t)
+  (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
+  )
+
+(defun rossrv-test-double ()
+  (ros::service-call "after_stow_data_collection_kinect/save_request" req t)
+  (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
+  )
+
+
 ;; add dynamic parmas
 ;; c.f https://github.com/knorth55/jsk_demos/blob/5b2a3112cdefb1d53ae04ea0e06d345684386f21/elevator_move_base_pr2/src/utils.l#L1-L145
 (defun call-service (service req)
@@ -336,7 +471,7 @@
   (set-head)
   )
 
-;; move with speech
+;; move with speech ;; TODOここに移動可能か検知を入れる．
 (defun speech-before-move ()
   (send *ri* :speak-jp "移動するので電源ケーブルを抜いて，合図して下さい")
   (ros::unsubscribe "/speech_to_text")
