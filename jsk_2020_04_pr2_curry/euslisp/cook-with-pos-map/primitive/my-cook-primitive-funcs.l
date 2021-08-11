@@ -378,7 +378,7 @@
   )
 
 ;; move-gripper primitive
-(defun move-gripper-func (pos &key (arm :rarm)) ;; どのくらいの値がちょうど良いのだろうか．．．
+(defun move-gripper-func (pos &key (arm :rarm)) ;; ex. (move-gripper-func 50 :arm :larm)
   (send *ri* :move-gripper arm pos)
   )
 
@@ -1080,3 +1080,5 @@
   (send *ri* :wait-interpolation)
   
   )
+
+
