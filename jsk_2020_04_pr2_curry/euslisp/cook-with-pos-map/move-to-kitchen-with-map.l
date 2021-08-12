@@ -259,12 +259,42 @@
     ))
 
 ;; wait until movable
+(ros::load-ros-manifest "pr2_msgs")
+
 (defun wait-cable ()
   (setq *cable* t)
   (while *cable*
     (let ((msg (one-shot-subscribe "/power_state" pr2_msgs::PowerState)))
       (setq *cable* (<= 0 (send msg :AC_present)))
       (unix::sleep 1)))
+  )
+
+(defun cable-test ()
+  (let ((msg (one-shot-subscribe "/power_state" pr2_msgs::PowerState)))
+    (format t "now AC_present is ~A ~%" (send msg :AC_present))
+    msg))
+
+(defun speech-before-move-with-rec ()
+  (setq *msg* cable-test)
+  (if (<= 0 (send msg :AC_present))
+      (progn
+        (send *ri* :speak-jp "移動するので電源ケーブルを抜いて下さい")
+        (wait-cable)
+        (send *ri* :speak-jp "ありがとうございます．移動を開始します")
+        )
+    (send *ri* :speak-jp "移動を開始します")
+    )
+  )
+
+(defun speech-after-move-with-rec ()
+  (setq *msg* cable-test)
+  (if (<= 0 (send msg :AC_present))
+      (send *ri* :speak-jp "調理を再開します")
+    (progn
+      (send *ri* :speak-jp "電源ケーブルを挿して下さい")
+      (wait-cable)
+      (send *ri* :speak-jp "ありがとうございます．調理を再開します")
+      ))
   )
 
 
