@@ -264,8 +264,19 @@
 (defun wait-cable ()
   (setq *cable* t)
   (while *cable*
+    ;; (let ((msg (cable-test)))
+    ;;   (setq *cable* (< 0 (send msg :AC_present)))
+    ;;   (unix::sleep 1)))
     (let ((msg (one-shot-subscribe "/power_state" pr2_msgs::PowerState)))
-      (setq *cable* (<= 0 (send msg :AC_present)))
+      (setq *cable* (< 0 (send msg :AC_present)))
+      (unix::sleep 1)))
+  )
+
+(defun wait-cable-in ()
+  (setq *cable* t)
+  (while *cable*
+    (let ((msg (one-shot-subscribe "/power_state" pr2_msgs::PowerState)))
+      (setq *cable* (>= 0 (send msg :AC_present)))
       (unix::sleep 1)))
   )
 
@@ -275,8 +286,8 @@
     msg))
 
 (defun speech-before-move-with-rec ()
-  (setq *msg* cable-test)
-  (if (<= 0 (send msg :AC_present))
+  (setq *msg* (cable-test))
+  (if (< 0 (send *msg* :AC_present))
       (progn
         (send *ri* :speak-jp "移動するので電源ケーブルを抜いて下さい")
         (wait-cable)
@@ -287,12 +298,12 @@
   )
 
 (defun speech-after-move-with-rec ()
-  (setq *msg* cable-test)
-  (if (<= 0 (send msg :AC_present))
+  (setq *msg* (cable-test))
+  (if (< 0 (send *msg* :AC_present))
       (send *ri* :speak-jp "調理を再開します")
     (progn
       (send *ri* :speak-jp "電源ケーブルを挿して下さい")
-      (wait-cable)
+      (wait-cable-in)
       (send *ri* :speak-jp "ありがとうございます．調理を再開します")
       ))
   )

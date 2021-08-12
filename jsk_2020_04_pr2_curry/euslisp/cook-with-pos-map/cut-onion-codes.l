@@ -255,7 +255,7 @@
   (send *arrow* :translate (float-vector (* (+ (/ *width* -2) 20) 2) 0 0))
   (send *arrow* :rotate (deg2rad 70) :y)
 
-  ;; (send *arrow* :translate #f(-10 -20 -10) :world)
+  (send *arrow* :translate #f(-10 -20 -10) :world) ;;調整用の入れてみる？
 
   ;;gripperを開く
   (send *ri* :stop-grasp :larm :wait t)
