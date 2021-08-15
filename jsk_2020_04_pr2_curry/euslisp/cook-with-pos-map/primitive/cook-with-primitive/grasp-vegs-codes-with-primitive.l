@@ -137,29 +137,26 @@
   )
 
 (defun vegs-carry-pose ()
-  ;; ;; (send *arrow* :newcoords (make-coords :pos (float-vector 640 8445 31174) :rpy (float-vector 1.587 0 0)))
-  ;; ;; (send *pr2* :larm :inverse-kinematics
-  ;; ;;       (send *arrow* :copy-worldcoords)
-  ;; ;;       :move-target *potato*
-  ;; ;;       :rotation-axis t
-  ;; ;;       :debug-view *debug-flag*)
-  ;; ;; (send *viewer* :draw-objects)
-  ;; ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
-  ;; ;; (send *ri* :wait-interpolation)
-  ;; ;; (send *arrow* :newcoords (make-coords :pos (float-vector 640.324 8425.003 31174.0) :rpy (float-vctor 1.587 0.785 0.0)))
-  ;; ;; (send *pr2* :rarm :inverse-kinematics
-  ;; ;;       (send *arrow* :copy-worldcoords)
-  ;; ;;       :rotation-axis t
-  ;; ;;       :debug-view *debug-flag*)
-  ;; (setq *lav-vc* #f(35.2692 -2.67452 58.1589 -95.2169 65.0479 -80.0523 -157.341))
-  ;; (send *pr2* :larm :angle-vector *lav-vc*)
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 640 8445 31174) :rpy (float-vector 1.587 0 0)))
+  ;; (send *pr2* :larm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :move-target *potato*
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
   ;; (send *viewer* :draw-objects)
   ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
   ;; (send *ri* :wait-interpolation)
-
-  (send *arrow* :newcoords (make-coords :pos (float-vector 640.324 8425.003 31174.0) :rpy (float-vctor 1.587 0.785 0.0)))
-  (send *arrow* :translate #f(100 0 0) :world)
-  (move-arm-ik (send *arrow* :copy-worldcoords) :arm :larm :times 8000) ;; move-arm primitive
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 640.324 8425.003 31174.0) :rpy (float-vctor 1.587 0.785 0.0)))
+  ;; (send *pr2* :rarm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
+  (setq *lav-vc* #f(35.2692 -2.67452 58.1589 -95.2169 65.0479 -80.0523 -157.341))
+  (move-arm-av *lav-vc* :arm :larm :times 8000) ;; move-arm primitive
+  
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 640.324 8425.003 31174.0) :rpy (float-vctor 1.587 0.785 0.0)))
+  ;; (send *arrow* :translate #f(100 0 0) :world)
+  ;; (move-arm-ik (send *arrow* :copy-worldcoords) :arm :larm :times 8000) ;; move-arm primitive
   
   (warn "please go to sink spot !! ~%")  
   )
@@ -171,4 +168,10 @@
   (grasp-carrot-with-fail-detection)
   (after-grasp-vegs)
   (vegs-carry-pose)  
+  )
+
+
+(defun now-put-carrot-on-board ()
+  (put-carrot-on-board)
+  (reset-larm)
   )

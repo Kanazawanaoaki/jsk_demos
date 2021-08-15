@@ -509,6 +509,11 @@
   (set-head)
   )
 
+(defun after-move-with-primitive ()
+  (move-torso-func 325)
+  (move-head-func :p-val 50 :y-val 0.0)
+  )
+
 ;; move with speech ;; TODOここに移動可能か検知を入れる．
 (defun speech-before-move ()
   (send *ri* :speak-jp "移動するので電源ケーブルを抜いて，合図して下さい")
@@ -547,6 +552,19 @@
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) times)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun move-arm-av (av &key (arm :rarm) (times 3000))
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* arm :angle-vector av)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) times)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun move-arm-avs (avs tms)
+  (send *ri* :angle-vector-sequence avs tms)
   (send *ri* :wait-interpolation)
   )
 
@@ -1244,7 +1262,7 @@
   (send *cds* :newcoords (send coord :copy-worldcoords))
   ;; (send *cds* :translate #f(100 0 0) :world)
   (send *cds* :translate #f(-100 0 0))
-
+  
   (send *pr2* arm :inverse-kinematics
         (send *cds* :copy-worldcoords)
         :rotation-axis t
@@ -1254,4 +1272,15 @@
   
   )
 
+
+
+
+;; 移動系のプログラム move
+
+(defun move-to-sink-with-speech-before ()
+  (speech-before-move-with-rec)
+  (unix:sleep *w-time*)
+  (move-base-to-coords-ri-direct (make-coords :pos #f(1110 9100 351) :rpy (float-vector pi 0 0)))
+  (after-move-with-primitive)
+  )
 
