@@ -18,6 +18,7 @@
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
 
   (load "models/arrow-object.l")
+  (setq *arrow* (arrow))
   (setq *cds* (arrow))
   
   (objects (list *scene* *pr2*))
@@ -385,30 +386,25 @@
   )
 
 ;; grasp object grasp primitive
-(defun grasp-object (&rest args &key (gain 0.01) &allow-other-keys)
-  (send *ri* :start-grasp :rarm :wait t)
-  (unix:sleep 1)
-  )
-
-(defun grasp-object-larm (&rest args &key (gain 0.01) &allow-other-keys)
-  (send *ri* :start-grasp :larm :wait t)
+(defun grasp-object (&rest args &key (arm :rarm) (gain 0.01) &allow-other-keys)
+  (send *ri* :start-grasp arm :wait t :gain gain)
   (unix:sleep 1)
   )
 
 ;; release gripper release primitive
-(defun release-object (&rest args &key (g-num 0.025) &allow-other-keys)
+(defun release-object (&rest args &key (arm :rarm) (g-num 0.025) &allow-other-keys)
   (let (tmp-gripper)
     ;;グリッパを微妙に開く
-    (setq tmp-gripper (* 0.001 (send *ri* :state :gripper :rarm :position)))
-    (send *ri* :move-gripper :rarm (+ g-num tmp-gripper))
+    (setq tmp-gripper (* 0.001 (send *ri* :state :gripper arm :position)))
+    (send *ri* :move-gripper arm (+ g-num tmp-gripper))
     ))
 
-(defun release-object-larm (&rest args &key (g-num 0.025) &allow-other-keys)
-  (let (tmp-gripper)
-    ;;グリッパを微妙に開く
-    (setq tmp-gripper (* 0.001 (send *ri* :state :gripper :larm :position)))
-    (send *ri* :move-gripper :larm (+ g-num tmp-gripper))
-    ))
+;; (defun release-object-larm (&rest args &key (g-num 0.025) &allow-other-keys)
+;;   (let (tmp-gripper)
+;;     ;;グリッパを微妙に開く
+;;     (setq tmp-gripper (* 0.001 (send *ri* :state :gripper :larm :position)))
+;;     (send *ri* :move-gripper :larm (+ g-num tmp-gripper))
+;;     ))
 
 ;; wait until movable
 (ros::load-ros-manifest "pr2_msgs")
