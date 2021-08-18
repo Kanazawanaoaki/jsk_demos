@@ -2812,7 +2812,7 @@
   (if (not (eql (send *rcup* :parent) nil))
       (send (send *rcup* :parent) :dissoc *rcup*))
   (send *rcup* :newcoords (send *mcup-coords* :copy-worldcoords))
-  (send *arrow* :newcoords (send (send *rcup* :handle-handle1) :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *rcup* :handle-handle0) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
   
   (put-bowl-larm)
@@ -2839,7 +2839,7 @@
 (defun grasp-rcup (&rest args &key (gain 0.1) &allow-other-keys)
   ;; rcupの位置
   (setq *target* (make-coords))
-  (send *target* :newcoords (send (send *rcup* :handle-handle1) :copy-worldcoords))
+  (send *target* :newcoords (send (send *rcup* :handle-handle0) :copy-worldcoords))
   
   (grasp-bowl-larm :gain gain)
   
