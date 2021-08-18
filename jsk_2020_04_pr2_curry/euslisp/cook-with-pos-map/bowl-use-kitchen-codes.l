@@ -14,7 +14,7 @@
   (if (not (eql (send *mcup* :parent) nil))
       (send (send *mcup* :parent) :dissoc *mcup*))
   (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
-
+  
   (unless (boundp '*rcup*)
     (progn
       (load "package://jsk_2020_04_pr2_curry/euslisp/model/red-cup.l")
@@ -2782,6 +2782,126 @@
 
 
 ;; add for rcup
+(defun recieve-rcup ()
+  (carry-rcup-pose)
+  
+  ;; mcupを受け取る
+  (send *ri* :stop-grasp :larm :wait t)
+  (send *ri* :speak-jp "赤いコップを握らせて下さい")
+  (unix:sleep *s-time*)
+  (send *ri* :start-grasp :larm :wait t)
+  
+  (set-rcup)
+  
+  (warn "please run (put-rcup) ~%")
+  )
+
+(defun recieve-rcup-with-dialogue ()
+  (carry-rcup-pose)
+  
+  ;; mcupを受け取る
+  (send *ri* :speak-jp "赤いコップを渡す準備をして，合図をして下さい")
+  (receive-with-dialogue-larm :gain 0.1)  
+  
+  (set-mcup)
+  (warn "please run (put-rcup) ~%")
+  )
+
+(defun put-rcup ()
+  ;; rcupを置く位置
+  (if (not (eql (send *rcup* :parent) nil))
+      (send (send *rcup* :parent) :dissoc *rcup*))
+  (send *rcup* :newcoords (send *mcup-coords* :copy-worldcoords))
+  (send *arrow* :newcoords (send (send *rcup* :handle-handle1) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 200) :world)
+  
+  (put-bowl-larm)
+  )
+
+(defun now-set-rcup ()
+  (recieve-rcup)
+  (put-rcup)
+  (reset-larm)
+  )
+
+(defun now-set-rcup-with-dialogue ()
+  (recieve-rcup-with-dialogue)
+  (put-rcup)
+  (reset-larm)
+  )
+
+(defun transfer-rcup-model-to-pot-side ()
+  (if (not (eql (send *rcup* :parent) nil))
+      (send (send *rcup* :parent) :dissoc *rcup*))
+  (send *rcup* :newcoords (send *mcup-coords* :copy-worldcoords))
+  )
+
+(defun grasp-rcup (&rest args &key (gain 0.1) &allow-other-keys)
+  ;; rcupの位置
+  (setq *target* (make-coords))
+  (send *target* :newcoords (send (send *rcup* :handle-handle1) :copy-worldcoords))
+  
+  (grasp-bowl-larm :gain gain)
+  
+  (set-rcup)
+  
+  (warn "please run (carry-rcup-pose) ~%")
+  )
+
+
+(defun grasp-rcup-with-fail-detection ()
+  (setq tmp-coords (send *rcup* :copy-worldcoords))
+  (grasp-rcup :gain 0.1)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection-larm :g-thre 10)
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (if (not (eql (send *rcup* :parent) nil))
+            (send (send *rcup* :parent) :dissoc *rcup*))
+        (send *rcup* :newcoords (send tmp-coords :copy-worldcoords))
+	(grasp-rcup :gain 0.1)
+        (grasp-fail-detection-larm :g-thre 10)
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (send *ri* :speak-jp "計量カップの把持が失敗しました，渡す準備をして合図をして下さい")
+	      (receive-with-dialogue-larm :gain 0.1)
+              ))
+        ))
+  
+  (warn "please run (carry-rcup-pose) ~%")
+  )
+
+(defun after-grasp-rcup ()
+  (send *arrow* :newcoords (make-coords :pos (float-vector 604.833 8300.101 31079.393) :rpy (float-vector 3.141 0.75 0.0)))
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
+  (send *ri* :wait-interpolation)
+  )
+
+
+(defun now-grasp-rcup-pot-side ()
+  (transfer-rcup-model-to-pot-side)
+  (grasp-rcup)
+  (after-grasp-rcup)
+  (carry-rcup-pose)
+  
+  (warn "please go to sink spot ~%")
+  )
+
+(defun now-grasp-rcup-pot-side-with-fail-detection ()
+  (transfer-rcup-model-to-pot-side)
+  (grasp-rcup-with-fail-detection)
+  (after-grasp-rcup)
+  (carry-rcup-pose)
+  
+  (warn "please go to sink spot ~%")
+  )
+
 (defun now-only-pour-rcup-water (&rest args &key (sleep-time 4) &allow-other-keys)
   (carry-rcup-pose)
   (transfer-rcup-set)

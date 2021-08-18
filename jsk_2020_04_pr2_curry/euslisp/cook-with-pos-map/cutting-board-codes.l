@@ -1174,42 +1174,11 @@
   (now-cutting-board-transfer-after)
   )
 
-
-(defun tmp-test ()
-  (tmp-grasp)
-  (lift-board)  
-  
-  (transfer-to-bowl-1-set)
-  )
-
-(defun tmp-devel ()
-  ;; (now-board)
-  (tmp-grasp)
-  (lift-board)  
-
-  (wait-for-bowl-1-rarm)
-  
-  (transfer-to-bowl-1-set)
-  (transfer-to-bowl-1)
-
-  (set-knife-model)
-
-  (knife-slide-transfer-set-bowl-1)
-  (knife-slide-transfer)
-
-  (rarm-up-60)
-  (knife-slide-transfer-set-bowl-1)
-  (wait-for-bowl-1-rarm)
-
-  (after-transfer-board)
-  
-  (only-set-board)
-  )
-
 (defun now-cutting-board-transfer-bowl-1-all-with-fail-detection ()
   (now-board)
   
   (grasp-knife-with-fail-detection)
+  (send *ri* :start-grasp :rarm :wait t :gain 1.00);;強く握る
   (wait-for-bowl-1-rarm)
   
   (transfer-to-bowl-1-set)
@@ -1227,6 +1196,17 @@
   
   (only-set-board)
   )
+
+(defun now-cutting-board-transfer-pot-all-with-fail-detection ()
+  (now-cutting-board-transfer-set)
+  (grasp-knife-with-fail-detection)
+  (send *ri* :start-grasp :rarm :wait t :gain 1.00);;強く握る
+  (now-cutting-board-transfer)
+  (put-knife)
+  (reset-rarm)
+  (now-cutting-board-transfer-after)
+  )
+
 
 
 (defun rarm-up-60 ()
