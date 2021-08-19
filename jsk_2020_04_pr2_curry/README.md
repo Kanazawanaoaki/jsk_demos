@@ -60,8 +60,11 @@ PR2の移動
 PR2の手袋+グリッパ部分のカバー  
 PR2の
 
+### 準備後の画像
+![curry-set-fig](https://user-images.githubusercontent.com/38127823/130017774-810fc55c-3f29-400b-9c06-d36a4140f7ed.jpg)
 
-### ソフトウェアの準備
+
+## ソフトウェアの準備
 
 ```
 roslaunch jsk_2020_04_pr2_curry cutting_board_top_pr2_test.launch 
