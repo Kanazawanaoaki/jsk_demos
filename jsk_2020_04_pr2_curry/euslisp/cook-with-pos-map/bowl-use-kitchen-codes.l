@@ -2860,6 +2860,16 @@
 
 (defun now-set-rcup-with-dialogue ()
   (recieve-rcup-with-dialogue)
+
+  (send *arrow* :newcoords (make-coords :pos #f(437.222 7883.657 31276.961) :rpy #f(-3.14 0.0 -1.57)))
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  
   (put-rcup)
   (reset-larm)
   )
@@ -2890,14 +2900,14 @@
   (grasp-rcup :gain 0.1)
   
   ;; 失敗を検知する
-  (grasp-fail-detection-larm :g-thre 10)
+  (grasp-fail-detection-larm :g-thre 2)
   (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
       (progn
         (if (not (eql (send *rcup* :parent) nil))
             (send (send *rcup* :parent) :dissoc *rcup*))
         (send *rcup* :newcoords (send tmp-coords :copy-worldcoords))
         (grasp-rcup :gain 0.1)
-        (grasp-fail-detection-larm :g-thre 10)
+        (grasp-fail-detection-larm :g-thre 2)
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
               (send *ri* :speak-jp "計量カップの把持が失敗しました，渡す準備をして合図をして下さい")
