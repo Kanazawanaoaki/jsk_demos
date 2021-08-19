@@ -372,7 +372,7 @@
   (send *ri* :wait-interpolation) 
   )
 
-(defun put-bowl-larm ()
+(defun put-bowl-larm (&key (slide 0))
   ;; (send *arrow* :translate (float-vector 0 0 200) :world) ;; がしてある状態で使う
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -399,9 +399,21 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-
+  
   (send *ri* :stop-grasp :larm :wait t)
 
+  (unless (= slide 0)
+    (progn
+      (send *arrow* :translate (float-vector slide 0 0))
+      (send *pr2* :larm :inverse-kinematics
+            (send *arrow* :copy-worldcoords)
+            :rotation-axis t
+            :debug-view *debug-flag*)
+      (send *viewer* :draw-objects)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+      (send *ri* :wait-interpolation)
+      ))
+  
   (send *arrow* :translate (float-vector 0 0 100) :world)
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -495,7 +507,7 @@
   (send *ri* :wait-interpolation) 
   )
 
-(defun grasp-bowl-larm (&rest args &key (gain 0.01) &allow-other-keys)
+(defun grasp-bowl-larm (&rest args &key (gain 0.01) (slide 0) &allow-other-keys)
   (before-recieve-larm)
   
   (send *ri* :stop-grasp :larm :wait t)
@@ -503,6 +515,12 @@
   ;; ボウルの位置
   (send *arrow* :newcoords (send *target* :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
+
+  (unless (= slide 0)
+    (progn
+      (send *arrow* :translate (float-vector slide 0 0))
+      ))
+  
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -526,8 +544,20 @@
         :rotation-axis t
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
+
+  (unless (= slide 0)
+    (progn
+      (send *arrow* :translate (float-vector (* slide -1) 0 0))
+      (send *pr2* :larm :inverse-kinematics
+            (send *arrow* :copy-worldcoords)
+            :rotation-axis t
+            :debug-view *debug-flag*)
+      (send *viewer* :draw-objects)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+      (send *ri* :wait-interpolation)
+      ))
   
   (send *ri* :start-grasp :larm :wait t :gain gain)
   
@@ -2803,19 +2833,23 @@
   (send *ri* :speak-jp "赤いコップを渡す準備をして，合図をして下さい")
   (receive-with-dialogue-larm :gain 0.1)  
   
-  (set-mcup)
+  (set-rcup)
   (warn "please run (put-rcup) ~%")
   )
+
+
+
 
 (defun put-rcup ()
   ;; rcupを置く位置
   (if (not (eql (send *rcup* :parent) nil))
       (send (send *rcup* :parent) :dissoc *rcup*))
   (send *rcup* :newcoords (send *mcup-coords* :copy-worldcoords))
+  (send *rcup* :rotate (deg2rad 45) :z)
   (send *arrow* :newcoords (send (send *rcup* :handle-handle0) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
-  
-  (put-bowl-larm)
+
+  (put-bowl-larm :slide -100)
   )
 
 (defun now-set-rcup ()
@@ -2834,6 +2868,8 @@
   (if (not (eql (send *rcup* :parent) nil))
       (send (send *rcup* :parent) :dissoc *rcup*))
   (send *rcup* :newcoords (send *mcup-coords* :copy-worldcoords))
+  (send *rcup* :rotate (deg2rad 45) :z)
+  (send *viewer* :draw-objects)
   )
 
 (defun grasp-rcup (&rest args &key (gain 0.1) &allow-other-keys)
@@ -2841,7 +2877,7 @@
   (setq *target* (make-coords))
   (send *target* :newcoords (send (send *rcup* :handle-handle0) :copy-worldcoords))
   
-  (grasp-bowl-larm :gain gain)
+  (grasp-bowl-larm :gain gain :slide -100)
   
   (set-rcup)
   
@@ -2860,12 +2896,12 @@
         (if (not (eql (send *rcup* :parent) nil))
             (send (send *rcup* :parent) :dissoc *rcup*))
         (send *rcup* :newcoords (send tmp-coords :copy-worldcoords))
-	(grasp-rcup :gain 0.1)
+        (grasp-rcup :gain 0.1)
         (grasp-fail-detection-larm :g-thre 10)
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
               (send *ri* :speak-jp "計量カップの把持が失敗しました，渡す準備をして合図をして下さい")
-	      (receive-with-dialogue-larm :gain 0.1)
+              (receive-with-dialogue-larm :gain 0.1)
               ))
         ))
   
