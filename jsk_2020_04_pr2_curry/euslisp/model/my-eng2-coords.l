@@ -83,3 +83,6 @@
 (setq *ih-switch-on-coords* (make-coords :pos (float-vector 680 8171 30750) :rpy (float-vector -3.047 -0.011 1.512)))
 (setq *ih-switch-off-coords* (make-coords :pos (float-vector 680 8161 30750) :rpy (float-vector -3.047 -0.011 1.512)))
 (setq *ih-knob-coords* (make-coords :pos (float-vector 680 8154 30715) :rpy (float-vector -3.047 -0.011 1.512)))
+
+;; ゴミ箱
+(setq *trashbox0-coords* (make-coords :pos (float-vector 1600 9300 30000) :rpy (float-vector 0 0 0)))
