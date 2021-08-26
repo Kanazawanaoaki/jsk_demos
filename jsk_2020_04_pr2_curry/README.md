@@ -98,10 +98,10 @@ eusのプログラム的には，`jsk_2020_04_pr2_curry/euslisp/cook-with-pos-ma
 
 電子レンジの位置姿勢を認識するためのlaunchファイル
 ```
-detect_microwave.launch
+roslaunch jsk_2020_04_pr2_curry detect_microwave.launch 
 ```
 
 電子レンジのパネルも読みたいとき
 ```
-update_microwave_panel_reader.launch
+roslaunch jsk_2020_04_pr2_curry update_microwave_panel_reader.launch
 ```
