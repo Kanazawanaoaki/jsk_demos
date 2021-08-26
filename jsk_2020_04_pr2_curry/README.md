@@ -90,3 +90,18 @@ roslaunch jsk_2020_04_pr2_curry data_collection_kinect_and_prosilica_each.launch
 ```
 roslaunch jsk_kitchen_knife_pr2 execute.launch
 ```
+
+# 電子レンジ関連
+
+
+eusのプログラム的には，`jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/microwave-codes.l`など  
+
+電子レンジの位置姿勢を認識するためのlaunchファイル
+```
+detect_microwave.launch
+```
+
+電子レンジのパネルも読みたいとき
+```
+update_microwave_panel_reader.launch
+```
