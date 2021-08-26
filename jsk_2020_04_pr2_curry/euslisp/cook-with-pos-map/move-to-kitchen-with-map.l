@@ -340,6 +340,10 @@
   (send *pr2* :move-to (send *arrange-spot* :copy-worldcoords) :world)
   (update-view)
   )
+(defun move-to-garbage-irt ()
+  (send *pr2* :move-to (send *garbage-spot* :copy-worldcoords) :world)
+  (update-view)
+  )
 
 ;; 実機の移動
 (defun move-to-kitchen-ri ()
@@ -456,6 +460,12 @@
 (defun move-to-arrange-ri-direct ()
   (send *ri* :clear-costmap)
   (send *ri* :move-to (make-coords :pos #f(1200 8200 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun move-to-garbage-ri-direct ()
+  (send *ri* :clear-costmap)
+  (send *ri* :move-to (make-coords :pos #f(1700 9000 351) :rpy (float-vector 0 0 0)) :frame-id "/map")
   (print (send *ri* :state :worldcoords))
   )
 
