@@ -7,7 +7,7 @@
     <remap from="~image" to="$(arg INPUT_IMAGE)" />
     
     <rosparam command="load"
-              file="$(find jsk_2020_04_pr2_curry)/launch/sift/template-ih-stove.yaml"/>
+              file="$(find jsk_2020_04_pr2_curry)/launch/sift/template-0820-ih-stove.yaml"/>
     <rosparam>
       show_probability: ture
     </rosparam>

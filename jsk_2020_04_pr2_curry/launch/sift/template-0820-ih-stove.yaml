@@ -1,0 +1,47 @@
+method: CCOEFF
+template_list: OF 1P 2P 3P 4P 5P 6P 7P 8P 9P 10P
+template:
+    OF:
+        name: /off
+        path: "package://jsk_2020_04_pr2_curry/data/ih-panel-stove-20210820/grey-crop-ih-panel-stove-off-20210820.jpg"
+        thre: 0.75
+    1P:
+        name: /1p
+        path: "package://jsk_2020_04_pr2_curry/data/ih-panel-stove-20210820/grey-crop-ih-panel-stove-1-20210820.jpg"
+        thre: 0.75
+    2P:
+        name: /2p
+        path: "package://jsk_2020_04_pr2_curry/data/ih-panel-stove-20210820/grey-crop-ih-panel-stove-2-20210820.jpg"
+        thre: 0.75
+    3P:
+        name: /3p
+        path: "package://jsk_2020_04_pr2_curry/data/ih-panel-stove-20210820/grey-crop-ih-panel-stove-3-20210820.jpg"
+        thre: 0.75
+    4P:
+        name: /4p
+        path: "package://jsk_2020_04_pr2_curry/data/ih-panel-stove-20210820/grey-crop-ih-panel-stove-4-20210820.jpg"
+        thre: 0.75
+    5P:
+        name: /5p
+        path: "package://jsk_2020_04_pr2_curry/data/ih-panel-stove-20210820/grey-crop-ih-panel-stove-5-20210820.jpg"
+        thre: 0.75
+    6P:
+        name: /6p
+        path: "package://jsk_2020_04_pr2_curry/data/ih-panel-stove-20210820/grey-crop-ih-panel-stove-6-20210820.jpg"
+        thre: 0.75
+    7P:
+        name: /7p
+        path: "package://jsk_2020_04_pr2_curry/data/ih-panel-stove-20210820/grey-crop-ih-panel-stove-7-20210820.jpg"
+        thre: 0.75
+    8P:
+        name: /8p
+        path: "package://jsk_2020_04_pr2_curry/data/ih-panel-stove-20210820/grey-crop-ih-panel-stove-8-20210820.jpg"
+        thre: 0.75
+    9P:
+        name: /9p
+        path: "package://jsk_2020_04_pr2_curry/data/ih-panel-stove-20210820/grey-crop-ih-panel-stove-9-20210820.jpg"
+        thre: 0.75
+    10P:
+        name: /10p
+        path: "package://jsk_2020_04_pr2_curry/data/ih-panel-stove-20210820/grey-crop-ih-panel-stove-10-20210820.jpg"
+        thre: 0.75

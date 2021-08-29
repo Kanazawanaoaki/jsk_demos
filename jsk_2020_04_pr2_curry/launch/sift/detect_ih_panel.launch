@@ -1,6 +1,9 @@
 <launch>
+  <arg name="INPUT_IMAGE" default="/prosilica/image_raw" />
+  
   <node name="image_siftnode" pkg="imagesift" type="imagesift" output="screen" >
-    <remap from="image" to="prosilica/image_raw" />
+    <remap from="image" to="$(arg INPUT_IMAGE)" />
+    <!-- <remap from="image" to="prosilica/image_raw" /> -->
     <remap from="camera_info" to="prosilica/camera_info" />
   </node>
 
