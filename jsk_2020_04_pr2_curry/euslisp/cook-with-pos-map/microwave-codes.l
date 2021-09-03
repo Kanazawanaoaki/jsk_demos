@@ -24,6 +24,27 @@
     )
   )
 
+(defun panel-reader-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :data))
+    (format t "~A ~%" *data*)
+    (if (ros::time> (send *msg* :header :stamp) *now*)
+        (setq *cb-flag* t)
+      )
+    ))
+
+(defun read-panel ()
+  (setq *now* (ros::time-now))
+  (ros::unsubscribe "/microwave_reader/result")
+  (setq *cb-flag* nil)
+  (ros::subscribe "/microwave_reader/result" roseus::StringStamped #'panel-reader-cb)
+  (until *cb-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  )
+
 ;; add for rosservice
 (ros::load-ros-manifest "std_srvs")
 ;; (ros::wait-for-service "after_stow_data_collection/save_request")
@@ -228,6 +249,44 @@
     )
   )
 
+(defun button-test-with-rec-stamp ()
+  ;; push button
+  (setq *push-flag* nil)
+  (while (eql *push-flag* nil)
+    (send *pmi* :push-500w-button)
+    (read-panel)
+    (if (equal *data* "/500w")
+        (setq *push-flag* t))
+    )
+  
+  ;; ここは二回押していたらどうするとかがあっても良いようにしたい．
+  (setq *push-flag* nil)
+  (while (eql *push-flag* nil)
+    (send *pmi* :push-1min-button)
+    (read-panel)
+    (if (equal *data* "/1m")
+        (setq *push-flag* t))
+    )
+  
+  (setq *push-flag* nil)
+  (while (eql *push-flag* nil)
+    (send *pmi* :push-1min-button)
+    (read-panel)
+    (if (equal *data* "/2m")
+        (setq *push-flag* t))
+    )
+
+  (setq *tmp-data* *data*)
+  
+  (setq *push-flag* nil)
+  (while (eql *push-flag* nil)
+    (send *pmi* :push-start-button)
+    (read-panel)
+    (if (or (equal *data* "/start") (not (equal *data* *tmp-data*)))
+        (setq *push-flag* t))
+    )
+  )
+
 
 (defun sato-push-button-with-rec ()
   ;; push button
@@ -275,6 +334,44 @@
     )
   )
 
+(defun sato-push-button-with-rec-stamp ()
+  ;; push button
+  (setq *push-flag* nil)
+  (while (eql *push-flag* nil)
+    (send *pmi* :push-500w-button)
+    (read-panel)
+    (if (equal *data* "/500w")
+        (setq *push-flag* t))
+    )
+  
+  ;; ここは二回押していたらどうするとかがあっても良いようにしたい． ;; TODO
+  (setq *push-flag* nil)
+  (while (eql *push-flag* nil)
+    (send *pmi* :push-1min-button)
+    (read-panel)
+    (if (equal *data* "/1m")
+        (setq *push-flag* t))
+    )
+  
+  (setq *push-flag* nil)
+  (while (eql *push-flag* nil)
+    (send *pmi* :push-1min-button)
+    (read-panel)
+    (if (equal *data* "/2m")
+        (setq *push-flag* t))
+    )
+
+  (setq *tmp-data* *data*)
+  
+  (setq *push-flag* nil)
+  (while (eql *push-flag* nil)
+    (send *pmi* :push-start-button)
+    (read-panel)
+    (if (or (equal *data* "/start") (not (equal *data* *tmp-data*)))
+        (setq *push-flag* t))
+    )
+  )
+
 (defun sato-rice-micro-with-rec ()
   ;; put object in microwave
   (send *pmi* :open-microwave)
@@ -283,6 +380,27 @@
   
   ;; push button
   (sato-push-button-with-rec)
+  
+  ;; wait for heating
+  (unix::sleep (* 2 60))
+  
+  ;; take object from microwave
+  (send *pmi* :open-microwave)
+  ;; (send *pmi* :kanazawa-take-object)
+  ;; (send *pmi* :close-microwave)
+
+  (send *ri* :speak-jp "サトウのごはんを温めました")
+  (unix:sleep 2)
+  )
+
+(defun sato-rice-micro-with-rec-stamp ()
+  ;; put object in microwave
+  (send *pmi* :open-microwave)
+  (send *pmi* :kanazawa-put-object)
+  (send *pmi* :close-microwave)
+  
+  ;; push button
+  (sato-push-button-with-rec-stamp)
   
   ;; wait for heating
   (unix::sleep (* 2 60))

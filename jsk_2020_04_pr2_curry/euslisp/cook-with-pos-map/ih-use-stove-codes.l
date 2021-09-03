@@ -53,6 +53,32 @@
         (format t "x: ~A ~%" x))
       )))
 
+;; add for panel rec
+(ros::load-ros-package "roseus")
+
+(defun panel-reader-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :data))
+    (format t "~A ~%" *data*)
+    (if (ros::time> (send *msg* :header :stamp) *now*)
+        (setq *cb-flag* t)
+      )
+    ))
+
+(defun read-panel ()
+  (setq *now* (ros::time-now))
+  (ros::unsubscribe "/ih_stove_reader/result")
+  (setq *cb-flag* nil)
+  (ros::subscribe "/ih_stove_reader/result" roseus::StringStamped #'panel-reader-cb)
+  (until *cb-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  )
+
+
+
 ;; add for rosservice
 (ros::load-ros-manifest "std_srvs")
 (ros::wait-for-service "after_stow_data_collection/save_request")
@@ -437,6 +463,18 @@
   (send *ri* :wait-interpolation)
   
   )
+
+
+(defun rotate-knob-with-rec (&rest args &key (target "/7p") &allow-other-keys)
+  (setq *target-flag* nil)
+  (until *target-flag*
+         (read-panel)
+         (if (equal *data* target)
+             (setq *target-flag* t))
+         ;; TODO TODO
+         )
+  )
+
 
 (defun release-knob ()
   (send *ri* :stop-grasp :larm :wait t)
