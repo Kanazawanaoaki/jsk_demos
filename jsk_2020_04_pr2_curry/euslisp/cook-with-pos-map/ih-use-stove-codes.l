@@ -77,6 +77,35 @@
          )
   )
 
+(defun string2num (string)
+  (let (num)
+    (cond
+     ((equal string "1")
+      (setq num 1))
+     ((equal string "2")
+      (setq num 2))
+     ((equal string "3")
+      (setq num 3))
+     ((equal string "4")
+      (setq num 4))
+     ((equal string "5")
+      (setq num 5))
+     ((equal string "6")
+      (setq num 6))
+     ((equal string "7")
+      (setq num 7))
+     ((equal string "8")
+      (setq num 8))
+     ((equal string "9")
+      (setq num 9))
+     )
+    num))
+
+(defun read-data ()
+  (let (num-data num)
+    (setq num-data (string-trim "p" (string-trim "/" *data*)))
+    (setq num (string2num num-data))
+    num))
 
 
 ;; add for rosservice
@@ -469,11 +498,24 @@
   (setq *target-flag* nil)
   (until *target-flag*
          (read-panel)
-         (if (equal *data* target)
-             (setq *target-flag* t))
-         ;; TODO TODO
-         )
-  )
+         (setq *read-data* (read-data))
+         (cond           
+          ;; TODO TODO
+          ;; もし読めていなかったら
+          ((equal *read-data* "")
+           (send *ri* :speak-jp "パネルの認識に失敗しました，もう一度認識します") ;; fail countを入れても良いかも．
+           )
+          ;; もしtargetと一致していたら
+          ((equal *read-data* target)
+           (setq *target-flag* t))
+          ;; もしtargetよりも小さかったら
+          ((< *read-data* target)
+           )
+          ;; もしtargetよりも大きかったら
+          ((> *read-data* target)
+           )
+          )
+         ))
 
 
 (defun release-knob ()
