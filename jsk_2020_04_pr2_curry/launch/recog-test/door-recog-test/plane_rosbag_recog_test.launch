@@ -1,0 +1,45 @@
+<launch>
+  <arg name="INPUT" default="/kinect_head/depth_registered/throttled/points" />
+  <arg name="gui" default="true" />
+  
+  <!-- <node name="multi_plane_estimate" pkg="nodelet" type="nodelet" -->
+  <!--       args="load jsk_pcl/OrganizedMultiPlaneSegmentation $(arg manager)" -->
+  <!--       output="screen" -->
+  <!--       if="$(arg launch_manager)" -->
+  <!--       machine="$(arg machine)"> -->
+  <!--   <remap from="~input" to="input_relay/output" /> -->
+  <!--   <rosparam> -->
+  <!--     ransac_refine_outlier_distance_threshold: 1 -->
+  <!--     max_curvature: 0.01 -->
+  <!--     estimate_normal: true -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+
+  <node name="sample_manager"
+        pkg="nodelet" type="nodelet"
+        args="manager"/>
+  
+  <!-- plane detection  -->  
+  <node name="organized_multi_plane_segmentation"
+        pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/OrganizedMultiPlaneSegmentation sample_manager">
+    <remap from="~input" to="$(arg INPUT)"/>
+    <rosparam>
+      publish_normal: true
+    </rosparam>
+  </node>
+
+  <group if="$(arg gui)">
+    <node name="normal_concatenater"
+          pkg="nodelet" type="nodelet"
+          args="load jsk_pcl_utils/NormalConcatenater sample_manager">
+      <remap from="~input" to="$(arg INPUT)"/>
+      <remap from="~normal" to="organized_multi_plane_segmentation/output_normal"/>
+    </node>
+
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_pcl_ros)/sample/rviz/organized_multi_plane_segmentation.rviz"/>
+  </group>
+
+</launch>
