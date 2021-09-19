@@ -87,7 +87,7 @@
   ;; サトウのごはんを調理する
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/microwave-codes.l")
   (update-pos)
-  (now-sato-rice-micro) ;; TODO用意する
+  (now-sato-rice-micro)
   
   ;; サトウのごはんを持ってキッチンまで行く 
   (move-to-arrange-with-speech-after)
