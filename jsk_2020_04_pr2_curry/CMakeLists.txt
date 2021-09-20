@@ -7,7 +7,7 @@ project(jsk_2020_04_pr2_curry)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED message_generation)
+find_package(catkin REQUIRED message_generation roscpp)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -199,3 +199,14 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+
+include_directories(include ${catkin_INCLUDE_DIRS})
+
+add_executable(talker src/talker.cpp)
+target_link_libraries(talker ${catkin_LIBRARIES})
+
+add_executable(listener src/listener.cpp)
+add_executable(ptcloud_listener src/ptcloud_listener.cpp)
+target_link_libraries(listener ${catkin_LIBRARIES})
+target_link_libraries(ptcloud_listener ${catkin_LIBRARIES})
