@@ -11,9 +11,9 @@ find_package(catkin REQUIRED
   message_generation
   roscpp
   pcl_conversions
-  PCL 1.2 REQUIRED
   )
 
+find_package(PCL 1.5 REQUIRED)
 include_directories(${PCL_INCLUDE_DIRS})
 link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
@@ -217,7 +217,7 @@ target_link_libraries(talker ${catkin_LIBRARIES})
 
 add_executable(listener src/listener.cpp)
 add_executable(ptcloud_listener src/ptcloud_listener.cpp)
-add_executable(sample src/sample.cpp)
+# add_executable(sample src/sample.cpp)
 target_link_libraries(listener ${catkin_LIBRARIES})
 target_link_libraries(ptcloud_listener ${catkin_LIBRARIES})
-target_link_libraries(sample ${catkin_LIBRARIES})
+# target_link_libraries(sample ${catkin_LIBRARIES})
