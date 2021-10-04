@@ -7,7 +7,16 @@ project(jsk_2020_04_pr2_curry)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED message_generation roscpp)
+find_package(catkin REQUIRED
+  message_generation
+  roscpp
+  pcl_conversions
+  PCL 1.2 REQUIRED
+  )
+
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -208,5 +217,7 @@ target_link_libraries(talker ${catkin_LIBRARIES})
 
 add_executable(listener src/listener.cpp)
 add_executable(ptcloud_listener src/ptcloud_listener.cpp)
+add_executable(sample src/sample.cpp)
 target_link_libraries(listener ${catkin_LIBRARIES})
 target_link_libraries(ptcloud_listener ${catkin_LIBRARIES})
+target_link_libraries(sample ${catkin_LIBRARIES})
