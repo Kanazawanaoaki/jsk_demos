@@ -217,7 +217,8 @@ target_link_libraries(talker ${catkin_LIBRARIES})
 
 add_executable(listener src/listener.cpp)
 add_executable(ptcloud_listener src/ptcloud_listener.cpp)
-# add_executable(sample src/sample.cpp)
 target_link_libraries(listener ${catkin_LIBRARIES})
 target_link_libraries(ptcloud_listener ${catkin_LIBRARIES})
+
+# add_executable(sample src/sample.cpp)
 # target_link_libraries(sample ${catkin_LIBRARIES})
