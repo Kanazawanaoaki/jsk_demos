@@ -118,13 +118,14 @@ class MatchTemplate(ConnectionBasedTransport):
                 tmp = i.score
                 res = n
         msg.data = res
+        top_score = tmp
         rospy.loginfo('Matched template: {}'.format(msg.data))
         self.pub_result.publish(msg)
 
         # publish debug image
-        self.publish_debug(img, results)
+        self.publish_debug(img, results, top_score)
 
-    def publish_debug(self, img, results):
+    def publish_debug(self, img, results, top_score):
         templates = self.templates.values()
         templates.sort(key=lambda t: t.name)
         imgs = [t.image for t in templates]
@@ -147,7 +148,7 @@ class MatchTemplate(ConnectionBasedTransport):
 
         for i, t in enumerate(templates):
             res = results[t.name]
-            if res.found:
+            if res.found and res.score == top_score:
                 w = int(t.image.shape[1] * tmpl_scale)
                 h = int(t.image.shape[0] * tmpl_scale)
                 top_left = (i * w, 0)
