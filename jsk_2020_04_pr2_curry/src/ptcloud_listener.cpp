@@ -20,8 +20,10 @@ public:
 
   PtcloudListenerClass()
   {
-    sub_ = n_.subscribe("/kinect_head/depth_registered/throttled/points", 1000, &PtcloudListenerClass::ptcloudCallback, this);
-    pub_ = n_.advertise<sensor_msgs::PointCloud2>("/ptcloud_test/msg_debug_points", 1000);
+    // sub_ = n_.subscribe("/kinect_head/depth_registered/throttled/points", 1000, &PtcloudListenerClass::ptcloudCallback, this);
+    sub_ = n_.subscribe("input", 1000, &PtcloudListenerClass::ptcloudCallback, this);
+    pub_ = n_.advertise<sensor_msgs::PointCloud2>("ptcloud_test/msg_debug_points", 1000);
+    // pub_ = n_.advertise<sensor_msgs::PointCloud2>("output", 1000);
   }
 };
 
