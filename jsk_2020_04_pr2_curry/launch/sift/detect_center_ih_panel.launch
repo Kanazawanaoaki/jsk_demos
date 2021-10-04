@@ -1,0 +1,7 @@
+<launch>
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/sift/prosilica_mask_center.launch"/>
+  
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/sift/detect_ih_panel.launch">
+    <arg name="INPUT_IMAGE" default="/prosilica/image_raw" />
+  </include>
+</launch>
