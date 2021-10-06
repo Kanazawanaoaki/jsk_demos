@@ -13,16 +13,16 @@
   (warn "please run (soup-1) ~%")
   )
 
-;; スープの元を皿に入れる
-(defun soup-1 () 
-  ;; ボウル４の中身を皿に入れる．
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
-  (update-pos)
-  (now-set-mcup)
-  (now-set-4-model)
+;; ;; スープの元を皿に入れる
+;; (defun soup-1 () 
+;;   ;; ボウル４の中身を皿に入れる．
+;;   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-codes.l")
+;;   (update-pos)
+;;   (now-set-mcup)
+;;   (now-set-4-model)
   
-  (warn "please run (soup-1) ~%")
-  )
+;;   (warn "please run (soup-1) ~%")
+;;   )
 
 ;; 水を汲む
 (defun soup-1 ()
