@@ -1,4 +1,5 @@
 <launch>
+  <arg name="gui" default="false"/>
   <arg name="topic_name" default="/kinect_head/depth_registered/throttled/points"/>
   <arg name="world_frame" default="base_footprint"/>
 
@@ -10,7 +11,14 @@
 
   <!-- use ptcloud listener codes -->
   <node name="ptcloud_listener_test" pkg="jsk_2020_04_pr2_curry" type="ptcloud_listener" output="screen">
-  <!-- <node name="ptcloud_listener_test" pkg="jsk_2020_04_pr2_curry" type="ptcloud_listener"> -->
-    <remap from="input" to="$(arg topic_name)" />
+    <!-- <remap from="input" to="$(arg topic_name)" /> -->
+    <remap from="input" to="/tf_transform_cloud/output" />
   </node>
+  
+  <group if="$(arg gui)">
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2020_04_pr2_curry)/config/ptcloud_listener_test.rviz"/>
+  </group>
+  
 </launch>

@@ -35,8 +35,8 @@ void PtcloudListenerClass::ptcloudCallback(const sensor_msgs::PointCloud2::Const
   // transform rosmsg to pointcloud
   pcl::PointCloud<pcl::PointXYZ> pointcloud;
   pcl::fromROSMsg(*msg_ptcloud, pointcloud);
-  std::cout << "len is: " << pointcloud.size() << std::endl;
-  std::cout << "fisrt point x: " << pointcloud.points[100] << std::endl;
+  // std::cout << "len is: " << pointcloud.size() << std::endl;
+  // std::cout << "fisrt point x: " << pointcloud.points[100] << std::endl;
 
   // // オウム返し
   // sensor_msgs::PointCloud2 msg_debug_points;
@@ -56,8 +56,8 @@ void PtcloudListenerClass::ptcloudCallback(const sensor_msgs::PointCloud2::Const
   // std::cout << "max z is : " << max_z << std::endl;
 
   // zがある値の点群を取り出す
-  double z_val = 1.0;
-  double z_tolerance = 0.1;
+  double z_val = 1.45;
+  double z_tolerance = 0.05; //0.1
   double z_points_num = 0;
   pcl::PointCloud<pcl::PointXYZ> z_points;
   for (pcl::PointCloud<pcl::PointXYZ>::iterator p = pointcloud.points.begin(); p != pointcloud.points.end(); *p++) {
@@ -65,12 +65,12 @@ void PtcloudListenerClass::ptcloudCallback(const sensor_msgs::PointCloud2::Const
       z_points_num++;
       z_points.push_back(pcl::PointXYZ(p->x, p->y, p->z));
     }
-  }    
+  }
   sensor_msgs::PointCloud2 msg_debug_points;
   pcl::toROSMsg(z_points, msg_debug_points);
   msg_debug_points.header = msg_ptcloud->header;
   pub_.publish(msg_debug_points);
-  std::cout << "z points num is : " << z_points_num << std::endl;  
+  std::cout << "z points num is : " << z_points_num << std::endl;
 }
 
 int main(int argc, char **argv)
