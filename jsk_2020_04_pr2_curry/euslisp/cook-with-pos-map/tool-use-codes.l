@@ -1792,6 +1792,36 @@
   (send *ri* :wait-interpolation)  
   )
 
+;; 盛り付け関連のプログラム
+(defun arrange-motion-set ()
+  (send *arrow* :newcoords (make-coords :pos (float-vector 489.77 8042.025 31004.991) :rpy (float-vector -1.621 0.06 0.033)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (elt (send *ladle* :attention) 1)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (warn "please run (arrange-motion) ~%")
+  )
+
+
+(defun arrange-motion ()
+  (dotimes (i 2)
+    (send *pr2* :rarm :move-end-pos #f(0 100 0) :world)
+    (send *viewer* :draw-objects)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+    )  
+  (warn "please run (transfer-curry-set) ~%")
+  )
+
+(defun have-the-plate-set-with-dialgue ()
+  (send *ri* :speak-jp "盛り付ける器を位置にセットして，OKと合図をして下さい")
+  (ok-wait)
+  )
 
 
 ;; now codes
@@ -2059,7 +2089,7 @@
   )
 
 
-
+;; 盛り付けの位置での プログラム
 (defun now-set-spatula-a ()
   (up-rarm)
   (receive-spatula)
@@ -2079,6 +2109,24 @@
   (put-ladle-a)
   (reset-rarm)
   )
+
+(defun now-set-ladle-a-and-plate-with-dialogue ()
+  ;; おたまを受け取る
+  (up-rarm)
+  (receive-ladle-with-dialogue)
+
+  ;; 盛り付ける動作をして皿を人にセットしてもらう
+  (arrange-motion-set)
+  (arrange-motion)
+  (have-the-plate-set-with-dialgue)
+  (arrange-motion-set)
+  (rarm-middle-pose)  
+
+  ;; おたまをセットする
+  (put-ladle-a)
+  (reset-rarm)
+  )
+
 
 
 (defun now-set-tools-a ()

@@ -66,10 +66,11 @@
   (update-pos)
   (now-set-rcup-with-dialogue)
   
-  ;; おたまを用意する TODO ここでカップもセットするように工夫を行う
+  ;; おたまとカップを用意する
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   (update-pos)
-  (now-set-ladle-a-with-dialogue)
+  ;; (now-set-ladle-a-with-dialogue)
+  (now-set-ladle-a-and-plate-with-dialogue)
   
   (send *ri* :speak-jp "準備を行いました．確認して合図をして下さい")
   (curry-ok-wait)
