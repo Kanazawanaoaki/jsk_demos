@@ -869,3 +869,12 @@
   (after-move)
   )
 
+(defun move-to-arrange-with-speech-before-and-before-with-rec ()
+  (speech-before-move-with-rec)
+  (unix:sleep *w-time*)
+  (move-to-arrange-ri-direct)
+  (speech-after-move-with-rec)
+  (unix:sleep *w-time*)
+  (after-move)
+  )
+
