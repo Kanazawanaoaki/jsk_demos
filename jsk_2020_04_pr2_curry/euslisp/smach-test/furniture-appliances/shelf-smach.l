@@ -15,7 +15,9 @@
            ;; if <transition> is ->, it corresponds when node returns t and !-> for nil.
            '(
              (:init :success :close)
-             (:close :success :open)
+             (:close :success :done)
+             (:close :open :open)
+             (:open :close :close)
              (:open :success :done)
              )
            ;; define function map
