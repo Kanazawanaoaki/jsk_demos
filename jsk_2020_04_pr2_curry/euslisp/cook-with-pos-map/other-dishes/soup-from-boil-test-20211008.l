@@ -1,5 +1,5 @@
 (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/move-to-kitchen-with-map.l")
-(warn "please run (soup-0) or (soup-all)~%")
+(warn "please run (soup-boil-0) or (soup-boil-all)~%")
 
 ;; 最初に換気扇とIHの電源を入れていく
 
@@ -55,16 +55,11 @@
   (unix:sleep *w-time*)
   )
 
-(defun soup-0 () ;; 最初の準備
-  (send *ri* :speak-jp "準備を開始します") ;; 最初の位置はkitchenの場所 (move-to-kitchen-ri-direct)
+(defun soup-boil-0 () ;; 最初の準備
+  (send *ri* :speak-jp "準備を開始します") ;; 最初の位置はarrangeの場所 (move-to-arrange-ri-direct)
   
   ;; 設置するもの
-  ;; おたま，赤いコップ，など，，皿も？？ 
-  
-  ;; 赤いコップをセットする
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
-  (update-pos)
-  (now-set-rcup-with-dialogue)
+  ;; おたまと皿も？？ 
   
   ;; おたまとお皿を用意する
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
@@ -76,73 +71,11 @@
   (curry-ok-wait)
   (send *ri* :speak-jp "次の工程に移ります")
   
-  (warn "please run (soup-1) ~%")
+  (warn "please run (soup-boil-1) ~%")
   )
 
 
-(defun soup-1 () ;; 粉末を入れる
-  ;; ここをいい感じにしたい！！アイデアが必要？
-  
-  (warn "WIP !!  ~%")
-
-  (warn "please run (soup-2) ~%")
-  )
-
-(defun soup-2 () ;; 水を汲む
-  (send *ri* :speak-jp "水を汲む調理を開始します")
-  
-  ;; 赤いコップを掴む
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
-  (update-pos)
-  (now-grasp-rcup-pot-side-with-fail-detection)
-  
-  ;; 水を汲んで注ぐのを繰り返す
-  (setq *fetch-flag* nil)
-  (until *fetch-flag*
-         (move-to-sink-with-speech-before-with-rec)
-         
-         ;; 水を汲む
-         (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/water-use-codes.l")
-         (update-pos)
-         (now-fetch-water-rcup-with-fail-detection :sleep-time 1)
-
-         ;; kitchenまで:go-pos-unsafeで移動
-         (go-to-kitchen-from-sink-without-map)
-         
-         ;; 水を注ぐ
-         (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
-         (update-pos)
-         (now-only-pour-rcup-water :sleep-time 4)
-         
-         
-         ;; 水汲みの状態を確認する
-         (look-at-pot) 
-         (send *ri* :speak-jp "まだ水が必要ですか？")
-         (curry-dialogue)
-         (unless (equal *data* '("はい"))
-           (setq *fetch-flag* t)
-           )
-         )
-  
-  ;; 計量カップを置く
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
-  (update-pos)
-  (put-rcup)
-  (reset-larm)
-  
-  (send *ri* :speak-jp "移動します")
-  (unix:sleep 2)
-  (move-to-stove-with-speech-after-with-rec)
-  
-  (send *ri* :speak-jp "水を汲む調理を行いました．確認して合図をして下さい")
-  (curry-ok-wait)
-  (send *ri* :speak-jp "次の工程に移ります")
-  
-  (warn "please run (soup-3) ~%")
-  )
-
-
-(defun soup-3 () ;; 沸騰させる
+(defun soup-boil-1 () ;; 粉末を入れる 動作をさせる
   (send *ri* :speak-jp "沸騰させる調理を開始します")
   
   ;; 着火する
@@ -162,13 +95,12 @@
   (curry-ok-wait)
   (send *ri* :speak-jp "次の工程に移ります")
   
-  (warn "please run (soup-4) ~%")
+  (warn "please run (soup-boil-2) ~%")
   )
 
-
-(defun soup-4 () ;; お湯を注ぐ
-  ;; 盛り付けの位置に移動する
-  (move-to-arrange-with-speech-before-and-before-with-rec)
+(defun soup-boil-2 () ;; 水を汲む
+  ;; ;; 盛り付けの位置に移動する arrangeの位置で全てやる，stoveの位置で全てやる，arrangeとstoveの位置を行き来するなど色々考えられる．
+  ;; (move-to-arrange-with-speech-before-and-before-with-rec)
   
   ;; おたまを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/arrangement-codes.l")
@@ -194,17 +126,22 @@
   (send *ri* :speak-jp "お湯を注ぐ工程を行いました．確認して合図をして下さい")
   (curry-ok-wait)
   (send *ri* :speak-jp "スープが完成しました")
+
+  ;; (warn "please run (soup-boil-3) ~%")
   )
 
 
-(defun soup-all ()
-  (soup-0) ;; 最初の準備
+(defun soup-boil-3 () ;; 冷ます
+  
+  (warn "please run (soup-boil-4) ~%")
+  )
+
+(defun soup-boil-all ()
+  (soup-boil-0) ;; 最初の準備
   (unix:sleep 2)
-  (soup-1) ;; 粉末を入れる
+  (soup-boil-1) ;; 沸騰させる
   (unix:sleep 2)
-  (soup-2) ;; 水を汲む
-  (unix:sleep 2)
-  (soup-3) ;; 沸騰させる
-  (unix:sleep 2)
-  (soup-4) ;; お湯を注ぐ
+  (soup-boil-2) ;; お湯を注ぐ
+  ;; (unix:sleep 2)
+  ;; (soup-boil-3) ;; 冷ます
   )

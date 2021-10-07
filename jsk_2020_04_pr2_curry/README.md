@@ -52,7 +52,7 @@ roscd jsk_2020_04_pr2_curry/euslisp/
 rlwrap roseus gazebo-test.l 
 ```
 
-# 実機で行う時
+# 実機でカレーの実験を行う時
 
 ## ハードウェアの準備
 PR2のグリッパを替える  
@@ -90,6 +90,25 @@ roslaunch jsk_2020_04_pr2_curry data_collection_kinect_and_prosilica_each.launch
 ```
 roslaunch jsk_kitchen_knife_pr2 execute.launch
 ```
+
+## プログラムの実行
+https://github.com/Kanazawanaoaki/jsk_demos/blob/kanazawa-ow/jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cook-curry/curry-test-20210108.l
+のプログラムが卒論の最終実験．
+```
+roscd jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/cook-curry/
+rlwrap roseus curry-test-20210108.l
+```
+
+# スープ作り実験
+
+## スープ作りのハードウェアの準備
+PR2の右手のグリッパを替える
+PR2の移動
+PR2の左手の手袋+グリッパ部分のカバー
+PR2の台車にビニールカバーを付ける
+
+## スープ作りのソフトウェア実行
+
 
 # 電子レンジ関連
 
