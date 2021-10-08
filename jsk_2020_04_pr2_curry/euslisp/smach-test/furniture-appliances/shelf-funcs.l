@@ -5,16 +5,48 @@
   (if (eql ans 'yes) :success :fail)
   )
 
+(defun string-cb (msg)
+  (setq *msg* msg)
+  (setq *data* (send msg :data))
+  (format t "data is ~A ~%" *data*)
+  (setq *msg-flag* t)
+  )
+
+
 (defun init ()
+  (ros::roseus "smach-shelf-funcs" :anonymous t)
+  (ros::load-ros-manifest "roseus")
+  (ros::subscribe "smach_state_msg" std_msgs::string #'string-cb 1)
   (warn "init! ~%")
+  )
 
 (defun close ()
-  (unix:sleep 1)
-  (warn "電子レンジの認識 ~%")
+  (warn "state: close ~%")
+  (setq *msg-flag* nil)
+  (until *msg-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (if (equal *data* "open") ;; case文使って書いても良いかも
+      (return-from close :open))
+  (if (equal *data* "finish")
+      (return-from close :finish)
+    (close)
+    )
   )
 
 (defun open ()
-  (unix:sleep 1)
-  (warn "電子レンジの扉を開ける ~%")
+  (warn "state: open ~%")
+  (setq *msg-flag* nil)
+  (until *msg-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (if (equal *data* "close")
+      (return-from open :close))
+  (if (equal *data* "finish")
+      (return-from open :finish)
+    (open)
+    )
   )
 

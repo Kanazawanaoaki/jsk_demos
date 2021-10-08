@@ -15,15 +15,17 @@
            ;; if <transition> is ->, it corresponds when node returns t and !-> for nil.
            '(
              (:init :success :close)
-             (:close :success :done)
+             (:close :finish :done)
              (:close :open :open)
              (:open :close :close)
-             (:open :success :done)
+             (:open :finish :done)
              )
            ;; define function map
            '((:init '(lambda (&rest args) (init) :success))
-             (:close '(lambda (&rest args) (close) :success))
-             (:open '(lambda (&rest args) (open) :success))
+             ;; (:close '(lambda (&rest args) (close) :success))
+             ;; (:open '(lambda (&rest args) (open) :success))
+             (:close '(lambda (&rest args) (close) ))
+             (:open '(lambda (&rest args) (open) ))
              )
            ;; initial state
            '(:init)
