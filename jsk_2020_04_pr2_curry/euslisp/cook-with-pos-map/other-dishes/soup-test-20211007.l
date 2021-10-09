@@ -178,7 +178,8 @@
   ;; お湯を注ぐ ;; 何回かやる？
   (setq *pour-flag* nil)
   (until *pour-flag*
-         (now-arrange-curry) ;; ここを改良したい？？認識を入れるなどしたい？IKが失敗したらやめるなど？
+	 (grasp-pot-from-below-model-with-fail-detection)
+	 (now-arrange-curry) ;; ここを改良したい？？認識を入れるなどしたい？IKが失敗したらやめるなど？
          ;; お湯を注ぐ状態を確認する
          ;; (look-at-pot) 
          (send *ri* :speak-jp "まだお湯が必要ですか？")
@@ -188,7 +189,10 @@
            )
          )
   
-  (put-ladle)
+  (release-pot-from-below-model)
+  (put-ladle-a)
+  (reset-rarm)
+  (set-pose)
   
   ;;完成！！
   (send *ri* :speak-jp "お湯を注ぐ工程を行いました．確認して合図をして下さい")

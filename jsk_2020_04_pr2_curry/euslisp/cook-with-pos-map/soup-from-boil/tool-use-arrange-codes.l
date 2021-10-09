@@ -34,7 +34,10 @@
 
   (setq *shelf-look-coords* (send (send *shelf-door* :handle-handle0) :copy-worldcoords))
 
-  (move-to-kitchen-irt)
+  ;; arrange original
+  (setq *ladle-coords-a* (make-coords :pos (float-vector 560 8700 30860) :rpy (float-vector 3.128 -0.098 1.514))) ;; おたま，盛り付け時
+  
+  (move-to-arrange-irt)
   (objects (list *pr2* *peeler* *knife* *potato-peeler* *scene* *spatula* *ladle* *shelf-door*))
   (update-view)
 
@@ -1245,25 +1248,25 @@
 
 
 
-(defun reset-rarm ()
-  ;; (setq *rav0* #f(-20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
-  ;; (send *pr2* :rarm :angle-vector *rav0*)
-  (send *arrow* :newcoords (make-coords :pos (float-vector 628.029 8828.539 31050.217) :rpy (float-vector -3.14 0.18 -0.086)))
-  (send *pr2* :rarm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)  
+(defun reset-rarm () ;; TODO (copy from arrangement-codes.l)
+  (setq *rav0* #f(-20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
+  (send *pr2* :rarm :angle-vector *rav0*)
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 628.029 8828.539 31050.217) :rpy (float-vector -3.14 0.18 -0.086)))
+  ;; (send *pr2* :rarm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)  
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
-
-  ;; (setq *rav2* #f(-30.0303 1.63624 -169.166 -116.783 100.843 -98.3015 -58.1037))
-  ;; (send *pr2* :rarm :angle-vector *rav2*)
-  (send *arrow* :newcoords (make-coords :pos (float-vector 800.186 8689.105 30866.677) :rpy (float-vector -2.341 -0.222 -0.482)))
-  (send *pr2* :rarm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)  
+  
+  (setq *rav2* #f(-30.0303 1.63624 -169.166 -116.783 100.843 -98.3015 -58.1037))
+  (send *pr2* :rarm :angle-vector *rav2*)
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 800.186 8689.105 30866.677) :rpy (float-vector -2.341 -0.222 -0.482)))
+  ;; (send *pr2* :rarm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)  
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
