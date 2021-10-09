@@ -1,0 +1,52 @@
+(defun curry-state-ask ()
+  (warn "Please check. Is it going well? ~%")
+  (setq ans (read))
+  (format t "Your answer is ~A. ~%" ans)
+  (if (eql ans 'yes) :success :fail)
+  )
+
+(defun string-cb (msg)
+  (setq *msg* msg)
+  (setq *data* (send msg :data))
+  (format t "data is ~A ~%" *data*)
+  (setq *msg-flag* t)
+  )
+
+
+(defun init ()
+  (ros::roseus "smach-water-cew-funcs" :anonymous t)
+  (ros::load-ros-manifest "roseus")
+  (ros::subscribe "smach_state_msg" std_msgs::string #'string-cb 1)
+  (warn "init! ~%")
+  )
+
+(defun off ()
+  (warn "state: off ~%")
+  (setq *msg-flag* nil)
+  (until *msg-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (if (equal *data* "on") ;; case文使って書いても良いかも
+      (return-from off :on))
+  (if (equal *data* "finish")
+      (return-from off :finish)
+    (off)
+    )
+  )
+
+(defun on ()
+  (warn "state: on ~%")
+  (setq *msg-flag* nil)
+  (until *msg-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (if (equal *data* "off")
+      (return-from on :off))
+  (if (equal *data* "finish")
+      (return-from on :finish)
+    (on)
+    )
+  )
+
