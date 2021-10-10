@@ -135,7 +135,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
-  (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい")
+  (send *ri* :speak-jp "包丁を渡す準備をして，okと合図をして下さい")
   (receive-with-dialogue)  
   (send *ri* :start-grasp :rarm :wait t :gain 100)
   
@@ -240,7 +240,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   
-  (send *ri* :speak-jp "ピーラーを渡す準備をして，合図をして下さい")
+  (send *ri* :speak-jp "ピーラーを渡す準備をして，okと合図をして下さい")
   (receive-with-dialogue)  
   (send *ri* :start-grasp :rarm :wait t :gain 100)
   
@@ -342,7 +342,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
-  (send *ri* :speak-jp "じゃがいもピーラーを渡す準備をして，合図をして下さい")
+  (send *ri* :speak-jp "じゃがいもピーラーを渡す準備をして，okと合図をして下さい")
   (receive-with-dialogue)  
   (send *ri* :start-grasp :rarm :wait t :gain 100)
   
@@ -426,7 +426,7 @@
 (defun receive-spatula-with-dialogue ()
   (rarm-middle-pose)
   
-  (send *ri* :speak-jp "ヘラを渡す準備をして，合図をして下さい")
+  (send *ri* :speak-jp "ヘラを渡す準備をして，okと合図をして下さい")
   (receive-with-dialogue)  
   (send *ri* :start-grasp :rarm :wait t :gain 100)
   
@@ -560,7 +560,7 @@
 (defun receive-ladle-with-dialogue ()
   (rarm-middle-pose)
   
-  (send *ri* :speak-jp "おたまを渡す準備をして，合図をして下さい")
+  (send *ri* :speak-jp "おたまを渡す準備をして，okと合図をして下さい")
   (receive-with-dialogue)  
   (send *ri* :start-grasp :rarm :wait t :gain 100)
   
@@ -997,7 +997,7 @@
         (grasp-fail-detection :g-thre 10)
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
-              (send *ri* :speak-jp "ヘラの把持が失敗しました，渡す準備をして合図をして下さい")
+              (send *ri* :speak-jp "ヘラの把持が失敗しました，渡す準備をしてokと合図をして下さい")
               (receive-with-dialogue)
               (send *ri* :start-grasp :rarm :wait t)
               ))
@@ -1065,7 +1065,7 @@
         (grasp-fail-detection :g-thre 10)
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
-              (send *ri* :speak-jp "おたまの把持が失敗しました，渡す準備をして合図をして下さい")
+              (send *ri* :speak-jp "おたまの把持が失敗しました，渡す準備をしてokと合図をして下さい")
               (receive-with-dialogue)
               (send *ri* :start-grasp :rarm :wait t)
               ))
@@ -1378,7 +1378,7 @@
         (grasp-fail-detection :g-thre 10)
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
-              (send *ri* :speak-jp "包丁の把持が失敗しました，渡す準備をして合図をして下さい")
+              (send *ri* :speak-jp "包丁の把持が失敗しました，渡す準備をしてokと合図をして下さい")
               (receive-with-dialogue)
               (send *ri* :start-grasp :rarm :wait t)
               ))
@@ -1436,7 +1436,7 @@
         (grasp-fail-detection :g-thre 10)
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
-              (send *ri* :speak-jp "ピーラーの把持が失敗しました，渡す準備をして合図をして下さい")
+              (send *ri* :speak-jp "ピーラーの把持が失敗しました，渡す準備をしてokと合図をして下さい")
               (receive-with-dialogue)
               (send *ri* :start-grasp :rarm :wait t)
               ))
@@ -1493,7 +1493,7 @@
         (grasp-fail-detection :g-thre 10)
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
-              (send *ri* :speak-jp "ピーラーの把持が失敗しました，渡す準備をして合図をして下さい")
+              (send *ri* :speak-jp "ピーラーの把持が失敗しました，渡す準備をしてokと合図をして下さい")
               (receive-with-dialogue)
               (send *ri* :start-grasp :rarm :wait t)
               ))
@@ -1562,7 +1562,7 @@
         (grasp-fail-detection :g-thre 10)
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
-              (send *ri* :speak-jp "ヘラの把持が失敗しました，渡す準備をして合図をして下さい")
+              (send *ri* :speak-jp "ヘラの把持が失敗しました，渡す準備をしてokと合図をして下さい")
               (receive-with-dialogue)
               (send *ri* :start-grasp :rarm :wait t)
               ))
@@ -1635,7 +1635,7 @@
         (grasp-fail-detection :g-thre 10)
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
-              (send *ri* :speak-jp "おたまの把持が失敗しました，渡す準備をして合図をして下さい")
+              (send *ri* :speak-jp "おたまの把持が失敗しました，渡す準備をしてokと合図をして下さい")
               (receive-with-dialogue)
               (send *ri* :start-grasp :rarm :wait t)
               ))
@@ -1796,6 +1796,21 @@
   )
 
 ;; 盛り付け関連のプログラム
+(defun before-arrange-motion ()
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 504.422 8343.425 30917.724) :rpy (float-vector -1.367 0.118 -0.067)))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 570 8500 31100) :rpy (float-vector 3.14 0.0 0.0)))
+  (send *arrow* :newcoords (make-coords :pos (float-vector 380 8720 31110) :rpy (float-vector 3.14 0.0 0.0)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  
+  (warn "please run (arrange-motion-set) ~%")
+  )
+
 (defun arrange-motion-set ()
   ;; copy from (transfer-curry-set) in arrangement-codes.l
   (send *arrow* :newcoords (make-coords :pos (float-vector 504.422 8343.425 30917.724) :rpy (float-vector -1.367 0.118 -0.067)))
@@ -1988,7 +2003,7 @@
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
               (rarm-middle-pose) ;; 中間姿勢になる
-              (send *ri* :speak-jp "棚の取手を掴むのに失敗しました，棚を開けて合図をして下さい")
+              (send *ri* :speak-jp "棚の取手を掴むのに失敗しました，棚を開けてokと合図をして下さい")
               (ok-wait)
               (return-from now-open-shelf-with-fail-detection)))
         ))
@@ -2161,8 +2176,9 @@
   ;; おたまを受け取る
   (up-rarm)
   (receive-ladle-with-dialogue)
-
+  
   ;; 盛り付ける動作をして皿を人にセットしてもらう
+  (before-arrange-motion)
   (arrange-motion-set)
   (arrange-motion)
   (have-the-plate-set-with-dialgue)

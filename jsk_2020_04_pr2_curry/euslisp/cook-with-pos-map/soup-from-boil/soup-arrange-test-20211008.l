@@ -73,7 +73,7 @@
   (update-pos)
   (now-set-ladle-a-and-plate-with-dialogue)
   
-  (send *ri* :speak-jp "準備を行いました．確認して合図をして下さい")
+  (send *ri* :speak-jp "準備を行いました．確認してokと合図をして下さい")
   (curry-ok-wait)
   (send *ri* :speak-jp "次の工程に移ります")
   
@@ -97,7 +97,7 @@
   (update-pos)
   (push-knob)
   
-  (send *ri* :speak-jp "沸騰させる調理を行いました．確認して合図をして下さい")
+  (send *ri* :speak-jp "沸騰させる調理を行いました．確認してokと合図をして下さい")
   (curry-ok-wait)
   (send *ri* :speak-jp "次の工程に移ります")
   
@@ -137,7 +137,7 @@
   (set-pose)
   
   ;;完成！！
-  (send *ri* :speak-jp "お湯を注ぐ工程を行いました．確認して合図をして下さい")
+  (send *ri* :speak-jp "お湯を注ぐ工程を行いました．確認してokと合図をして下さい")
   (curry-ok-wait)
   (send *ri* :speak-jp "スープが完成しました")
   

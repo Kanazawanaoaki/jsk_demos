@@ -584,7 +584,7 @@
   (recieve-sato-rice-rarm-set)
   
   ;; ご飯を受け取る
-  (send *ri* :speak-jp "サトウのごはんを渡す準備をして，合図をして下さい")
+  (send *ri* :speak-jp "サトウのごはんを渡す準備をして，okと合図をして下さい")
   (receive-with-dialogue)  
   
   (set-sato-rice-rarm)
@@ -651,7 +651,7 @@
   (recieve-sato-rice-set)
   
   ;; ご飯を受け取る
-  (send *ri* :speak-jp "サトウのごはんを握らせる準備をして，合図をして下さい")
+  (send *ri* :speak-jp "サトウのごはんを握らせる準備をして，okと合図をして下さい")
   (receive-with-dialogue)
   
   (set-sato-rice)
@@ -1137,3 +1137,39 @@
   (after-sato)
   )
 
+;; tmp for adjust
+(defun tmp-pose-0 ()
+  (setq *rav0* #f(-20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
+  (send *pr2* :rarm :angle-vector *rav0*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun tmp-pose-1 ()
+  (setq *rav11* #f(-54.5314 38.2119 -21.5625 -85.2371 231.84 -57.8174 -206.657))
+  (send *pr2* :rarm :angle-vector *rav11*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun arrange-tmp-pose ()
+  ;; (send *pr2* :rarm :angle-vector #f(-4.95337 -15.8018 -214.115 -38.2292 476.862 -113.391 -198.172))
+  (send *pr2* :rarm :angle-vector #f(-25.3908 2.76366 -74.1264 -33.1894 344.251 -81.5966 -173.509))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  )
+
+
+(defun arrange-test ()
+  (send *arrow* :newcoords (make-coords :pos (float-vector 468.165 7928.397 30869.075) :rpy (float-vector -0.494 0.616 -1.038)))
+  (send *pr2* :rarm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :move-target (elt (send *ladle* :attention) 1)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  )

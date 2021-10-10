@@ -111,21 +111,21 @@
     num))
 
 
-;; add for rosservice
-(ros::load-ros-manifest "std_srvs")
-(ros::wait-for-service "after_stow_data_collection/save_request")
-(setq req (instance std_srvs::TriggerRequest :init))
+;; ;; add for rosservice
+;; (ros::load-ros-manifest "std_srvs")
+;; (ros::wait-for-service "after_stow_data_collection/save_request")
+;; (setq req (instance std_srvs::TriggerRequest :init))
 
 
-(defun rossrv-test ()
-  ;; (ros::service-call "after_stow_data_collection_kinect/save_request" req t)
-  (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
-  )
+;; (defun rossrv-test ()
+;;   ;; (ros::service-call "after_stow_data_collection_kinect/save_request" req t)
+;;   (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
+;;   )
 
-(defun rossrv-test-double ()
-  (ros::service-call "after_stow_data_collection_kinect/save_request" req t)
-  (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
-  )
+;; (defun rossrv-test-double ()
+;;   (ros::service-call "after_stow_data_collection_kinect/save_request" req t)
+;;   (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
+;;   )
 
 (defun look-at-arrow ()
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
@@ -193,7 +193,7 @@
   )
 
 (defun receive-with-dialogue-larm (&rest args &key (gain 0.01) &allow-other-keys)
-  ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
+  ;; (send *ri* :speak-jp "包丁を渡す準備をして，okと合図をして下さい") ;; 喋らせている想定でスタート
   (setq *yes-flag* nil)
   (until *yes-flag*
          (send *ri* :stop-grasp :larm :wait t)
@@ -643,7 +643,7 @@
         (grasp-fail-detection-larm :g-thre 10)
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
-              (send *ri* :speak-jp "鍋を掴むのが失敗しました，鍋の柄を掴ませる準備をして合図して下さい")
+              (send *ri* :speak-jp "鍋を掴むのが失敗しました，鍋の柄を掴ませる準備をしてokと合図して下さい")
               (ok-grasp-larm)
               ))
         ))
@@ -725,7 +725,7 @@
         (grasp-fail-detection-larm :g-thre 10)
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn
-              (send *ri* :speak-jp "鍋を掴むのが失敗しました，鍋の柄を掴ませる準備をして合図して下さい")
+              (send *ri* :speak-jp "鍋を掴むのが失敗しました，鍋の柄を掴ませる準備をしてokと合図して下さい")
               (ok-grasp-larm)
               ))
         ))
@@ -1906,7 +1906,7 @@
             (progn
               (release-knob)
               (set-pose-3)
-              (send *ri* :speak-jp "IHコンロのつまみの操作に失敗しました，コンロをつけて合図をして下さい")
+              (send *ri* :speak-jp "IHコンロのつまみの操作に失敗しました，コンロをつけてokと合図をして下さい")
               (ok-wait)
               (return-from now-start-ih-with-fail-detection)))
         ))
@@ -1994,20 +1994,20 @@
 
 (defun spatula-mix-rotate-loop (&rest args &key (times 10) &allow-other-keys)
   (look-at-pot)
-  (rossrv-test)
+  ;; (rossrv-test)
   (wait-pose-spatula)
   (rotate-mix-with-spatula :times times)
   (wait-pose-spatula)
-  (rossrv-test)
+  ;; (rossrv-test)
   )
 
 (defun ladle-mix-rotate-loop (&rest args &key (times 10) &allow-other-keys)
   (look-at-pot)
-  (rossrv-test)
+  ;; (rossrv-test)
   (wait-pose-ladle)
   (rotate-mix-with-ladle :times times)
   (wait-pose-ladle)
-  (rossrv-test)
+  ;; (rossrv-test)
   )
 
 (defun now-start-spatula-mix ()
@@ -2043,7 +2043,7 @@
   (grasp-knob) ;;つまみを掴む
   (rotate-knob :deg 30) ;;時計回りにdeg度つまみを回す
   (rotate-knob :deg deg) ;;時計回りにdeg度つまみを回す
-  (rossrv-test)
+  ;; (rossrv-test)
   (release-knob) ;;つまみを離す
   )
 
@@ -2052,7 +2052,7 @@
   (until *yes-flag*
          (unix:sleep 1)
          (send *ri* :speak-jp "画像を記録します")
-         (rossrv-test)
+         ;; (rossrv-test)
          (send *ri* :speak-jp "記録しました")
          (unix:sleep 1)
          (send *ri* :speak-jp "具材は炒め終わっていますか？")
@@ -2067,7 +2067,7 @@
 
 (defun now-spatula-mix-rotate-loop-with-dialogue (&rest args &key (times 10) &allow-other-keys)
   (look-at-pot)
-  (rossrv-test)
+  ;; (rossrv-test)
   (wait-pose-spatula)
   (setq *yes-flag* nil)
   (until *yes-flag*
@@ -2075,7 +2075,7 @@
          (wait-pose-spatula)
          (send *ri* :speak-jp "画像を記録します")
          ;; (rossrv-test)
-         (rossrv-test-double)
+         ;; (rossrv-test-double)
          (send *ri* :speak-jp "記録しました")
          (unix:sleep 1)
          (send *ri* :speak-jp "具材は炒め終わっていますか？")
@@ -2090,7 +2090,7 @@
 
 (defun now-ladle-mix-rotate-loop-with-dialogue (&rest args &key (times 10) &allow-other-keys)
   (look-at-pot)
-  (rossrv-test)
+  ;; (rossrv-test)
   (wait-pose-ladle)
   (setq *yes-flag* nil)
   (until *yes-flag*
@@ -2098,7 +2098,7 @@
          (wait-pose-ladle)
          (send *ri* :speak-jp "画像を記録します")
          ;; (rossrv-test)
-         (rossrv-test-double)
+         ;; (rossrv-test-double)
          (send *ri* :speak-jp "記録しました")
          (unix:sleep 1)
          (send *ri* :speak-jp "具材は上手く混ざっていますか？")
@@ -2113,13 +2113,13 @@
 
 (defun now-boil-with-dialogue (&rest args &key (sleep-time 30) &allow-other-keys)
   (look-at-pot)
-  (rossrv-test)
+  ;; (rossrv-test)
   (setq *yes-flag* nil)
   (until *yes-flag*
          (unix:sleep sleep-time)
          (send *ri* :speak-jp "画像を記録します")
          ;; (rossrv-test)
-         (rossrv-test-double)
+         ;; (rossrv-test-double)
          (send *ri* :speak-jp "記録しました")
          (send *ri* :speak-jp "鍋の中身は沸騰していますか？")
          (dialogue-func)
