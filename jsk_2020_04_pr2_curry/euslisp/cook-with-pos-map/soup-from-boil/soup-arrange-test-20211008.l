@@ -1,4 +1,4 @@
-(load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/move-to-kitchen-with-map.l")
+(load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/soup-from-boil/move-to-kitchen-with-map.l")
 (warn "please run (soup-arrange-0) or (soup-arrange-all)~%")
 
 ;; 最初に換気扇とIHの電源を入れていく
@@ -96,6 +96,7 @@
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/soup-from-boil/ih-use-arrange-codes.l")
   (update-pos)
   (push-knob)
+  (set-pose-3)
   
   (send *ri* :speak-jp "沸騰させる調理を行いました．確認してokと合図をして下さい")
   (curry-ok-wait)
@@ -105,7 +106,7 @@
   )
 
 (defun soup-arrange-2 () ;; お湯を注ぐ
-  ;; ;; 盛り付けの位置に移動する arrangeの位置で全てやる，stoveの位置で全てやる，arrangeとstoveの位置を行き来するなど色々考えられる．
+  ;; ;; 盛り付けの位置に移動する 
   ;; (move-to-arrange-with-speech-before-and-before-with-rec)
   
   ;; おたまを掴む
