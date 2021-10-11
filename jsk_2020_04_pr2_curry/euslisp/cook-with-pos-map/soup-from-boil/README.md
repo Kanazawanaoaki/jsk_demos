@@ -11,6 +11,7 @@
 - 台座防水シート
 - 地図合わせ
 - 鍋のセット
+- 換気扇とIHコンロの準備
 
 準備が出来たら
 ```
@@ -19,6 +20,15 @@ roseus move-to-kitchen-with-map.l
 (move-to-arrange-ri-direct)
 ```
 としてPR2を位置に移動させる．移動が失敗した場合はps3joyでアシストする．
+
+### 位置のチェック
+
+```
+roscd jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/soup-from-boil
+roseus soup-arrange-test-20211008.l
+(ih-check)
+```
+としてIHコンロの操作が成功するか確認することができる．
 
 ## 実行
 ```
