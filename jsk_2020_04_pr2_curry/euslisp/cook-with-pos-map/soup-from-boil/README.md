@@ -12,6 +12,7 @@
 - 地図合わせ
 - 鍋のセット
 
+準備が出来たら
 ```
 roscd jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/soup-from-boil
 roseus move-to-kitchen-with-map.l
