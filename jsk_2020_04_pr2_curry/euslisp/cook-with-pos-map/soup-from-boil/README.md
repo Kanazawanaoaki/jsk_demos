@@ -1,10 +1,10 @@
 # soup-from-boil
 スープを作るデモの移動無しver. 
 
-TODO 画像を貼る
+![IMG_5826](https://user-images.githubusercontent.com/38127823/136733293-a7e58b12-2150-4099-ad30-2df666da0a86.jpg)
 
 ## 準備
-google スライドに従いながらハードウェア等の準備をする．
+[google スライド](https://docs.google.com/presentation/d/1uuL0VSfQScqvSo1AYunSH2SAyWI3LbZ4ZQoqa1mCs14/edit?usp=sharing)に従いながらハードウェア等の準備をする．
 
 ```
 roscd jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/soup-from-boil
@@ -23,7 +23,7 @@ roseus soup-arrange-test-20211008.l
 
 
 ### デモの内容
-``
+```
 (defun soup-arrange-all ()
   (soup-arrange-0) ;; 最初の準備
   (unix:sleep 2)
@@ -35,5 +35,7 @@ roseus soup-arrange-test-20211008.l
   )
 ```
 
-#### 最初の準備
-PR2の音声に従いながらおたまとお皿をセットする．
+- 最初の準備 : PR2の音声に従いながらおたまとコップをセットする．
+- 沸騰させる : IHコンロを操作して沸騰させる．
+- お湯を注ぐ : おたまを使ってお湯をコップに注ぐ．
+- 冷ます : WIP!!
