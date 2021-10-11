@@ -2,6 +2,17 @@
 
 PR2が一般家庭の台所で、一般家庭にある道具を使って、外出中にカレーを作ってくれるデモを作る。
 
+## ROSのワークスペースを作る
+
+```bash
+mkdir -p ~/curry_ws/src -p
+cd ~/curry_ws/src
+git clone https://github.com/Kanazawanaoaki/jsk_demos.git -b kanazawa-ow
+rosdep install --ignore-src --from-path . -y -r
+cd ~/curry_ws/
+catkin build jsk_2020_04_pr2_curry
+```
+
 ## 作るデモ
 ### IRT viewer  
 まずIRT viewerで作る、認識とかもすべてわかっている状態。シミュレーションでも無い。
