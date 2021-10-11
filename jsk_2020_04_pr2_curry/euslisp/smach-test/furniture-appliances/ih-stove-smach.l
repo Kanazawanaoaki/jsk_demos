@@ -31,6 +31,32 @@
              (:medium-heat :off :off)
              (:high-heat :off :off)
              (:high-power :off :off)
+
+             (:melting-fire :low-heat :low-heat)
+             (:melting-fire :medium-heat :medium-heat)
+             (:melting-fire :high-heat :high-heat)
+             (:melting-fire :high-power :high-power)
+
+             (:low-heat :melting-fire :melting-fire)
+             (:low-heat :medium-heat :medium-heat)
+             (:low-heat :high-heat :high-heat)
+             (:low-heat :high-power :high-power)
+             
+             (:medium-heat :melting-fire :melting-fire)
+             (:medium-heat :low-heat :low-heat)
+             (:medium-heat :high-heat :high-heat)
+             (:medium-heat :high-power :high-power)
+
+             (:high-heat :melting-fire :melting-fire)
+             (:high-heat :low-heat :low-heat)
+             (:high-heat :medium-heat :medium-heat)
+             (:high-heat :high-power :high-power)
+
+             (:high-power :melting-fire :melting-fire)
+             (:high-power :low-heat :low-heat)
+             (:high-power :medium-heat :medium-heat)
+             (:high-power :high-heat :high-heat)
+             
              )
            ;; define function map
            '((:init '(lambda (&rest args) (init) :success))
@@ -40,7 +66,7 @@
              (:low-heat '(lambda (&rest args) (low-heat) ))
              (:medium-heat '(lambda (&rest args) (medium-heat) ))
              (:high-heat '(lambda (&rest args) (high-heat) ))
-             (:high-power '(lambda (&rest args) (high-powerp) ))
+             (:high-power '(lambda (&rest args) (high-power) ))
              )
            ;; initial state
            '(:init)
