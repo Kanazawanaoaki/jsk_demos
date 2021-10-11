@@ -4,7 +4,13 @@
 ![IMG_5826](https://user-images.githubusercontent.com/38127823/136733293-a7e58b12-2150-4099-ad30-2df666da0a86.jpg)
 
 ## 準備
-[google スライド](https://docs.google.com/presentation/d/1uuL0VSfQScqvSo1AYunSH2SAyWI3LbZ4ZQoqa1mCs14/edit?usp=sharing)に従いながらハードウェア等の準備をする．
+[google スライド](https://docs.google.com/presentation/d/1uuL0VSfQScqvSo1AYunSH2SAyWI3LbZ4ZQoqa1mCs14/edit?usp=sharing)に従いながらハードウェア等の準備をする．  
+
+行うのは
+- 右グリッパの付替え
+- 台座防水シート
+- 地図合わせ
+- 鍋のセット
 
 ```
 roscd jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/soup-from-boil
