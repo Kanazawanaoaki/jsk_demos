@@ -1,3 +1,5 @@
+;; クラスにしてインターフェースで実装しようと思っている．現状ではただコピーしているだけ．
+
 (require :pr2-interface "package://pr2eus/pr2-interface.l")
 
 ;; (require :eng2-scene "package://jsk_maps/src/eng2-scene.l")
