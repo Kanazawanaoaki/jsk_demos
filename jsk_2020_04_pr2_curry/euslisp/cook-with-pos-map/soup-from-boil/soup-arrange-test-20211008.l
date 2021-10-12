@@ -57,7 +57,7 @@
 
 (defun ih-check ()
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/soup-from-boil/ih-use-arrange-codes.l")
-  (update-pos)
+  ;; (update-pos)
   (now-start-ih-with-fail-detection :deg 10)
   (push-knob)
   (set-pose)
@@ -70,7 +70,7 @@
   
   ;; おたまとお皿を用意する TODOここで鍋の位置も調整してもいいかも 最初にコンロ操作を確認するのもあり？
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/soup-from-boil/tool-use-arrange-codes.l")
-  (update-pos)
+  ;; (update-pos)
   (now-set-ladle-a-and-plate-with-dialogue)
   
   (send *ri* :speak-jp "準備を行いました．確認してokと合図をして下さい")
@@ -86,7 +86,7 @@
   
   ;; 着火する
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/soup-from-boil/ih-use-arrange-codes.l")
-  (update-pos)
+  ;; (update-pos)
   (now-start-ih-with-fail-detection :deg 10)
   
   ;; 沸騰させる
@@ -94,7 +94,7 @@
   
   ;; 火を止める
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/soup-from-boil/ih-use-arrange-codes.l")
-  (update-pos)
+  ;; (update-pos)
   (push-knob)
   (set-pose-3)
   
@@ -111,12 +111,13 @@
   
   ;; おたまを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/soup-from-boil/arrangement-codes.l")
-  (update-pos)
+  ;; (update-pos)
+  (set-pose)
   (grasp-ladle-with-fail-detection)
   
   ;; 鍋を掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/soup-from-boil/ih-use-arrange-codes.l")
-  (update-pos)  
+  ;; (update-pos)  
   (grasp-pot-from-below-model-with-fail-detection) ;; 鍋を掴む
   
   ;; お湯を注ぐ ;; 何回かやる？

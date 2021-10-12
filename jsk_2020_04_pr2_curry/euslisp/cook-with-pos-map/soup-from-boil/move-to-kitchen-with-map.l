@@ -573,6 +573,12 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun pre-ik-pose ()
+  ;; set-pose without ri
+  (send *pr2* :reset-manip-pose)
+  (send *pr2* :torso_lift_joint :joint-angle 325)
+  )
+
 (defun set-pose-rec ()
   (send *pr2* :reset-manip-pose)
   (send *pr2* :torso_lift_joint :joint-angle 325)
