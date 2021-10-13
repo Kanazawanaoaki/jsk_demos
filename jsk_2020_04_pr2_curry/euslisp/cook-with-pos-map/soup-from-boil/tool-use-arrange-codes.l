@@ -553,20 +553,25 @@
   (send *ladle* :rotate (deg2rad 90) :x)
   (send *pr2* :rarm :end-coords :assoc *ladle*)
   (send *viewer* :draw-objects)
-
+  
   (warn "please run (put-ladle-1) or (put-ladle-0) ~%")
   )
 
 (defun receive-ladle-with-dialogue ()
   (rarm-middle-pose)
   
+  (set-ladle)
+  (arrange-motion-set)  
+  
   (send *ri* :speak-jp "おたまを渡す準備をして，okと合図をして下さい")
   (receive-with-dialogue)  
   (send *ri* :start-grasp :rarm :wait t :gain 100)
   
-  (send *ladle* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  (send *ladle* :rotate (deg2rad 90) :x)
-  (send *pr2* :rarm :end-coords :assoc *ladle*)
+  ;; (send *ladle* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+  ;; (send *ladle* :rotate (deg2rad 90) :x)
+  ;; (send *pr2* :rarm :end-coords :assoc *ladle*)
+  (set-ladle)
+  
   (send *viewer* :draw-objects)
 
   (warn "please run (put-ladle-1) or (put-ladle-0) ~%")
@@ -1831,7 +1836,6 @@
 
 (defun arrange-motion ()
   ;; copy from (transfer-curry) in arrangement-codes.l
-  (pre-ik-pose)
   (send *arrow* :newcoords (send (elt (send *ladle* :attention) 1) :copy-worldcoords))
   
   (dotimes (i 9)
@@ -1855,7 +1859,6 @@
   )
 
 (defun after-arrange-motion ()
-  (pre-ik-pose)
   (send *pr2* :rarm :move-end-pos #f(0 0 100) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
   (send *ri* :wait-interpolation)
@@ -2182,7 +2185,7 @@
   (receive-ladle-with-dialogue)
   
   ;; 盛り付ける動作をして皿を人にセットしてもらう
-  (before-arrange-motion)
+  ;; (before-arrange-motion)
   (arrange-motion-set)
   (arrange-motion)
   (have-the-plate-set-with-dialgue)

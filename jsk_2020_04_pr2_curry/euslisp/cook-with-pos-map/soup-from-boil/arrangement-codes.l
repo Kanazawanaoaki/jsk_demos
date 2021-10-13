@@ -423,7 +423,7 @@
   )
 
 (defun transfer-curry-set ()
-  (pre-ik-pose)
+  ;; (pre-ik-pose)
   (send *arrow* :newcoords (make-coords :pos (float-vector 504.422 8343.425 30917.724) :rpy (float-vector -1.367 0.118 -0.067)))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -438,7 +438,6 @@
   )
 
 (defun transfer-curry ()
-  (pre-ik-pose)
   (send *arrow* :newcoords (send (elt (send *ladle* :attention) 1) :copy-worldcoords))
   
   (dotimes (i 9)
@@ -456,7 +455,6 @@
   )
 
 (defun after-transfer-curry ()
-  (pre-ik-pose)
   (send *pr2* :rarm :move-end-pos #f(0 0 100) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
   (send *ri* :wait-interpolation)

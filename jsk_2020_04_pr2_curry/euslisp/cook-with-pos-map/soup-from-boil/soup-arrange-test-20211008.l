@@ -58,6 +58,7 @@
 (defun ih-check ()
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/soup-from-boil/ih-use-arrange-codes.l")
   ;; (update-pos)
+  (set-pose)
   (now-start-ih-with-fail-detection :deg 10)
   (push-knob)
   (set-pose)
@@ -71,6 +72,7 @@
   ;; おたまとお皿を用意する TODOここで鍋の位置も調整してもいいかも 最初にコンロ操作を確認するのもあり？
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/soup-from-boil/tool-use-arrange-codes.l")
   ;; (update-pos)
+  (set-pose)
   (now-set-ladle-a-and-plate-with-dialogue)
   
   (send *ri* :speak-jp "準備を行いました．確認してokと合図をして下さい")
@@ -108,7 +110,7 @@
 (defun soup-arrange-2 () ;; お湯を注ぐ
   ;; ;; 盛り付けの位置に移動する 
   ;; (move-to-arrange-with-speech-before-and-before-with-rec)
-  
+ 
   ;; おたまを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/soup-from-boil/arrangement-codes.l")
   ;; (update-pos)

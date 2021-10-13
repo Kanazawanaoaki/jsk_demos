@@ -118,16 +118,16 @@
 (init)
 (update-view)
 
-(if (send *ri* :simulation-modep)
-    (progn
-      (update-view)
-      )
-  (progn
-    (update-pos)
-    (store-params)
-    (change-dynm-params)
-    )
-  )
+;; (if (send *ri* :simulation-modep)
+;;     (progn
+;;       (update-view)
+;;       )
+;;   (progn
+;;     (update-pos)
+;;     (store-params)
+;;     (change-dynm-params)
+;;     )
+;;   )
 
 (warn "~% If you use real robot, run (update-pos) ~%")
 (warn "please run (move-to-kitchen-ri) , (move-to-sink-ri) or (move-to-stove-ri) and (set-pose)~%")
