@@ -114,7 +114,7 @@
   ;; おたまを掴む
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/soup-from-boil/arrangement-codes.l")
   ;; (update-pos)
-  (set-pose)
+  (set-pose) ;; よけいなset-poseになってしまっているがデモ固定化のために一応のこしておく．右腕がここで動いていなければなくしても問題ないかも．
   (grasp-ladle-with-fail-detection)
   
   ;; 鍋を掴む
