@@ -4,7 +4,7 @@
 (load "package://roseus_smach/src/state-machine-ros.l")
 (load "package://roseus_smach/src/state-machine-utils.l")
 
-(load "ih-stove-funcs.l")
+(load "easy-ver-ih-stove-funcs.l")
 
 (defun ih-stove-smach-test ()
   (let (sm)
@@ -20,11 +20,7 @@
              (:on :off :off)
              ;; (:on :finish :done)
 
-             (:on :melting-fire :melting-fire)
-             (:on :low-heat :low-heat)
              (:on :medium-heat :medium-heat)
-             (:on :high-heat :high-heat)
-             (:on :high-power :high-power)
 
              (:melting-fire :off :off)
              (:low-heat :off :off)
@@ -33,28 +29,16 @@
              (:high-power :off :off)
 
              (:melting-fire :low-heat :low-heat)
-             (:melting-fire :medium-heat :medium-heat)
-             (:melting-fire :high-heat :high-heat)
-             (:melting-fire :high-power :high-power)
 
              (:low-heat :melting-fire :melting-fire)
              (:low-heat :medium-heat :medium-heat)
-             (:low-heat :high-heat :high-heat)
-             (:low-heat :high-power :high-power)
              
-             (:medium-heat :melting-fire :melting-fire)
              (:medium-heat :low-heat :low-heat)
              (:medium-heat :high-heat :high-heat)
-             (:medium-heat :high-power :high-power)
 
-             (:high-heat :melting-fire :melting-fire)
-             (:high-heat :low-heat :low-heat)
              (:high-heat :medium-heat :medium-heat)
              (:high-heat :high-power :high-power)
 
-             (:high-power :melting-fire :melting-fire)
-             (:high-power :low-heat :low-heat)
-             (:high-power :medium-heat :medium-heat)
              (:high-power :high-heat :high-heat)
              
              )
