@@ -1575,6 +1575,7 @@
   )
 
 (defun grasp-ladle ()
+  (pre-ik-pose)
   (send *pr2* :larm :angle-vector #f(117.007 48.3805 113.439 -103.326 38.7107 -5.72958 14.4628))
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)

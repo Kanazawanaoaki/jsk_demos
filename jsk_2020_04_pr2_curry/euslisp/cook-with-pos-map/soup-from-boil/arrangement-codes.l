@@ -372,6 +372,9 @@
 
 (defun scoop-up-curry-0 ()
   (send *arrow* :newcoords (make-coords :pos (float-vector 471 8170 31070) :rpy (float-vector -1.603 0.0 3.14))) ;; wait-pose
+  ;; Pre-pose for IK
+  (send *pr2* :angle-vector
+        #f(324.895 27.5033 64.5305 54.0589 -83.4934 -44.0265 -47.123 217.695 -75.2863 3.32114 -91.388 -82.7469 226.169 -11.2871 -143.423 11.7494 47.4173))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :move-target (car (send *ladle* :attention))
