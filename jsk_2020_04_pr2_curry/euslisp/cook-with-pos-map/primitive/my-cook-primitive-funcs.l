@@ -569,7 +569,7 @@
   )
 
 ;; move-gripper primitive
-(defun move-gripper-func (pos &key (arm :rarm)) ;; ex. (move-gripper-func 50 :arm :larm)
+(defun move-gripper-func (pos &key (arm :rarm)) ;; ex. (move-gripper-func 50 :arm :larm) (move-gripper-func 0.08 :arm :larm)
   (send *ri* :move-gripper arm pos)
   )
 
@@ -613,7 +613,9 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun move-object-av-sequence ()
+(defun move-object-avs (avs tms)
+  (send *ri* :angle-vector-sequence avs tms)
+  (send *ri* :wait-interpolation)  
   )
 
 
@@ -639,7 +641,6 @@
   (send *ri* :angle-vector-sequence avs tms)
   (send *ri* :wait-interpolation)
   )
-
 
 ;; peel primitive
 (defun peel-primitive (peeler height width)
@@ -1212,7 +1213,7 @@
 
 
 ;; push-button primitive
-(defun push-primitive (coord &key (arm :larm)) ;; ex. (push-primitive (send *ih-knob-coords* :copy-worldcoords))
+(defun push-primitive (coord &key (arm :larm) (w-thre -15) (axis :x)) ;; ex. (push-primitive (send *ih-knob-coords* :copy-worldcoords) :w-thre -15 :axis :x)
   (send *cds* :newcoords coord)
   ;; (send *cds* :translate #f(100 0 0) :world)
   (send *cds* :translate #f(-100 0 0))
@@ -1229,7 +1230,7 @@
   
   (dotimes (i 15)
     ;; (send *pr2* arm :move-end-pos #f(-10 0 0) :world)
-    (send *pr2* arm :move-end-pos #f(10 0 0) :world)
+    (send *pr2* arm :move-end-pos #f(10 0 0))
     (setq av (send *pr2* :angle-vector))
     (setq avs (append avs (list av)))
     (setq tms (append tms (list 400)))
@@ -1240,11 +1241,18 @@
       (setq *wrench-topic-name* "/left_endeffector/wrench")
     (setq *wrench-topic-name* "/right_endeffector/wrench")
     )
-  
   (ros::unsubscribe *wrench-topic-name*)
   (setq *topic-name* *wrench-topic-name*)
   (setq *cb-flag* nil)
-  (ros::subscribe *wrench-topic-name* geometry_msgs::WrenchStamped #'wrench-x-cb)
+
+  (cond
+   ((equal axis :x)
+    (ros::subscribe *wrench-topic* geometry_msgs::WrenchStamped #'wrench-x-cb)
+    (setq *x-thre* w-thre))
+   ((equal axis :y)
+    (ros::subscribe *wrench-topic* geometry_msgs::WrenchStamped #'wrench-y-cb)
+    (setq *y-thre* w-thre))
+   )
   
   (while (some #'identity (send *ri* :wait-interpolation nil 0.1))
     (when (progn
@@ -1258,21 +1266,7 @@
     )
   
   (ros::unsubscribe *wrench-topic-name*)
-  
-  (send *cds* :newcoords (send coord :copy-worldcoords))
-  ;; (send *cds* :translate #f(100 0 0) :world)
-  (send *cds* :translate #f(-100 0 0))
-  
-  (send *pr2* arm :inverse-kinematics
-        (send *cds* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-  
   )
-
-
 
 
 ;; 移動系のプログラム move
