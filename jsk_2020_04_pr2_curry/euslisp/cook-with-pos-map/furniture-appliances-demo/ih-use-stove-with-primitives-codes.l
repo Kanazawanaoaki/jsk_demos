@@ -6,8 +6,8 @@
   (setq *ih-panel-coords* (make-coords :pos (float-vector 563 7940 30865) :rpy (float-vector  3.044 1.407 2.87)))
 
   ;; coords
-  (setq *ih-knob-coords* (make-coords :pos (float-vector 680 8154 30715) :rpy (float-vector -3.047 -0.011 1.512)));; original
-  ;; (setq *ih-knob-coords* (make-coords :pos (float-vector 680 8154 30715) :rpy (float-vector -3.047 -0.011 1.512)));;変更後
+  ;; (setq *ih-knob-coords* (make-coords :pos (float-vector 680 8154 30715) :rpy (float-vector -3.047 -0.011 1.512)));; original
+  (setq *ih-knob-coords* (make-coords :pos (float-vector 680 8110 30715) :rpy (float-vector -3.047 -0.011 1.512))) ;; ここを変える
   
   ;; (move-to-stove-irt)
   (move-to-spot-irt *stove-spot*)
@@ -36,13 +36,14 @@
 (defun grasp-knob ()
   (move-gripper-func 0.08 :arm :larm) ;; move-gripper primitive
   
+  ;; (send *arrow* :newcoords (send *ih-knob-coords* :copy-worldcoords))
+  ;; (send *arrow* :rotate (deg2rad 90) :x)
+  ;; (send *arrow* :translate #f(100 0 0) :world)
+  ;; (move-arm-ik (send *arrow* :copy-worldcoords) :arm :larm) ;;move-arm primitive
+  
   (send *arrow* :newcoords (send *ih-knob-coords* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad 90) :x)
-  (send *arrow* :translate #f(100 0 0) :world)
-  (move-arm-ik (send *arrow* :copy-worldcoords) :arm :larm) ;;move-arm primitive
-    
-  (send *arrow* :newcoords (send *ih-knob-coords* :copy-worldcoords))
-  (push-primitive (send *ih-knob-coords* :copy-worldcoords) :arm :larm :w-thre -15 :axis :x) ;; push-primitive
+  (push-primitive (send *arrow* :copy-worldcoords) :arm :larm :w-thre -15 :axis :x) ;; push-primitive
   
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
@@ -201,6 +202,7 @@
 (defun ih-smach-start ()
   (load "package://jsk_2020_04_pr2_curry/euslisp/smach-test/furniture-appliances/ih-stove-smach.l")
   (ih-stove-smach)
+  ;; これをすると止まってしまう．
   )
 
 (defun ih-smach-on ()
@@ -231,7 +233,7 @@
 
 ;; now codes 連続のIHコンロ操作のプログラムを書く．
 (defun now-start-ih ()
-  (ih-smach-start)
+  ;; (ih-smach-start) これをすると止まってしまう．あと前にupdate-posが必要
   (ready-pose)
   
   (push-knob)
@@ -243,29 +245,33 @@
   (if (equal *fail-flag* t) ;; 失敗したら知らせる
       (progn
         (release-knob)
-        (send *ri* :speak-jp "IHコンロのつまみの操作に失敗しました，コンロをつけて合図をして下さい")
+        (send *ri* :speak-jp "IHコンロのつまみの操作に失敗しました．")
         (return-from now-start-ih)))
 
   (rotate-knob)
-  (ih-smach-on);; onに状態遷移する  
+  (ih-smach-heat);; :medium-heatに状態遷移する  
   )
 
 (defun now-adjust-heat (&rest args &key (heat :medium-heat) &allow-other-keys) ;; 引数付きにする :heat :medium-heat (:melting-fire,:low-heat,:medium-heat,:high-heat,:high-power)
   (setq *heat-flag* nil)
 
+  ;; ih-panelを見る
+  (move-head-look-at (send (send *ih-panel-coords* :copy-worldcoords) :worldpos)) ;; move-head primitive
+  
   (until *heat-flag*
          (setq *panel-data* (read-panel))
          ;; あっているかチェック
          (if (equal heat (panel-to-heat *panel-data*))
              (progn
-               (ih-smach-heat heat);; 火加減の状態遷移をする
+               (ih-smach-heat :heat heat);; 火加減の状態遷移をする
                (setq *heat-flag* t) ;;OK
                )
            (progn
-             (ih-smach-heat (panel-to-heat *panel-data*));; 火加減の状態遷移をする
+             (ih-smach-heat :heat (panel-to-heat *panel-data*));; 火加減の状態遷移をする
              (rotate-knob :deg (* (- (heat-to-panel heat) *panel-data*) 5));; 一メモリにつき5度回す
              )
-         )
+	   )
+	 )
   )
 
 

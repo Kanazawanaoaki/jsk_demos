@@ -7,7 +7,9 @@
 状態遷移図を立ち上げる
 
 ```
-
+roscd jsk_2020_04_pr2_curry/euslisp/smach-test/furniture-appliances/
+roseus ih-stove-smach.l 
+(ih-stove-smach)
 ```
 
 ## ihコンロの実行tmp

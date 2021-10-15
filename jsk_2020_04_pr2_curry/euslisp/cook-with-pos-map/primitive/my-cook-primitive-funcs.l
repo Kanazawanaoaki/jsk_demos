@@ -1240,10 +1240,10 @@
 
   (cond
    ((equal axis :x)
-    (ros::subscribe *wrench-topic* geometry_msgs::WrenchStamped #'wrench-x-cb)
+    (ros::subscribe *wrench-topic-name* geometry_msgs::WrenchStamped #'wrench-x-cb)
     (setq *x-thre* w-thre))
    ((equal axis :y)
-    (ros::subscribe *wrench-topic* geometry_msgs::WrenchStamped #'wrench-y-cb)
+    (ros::subscribe *wrench-topic-name* geometry_msgs::WrenchStamped #'wrench-y-cb)
     (setq *y-thre* w-thre))
    )
   
