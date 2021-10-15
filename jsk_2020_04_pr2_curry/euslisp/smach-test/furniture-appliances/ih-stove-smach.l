@@ -4,7 +4,8 @@
 (load "package://roseus_smach/src/state-machine-ros.l")
 (load "package://roseus_smach/src/state-machine-utils.l")
 
-(load "ih-stove-funcs.l")
+;; (load "ih-stove-funcs.l")
+(load "package://jsk_2020_04_pr2_curry/euslisp/smach-test/furniture-appliances/ih-stove-funcs.l")
 
 (defun ih-stove-smach-test ()
   (let (sm)

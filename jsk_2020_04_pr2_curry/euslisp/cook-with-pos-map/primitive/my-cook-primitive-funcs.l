@@ -38,7 +38,7 @@
 (setq *bbox-topic-name* "/segmentation_decomposer/boxes")
 
 ;; ros init
-(ros::roseus "vegs_rec_test" :anonymous t)
+(ros::roseus "pr2_cook_eus" :anonymous t)
 (ros::load-ros-manifest "jsk_recognition_msgs")
 (setq *l* (instance ros::transform-listener :init))
 (setq found-obj nil)
@@ -147,21 +147,21 @@
       )))
 
 
-;; add for rosservice
-(ros::load-ros-manifest "std_srvs")
-(ros::wait-for-service "after_stow_data_collection/save_request")
-(setq req (instance std_srvs::TriggerRequest :init))
+;; ;; add for rosservice
+;; (ros::load-ros-manifest "std_srvs")
+;; (ros::wait-for-service "after_stow_data_collection/save_request")
+;; (setq req (instance std_srvs::TriggerRequest :init))
 
 
-(defun rossrv-test ()
-  ;; (ros::service-call "after_stow_data_collection_kinect/save_request" req t)
-  (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
-  )
+;; (defun rossrv-test ()
+;;   ;; (ros::service-call "after_stow_data_collection_kinect/save_request" req t)
+;;   (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
+;;   )
 
-(defun rossrv-test-double ()
-  (ros::service-call "after_stow_data_collection_kinect/save_request" req t)
-  (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
-  )
+;; (defun rossrv-test-double ()
+;;   (ros::service-call "after_stow_data_collection_kinect/save_request" req t)
+;;   (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
+;;   )
 
 
 ;; add dynamic parmas
@@ -371,16 +371,9 @@
   )
 
 ;; add for grasp detection
-(defun grasp-fail-detection (&rest args &key (g-thre 10) &allow-other-keys)
+(defun grasp-fail-detection (&rest args &key (arm :rarm) (g-thre 10) &allow-other-keys)
   (setq *fail-flag* nil)
-  (setq gripper-len (send *ri* :state :gripper :rarm :position))
-  (if (< gripper-len g-thre)
-      (setq *fail-flag* t))
-  )
-
-(defun grasp-fail-detection-larm (&rest args &key (g-thre 10) &allow-other-keys)
-  (setq *fail-flag* nil)
-  (setq gripper-len (send *ri* :state :gripper :larm :position))
+  (setq gripper-len (send *ri* :state :gripper arm :position))
   (if (< gripper-len g-thre)
       (setq *fail-flag* t))
   )
@@ -1278,3 +1271,92 @@
   (after-move-with-primitive)
   )
 
+
+
+;; move utils
+(defun move-to-kitchen-irt ()
+  ;; (send *pr2* :move-to (send *kitchen-spot* :copy-worldcoords) :world)
+  (move-to-spot-irt *kitchen-spot*)
+  (update-view)
+  )
+
+(defun move-to-shelf-irt ()
+  (move-to-spot-irt *shelf-spot*)
+  (update-view)
+  )
+
+(defun move-to-sink-irt ()
+  (move-to-spot-irt *sink-spot*)
+  (update-view)
+  )
+(defun move-to-stove-irt ()
+  (move-to-spot-irt *stove-spot*)
+  (update-view)
+  )
+(defun move-to-microwave-irt ()
+  (move-to-spot-irt *microwave-spot*)
+  (update-view)
+  )
+(defun move-to-seasoning-irt ()
+  (move-to-spot-irt *seasoning-spot*)
+  (update-view)
+  )
+(defun move-to-arrange-irt ()
+  (move-to-spot-irt *arrange-spot*)
+  (update-view)
+  )
+(defun move-to-garbage-irt ()
+  (move-to-spot-irt *garbage-spot*)
+  (update-view)
+  )
+
+(defun move-to-kitchen-ri-direct ()
+  (send *ri* :clear-costmap)
+  (send *ri* :move-to (make-coords :pos #f(1200 8500 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun move-to-shelf-ri-direct ()
+  (send *ri* :clear-costmap)
+  (send *ri* :move-to (make-coords :pos #f(1110 8500 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun move-to-sink-ri-direct ()
+  ;; コンロまで移動する
+  (send *ri* :clear-costmap)
+  (send *ri* :move-to (make-coords :pos #f(1110 9100 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun move-to-stove-ri-direct ()
+  (send *ri* :clear-costmap)
+  (send *ri* :move-to (make-coords :pos #f(1200 8100 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun move-to-microwave-ri-direct ()
+  ;; 電子レンジまで移動する
+  (send *ri* :clear-costmap)
+  (send *ri* :move-to (make-coords :pos #f(1600 9300 351) :rpy (float-vector 0 0 0)) :frame-id "/map")
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun move-to-seasoning-ri-direct ()
+  ;; 調味料まで移動する
+  (send *ri* :clear-costmap)
+  (send *ri* :move-to (make-coords :pos #f(1700 8900 351) :rpy (float-vector 0 0 0)) :frame-id "/map")
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun move-to-arrange-ri-direct ()
+  (send *ri* :clear-costmap)
+  (send *ri* :move-to (make-coords :pos #f(1200 8200 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
+  (print (send *ri* :state :worldcoords))
+  )
+
+(defun move-to-garbage-ri-direct ()
+  (send *ri* :clear-costmap)
+  (send *ri* :move-to (make-coords :pos #f(1700 9000 351) :rpy (float-vector 0 0 0)) :frame-id "/map")
+  (print (send *ri* :state :worldcoords))
+  )
