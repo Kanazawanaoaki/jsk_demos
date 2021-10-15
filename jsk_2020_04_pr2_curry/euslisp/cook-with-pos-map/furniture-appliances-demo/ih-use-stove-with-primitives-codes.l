@@ -22,7 +22,6 @@
   )
 
 (defun push-knob ()  
-  ;; (send *ri* :start-grasp :larm :wait t) ;; grasp primitive?
   (move-gripper-func 0 :arm :larm) ;; move-gripper primitive
   
   (send *arrow* :newcoords (send *ih-knob-coords* :copy-worldcoords))
@@ -35,11 +34,6 @@
 
 (defun grasp-knob ()
   (move-gripper-func 0.08 :arm :larm) ;; move-gripper primitive
-  
-  ;; (send *arrow* :newcoords (send *ih-knob-coords* :copy-worldcoords))
-  ;; (send *arrow* :rotate (deg2rad 90) :x)
-  ;; (send *arrow* :translate #f(100 0 0) :world)
-  ;; (move-arm-ik (send *arrow* :copy-worldcoords) :arm :larm) ;;move-arm primitive
   
   (send *arrow* :newcoords (send *ih-knob-coords* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad 90) :x)
@@ -207,10 +201,12 @@
 
 (defun ih-smach-on ()
   (pub-msg "on")
+  (send *ri* :speak-jp "IHコンロをonにしました．")
   )
 
 (defun ih-smach-off ()
   (pub-msg "off")
+  (send *ri* :speak-jp "IHコンロをoffにしました．")
   )
 
 (defun ih-smach-finish ()
@@ -220,15 +216,20 @@
 (defun ih-smach-heat (&rest args &key (heat :medium-heat) &allow-other-keys) ;; 引数付きにする :heat :medium-heat (:melting-fire,:low-heat,:medium-heat,:high-heat,:high-power)
   (cond
    ((equal heat :melting-fire)
-    (pub-msg "melting-fire"))
+    (pub-msg "melting-fire")
+    (send *ri* :speak-jp "IHコンロをとろ火にしました．"))
    ((equal heat :low-heat)
-    (pub-msg "low-heat"))
+    (pub-msg "low-heat")
+    (send *ri* :speak-jp "IHコンロを弱火にしました．"))
    ((equal heat :medium-heat)
-    (pub-msg "medium-heat"))
+    (pub-msg "medium-heat")
+    (send *ri* :speak-jp "IHコンロを中火にしました．"))
    ((equal heat :high-heat)
-    (pub-msg "high-heat"))
+    (pub-msg "high-heat")
+    (send *ri* :speak-jp "IHコンロを強火にしました．"))
    ((equal heat :high-power)
-    (pub-msg "high-power")))
+    (pub-msg "high-power")
+    (send *ri* :speak-jp "IHコンロをハイパワーにしました．")))
   )
 
 ;; now codes 連続のIHコンロ操作のプログラムを書く．
@@ -278,6 +279,7 @@
 (defun now-end-ih ()
   (release-knob)
   (push-knob)
+  (ih-smach-off);; offに状態遷移する  
   (ready-pose)
   )
 
