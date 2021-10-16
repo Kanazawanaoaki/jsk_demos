@@ -48,41 +48,45 @@
   )
 
 (defun rotate-knob (&rest args &key (deg 30) &allow-other-keys)
-  ;; rotate
-  (setq avs (list))
-  (setq tms (list))
+  ;; ;; rotate
+  ;; (setq avs (list))
+  ;; (setq tms (list))
 
-  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  ;; (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  ;; (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+  
+  ;; (cond
+  ;;  ((> deg 0)
+  ;;   (dotimes (i (/ deg 10))
+  ;;     (send *arrow* :rotate (deg2rad 10) :x)
+  ;;     (send *pr2* :larm :inverse-kinematics
+  ;;           (send *arrow* :copy-worldcoords)
+  ;;           :rotation-axis t
+  ;;           :debug-view nil)
+  ;;     (setq av (send *pr2* :angle-vector))
+  ;;     (setq avs (append avs (list av)))
+  ;;     (setq tms (append tms (list 200)))
+  ;;     ))
+  ;;  ((< deg 0)
+  ;;   (dotimes (i (/ (* deg -1) 10))
+  ;;     (send *arrow* :rotate (deg2rad -10) :x)
+  ;;     (send *pr2* :larm :inverse-kinematics
+  ;;           (send *arrow* :copy-worldcoords)
+  ;;           :rotation-axis t
+  ;;           :debug-view nil)
+  ;;     (setq av (send *pr2* :angle-vector))
+  ;;     (setq avs (append avs (list av)))
+  ;;     (setq tms (append tms (list 200)))
+  ;;     ))
+  ;;  )
+
+  ;; (unless (equal deg 0)
+  ;;   (move-object-avs avs tms) ;; move-arm primitive? move object primitive?
+  ;;   )
+
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
-
-  (cond
-   ((> deg 0)
-    (dotimes (i (/ deg 10))
-      (send *arrow* :rotate (deg2rad 10) :x)
-      (send *pr2* :larm :inverse-kinematics
-            (send *arrow* :copy-worldcoords)
-            :rotation-axis t
-            :debug-view nil)
-      (setq av (send *pr2* :angle-vector))
-      (setq avs (append avs (list av)))
-      (setq tms (append tms (list 200)))
-      ))
-   ((< deg 0)
-    (dotimes (i (/ (* deg -1) 10))
-      (send *arrow* :rotate (deg2rad -10) :x)
-      (send *pr2* :larm :inverse-kinematics
-            (send *arrow* :copy-worldcoords)
-            :rotation-axis t
-            :debug-view nil)
-      (setq av (send *pr2* :angle-vector))
-      (setq avs (append avs (list av)))
-      (setq tms (append tms (list 200)))
-      ))
-   )
-
-  (unless (equal deg 0)
-    (move-object-avs avs tms) ;; move-arm primitive? move object primitive?
-    )
+  (send *arrow* :rotate (deg2rad deg) :x)
+  (move-object-ik (send *arrow* :copy-worldcoords) :arm :larm :target (send *pr2* :larm :end-coords) :times 1000) ;; move-arm primitive
   )
 
 (defun release-knob ()
@@ -118,7 +122,7 @@
     (setq *data* (send *msg* :data))
     (format t "~A ~%" *data*)
     (if (ros::time> (send *msg* :header :stamp) *now*)
-        (setq *cb-flag* t)
+        (setq *panel-cb-flag* t)
       )
     ))
 
@@ -183,9 +187,9 @@
 (defun read-panel ()
   (setq *now* (ros::time-now))
   (ros::unsubscribe "/ih_stove_reader/result")
-  (setq *cb-flag* nil)
+  (setq *panel-cb-flag* nil)
   (ros::subscribe "/ih_stove_reader/result" roseus::StringStamped #'panel-reader-cb)
-  (until *cb-flag*
+  (until *panel-cb-flag*
          (ros::spin-once)
          (ros::sleep)
          )
@@ -232,6 +236,11 @@
     (send *ri* :speak-jp "IHコンロをハイパワーにしました．")))
   )
 
+(defun ih-smach-finish ()
+  (pub-msg "finish")
+  (send *ri* :speak-jp "IHコンロの操作を修了しました．")
+  )
+
 ;; now codes 連続のIHコンロ操作のプログラムを書く．
 (defun now-start-ih ()
   ;; (ih-smach-start) これをすると止まってしまう．あと前にupdate-posが必要
@@ -248,9 +257,8 @@
         (release-knob)
         (send *ri* :speak-jp "IHコンロのつまみの操作に失敗しました．")
         (return-from now-start-ih)))
-
+  
   (rotate-knob)
-  (ih-smach-heat);; :medium-heatに状態遷移する  
   )
 
 (defun now-adjust-heat (&rest args &key (heat :medium-heat) &allow-other-keys) ;; 引数付きにする :heat :medium-heat (:melting-fire,:low-heat,:medium-heat,:high-heat,:high-power)
@@ -269,7 +277,7 @@
                )
            (progn
              (ih-smach-heat :heat (panel-to-heat *panel-data*));; 火加減の状態遷移をする
-             (rotate-knob :deg (* (- (heat-to-panel heat) *panel-data*) 5));; 一メモリにつき5度回す
+             (rotate-knob :deg (* (- (heat-to-panel heat) *panel-data*) 10));; 一メモリにつき5度回す
              )
 	   )
 	 )
@@ -281,9 +289,11 @@
   (push-knob)
   (ih-smach-off);; offに状態遷移する  
   (ready-pose)
+  (ih-smach-finish)
   )
 
 (defun now-ih-all ()
+  (update-pos)
   (now-start-ih)
   (if (equal *fail-flag* t) ;; 失敗していたら抜ける
       (return-from now-ih-all))

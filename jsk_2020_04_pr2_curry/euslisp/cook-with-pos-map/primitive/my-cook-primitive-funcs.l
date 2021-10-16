@@ -121,14 +121,14 @@
 
 
 (ros::load-ros-manifest "geometry_msgs")
-(setq *cb-flag* nil)
+(setq *wrench-cb-flag* nil)
 (defun wrench-y-cb (msg)
   (when msg
     (let ((y nil))
       (setq y (send msg :wrench :force :y))
       (if (< y *y-thre*)
           (progn 
-            (setq *cb-flag* t)
+            (setq *wrench-cb-flag* t)
             (format t "OK!! y: ~A ~%" y)
             )
         (format t "y: ~A ~%" y))
@@ -140,7 +140,7 @@
       (setq x (send msg :wrench :force :x))
       (if (< x *x-thre*)
           (progn 
-            (setq *cb-flag* t)
+            (setq *wrench-cb-flag* t)
             (format t "OK!! x: ~A ~%" x)
             )
         (format t "x: ~A ~%" x))
@@ -690,7 +690,7 @@
   
   ;; 皮剥き始める所
   (ros::unsubscribe "/right_endeffector/wrench")
-  (setq *cb-flag* nil)
+  (setq *wrench-cb-flag* nil)
   (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-y-cb)
   
   (setq interval 10)
@@ -717,7 +717,7 @@
   (while (some #'identity (send *ri* :wait-interpolation nil 0.1))
     (when (progn
             (ros::spin-once)
-            (if *cb-flag* t)
+            (if *wrench-cb-flag* t)
             )
       (send *ri* :cancel-angle-vector)
       (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
@@ -990,13 +990,13 @@
   
   (ros::unsubscribe "/right_endeffector/wrench")
   (setq *topic-name* "/right_endeffector/wrench")
-  (setq *cb-flag* nil)
+  (setq *wrench-cb-flag* nil)
   (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-x-cb)
   
   (while (some #'identity (send *ri* :wait-interpolation nil 0.1))
     (when (progn
             (ros::spin-once)
-            (if *cb-flag* t)
+            (if *wrench-cb-flag* t)
             )
       (send *ri* :cancel-angle-vector)
       (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
@@ -1236,7 +1236,7 @@
     )
   (ros::unsubscribe *wrench-topic-name*)
   (setq *topic-name* *wrench-topic-name*)
-  (setq *cb-flag* nil)
+  (setq *wrench-cb-flag* nil)
 
   (cond
    ((equal axis :x)
@@ -1250,7 +1250,7 @@
   (while (some #'identity (send *ri* :wait-interpolation nil 0.1))
     (when (progn
             (ros::spin-once)
-            (if *cb-flag* t)
+            (if *wrench-cb-flag* t)
             )
       (send *ri* :cancel-angle-vector)
       (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
