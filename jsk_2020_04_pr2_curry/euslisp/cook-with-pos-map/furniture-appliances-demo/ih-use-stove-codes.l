@@ -98,6 +98,10 @@
       (setq num 8))
      ((equal string "9")
       (setq num 9))
+     ((equal string "10")
+      (setq num 10))
+     ((equal string "11")
+      (setq num 11))
      )
     num))
 
