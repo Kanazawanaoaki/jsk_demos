@@ -48,45 +48,51 @@
   )
 
 (defun rotate-knob (&rest args &key (deg 30) &allow-other-keys)
-  ;; ;; rotate
-  ;; (setq avs (list))
-  ;; (setq tms (list))
-
-  ;; (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-  ;; (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
-  
-  ;; (cond
-  ;;  ((> deg 0)
-  ;;   (dotimes (i (/ deg 10))
-  ;;     (send *arrow* :rotate (deg2rad 10) :x)
-  ;;     (send *pr2* :larm :inverse-kinematics
-  ;;           (send *arrow* :copy-worldcoords)
-  ;;           :rotation-axis t
-  ;;           :debug-view nil)
-  ;;     (setq av (send *pr2* :angle-vector))
-  ;;     (setq avs (append avs (list av)))
-  ;;     (setq tms (append tms (list 200)))
-  ;;     ))
-  ;;  ((< deg 0)
-  ;;   (dotimes (i (/ (* deg -1) 10))
-  ;;     (send *arrow* :rotate (deg2rad -10) :x)
-  ;;     (send *pr2* :larm :inverse-kinematics
-  ;;           (send *arrow* :copy-worldcoords)
-  ;;           :rotation-axis t
-  ;;           :debug-view nil)
-  ;;     (setq av (send *pr2* :angle-vector))
-  ;;     (setq avs (append avs (list av)))
-  ;;     (setq tms (append tms (list 200)))
-  ;;     ))
-  ;;  )
-
-  ;; (unless (equal deg 0)
-  ;;   (move-object-avs avs tms) ;; move-arm primitive? move object primitive?
-  ;;   )
-
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   (send *arrow* :rotate (deg2rad deg) :x)
   (move-object-ik (send *arrow* :copy-worldcoords) :arm :larm :target (send *pr2* :larm :end-coords) :times 1000) ;; move-arm primitive
+  )
+
+(defun rotate-knob-avs (&rest args &key (deg 30) &allow-other-keys)
+  ;; rotate
+  (setq avs (list))
+  (setq tms (list))
+
+  (setq *now-neck-p* (send *pr2* :head :neck-p :joint-angle))
+  (setq *now-neck-y* (send *pr2* :head :neck-y :joint-angle))
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (send *pr2* :head :neck-p :joint-angle *now-neck-p*)
+  (send *pr2* :head :neck-y :joint-angle *now-neck-y*)
+  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+  
+  (cond
+   ((> deg 0)
+    (dotimes (i (/ deg 10))
+      (send *arrow* :rotate (deg2rad 10) :x)
+      (send *pr2* :larm :inverse-kinematics
+	    (send *arrow* :copy-worldcoords)
+	    :rotation-axis t
+	    :debug-view nil)
+      (setq av (send *pr2* :angle-vector))
+      (setq avs (append avs (list av)))
+      (setq tms (append tms (list 200)))
+      ))
+   ((< deg 0)
+    (dotimes (i (/ (* deg -1) 10))
+      (send *arrow* :rotate (deg2rad -10) :x)
+      (send *pr2* :larm :inverse-kinematics
+	    (send *arrow* :copy-worldcoords)
+	    :rotation-axis t
+	    :debug-view nil)
+      (setq av (send *pr2* :angle-vector))
+      (setq avs (append avs (list av)))
+      (setq tms (append tms (list 200)))
+      ))
+   )
+
+  (unless (equal deg 0)
+    (move-object-avs avs tms) ;; move-arm primitive? move object primitive?
+    )
   )
 
 (defun release-knob ()
