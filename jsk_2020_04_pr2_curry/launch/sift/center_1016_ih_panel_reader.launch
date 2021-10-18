@@ -1,0 +1,7 @@
+<launch>
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/sift/prosilica_mask_center.launch"/>
+  
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/sift/update_1016_ih_panel_stove_reader.launch">
+    <arg name="INPUT_IMAGE" default="/apply_mask_image/output" />
+  </include>
+</launch>
