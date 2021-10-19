@@ -385,12 +385,14 @@
   )
 
 ;; release gripper release primitive
-(defun release-object (&rest args &key (arm :rarm) (g-num 0.025) &allow-other-keys)
+(defun release-object (&rest args &key (arm :rarm) (g-num 0.025) (stop-grasp nil) &allow-other-keys)
   (let (tmp-gripper)
-    ;;グリッパを微妙に開く
-    (setq tmp-gripper (* 0.001 (send *ri* :state :gripper arm :position)))
-    (send *ri* :move-gripper arm (+ g-num tmp-gripper))
-    ))
+    (if stop-grasp
+        (send *ri* :stop-grasp arm :wait t) ;;グリッパを全開にする
+      (progn     ;;グリッパを微妙に開く
+        (setq tmp-gripper (* 0.001 (send *ri* :state :gripper arm :position)))
+        (send *ri* :move-gripper arm (+ g-num tmp-gripper))
+        ))))
 
 ;; (defun release-object-larm (&rest args &key (g-num 0.025) &allow-other-keys)
 ;;   (let (tmp-gripper)

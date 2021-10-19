@@ -96,27 +96,17 @@
   )
 
 (defun release-knob ()
-  (send *ri* :stop-grasp :larm :wait t)
+  (release-object :arm :larm :stop-grasp t) ;; release gripper primitive
   
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(30 0 0) :world)
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *ri* :angle-vector (send *pr2* :angle-vector))
-  (send *ri* :wait-interpolation)
-
+  (move-arm-ik (send *arrow* :copy-worldcoords) :arm :larm) ;;move-arm primitive
+  
   (send *arrow* :newcoords (send *ih-knob-coords* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad 90) :x)
   (send *arrow* :translate #f(100 0 0) :world)
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *ri* :angle-vector (send *pr2* :angle-vector))
-  (send *ri* :wait-interpolation)
+  (move-arm-ik (send *arrow* :copy-worldcoords) :arm :larm) ;;move-arm primitive
   )
 
 ;; recognition
