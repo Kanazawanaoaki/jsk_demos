@@ -59,7 +59,7 @@
      (send *scene* :add-spots (list microwave-front-spots))
      )
    )
-
+  
   (:go-forward
    ()
    (send *ri* :go-pos-unsafe 0.15 0 0)
@@ -76,7 +76,7 @@
 
    (send *microwave* :move-to (send (send *scene* :spot "/eng2/7f/room73B2-counter-side") :worldcoords) :world)
    (send *microwave* :move-to (make-coords :pos (float-vector 0 0 1000)))
-
+   
    (send *pr2* :move-to (send (send *scene* :spot "/eng2/7f/room73B2-counter-side") :worldcoords) :world)
    (send *pr2* :move-to (make-coords :pos (float-vector -700 0 0)))
    (pr2-left-reset-pose)

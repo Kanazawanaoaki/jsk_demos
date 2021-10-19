@@ -52,7 +52,7 @@
        ;;(send m-handle :locate (float-vector 0 (/ ly 2) 0))
 
        (setq m-joint (instance rotational-joint :init :parent-link m-body :child-link m-door :axis :z :min -180 :max 360))
-
+       
        (setq links (list m-body m-door))
        (setq joint-list (list m-joint))
 
@@ -63,7 +63,7 @@
        (send self :init-ending)
        self))
 
-  (:get-handle () m-handle)
+    (:get-handle () m-handle)
 
   (:m-joint (&rest args) (forward-message-to m-joint args))
   )
