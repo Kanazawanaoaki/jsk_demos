@@ -4,7 +4,7 @@
 (load "package://roseus_smach/src/state-machine-ros.l")
 (load "package://roseus_smach/src/state-machine-utils.l")
 
-(load "package://jsk_2020_04_pr2_curry/euslisp/smach-test/furniture-appliances/microwave-funcs.l")
+(load "package://jsk_2020_04_pr2_curry/euslisp/smach-test/furniture-appliances/easy-microwave-funcs.l")
 
 (defun microwave-smach-test ()
   (let (sm)
@@ -24,13 +24,11 @@
              (:0s :off :off)
              (:0s :500w :500w)
              (:0s :open :open)
-             
+
              (:500w :1min :1min)
-             (:500w :2min :2min)
              (:500w :open :open)
-             
+
              (:1min :2min :2min)
-             (:1min :3min :3min)
              (:1min :heating :heating)
              (:1min :open :open)
              

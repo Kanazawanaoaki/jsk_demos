@@ -79,8 +79,6 @@
   (cond
    ((equal *data* "1min")
     (return-from 500w :1min))
-   ((equal *data* "2min")
-    (return-from 500w :2min))
    ((equal *data* "open")
     (return-from 500w :open))
    )
