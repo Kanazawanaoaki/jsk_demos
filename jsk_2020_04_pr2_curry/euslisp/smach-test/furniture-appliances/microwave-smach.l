@@ -15,25 +15,31 @@
            ;; if <transition> is ->, it corresponds when node returns t and !-> for nil.
            '(
              (:init :success :off)
-	     
+             
              (:off :finish :done)
              (:off :open :open)
-             (:open :0s :0s)
+             (:open :close :0s)
+
              (:0s :finish :done)
              (:0s :off :off)
-
              (:0s :500w :500w)
+             (:0s :open :open)
+
              (:500w :1min :1min)
+             (:500w :open :open)
 
-	     (:1min :2min :2min)
-	     (:1min :heating :heating)
-	     
-	     (:2min :3min :3min)
-	     (:2min :heating :heating)
+             (:1min :2min :2min)
+             (:1min :heating :heating)
+             (:1min :open :open)
+             
+             (:2min :3min :3min)
+             (:2min :heating :heating)
+             (:2min :open :open)
 
-	     (:3min :heating :heating)
+             (:3min :heating :heating)
+             (:3min :open :open)
 
-	     (:heating :0s :0s)
+             (:heating :time-elapsed :0s)
              
              )
            ;; define function map
