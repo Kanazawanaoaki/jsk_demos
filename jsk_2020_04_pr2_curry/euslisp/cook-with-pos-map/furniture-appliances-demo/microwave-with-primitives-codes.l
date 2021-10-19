@@ -1,21 +1,35 @@
-(defun ih-primitive-init () ;; ihの動作部分だけをプリミティブを使って書く用にする．
+(defun microwave-primitive-init () ;; 電子レンジの動作部分だけをプリミティブを使って書く用にする．
   ;; init
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/primitive/my-cook-primitive-funcs.l")
   (load "package://jsk_2020_04_pr2_curry/euslisp/smach-test/furniture-appliances/ros-topic-test/smach_state_msg-publisher.l")
   
-  (setq *ih-panel-coords* (make-coords :pos (float-vector 563 7940 30865) :rpy (float-vector  3.044 1.407 2.87)))
-
-  ;; coords
-  ;; (setq *ih-knob-coords* (make-coords :pos (float-vector 680 8154 30715) :rpy (float-vector -3.047 -0.011 1.512)));; original
-  (setq *ih-knob-coords* (make-coords :pos (float-vector 680 8110 30715) :rpy (float-vector -3.047 -0.011 1.512))) ;; ここを変える
-  
-  ;; (move-to-stove-irt)
-  (move-to-spot-irt *stove-spot*)
+  (move-to-spot-irt *microwave-spot*)
   (objects (list *pr2* *scene*))
   (update-view)
   )
 
-(ih-primitive-init)
+(microwave-primitive-init)
+
+;; move-with primitive funcs
+(defun open-microwave ()
+  )
+
+
+(defun close-microwave ()
+  )
+
+(defun push-button () ;; 引数ありのプログラム
+  )
+
+(defun push-500w-button ()
+  )
+
+(defun push-1min-button ()
+  )
+
+(defun push-start-button ()
+  )
+
 
 (defun ready-pose ()
   (move-arm-av #f(117.007 48.3805 113.439 -103.326 38.7107 -5.72958 14.4628) :arm :larm :times 4000) ;;move-arm primitive
@@ -122,105 +136,48 @@
 ;; recognition
 (ros::load-ros-package "roseus")
 
+(defun microwave-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :data))
+    (format t "~A ~%" *data*)
+    )
+  )
+
 (defun panel-reader-cb (msg)
   (when msg
     (setq *msg* msg)
     (setq *data* (send *msg* :data))
     (format t "~A ~%" *data*)
     (if (ros::time> (send *msg* :header :stamp) *now*)
-        (setq *panel-cb-flag* t)
+        (setq *cb-flag* t)
       )
     ))
 
-(defun string2num (string)
-  (let (num)
-    (cond
-     ((equal string "1")
-      (setq num 1))
-     ((equal string "2")
-      (setq num 2))
-     ((equal string "3")
-      (setq num 3))
-     ((equal string "4")
-      (setq num 4))
-     ((equal string "5")
-      (setq num 5))
-     ((equal string "6")
-      (setq num 6))
-     ((equal string "7")
-      (setq num 7))
-     ((equal string "8")
-      (setq num 8))
-     ((equal string "9")
-      (setq num 9))
-     ((equal string "10")
-      (setq num 10))
-     ((equal string "11")
-      (setq num 11))
-     )
-    num))
-
-(defun panel-to-heat (num)
-  (cond
-   ((<= num 1)
-    (return-from panel-to-heat :melting-fire))
-   ((and (> num 1) (<= num 5))
-    (return-from panel-to-heat :low-heat))
-   ((and (> num 5) (<= num 8))
-    (return-from panel-to-heat :medium-heat))
-   ((and (> num 8) (<= num 10))
-    (return-from panel-to-heat :high-heat))
-   ((and (> num 10))
-    (return-from panel-to-heat :high-power)))
-  )
-
-(defun heat-to-panel (heat)
-  (cond
-   ((equal heat :melting-fire)
-    (return-from heat-to-panel 1))
-   ((equal heat :low-heat)
-    (return-from heat-to-panel 4))
-   ((equal heat :medium-heat)
-    (return-from heat-to-panel 7))
-   ((equal heat :high-heat)
-    (return-from heat-to-panel 9))
-   ((equal heat :melting-fire)
-    (return-from heat-to-panel 11)))
-  )
-
-(defun read-data ()
-  (let (num-data num)
-    (setq num-data (string-trim "p" (string-trim "/" *data*)))
-    (setq num (string2num num-data))
-    num))
-
 (defun read-panel ()
   (setq *now* (ros::time-now))
-  (ros::unsubscribe "/ih_stove_reader/result")
-  (setq *panel-cb-flag* nil)
-  (ros::subscribe "/ih_stove_reader/result" roseus::StringStamped #'panel-reader-cb)
-  (until *panel-cb-flag*
+  (ros::unsubscribe "/microwave_reader/result")
+  (setq *cb-flag* nil)
+  (ros::subscribe "/microwave_reader/result" roseus::StringStamped #'panel-reader-cb)
+  (until *cb-flag*
          (ros::spin-once)
          (ros::sleep)
          )
-  (read-data)
   )
 
 ;; defun smach funcs
-(defun ih-smach-start ()
-  (load "package://jsk_2020_04_pr2_curry/euslisp/smach-test/furniture-appliances/ih-stove-smach.l")
-  (ih-stove-smach)
-  ;; これをすると止まってしまう．
-  )
-
-(defun ih-smach-on ()
+(defun microwave-smach-on ()
   (pub-msg "on")
-  (send *ri* :speak-jp "IHコンロをonにしました．")
+  (send *ri* :speak-jp "電子レンジをonにしました．")
   )
 
-(defun ih-smach-off ()
+(defun microwave-smach-off ()
   (pub-msg "off")
   (send *ri* :speak-jp "IHコンロをoffにしました．")
+  )
+
+(defun microwave-smach-finish ()
+  (pub-msg "on")
   )
 
 (defun ih-smach-heat (&rest args &key (heat :medium-heat) &allow-other-keys) ;; 引数付きにする :heat :medium-heat (:melting-fire,:low-heat,:medium-heat,:high-heat,:high-power)
@@ -248,6 +205,49 @@
   )
 
 ;; now codes 連続のIHコンロ操作のプログラムを書く．
+(defun micro-all () ;; サトウのご飯
+  ;; put object in microwave
+  (send *pmi* :open-microwave)
+  (send *pmi* :kanazawa-put-object)
+  (send *pmi* :close-microwave)
+  
+  ;; push button
+  (send *pmi* :push-500w-button)
+  (send *pmi* :push-1min-button)
+  (send *pmi* :push-1min-button)
+  (send *pmi* :push-start-button)
+  
+  ;; wait for heating
+  (unix::sleep (* 2 60))
+
+  ;; take object from microwave
+  (send *pmi* :open-microwave)
+  )
+
+(defun hot-veg-micro () ;; 温野菜の温める
+  ;; put object in microwave
+  (send *pmi* :open-microwave)
+  (send *pmi* :kanazawa-put-object)
+  (send *pmi* :close-microwave)
+  
+  ;; push button
+  (send *pmi* :push-500w-button)
+  (send *pmi* :push-1min-button)
+  (send *pmi* :push-1min-button)
+  (send *pmi* :push-1min-button)
+  (send *pmi* :push-start-button)
+  
+  ;; wait for heating
+  (unix::sleep (* 3 60))
+  
+  ;; take object from microwave
+  (send *pmi* :open-microwave)
+  (send *pmi* :kanazawa-take-object)
+  (send *pmi* :close-microwave)
+  )
+
+
+
 (defun now-start-ih ()
   ;; (ih-smach-start) これをすると止まってしまう．あと前にupdate-posが必要
   (ready-pose)
@@ -306,4 +306,3 @@
   (now-adjust-heat)
   (now-end-ih)
   )
-
