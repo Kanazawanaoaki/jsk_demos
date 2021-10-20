@@ -308,6 +308,7 @@
          (ros::spin-once)
          (ros::sleep)
          )
+  *data*
   )
 
 (defun microwave-pos-recogniton ()
@@ -357,8 +358,7 @@
 
   (send *microwave* :move-to (make-coords :pos *microwave-pos* :rpy (car *microwave-rpy*)) :world)
   (send *microwave* :angle-vector (float-vector 100))
-  
-  
+    
   ;; pre-put2
   (send *pr2* :rarm :inverse-kinematics (send (send (send *microwave* :copy-worldcoords) :translate (float-vector -100 -210 180)) :rotate (deg2rad -90) :x) :rotation-axis t)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
@@ -431,18 +431,14 @@
   )
 
 ;; defun smach funcs
-(defun microwave-smach-on ()
-  (pub-msg "on")
-  (send *ri* :speak-jp "電子レンジをonにしました．")
+(defun microwave-smach-open ()
+  (pub-msg "open")
+  (send *ri* :speak-jp "電子レンジの扉を開けました．")
   )
 
-(defun microwave-smach-off ()
-  (pub-msg "off")
-  (send *ri* :speak-jp "IHコンロをoffにしました．")
-  )
-
-(defun microwave-smach-finish ()
-  (pub-msg "on")
+(defun microwave-smach-close ()
+  (pub-msg "close")
+  (send *ri* :speak-jp "電子レンジの扉を閉めました．")
   )
 
 (defun ih-smach-heat (&rest args &key (heat :medium-heat) &allow-other-keys) ;; 引数付きにする :heat :medium-heat (:melting-fire,:low-heat,:medium-heat,:high-heat,:high-power)
@@ -464,15 +460,77 @@
     (send *ri* :speak-jp "IHコンロをハイパワーにしました．")))
   )
 
-(defun ih-smach-finish ()
+(defun microwave-smach-finish ()
   (pub-msg "finish")
-  (send *ri* :speak-jp "IHコンロの操作を修了しました．")
+  (send *ri* :speak-jp "電子レンジの操作を修了しました．")
   )
 
 
-;; now codes 連続のIHコンロ操作のプログラムを書く．
+;; now codes 連続の電子レンジ操作のプログラムを書く とりあえず押し間違えを考えないバージョン
+(defun now-microwave-test ()
+  ;; recognition
+  (microwave-pos-recogniton) ;; 位置を認識
+  
+  ;; open and close microwave
+  (open-microwave) ;;扉をあける
+  (microwave-smach-open)
+  (close-microwave) ;;扉を閉める
+  (microwave-smach-close)
+  
+  ;; push button この部分は今までのを参考にして書く とりあえず押し間違えを考えないバージョン
+  (setq *push-flag* nil)
+  (while (eql *push-flag* nil)
+    (push-500w-button)
+    (read-panel)
+    (if (equal *data* "/500w")
+        (setq *push-flag* t))
+    )
+
+  (setq *push-flag* nil)
+  (while (eql *push-flag* nil)
+    (push-1min-button)
+    (read-panel)
+    (if (equal *data* "/1m")
+        (setq *push-flag* t))
+    )
+  
+  (setq *tmp-data* *data*)
+  
+  (setq *push-flag* nil)
+  (while (eql *push-flag* nil)
+    (push-start-button)
+    (read-panel)
+    (if (or (equal *data* "/start") (not (equal *data* *tmp-data*)))
+        (setq *push-flag* t))
+    )
+  
+  ;; wait for heating
+  (unix::sleep (* 2 60))
+  
+  ;; open and close microwave
+  (open-microwave)
+  (microwave-smach-open)
+  )
+
+
+(defun now-start-microwave ()
+  ;; recognition
+  (microwave-pos-recogniton) ;; 位置を認識
+  
+  ;; open and close microwave
+  (open-microwave) ;;扉をあける
+  (microwave-smach-open)
+  (close-microwave) ;;扉を閉める
+  (microwave-smach-close)
+  )
+
+(defun now-microwave-min (&rest args &key (min 2) &allow-other-keys) ;; 引数は将来的には170wとかの押し間違いにも対応したい．(w 170)
+  ;; min分にする
+  
+  )
+
 (defun now-micro-sato () ;; サトウのご飯
-  ;; put object in microwave
+  ;; put object in microwave  
   (send *pmi* :open-microwave)
   (send *pmi* :kanazawa-put-object)
   (send *pmi* :close-microwave)
@@ -535,7 +593,7 @@
 
 (defun now-adjust-heat (&rest args &key (heat :medium-heat) &allow-other-keys) ;; 引数付きにする :heat :medium-heat (:melting-fire,:low-heat,:medium-heat,:high-heat,:high-power)
   (setq *heat-flag* nil)
-
+  
   ;; ih-panelを見る
   (move-head-look-at (send (send *ih-panel-coords* :copy-worldcoords) :worldpos)) ;; move-head primitive
   
