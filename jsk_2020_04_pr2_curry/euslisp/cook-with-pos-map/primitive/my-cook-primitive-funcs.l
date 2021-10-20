@@ -564,7 +564,7 @@
   )
 
 ;; move-gripper primitive
-(defun move-gripper-func (pos &key (arm :rarm) (stop-grasp t)) ;; ex. (move-gripper-func 50 :arm :larm) (move-gripper-func 0.08 :arm :larm)
+(defun move-gripper-func (pos &key (arm :rarm) (stop-grasp nil)) ;; ex. (move-gripper-func 50 :arm :larm) (move-gripper-func 0.08 :arm :larm)
   (if stop-grasp
       (send *ri* :stop-grasp arm :wait t) ;; 全開にする
     (send *ri* :move-gripper arm pos) ;; 指定値に開く

@@ -7,7 +7,8 @@
 
   ;; coords
   ;; (setq *ih-knob-coords* (make-coords :pos (float-vector 680 8154 30715) :rpy (float-vector -3.047 -0.011 1.512)));; original
-  (setq *ih-knob-coords* (make-coords :pos (float-vector 680 8110 30715) :rpy (float-vector -3.047 -0.011 1.512))) ;; ここを変える
+  ;; (setq *ih-knob-coords* (make-coords :pos (float-vector 680 8110 30715) :rpy (float-vector -3.047 -0.011 1.512))) ;; 今までやっていたの
+  (setq *ih-knob-coords* (make-coords :pos (float-vector 680 8090 30715) :rpy (float-vector -3.047 -0.011 1.512))) ;; 1020
   
   ;; (move-to-stove-irt)
   (move-to-spot-irt *stove-spot*)
@@ -107,6 +108,16 @@
   (send *arrow* :rotate (deg2rad 90) :x)
   (send *arrow* :translate #f(100 0 0) :world)
   (move-arm-ik (send *arrow* :copy-worldcoords) :arm :larm) ;;move-arm primitive
+  )
+
+(defun look-at-ih-panel ()
+  ;; ih-panelを見る
+  (move-head-look-at (send (send *ih-panel-coords* :copy-worldcoords) :worldpos)) ;; move-head primitive
+  )
+
+(defun look-at-ih-knob ()
+  ;; ih-panelを見る
+  (move-head-look-at (send (send *ih-knob-coords* :copy-worldcoords) :worldpos)) ;; move-head primitive
   )
 
 ;; recognition
@@ -242,6 +253,7 @@
   ;; (ih-smach-start) これをすると止まってしまう．あと前にupdate-posが必要
   (ready-pose)
   
+  (look-at-ih-knob)
   (push-knob)
   (ih-smach-on);; onに状態遷移する  
   
@@ -261,7 +273,7 @@
   (setq *heat-flag* nil)
 
   ;; ih-panelを見る
-  (move-head-look-at (send (send *ih-panel-coords* :copy-worldcoords) :worldpos)) ;; move-head primitive
+  (look-at-ih-panel)
   
   (until *heat-flag*
          (setq *panel-data* (read-panel))
