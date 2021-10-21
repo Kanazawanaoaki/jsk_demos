@@ -1,0 +1,11 @@
+method: CCOEFF
+template_list: OF 1P
+template:
+    OF:
+        name: /off
+        path: "package://jsk_2020_04_pr2_curry/data/ih-knob-20211020/grey-crop-ih-knob-stove-off-20211020.jpg"
+        thre: 0.70
+    1P:
+        name: /on
+        path: "package://jsk_2020_04_pr2_curry/data/ih-knob-20211020/grey-crop-ih-knob-stove-on-20211020.jpg"
+        thre: 0.70
