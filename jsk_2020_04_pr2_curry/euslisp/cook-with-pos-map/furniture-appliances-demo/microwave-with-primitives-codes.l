@@ -2,7 +2,7 @@
   ;; init
   (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/primitive/my-cook-primitive-funcs.l")
   (load "package://jsk_2020_04_pr2_curry/euslisp/smach-test/furniture-appliances/ros-topic-test/smach_state_msg-publisher.l")
-
+  
 
   (require :detection-interface "package://jsk_perception/euslisp/detection_interface.l")
   (defparameter *detection-topic* "/ObjectDetection")
@@ -166,7 +166,7 @@
   )
 
 (defun push-button (pos) ;; 引数ありのプログラムにして使いまわす
-  (let ((button-front (send (send *microwave* :copy-worldcoords) :transform (make-coords :pos pos)))
+  (let* ((button-front (send (send *microwave* :copy-worldcoords) :transform (make-coords :pos pos)))
         (button (send (send button-front :copy-worldcoords) :translate (float-vector 95 0 0) :world))) ;; 85
     
     (push-primitive button :arm :rarm :w-thre -15 :axis :x)
@@ -206,7 +206,7 @@
     ;; (ros::unsubscribe "/right_endeffector/wrench")
     
     ;; post-push
-    (move-arm-ik button-front :arm :rarm :rotation-flag t :times 2000) ;; move arm primitive
+    (move-arm-ik button-front :arm :rarm :rotate-flag t :times 2000) ;; move arm primitive
     ;; (send *pr2* :rarm :inverse-kinematics button-front :rotation-axis t)
     ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
     ;; (send *ri* :wait-interpolation)
@@ -219,9 +219,9 @@
   (send *pr2* :head :neck-p :joint-angle 28)
   (send *pr2* :start-grasp :rarm)
   ;; (send *ri* :start-grasp :rarm)
-  (move-gripper-func 0 :arm :larm) ;; move-gripper primitive
+  (move-gripper-func 0 :arm :rarm) ;; move-gripper primitive
   
-  (send *microwave* :move-to (make-coords :pos microwave-pos :rpy (car microwave-rpy)) :world)
+  (send *microwave* :move-to (make-coords :pos *microwave-pos* :rpy (car *microwave-rpy*)) :world)
   (send *microwave* :angle-vector (float-vector 180))
   
   ;; (send self :push-button (float-vector -70 -370 95)) ;; (float-vector -70 -370 105)
@@ -240,9 +240,9 @@
   (send *pr2* :head :neck-p :joint-angle 28)
   (send *pr2* :start-grasp :rarm)
   ;; (send *ri* :start-grasp :rarm)
-  (move-gripper-func 0 :arm :larm) ;; move-gripper primitive
+  (move-gripper-func 0 :arm :rarm) ;; move-gripper primitive
   
-  (send *microwave* :move-to (make-coords :pos microwave-pos :rpy (car microwave-rpy)) :world)
+  (send *microwave* :move-to (make-coords :pos *microwave-pos* :rpy (car *microwave-rpy*)) :world)
   (send *microwave* :angle-vector (float-vector 180))
   
   ;; (send self :push-button (float-vector -70 -390 110)) ;; (float-vector -70 -390 120)
@@ -261,9 +261,9 @@
   (send *pr2* :head :neck-p :joint-angle 28)
   (send *pr2* :start-grasp :rarm)
   ;; (send *ri* :start-grasp :rarm)
-  (move-gripper-func 0 :arm :larm) ;; move-gripper primitive
+  (move-gripper-func 0 :arm :rarm) ;; move-gripper primitive
   
-  (send *microwave* :move-to (make-coords :pos microwave-pos :rpy (car microwave-rpy)) :world)
+  (send *microwave* :move-to (make-coords :pos *microwave-pos* :rpy (car *microwave-rpy*)) :world)
   (send *microwave* :angle-vector (float-vector 180))
   
   ;; (send self :push-button (float-vector -70 -410 185)) ;; (float-vector -70 -410 195)
@@ -311,7 +311,7 @@
   *data*
   )
 
-(defun microwave-pos-recogniton ()
+(defun microwave-pos-recognition ()
   (let ((local-cds)
         (local-pos)
         (microwave-cds (make-coords)))

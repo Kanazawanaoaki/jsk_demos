@@ -446,7 +446,8 @@
 (defun move-to-microwave-ri-direct ()
   ;; 電子レンジまで移動する
   (send *ri* :clear-costmap)
-  (send *ri* :move-to (make-coords :pos #f(1600 9300 351) :rpy (float-vector 0 0 0)) :frame-id "/map")
+  ;; (send *ri* :move-to (make-coords :pos #f(1600 9300 351) :rpy (float-vector 0 0 0)) :frame-id "/map")
+  (send *ri* :move-to (make-coords :pos #f(1600 8500 351) :rpy (float-vector 0 0 0)) :frame-id "/map")
   (print (send *ri* :state :worldcoords))
   )
 

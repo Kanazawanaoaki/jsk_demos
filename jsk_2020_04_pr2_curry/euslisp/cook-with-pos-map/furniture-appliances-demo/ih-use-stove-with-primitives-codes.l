@@ -204,7 +204,21 @@
          (ros::spin-once)
          (ros::sleep)
          )
+  (ros::unsubscribe "/ih_stove_reader/result")
   (read-data)
+  )
+
+(defun knob-rec ()
+  (setq *now* (ros::time-now))
+  (ros::unsubscribe "/ih_knob_rec/result")
+  (setq *panel-cb-flag* nil)
+  (ros::subscribe "/ih_knob_rec/result" roseus::StringStamped #'panel-reader-cb)
+  (until *panel-cb-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (ros::unsubscribe "/ih_knob_rec/result")
+  *data*
   )
 
 ;; defun smach funcs
@@ -255,7 +269,13 @@
   
   (look-at-ih-knob)
   (push-knob)
-  (ih-smach-on);; onに状態遷移する  
+  (setq *fail-flag* nil)
+  (if (equal "/on" (knob-rec))
+      (ih-smach-on);; onに状態遷移する
+    (progn
+      (setq *fail-flag* t)
+      (send *ri* :speak-jp "IHコンロのつまみの操作に失敗しました．")
+      (return-from now-start-ih)))
   
   (grasp-knob)
   ;; grasp 失敗検知
@@ -263,7 +283,7 @@
   (if (equal *fail-flag* t) ;; 失敗したら知らせる
       (progn
         (release-knob)
-        (send *ri* :speak-jp "IHコンロのつまみの操作に失敗しました．")
+        (send *ri* :speak-jp "IHコンロのつまみを掴む動作が失敗しました．")
         (return-from now-start-ih)))
   
   (rotate-knob)
@@ -294,8 +314,17 @@
 
 (defun now-end-ih ()
   (release-knob)
+  
+  (look-at-ih-knob)
   (push-knob)
-  (ih-smach-off);; offに状態遷移する  
+  (look-at-ih-knob)
+  (setq *fail-flag* nil)
+  (if (equal "/off" (knob-rec))
+      (ih-smach-off);; offに状態遷移する  
+    (progn
+      (setq *fail-flag* t)
+      (send *ri* :speak-jp "IHコンロのつまみの操作に失敗しました．")
+      (return-from now-end-ih)))
   (ready-pose)
   (ih-smach-finish)
   )
@@ -306,6 +335,17 @@
   (if (equal *fail-flag* t) ;; 失敗していたら抜ける
       (return-from now-ih-all))
   (now-adjust-heat)
+  (now-end-ih)
+  )
+
+
+(defun now-ih-test (&rest args &key (heat :medium-heat) &allow-other-keys) ;; 引数付きにする :heat :medium-heat (:melting-fire,:low-heat,:medium-heat,:high-heat,:high-power)
+  (update-pos)
+  (now-start-ih)
+  (if (equal *fail-flag* t) ;; 失敗していたら抜ける
+      (return-from now-ih-test))
+  (now-adjust-heat :heat heat)
+  (unix:sleep 10)
   (now-end-ih)
   )
 
