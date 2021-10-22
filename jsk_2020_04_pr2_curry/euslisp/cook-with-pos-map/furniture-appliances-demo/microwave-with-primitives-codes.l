@@ -38,9 +38,6 @@
 
 (defun recog-pose ()
   (move-head-func :p-val 28 :y-val 0)
-  ;; (send *pr2* :head :neck-p :joint-angle 28)
-  ;; (send *ri* :angle-vector (send *pr2* :angle-vector))
-  ;; (send *ri* :wait-interpolation)
   )
 
 (defun open-microwave ()
@@ -56,17 +53,11 @@
     (setq handle-coords (make-coords :pos (send (send m-handle :copy-worldcoords) :worldpos) :rpy (float-vector (car (car (rpy-angle (send (send m-handle :copy-worldcoords) :worldrot)))) 0 0)))
     (send handle-coords :translate (float-vector -80 -10 -50))
     (move-arm-ik (send (send handle-coords :copy-worldcoords) :rotate (/ pi -2) :y) :rotate-flag t :arm :larm :times 2000) ;; move-arm primitive
-    ;; (send *pr2* :larm :inverse-kinematics (send (send handle-coords :copy-worldcoords) :rotate (/ pi -2) :y) :rotation-axis t)
-    ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-    ;; (send *ri* :wait-interpolation)
 
     ;; pre-open2
     (setq handle-coords (make-coords :pos (send (send m-handle :copy-worldcoords) :worldpos) :rpy (float-vector (car (car (rpy-angle (send (send m-handle :copy-worldcoords) :worldrot)))) 0 0)))
     (send handle-coords :translate (float-vector -80 -10 50))
     (move-arm-ik (send (send handle-coords :copy-worldcoords) :rotate (/ pi -2) :y) :rotate-flag t :arm :larm :times 2000) ;; move-arm primitive 
-    ;; (send *pr2* :larm :inverse-kinematics (send (send handle-coords :copy-worldcoords) :rotate (/ pi -2) :y) :rotation-axis t)
-    ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-    ;; (send *ri* :wait-interpolation)
 
     (let ((i 170)   ;; open
           (av)
@@ -85,35 +76,18 @@
         (setq i (- i 10))
         )
       (move-object-avs avs tms) ;; move-object primitive ?
-      ;; (send *ri* :angle-vector-sequence avs tms)
-      ;; (send *ri* :wait-interpolation)
       )
     
     ;; detach left hand from microwave
     (move-arm-ik (send (send handle-coords :copy-worldcoords) :rotate (/ pi -2) :y) :rotate-flag t :arm :larm :times 1000) ;; move-arm primitive
-    ;; (send *pr2* :larm :inverse-kinematics (send (send handle-coords :copy-worldcoords) :rotate (/ pi -2) :y) :rotation-axis t)
-    ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
-    ;; (send *ri* :wait-interpolation)
 
     (move-arm-ik (send (send (send handle-coords :copy-worldcoords) :rotate (/ pi -2) :y) :translate (float-vector -50 0 60)) :rotate-flag t :arm :larm :times 1000) ;; move-arm primitive
-    ;; (send *pr2* :larm :inverse-kinematics (send (send (send handle-coords :copy-worldcoords) :rotate (/ pi -2) :y) :translate (float-vector -50 0 60)) :rotation-axis t)
-    ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
-    ;; (send *ri* :wait-interpolation)
 
     (move-arm-ik (send (send (send handle-coords :copy-worldcoords) :rotate (/ pi -2) :y) :translate (float-vector -50 -10 60)) :rotate-flag t :arm :larm :times 1000) ;; move-arm primitive
-    ;; (send *pr2* :larm :inverse-kinematics (send (send (send handle-coords :copy-worldcoords) :rotate (/ pi -2) :y) :translate (float-vector -50 -10 60)) :rotation-axis t)
-    ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
-    ;; (send *ri* :wait-interpolation)
     
     (move-arm-ik (send (send (send handle-coords :copy-worldcoords) :rotate (/ pi -2) :y) :translate (float-vector -200 0 10)) :rotate-flag t :arm :larm :times 1000) ;; move-arm primitive
-    ;; (send *pr2* :larm :inverse-kinematics (send (send (send handle-coords :copy-worldcoords) :rotate (/ pi -2) :y) :translate (float-vector -200 0 10)) :rotation-axis t)
-    ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
-    ;; (send *ri* :wait-interpolation)
     
     (move-arm-av #f(60.0 74.0 70.0 -120.0 20.0 -30.0 180.0) :arm :larm :times 1000) ;; move-arm primitive
-    ;; (send *pr2* :larm :angle-vector #f(60.0 74.0 70.0 -120.0 20.0 -30.0 180.0))
-    ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
-    ;; (send *ri* :wait-interpolation)
     )
   )
 
@@ -127,16 +101,10 @@
     ;; pre-hang left hand to microwave
     (setq handle-coords (make-coords :pos (send (send (send m-handle :copy-worldcoords) :translate (float-vector -100 -100 -50)) :worldpos) :rpy (float-vector (car (car (rpy-angle (send m-handle :worldrot)))) 0 0)))
     (move-arm-ik (send (send handle-coords :copy-worldcoords) :rotate (/ pi -2) :y) :rotate-flag nil :arm :larm :times 2000) ;; move-ar
-    ;; (send *pr2* :larm :inverse-kinematics (send (send handle-coords :copy-worldcoords) :rotate (/ pi -2) :y) :rotation-axis nil)
-    ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-    ;; (send *ri* :wait-interpolation)
      
     ;; hang left hand to microwave
     (setq handle-coords (make-coords :pos (send (send (send m-handle :copy-worldcoords) :translate (float-vector -100 -100 130)) :worldpos) :rpy (float-vector (car (car (rpy-angle (send m-handle :worldrot)))) 0 0)))
     (move-arm-ik (send (send handle-coords :copy-worldcoords) :rotate (/ pi -2) :y) :rotate-flag nil :arm :larm :times 2000) ;; move-ar
-    ;; (send *pr2* :larm :inverse-kinematics (send (send handle-coords :copy-worldcoords) :rotate (/ pi -2) :y) :rotation-axis nil)
-    ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-    ;; (send *ri* :wait-interpolation)
      
     (let ((i 110)   ;; close
           (av)
@@ -159,9 +127,6 @@
     ;; reset pose
     (send *pr2* :head :neck-p :joint-angle 28) ;; これはどうしようかめっちゃ微妙...
     (move-arm-av #f(60.0 74.0 70.0 -120.0 20.0 -30.0 180.0) :arm :larm :times 1000) ;; move-arm primitive
-    ;; (send *pr2* :larm :angle-vector #f(60.0 74.0 70.0 -120.0 20.0 -30.0 180.0))
-    ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-    ;; (send *ri* :wait-interpolation)
     )
   )
 
@@ -171,45 +136,8 @@
     
     (push-primitive button :arm :rarm :w-thre -15 :axis :x)
      
-    ;; ;; pre-push
-    ;; (send *pr2* :rarm :inverse-kinematics button-front :rotation-axis t)
-    ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-    ;; (send *ri* :wait-interpolation)
-
-    ;; ;; push
-    ;; (setq avs (list))
-    ;; (setq tms (list))
-    
-    ;; (dotimes (i 15)
-    ;;   (send *pr2* :rarm :move-end-pos #f(10 0 0) :world)
-    ;;   (setq av (send *pr2* :angle-vector))
-    ;;   (setq avs (append avs (list av)))
-    ;;   (setq tms (append tms (list 400)))
-    ;;   )
-    ;; (send *ri* :angle-vector-sequence avs tms)
-    
-    ;; (ros::unsubscribe "/right_endeffector/wrench")
-    ;; (setq *topic-name* "/right_endeffector/wrench")
-    ;; (setq *cb-flag* nil)
-    ;; (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-x-cb)
-    
-    ;; (while (some #'identity (send *ri* :wait-interpolation nil 0.01))
-    ;;   (when (progn
-    ;;           (ros::spin-once)
-    ;;           (if *cb-flag* t)
-    ;;           )
-    ;;     (send *ri* :cancel-angle-vector)
-    ;;     (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-    ;;     (warn "cancel!!! ~%")
-    ;;     )
-    ;;   )    
-    ;; (ros::unsubscribe "/right_endeffector/wrench")
-    
     ;; post-push
     (move-arm-ik button-front :arm :rarm :rotate-flag t :times 2000) ;; move arm primitive
-    ;; (send *pr2* :rarm :inverse-kinematics button-front :rotation-axis t)
-    ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-    ;; (send *ri* :wait-interpolation)
     )
   )
 
@@ -218,7 +146,6 @@
   (send *pr2* :reset-pose)
   (send *pr2* :head :neck-p :joint-angle 28)
   (send *pr2* :start-grasp :rarm)
-  ;; (send *ri* :start-grasp :rarm)
   (move-gripper-func 0 :arm :rarm) ;; move-gripper primitive
   
   (send *microwave* :move-to (make-coords :pos *microwave-pos* :rpy (car *microwave-rpy*)) :world)
@@ -230,16 +157,12 @@
   ;; reset-pose rarm
   (send *pr2* :head :neck-p :joint-angle 28) ;; これもどうしようかめっちゃ微妙...
   (move-arm-av #f(-60.0 74.0 -70.0 -120.0 -20.0 -30.0 180.0) :arm :rarm :times 1000) ;; move-arm primitive
-  ;; (send *pr2* :rarm :angle-vector #f(-60.0 74.0 -70.0 -120.0 -20.0 -30.0 180.0))
-  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  ;; (send *ri* :wait-interpolation)  
   )
 
 (defun push-1min-button ()
   (send *pr2* :reset-pose)
   (send *pr2* :head :neck-p :joint-angle 28)
   (send *pr2* :start-grasp :rarm)
-  ;; (send *ri* :start-grasp :rarm)
   (move-gripper-func 0 :arm :rarm) ;; move-gripper primitive
   
   (send *microwave* :move-to (make-coords :pos *microwave-pos* :rpy (car *microwave-rpy*)) :world)
@@ -251,16 +174,12 @@
   ;; reset-pose rarm
   (send *pr2* :head :neck-p :joint-angle 28) ;; これもどうしようかめっちゃ微妙...
   (move-arm-av #f(-60.0 74.0 -70.0 -120.0 -20.0 -30.0 180.0) :arm :rarm :times 1000) ;; move-arm primitive
-  ;; (send *pr2* :rarm :angle-vector #f(-60.0 74.0 -70.0 -120.0 -20.0 -30.0 180.0))
-  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  ;; (send *ri* :wait-interpolation)  
   )
 
 (defun push-start-button ()
   (send *pr2* :reset-pose)
   (send *pr2* :head :neck-p :joint-angle 28)
   (send *pr2* :start-grasp :rarm)
-  ;; (send *ri* :start-grasp :rarm)
   (move-gripper-func 0 :arm :rarm) ;; move-gripper primitive
   
   (send *microwave* :move-to (make-coords :pos *microwave-pos* :rpy (car *microwave-rpy*)) :world)
@@ -272,9 +191,23 @@
   ;; reset-pose rarm
   (send *pr2* :head :neck-p :joint-angle 28) ;; これもどうしようかめっちゃ微妙...
   (move-arm-av #f(-60.0 74.0 -70.0 -120.0 -20.0 -30.0 180.0) :arm :rarm :times 1000) ;; move-arm primitive
-  ;; (send *pr2* :rarm :angle-vector #f(-60.0 74.0 -70.0 -120.0 -20.0 -30.0 180.0))
-  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  ;; (send *ri* :wait-interpolation)  
+  )
+
+(defun push-reset-button ()
+  (send *pr2* :reset-pose)
+  (send *pr2* :head :neck-p :joint-angle 28)
+  (send *pr2* :start-grasp :rarm)
+  (move-gripper-func 0 :arm :rarm) ;; move-gripper primitive
+  
+  (send *microwave* :move-to (make-coords :pos *microwave-pos* :rpy (car *microwave-rpy*)) :world)
+  (send *microwave* :angle-vector (float-vector 180))
+  
+  ;; (send self :push-button (float-vector -70 -410 185)) ;; (float-vector -70 -410 195)
+  (push-button (float-vector -70 -415 70))
+  
+  ;; reset-pose rarm
+  (send *pr2* :head :neck-p :joint-angle 28) ;; これもどうしようかめっちゃ微妙...
+  (move-arm-av #f(-60.0 74.0 -70.0 -120.0 -20.0 -30.0 180.0) :arm :rarm :times 1000) ;; move-arm primitive
   )
 
 
@@ -319,11 +252,8 @@
     (send *microwave* :move-to (send *ri* :state :worldcoords) :world)
     (send *pr2* :move-to (send *ri* :state :worldcoords) :world)
     
-    ;; (send *pr2* :head :neck-p :joint-angle 28)
-    ;; (send *ri* :angle-vector (send *pr2* :angle-vector))
-    ;; (send *ri* :wait-interpolation)
     (recog-pose)
-
+    
     (setq local-pos (float-vector 0 0 0))
     (dotimes (i 10)
       (setq local-cds (check-detection :type "microwave" :speak-name "denshirenji" :timeout 10 :speak nil))
@@ -609,8 +539,8 @@
              (ih-smach-heat :heat (panel-to-heat *panel-data*));; 火加減の状態遷移をする
              (rotate-knob :deg (* (- (heat-to-panel heat) *panel-data*) 10));; 一メモリにつき5度回す
              )
-	   )
-	 )
+           )
+         )
   )
 
 
