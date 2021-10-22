@@ -26,18 +26,19 @@
              (:0s :open :open)
 
              (:500w :1min :1min)
-             (:500w :open :open)
+             ;; (:500w :open :open)
+             (:500w :0s :0s) ;;リセットボタン
 
              (:1min :2min :2min)
              (:1min :heating :heating)
-             (:1min :open :open)
+             (:1min :0s :0s) ;;リセットボタン
              
              (:2min :3min :3min)
              (:2min :heating :heating)
-             (:2min :open :open)
+             (:2min :0s :0s) ;;リセットボタン
 
              (:3min :heating :heating)
-             (:3min :open :open)
+             (:3min :0s :0s) ;;リセットボタン
 
              (:heating :time-elapsed :0s)
              
