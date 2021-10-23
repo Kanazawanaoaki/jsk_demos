@@ -1,0 +1,44 @@
+method: CCOEFF
+template_list: 500W 170W 1M 2M 3M 4M 5M START 0S
+template:
+    500W:
+        name: /500w
+        path: "package://jsk_2020_04_pr2_curry/data/microwave-panel-20211021/grey-crop-microwave-panel-500w-20211021.jpg"
+        thre: 0.75
+    170W:
+        name: /170w
+        path: "package://jsk_2020_04_pr2_curry/data/microwave-panel-20211021/grey-crop-microwave-panel-170w-20211021.jpg"
+        thre: 0.75
+    1M:
+        name: /1m
+        path: "package://jsk_2020_04_pr2_curry/data/microwave-panel-20211021/grey-crop-microwave-panel-1min-20211021.jpg"
+        thre: 0.75
+    2M:
+        name: /2m
+        path: "package://jsk_2020_04_pr2_curry/data/microwave-panel-20211021/grey-crop-microwave-panel-2min-20211021.jpg"
+        thre: 0.75
+    3M:
+        name: /3m
+        path: "package://jsk_2020_04_pr2_curry/data/microwave-panel-20211021/grey-crop-microwave-panel-3min-20211021.jpg"
+        thre: 0.75
+    4M:
+        name: /4m
+        path: "package://jsk_2020_04_pr2_curry/data/microwave-panel-20211021/grey-crop-microwave-panel-4min-20211021.jpg"
+        thre: 0.75
+    5M:
+        name: /5m
+        path: "package://jsk_2020_04_pr2_curry/data/microwave-panel-20211021/grey-crop-microwave-panel-5min-20211021.jpg"
+        thre: 0.75
+    1M59S:
+        name: /1m59s
+        path: "package://jsk_2020_04_pr2_curry/data/microwave-panel-20211021/grey-crop-microwave-panel-1min59s-20211021.jpg"
+        thre: 0.75
+    2M59S:
+        name: /2m59s
+        path: "package://jsk_2020_04_pr2_curry/data/microwave-panel-20211021/grey-crop-microwave-panel-2min59s-20211021.jpg"
+        thre: 0.75
+    0S:
+        name: /0s
+        path: "package://jsk_2020_04_pr2_curry/data/microwave-panel-20211021/grey-crop-microwave-panel-0s-20211021.jpg"
+        thre: 0.75
+
