@@ -1,5 +1,5 @@
 method: CCOEFF
-template_list: 500W 170W 1M 2M 3M 4M 5M START 0S
+template_list: 500W 170W 1M 2M 3M 4M 5M 1M59S 2M59S 0S
 template:
     500W:
         name: /500w
@@ -39,6 +39,6 @@ template:
         thre: 0.75
     0S:
         name: /0s
-        path: "package://jsk_2020_04_pr2_curry/data/microwave-panel-20211021/grey-crop-microwave-panel-0s-20211021.jpg"
+        path: "package://jsk_2020_04_pr2_curry/data/microwave-panel-20211021/grey-crop-microwave-panel-0-20211021.jpg"
         thre: 0.75
 

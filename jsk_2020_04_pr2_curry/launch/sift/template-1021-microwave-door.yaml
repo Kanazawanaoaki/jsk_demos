@@ -3,9 +3,9 @@ template_list: OF 1P
 template:
     OF:
         name: /close
-        path: "package://jsk_2020_04_pr2_curry/data/microwave-door-202111021/grey-crop-microwave-door-close-20211021.jpg"
+        path: "package://jsk_2020_04_pr2_curry/data/microwave-door-20211021/grey-crop-microwave-door-close-20211021.jpg"
         thre: 0.70
     1P:
         name: /open
-        path: "package://jsk_2020_04_pr2_curry/data/microwave-door-202111021/grey-crop-microwave-door-open-20211021.jpg"
+        path: "package://jsk_2020_04_pr2_curry/data/microwave-door-20211021/grey-crop-microwave-door-open-20211021.jpg"
         thre: 0.70

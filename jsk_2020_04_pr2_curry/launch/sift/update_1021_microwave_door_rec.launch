@@ -1,11 +1,11 @@
 <launch>
-  <node name="microwave_reader"
-        pkg="jsk_2020_04_pr2_curry" type="match_template.py"
+  <node name="microwave_door_rec"
+        pkg="jsk_2020_04_pr2_curry" type="my_match_template.py"
         output="screen">
     <remap from="~image" to="/prosilica/image_raw"/>
 
     <rosparam command="load"
-              file="$(find jsk_2020_04_pr2_curry)/launch/sift/template-microwave.yaml"/>
+              file="$(find jsk_2020_04_pr2_curry)/launch/sift/template-1021-microwave-door.yaml"/>
     <rosparam>
       show_probability: ture
     </rosparam>
