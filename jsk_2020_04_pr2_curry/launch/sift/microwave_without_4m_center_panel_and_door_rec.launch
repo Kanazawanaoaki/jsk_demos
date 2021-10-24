@@ -1,0 +1,9 @@
+<launch>
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/sift/prosilica_mask_center.launch"/>
+  
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/sift/update_without_4m_1021_microwave_panel_reader.launch">
+    <arg name="INPUT_IMAGE" default="/apply_mask_image/output" />
+  </include>
+  
+  <include file="$(find jsk_2020_04_pr2_curry)/launch/sift/update_1021_microwave_door_rec.launch"/>
+</launch>

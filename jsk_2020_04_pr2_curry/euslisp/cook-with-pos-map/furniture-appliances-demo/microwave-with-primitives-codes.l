@@ -46,7 +46,7 @@
     
     (send *microwave* :move-to (make-coords :pos *microwave-pos* :rpy (car *microwave-rpy*)) :world)
     (send *microwave* :angle-vector (float-vector 180))
-
+1;5202;0c
     (send *pr2* :larm :angle-vector #f(60.0 74.0 70.0 -120.0 20.0 -30.0 180.0))
     
     ;; pre-open1 m-handleは書き方がやばいから(send *microwave* :get-handle)とかを使って書き換えて行きたい.
@@ -152,7 +152,8 @@
   (send *microwave* :angle-vector (float-vector 180))
   
   ;; (send self :push-button (float-vector -70 -370 95)) ;; (float-vector -70 -370 105)
-  (push-button (float-vector -70 -380 85))
+  ;; (push-button (float-vector -70 -380 85)) 
+  (push-button (float-vector -70 -380 95)) ;;奥行き，左右，高さ
   
   ;; reset-pose rarm
   (send *pr2* :head :neck-p :joint-angle 28) ;; これもどうしようかめっちゃ微妙...
@@ -169,7 +170,8 @@
   (send *microwave* :angle-vector (float-vector 180))
   
   ;; (send self :push-button (float-vector -70 -390 110)) ;; (float-vector -70 -390 120)
-  (push-button (float-vector -70 -405 100))
+  ;; (push-button (float-vector -70 -405 100))
+  (push-button (float-vector -70 -405 110))
   
   ;; reset-pose rarm
   (send *pr2* :head :neck-p :joint-angle 28) ;; これもどうしようかめっちゃ微妙...
@@ -186,7 +188,8 @@
   (send *microwave* :angle-vector (float-vector 180))
   
   ;; (send self :push-button (float-vector -70 -410 185)) ;; (float-vector -70 -410 195)
-  (push-button (float-vector -60 -410 175))
+  ;; (push-button (float-vector -60 -410 175))
+  (push-button (float-vector -60 -410 180))
   
   ;; reset-pose rarm
   (send *pr2* :head :neck-p :joint-angle 28) ;; これもどうしようかめっちゃ微妙...
@@ -228,19 +231,33 @@
     (setq *data* (send *msg* :data))
     (format t "~A ~%" *data*)
     (if (ros::time> (send *msg* :header :stamp) *now*)
-        (setq *cb-flag* t)
+        (setq *panel-cb-flag* t)
       )
     ))
 
 (defun read-panel ()
   (setq *now* (ros::time-now))
   (ros::unsubscribe "/microwave_reader/result")
-  (setq *cb-flag* nil)
+  (setq *panel-cb-flag* nil)
   (ros::subscribe "/microwave_reader/result" roseus::StringStamped #'panel-reader-cb)
-  (until *cb-flag*
+  (until *panel-cb-flag*
          (ros::spin-once)
          (ros::sleep)
          )
+  (ros::unsubscribe "/microwave_reader/result")
+  *data*
+  )
+
+(defun door-rec ()
+  (setq *now* (ros::time-now))
+  (ros::unsubscribe "/microwave_door_rec/result")
+  (setq *panel-cb-flag* nil)
+  (ros::subscribe "/microwave_door_rec/result" roseus::StringStamped #'panel-reader-cb)
+  (until *panel-cb-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (ros::unsubscribe "/microwave_door_rec/result")
   *data*
   )
 
@@ -282,7 +299,7 @@
       (return-from min-check :equal)
       )
      ((< data-num min)
-      (format t "data is tarinai ~%")
+      (format t "data is under ~%")
       (return-from min-check :under)
       )
      ((> data-num min)
@@ -411,7 +428,7 @@
 ;; defun smach funcs
 (defun microwave-smach-open ()
   (pub-msg "open")
-  (send *ri* :speak-jp "電子レンジの扉を開けました．")
+  (send *ri* :speak-jp "電子レンジの扉を開きました．")
   )
 
 (defun microwave-smach-close ()
@@ -419,30 +436,30 @@
   (send *ri* :speak-jp "電子レンジの扉を閉めました．")
   )
 
-(defun microwave-smach-panal (&rest args &key (panal :0s) &allow-other-keys) ;; 引数付きにする :panel (:0s,:500w,:170w,:1min,:2min,:3min,:4min,:heating)
+(defun microwave-smach-panel (&rest args &key (panel :0s) &allow-other-keys) ;; 引数付きにする :panel (:0s,:500w,:170w,:1min,:2min,:3min,:4min,:heating)
   (cond
-   ((equal heat :0s)
+   ((equal panel :0s)
     (pub-msg "0s")
     (send *ri* :speak-jp "電子レンジを0の状態にしました．"))
-   ((equal heat :500w)
+   ((equal panel :500w)
     (pub-msg "500w")
     (send *ri* :speak-jp "電子レンジを500ワットに設定しました．"))
-   ((equal heat :170w)
+   ((equal panel :170w)
     (pub-msg "170w")
     (send *ri* :speak-jp "電子レンジを170ワットに設定しました．"))
-   ((equal heat :1min)
+   ((equal panel :1min)
     (pub-msg "1min")
     (send *ri* :speak-jp "電子レンジを1ふんに設定しました．"))
-   ((equal heat :2min)
+   ((equal panel :2min)
     (pub-msg "2min")
     (send *ri* :speak-jp "電子レンジを2ふんに設定しました．"))
-   ((equal heat :3min)
+   ((equal panel :3min)
     (pub-msg "3min")
     (send *ri* :speak-jp "電子レンジを3ふんに設定しました．"))
-   ((equal heat :4min)
+   ((equal panel :4min)
     (pub-msg "4min")
     (send *ri* :speak-jp "電子レンジを4ふんに設定しました．"))
-   ((equal heat :heating)
+   ((equal panel :heating)
     (pub-msg "heating")
     (send *ri* :speak-jp "電子レンジの加熱を開始しました．"))
    )
@@ -463,6 +480,11 @@
    )
   )
 
+(defun microwave-smach-time-elapsed ()
+  (pub-msg "time-elapsed")
+  (send *ri* :speak-jp "電子レンジの加熱時間が経過しました．")
+  )
+
 (defun microwave-smach-finish ()
   (pub-msg "finish")
   (send *ri* :speak-jp "電子レンジの操作を修了しました．")
@@ -472,7 +494,7 @@
 ;; now codes 連続の電子レンジ操作のプログラムを書く とりあえず押し間違えを考えないバージョン
 (defun now-microwave-test ()
   ;; recognition
-  (microwave-pos-recogniton) ;; 位置を認識
+  (microwave-pos-recognition) ;; 位置を認識
   
   ;; open and close microwave
   (open-microwave) ;;扉をあける
@@ -518,13 +540,25 @@
 
 (defun now-start-microwave ()
   ;; recognition
-  (microwave-pos-recogniton) ;; 位置を認識
+  (microwave-pos-recognition) ;; 位置を認識
   
   ;; open and close microwave
+  (setq *fail-flag* nil)
   (open-microwave) ;;扉をあける
-  (microwave-smach-open)
+  (if (equal "/open" (door-rec))
+      (microwave-smach-open);; openに状態遷移する
+    (progn
+      (setq *fail-flag* t)
+      (send *ri* :speak-jp "電子レンジの扉を開ける操作に失敗しました．")
+      (return-from now-start-microwave)))
+  
   (close-microwave) ;;扉を閉める
-  (microwave-smach-close)
+  (if (equal "/close" (door-rec))
+      (microwave-smach-close);; closeして0sに状態遷移する
+    (progn
+      (setq *fail-flag* t)
+      (send *ri* :speak-jp "電子レンジの扉を閉める操作に失敗しました．")
+      (return-from now-start-microwave)))
   )
 
 (defun now-microwave-min (&rest args &key (min 2) &allow-other-keys) ;; 引数は将来的には170wとかの押し間違いにも対応したい．(w 170)
@@ -545,23 +579,23 @@
            (microwave-smach-panel :panel :500w)
            (push-1min-button);; 1minボタンを押す
            )
-          ((and (substringp "m" hoge) (equal (substringp "s" hoge) nil))
+          ((and (substringp "m" *data*) (equal (substringp "s" *data*) nil))
            (cond
-            ((equal (min-check *data*) :equal);; 分数が一致した時
+            ((equal (min-check *data* min) :equal);; 分数が一致した時
              (microwave-smach-panel :panel (panel-rec2symbol *data*))
              (setq *set-flag* t);;これを抜ける
              )
-            ((equal (min-check *data*) :lack);; 分数が足りなかった時
+            ((equal (min-check *data* min) :under);; 分数が足りなかった時
              (microwave-smach-panel :panel (panel-rec2symbol *data*))
              (push-1min-button);; 1minボタンを押す
              )
-            ((equal (min-check *data*) :over);; 分数がオーバーした時
+            ((equal (min-check *data* min) :over);; 分数がオーバーした時
              (microwave-smach-panel :panel (panel-rec2symbol *data*))
              (push-reset-button);; リセットボタンを押す
              )
             )
            )
-          ((and (substringp "m" hoge) (substringp "s" hoge)) ;;1m59sとか
+          ((and (substringp "m" *data*) (substringp "s" *data*)) ;;1m59sとか
            ;; 何もしないで認識しなおし
            (warn "recog fail ~%")
            )
@@ -584,16 +618,45 @@
 
 (defun now-end-microwave ()
   ;; open and close microwave
+  (setq *fail-flag* nil)
   (open-microwave) ;;扉をあける
-  (microwave-smach-open)
+  (if (equal "/open" (door-rec))
+      (microwave-smach-open);; openに状態遷移する
+    (progn
+      (setq *fail-flag* t)
+      (send *ri* :speak-jp "電子レンジの扉を開ける操作に失敗しました．")
+      (return-from now-end-microwave)))
+  
   (close-microwave) ;;扉を閉める
-  (microwave-smach-close)
+  (if (equal "/close" (door-rec))
+      (microwave-smach-close);; closeして0sに状態遷移する
+    (progn
+      (setq *fail-flag* t)
+      (send *ri* :speak-jp "電子レンジの扉を閉める操作に失敗しました．")
+      (return-from now-end-microwave)))
+
+  (unix:sleep 2)
   (microwave-smach-finish)
   )
 
 (defun now-microwave-all ()
   (now-start-microwave)
+  (if (equal *fail-flag* t) ;; 失敗していたら抜ける
+      (return-from now-microwave-all))
   (now-microwave-min)
+  (now-end-microwave)
+  )
+
+(defun now-m-test (&rest args &key (min 1) &allow-other-keys) ;; 引数は将来的には170wとかの押し間違いにも対応したい．(w 170)
+  (now-start-microwave)
+  (if (equal *fail-flag* t) ;; 失敗していたら抜ける
+      (return-from now-microwave-all))
+  (now-microwave-min :min min)
+
+  ;; wait for heating
+  (unix::sleep (* min 60))
+  (microwave-smach-time-elapsed)
+  
   (now-end-microwave)
   )
 

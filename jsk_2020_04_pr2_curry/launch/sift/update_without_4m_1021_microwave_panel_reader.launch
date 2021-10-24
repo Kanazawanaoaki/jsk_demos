@@ -1,0 +1,15 @@
+<launch>
+  <arg name="INPUT_IMAGE" default="/prosilica/image_raw" />
+
+  <node name="microwave_reader"
+        pkg="jsk_2020_04_pr2_curry" type="my_match_template.py"
+        output="screen">
+    <remap from="~image" to="$(arg INPUT_IMAGE)" />
+
+    <rosparam command="load"
+              file="$(find jsk_2020_04_pr2_curry)/launch/sift/template-without-4m-1021-microwave-panel.yaml"/>
+    <rosparam>
+      show_probability: ture
+    </rosparam>
+  </node>
+</launch>
