@@ -244,6 +244,15 @@
   *data*
   )
 
+(defun min-check (data min) ;; 認識結果dataがminより上か下か一致しているか返す  
+  ;; (if (string-trim "/" *data*)
+  ;;     )
+  
+  (setq hoge (string-trim "/" *data*))  
+  (format t "debug ~A ~%" hoge)
+  )
+
+
 (defun microwave-pos-recognition ()
   (let ((local-cds)
         (local-pos)
@@ -456,7 +465,40 @@
 
 (defun now-microwave-min (&rest args &key (min 2) &allow-other-keys) ;; 引数は将来的には170wとかの押し間違いにも対応したい．(w 170)
   ;; min分にする
-  
+  (setq *set-flag* nil)
+  (until *set-flag*
+         (read-panel)
+         (cond
+          ((equal *data* "0s")
+           (push-500w-button);; 500wボタンを押す
+           )
+          ((equal *data* "170w")
+           (push-500w-button);; 500wボタンを押す
+           )
+          ((equal *data* "500w")
+           (push-1min-button);; 1minボタンを押す
+           )
+          ((substringp "m" *data*)
+          ((equal *data* "");; 分数が一致した時 TODO!ここの条件をかく
+           (setq *set-flag* t);;これを抜ける
+           )
+          ((equal *data* "");; 分数が足りなかった時
+           (push-1min-button);; 1minボタンを押す
+           )
+          ((equal *data* "");; 分数がオーバーした時
+           (push-reset-button);; リセットボタンを押す
+           )
+          ))
+
+  ;; startボタンを押してスタートさせる
+  (setq *tmp-data* *data*)
+  (setq *push-flag* nil)
+  (while (eql *push-flag* nil)
+    (push-start-button)
+    (read-panel)
+    (if (or (equal *data* "/start") (not (equal *data* *tmp-data*))) ;;ここは調整必要そう
+        (setq *push-flag* t))
+    )
   )
 
 (defun now-micro-sato () ;; サトウのご飯
