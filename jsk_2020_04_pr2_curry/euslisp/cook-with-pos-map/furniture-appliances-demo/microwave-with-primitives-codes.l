@@ -244,14 +244,53 @@
   *data*
   )
 
-(defun min-check (data min) ;; 認識結果dataがminより上か下か一致しているか返す  
-  ;; (if (string-trim "/" *data*)
-  ;;     )
-  
-  (setq hoge (string-trim "/" *data*))  
-  (format t "debug ~A ~%" hoge)
-  )
+(defun string2num (string)
+  (let (num)
+    (cond
+     ((equal string "1")
+      (setq num 1))
+     ((equal string "2")
+      (setq num 2))
+     ((equal string "3")
+      (setq num 3))
+     ((equal string "4")
+      (setq num 4))
+     ((equal string "5")
+      (setq num 5))
+     ((equal string "6")
+      (setq num 6))
+     ((equal string "7")
+      (setq num 7))
+     ((equal string "8")
+      (setq num 8))
+     ((equal string "9")
+      (setq num 9))
+     ((equal string "10")
+      (setq num 10))
+     ((equal string "11")
+      (setq num 11))
+     )
+    num))
 
+(defun min-check (data min) ;; 認識結果dataがminより上か下か一致しているか返す
+  (let (data-num)
+    (setq data-num (string2num (string-trim "m" (string-trim "/" data))))
+    
+    (cond
+     ((equal data-num min)
+      (format t "data is equal ~%")
+      (return-from min-check :equal)
+      )
+     ((< data-num min)
+      (format t "data is tarinai ~%")
+      (return-from min-check :under)
+      )
+     ((> data-num min)
+      (format t "data is over ~%")
+      (return-from min-check :over)
+      ))
+    )
+  )
 
 (defun microwave-pos-recognition ()
   (let ((local-cds)
@@ -468,7 +507,7 @@
   (setq *set-flag* nil)
   (until *set-flag*
          (read-panel)
-         (cond
+         (cond ;;TODO smachのpubを入れる
           ((equal *data* "0s")
            (push-500w-button);; 500wボタンを押す
            )
@@ -478,18 +517,25 @@
           ((equal *data* "500w")
            (push-1min-button);; 1minボタンを押す
            )
-          ((substringp "m" *data*)
-          ((equal *data* "");; 分数が一致した時 TODO!ここの条件をかく
-           (setq *set-flag* t);;これを抜ける
-           )
-          ((equal *data* "");; 分数が足りなかった時
-           (push-1min-button);; 1minボタンを押す
-           )
-          ((equal *data* "");; 分数がオーバーした時
-           (push-reset-button);; リセットボタンを押す
-           )
-          ))
-
+          ((and (substringp "m" hoge) (equal (substringp "s" hoge) nil))
+	   (cond
+	    ((equal (min-check *data*) :equal);; 分数が一致した時
+	     (setq *set-flag* t);;これを抜ける
+	     )
+	    ((equal (min-check *data*) :lack);; 分数が足りなかった時
+	     (push-1min-button);; 1minボタンを押す
+	     )
+	    ((equal (min-check *data*) :over);; 分数がオーバーした時
+	     (push-reset-button);; リセットボタンを押す
+	     )
+	    )
+	   )
+	  ((and (substringp "m" hoge) (substringp "s" hoge)) ;;1m59sとか
+	   ;; 何もしないで認識しなおし
+	   (warn "recog fail ~%")
+	   )
+	  ))
+  
   ;; startボタンを押してスタートさせる
   (setq *tmp-data* *data*)
   (setq *push-flag* nil)
