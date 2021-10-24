@@ -23,12 +23,17 @@
              (:0s :finish :done)
              (:0s :off :off)
              (:0s :500w :500w)
+             (:0s :170w :170w)
              (:0s :open :open)
              
              (:500w :1min :1min)
              (:500w :2min :2min)
              ;; (:500w :open :open)
+             (:500w :170w :170w)
              (:500w :0s :0s) ;;リセットボタン
+
+             (:170w :500w :500w)
+             (:170w :0s :0s) ;;リセットボタン
              
              (:1min :2min :2min)
              (:1min :3min :3min)
@@ -36,11 +41,16 @@
              (:1min :0s :0s) ;;リセットボタン
              
              (:2min :3min :3min)
+             (:2min :4min :4min)
              (:2min :heating :heating)
              (:2min :0s :0s) ;;リセットボタン
-
+             
+             (:3min :4min :4min)
              (:3min :heating :heating)
              (:3min :0s :0s) ;;リセットボタン
+             
+             (:4min :heating :heating)
+             (:4min :0s :0s) ;;リセットボタン
 
              (:heating :time-elapsed :0s)
              
@@ -51,9 +61,11 @@
              (:open '(lambda (&rest args) (open) ))
              (:0s '(lambda (&rest args) (0s) ))
              (:500w '(lambda (&rest args) (500w) ))
+             (:170w '(lambda (&rest args) (170w) ))
              (:1min '(lambda (&rest args) (1min) ))
              (:2min '(lambda (&rest args) (2min) ))
              (:3min '(lambda (&rest args) (3min) ))
+             (:4min '(lambda (&rest args) (4min) ))
              (:heating '(lambda (&rest args) (heating) ))
              )
            ;; initial state
