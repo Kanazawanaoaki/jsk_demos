@@ -419,23 +419,48 @@
   (send *ri* :speak-jp "電子レンジの扉を閉めました．")
   )
 
-(defun ih-smach-heat (&rest args &key (heat :medium-heat) &allow-other-keys) ;; 引数付きにする :heat :medium-heat (:melting-fire,:low-heat,:medium-heat,:high-heat,:high-power)
+(defun microwave-smach-panal (&rest args &key (panal :0s) &allow-other-keys) ;; 引数付きにする :panel (:0s,:500w,:170w,:1min,:2min,:3min,:4min,:heating)
   (cond
-   ((equal heat :melting-fire)
-    (pub-msg "melting-fire")
-    (send *ri* :speak-jp "IHコンロをとろ火にしました．"))
-   ((equal heat :low-heat)
-    (pub-msg "low-heat")
-    (send *ri* :speak-jp "IHコンロを弱火にしました．"))
-   ((equal heat :medium-heat)
-    (pub-msg "medium-heat")
-    (send *ri* :speak-jp "IHコンロを中火にしました．"))
-   ((equal heat :high-heat)
-    (pub-msg "high-heat")
-    (send *ri* :speak-jp "IHコンロを強火にしました．"))
-   ((equal heat :high-power)
-    (pub-msg "high-power")
-    (send *ri* :speak-jp "IHコンロをハイパワーにしました．")))
+   ((equal heat :0s)
+    (pub-msg "0s")
+    (send *ri* :speak-jp "電子レンジを0の状態にしました．"))
+   ((equal heat :500w)
+    (pub-msg "500w")
+    (send *ri* :speak-jp "電子レンジを500ワットに設定しました．"))
+   ((equal heat :170w)
+    (pub-msg "170w")
+    (send *ri* :speak-jp "電子レンジを170ワットに設定しました．"))
+   ((equal heat :1min)
+    (pub-msg "1min")
+    (send *ri* :speak-jp "電子レンジを1ふんに設定しました．"))
+   ((equal heat :2min)
+    (pub-msg "2min")
+    (send *ri* :speak-jp "電子レンジを2ふんに設定しました．"))
+   ((equal heat :3min)
+    (pub-msg "3min")
+    (send *ri* :speak-jp "電子レンジを3ふんに設定しました．"))
+   ((equal heat :4min)
+    (pub-msg "4min")
+    (send *ri* :speak-jp "電子レンジを4ふんに設定しました．"))
+   ((equal heat :heating)
+    (pub-msg "heating")
+    (send *ri* :speak-jp "電子レンジの加熱を開始しました．"))
+   )
+  )
+
+(defun panel-rec2symbol (data)
+  (cond
+   ((equal data "/1m")
+    (return-from panel-rec2symbol :1min))
+   ((equal data "/2m")
+    (return-from panel-rec2symbol :2min))
+   ((equal data "/3m")
+    (return-from panel-rec2symbol :3min))
+   ((equal data "/4m")
+    (return-from panel-rec2symbol :4min))
+   ((equal data "/5m")
+    (return-from panel-rec2symbol :5min))
+   )
   )
 
 (defun microwave-smach-finish ()
@@ -507,34 +532,40 @@
   (setq *set-flag* nil)
   (until *set-flag*
          (read-panel)
-         (cond ;;TODO smachのpubを入れる
-          ((equal *data* "0s")
+         (cond 
+          ((equal *data* "/0s")
+           (microwave-smach-panel :panel :0s)
            (push-500w-button);; 500wボタンを押す
            )
-          ((equal *data* "170w")
+          ((equal *data* "/170w")
+           (microwave-smach-panel :panel :170w)
            (push-500w-button);; 500wボタンを押す
            )
-          ((equal *data* "500w")
+          ((equal *data* "/500w")
+           (microwave-smach-panel :panel :500w)
            (push-1min-button);; 1minボタンを押す
            )
           ((and (substringp "m" hoge) (equal (substringp "s" hoge) nil))
-	   (cond
-	    ((equal (min-check *data*) :equal);; 分数が一致した時
-	     (setq *set-flag* t);;これを抜ける
-	     )
-	    ((equal (min-check *data*) :lack);; 分数が足りなかった時
-	     (push-1min-button);; 1minボタンを押す
-	     )
-	    ((equal (min-check *data*) :over);; 分数がオーバーした時
-	     (push-reset-button);; リセットボタンを押す
-	     )
-	    )
-	   )
-	  ((and (substringp "m" hoge) (substringp "s" hoge)) ;;1m59sとか
-	   ;; 何もしないで認識しなおし
-	   (warn "recog fail ~%")
-	   )
-	  ))
+           (cond
+            ((equal (min-check *data*) :equal);; 分数が一致した時
+             (microwave-smach-panel :panel (panel-rec2symbol *data*))
+             (setq *set-flag* t);;これを抜ける
+             )
+            ((equal (min-check *data*) :lack);; 分数が足りなかった時
+             (microwave-smach-panel :panel (panel-rec2symbol *data*))
+             (push-1min-button);; 1minボタンを押す
+             )
+            ((equal (min-check *data*) :over);; 分数がオーバーした時
+             (microwave-smach-panel :panel (panel-rec2symbol *data*))
+             (push-reset-button);; リセットボタンを押す
+             )
+            )
+           )
+          ((and (substringp "m" hoge) (substringp "s" hoge)) ;;1m59sとか
+           ;; 何もしないで認識しなおし
+           (warn "recog fail ~%")
+           )
+          ))
   
   ;; startボタンを押してスタートさせる
   (setq *tmp-data* *data*)
@@ -542,8 +573,12 @@
   (while (eql *push-flag* nil)
     (push-start-button)
     (read-panel)
-    (if (or (equal *data* "/start") (not (equal *data* *tmp-data*))) ;;ここは調整必要そう
-        (setq *push-flag* t))
+    (if (or (or (equal *data* "/1m59s") (equal *data* "/2m59s")) (not (equal *data* *tmp-data*))) ;;ここは調整必要そう
+        (progn
+          (setq *push-flag* t)
+          (microwave-smach-panel :panel :heating)
+          )
+      )
     )
   )
 
