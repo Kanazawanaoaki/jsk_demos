@@ -582,6 +582,21 @@
     )
   )
 
+(defun now-end-microwave ()
+  ;; open and close microwave
+  (open-microwave) ;;扉をあける
+  (microwave-smach-open)
+  (close-microwave) ;;扉を閉める
+  (microwave-smach-close)
+  (microwave-smach-finish)
+  )
+
+(defun now-microwave-all ()
+  (now-start-microwave)
+  (now-microwave-min)
+  (now-end-microwave)
+  )
+
 (defun now-micro-sato () ;; サトウのご飯
   ;; put object in microwave  
   (send *pmi* :open-microwave)
@@ -623,63 +638,3 @@
   (send *pmi* :close-microwave)
   )
 
-
-
-(defun now-start-ih ()
-  ;; (ih-smach-start) これをすると止まってしまう．あと前にupdate-posが必要
-  (ready-pose)
-  
-  (push-knob)
-  (ih-smach-on);; onに状態遷移する  
-  
-  (grasp-knob)
-  ;; grasp 失敗検知
-  (grasp-fail-detection :arm :larm :g-thre 10)
-  (if (equal *fail-flag* t) ;; 失敗したら知らせる
-      (progn
-        (release-knob)
-        (send *ri* :speak-jp "IHコンロのつまみの操作に失敗しました．")
-        (return-from now-start-ih)))
-  
-  (rotate-knob)
-  )
-
-(defun now-adjust-heat (&rest args &key (heat :medium-heat) &allow-other-keys) ;; 引数付きにする :heat :medium-heat (:melting-fire,:low-heat,:medium-heat,:high-heat,:high-power)
-  (setq *heat-flag* nil)
-  
-  ;; ih-panelを見る
-  (move-head-look-at (send (send *ih-panel-coords* :copy-worldcoords) :worldpos)) ;; move-head primitive
-  
-  (until *heat-flag*
-         (setq *panel-data* (read-panel))
-         ;; あっているかチェック
-         (if (equal heat (panel-to-heat *panel-data*))
-             (progn
-               (ih-smach-heat :heat heat);; 火加減の状態遷移をする
-               (setq *heat-flag* t) ;;OK
-               )
-           (progn
-             (ih-smach-heat :heat (panel-to-heat *panel-data*));; 火加減の状態遷移をする
-             (rotate-knob :deg (* (- (heat-to-panel heat) *panel-data*) 10));; 一メモリにつき5度回す
-             )
-           )
-         )
-  )
-
-
-(defun now-end-ih ()
-  (release-knob)
-  (push-knob)
-  (ih-smach-off);; offに状態遷移する  
-  (ready-pose)
-  (ih-smach-finish)
-  )
-
-(defun now-ih-all ()
-  (update-pos)
-  (now-start-ih)
-  (if (equal *fail-flag* t) ;; 失敗していたら抜ける
-      (return-from now-ih-all))
-  (now-adjust-heat)
-  (now-end-ih)
-  )
