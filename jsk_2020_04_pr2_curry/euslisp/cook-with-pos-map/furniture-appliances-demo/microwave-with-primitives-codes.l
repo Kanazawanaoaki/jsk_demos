@@ -37,7 +37,7 @@
   )
 
 (defun recog-pose ()
-  (move-head-func :p-val 28 :y-val 0)
+  (move-head-func :p-val 28 :y-val 0);; move-head primitive
   )
 
 (defun open-microwave ()
