@@ -264,7 +264,6 @@
 
 ;; now codes 連続のIHコンロ操作のプログラムを書く．
 (defun now-start-ih ()
-  ;; (ih-smach-start) これをすると止まってしまう．あと前にupdate-posが必要
   (ready-pose)
   
   (look-at-ih-knob)
