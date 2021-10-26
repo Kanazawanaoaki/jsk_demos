@@ -26,7 +26,7 @@
   (move-gripper-func 0 :arm :larm) ;; move-gripper primitive
   
   (send *arrow* :newcoords (send *ih-knob-coords* :copy-worldcoords))
-  (push-primitive (send *ih-knob-coords* :copy-worldcoords) :arm :larm :w-thre -15 :axis :x) ;; push-button primitive
+  (push-button-func (send *ih-knob-coords* :copy-worldcoords) :arm :larm :w-thre -15 :axis :x) ;; push-button primitive
   
   (send *arrow* :newcoords (send *ih-knob-coords* :copy-worldcoords))
   (send *arrow* :translate #f(-100 0 0))
@@ -38,7 +38,7 @@
   
   (send *arrow* :newcoords (send *ih-knob-coords* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad 90) :x)
-  (push-primitive (send *arrow* :copy-worldcoords) :arm :larm :w-thre -15 :axis :x) ;; push-primitive
+  (push-button-func (send *arrow* :copy-worldcoords) :arm :larm :w-thre -15 :axis :x) ;; push-button primitive
   
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))

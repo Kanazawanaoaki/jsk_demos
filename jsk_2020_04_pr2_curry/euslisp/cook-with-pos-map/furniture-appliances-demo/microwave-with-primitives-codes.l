@@ -134,7 +134,7 @@
   (let* ((button-front (send (send *microwave* :copy-worldcoords) :transform (make-coords :pos pos)))
         (button (send (send button-front :copy-worldcoords) :translate (float-vector 95 0 0) :world))) ;; 85
     
-    (push-primitive button :arm :rarm :w-thre -15 :axis :x)
+    (push-button-func button :arm :rarm :w-thre -15 :axis :x) ;; push-button primitive
      
     ;; post-push
     (move-arm-ik button-front :arm :rarm :rotate-flag t :times 2000) ;; move arm primitive
@@ -153,7 +153,7 @@
   
   ;; (send self :push-button (float-vector -70 -370 95)) ;; (float-vector -70 -370 105)
   ;; (push-button (float-vector -70 -380 85)) 
-  (push-button (float-vector -70 -380 95)) ;;奥行き，左右，高さ ;; push-button primitive
+  (push-button (float-vector -70 -380 95)) ;;奥行き，左右，高さ
   
   ;; reset-pose rarm
   (send *pr2* :head :neck-p :joint-angle 28) ;; これもどうしようかめっちゃ微妙...
@@ -171,7 +171,7 @@
   
   ;; (send self :push-button (float-vector -70 -390 110)) ;; (float-vector -70 -390 120)
   ;; (push-button (float-vector -70 -405 100))
-  (push-button (float-vector -70 -405 110)) ;; push-button primitive
+  (push-button (float-vector -70 -405 110))
   
   ;; reset-pose rarm
   (send *pr2* :head :neck-p :joint-angle 28) ;; これもどうしようかめっちゃ微妙...
@@ -189,7 +189,7 @@
   
   ;; (send self :push-button (float-vector -70 -410 185)) ;; (float-vector -70 -410 195)
   ;; (push-button (float-vector -60 -410 175))
-  (push-button (float-vector -60 -410 180)) ;; push-button primitive
+  (push-button (float-vector -60 -410 180))
   
   ;; reset-pose rarm
   (send *pr2* :head :neck-p :joint-angle 28) ;; これもどうしようかめっちゃ微妙...
@@ -206,7 +206,7 @@
   (send *microwave* :angle-vector (float-vector 180))
   
   ;; (send self :push-button (float-vector -70 -410 185)) ;; (float-vector -70 -410 195)
-  (push-button (float-vector -70 -415 70)) ;; push-button primitive
+  (push-button (float-vector -70 -415 70))
   
   ;; reset-pose rarm
   (send *pr2* :head :neck-p :joint-angle 28) ;; これもどうしようかめっちゃ微妙...
@@ -659,45 +659,3 @@
   
   (now-end-microwave)
   )
-
-(defun now-micro-sato () ;; サトウのご飯
-  ;; put object in microwave  
-  (send *pmi* :open-microwave)
-  (send *pmi* :kanazawa-put-object)
-  (send *pmi* :close-microwave)
-  
-  ;; push button
-  (send *pmi* :push-500w-button)
-  (send *pmi* :push-1min-button)
-  (send *pmi* :push-1min-button)
-  (send *pmi* :push-start-button)
-  
-  ;; wait for heating
-  (unix::sleep (* 2 60))
-
-  ;; take object from microwave
-  (send *pmi* :open-microwave)
-  )
-
-(defun hot-veg-micro () ;; 温野菜の温める
-  ;; put object in microwave
-  (send *pmi* :open-microwave)
-  (send *pmi* :kanazawa-put-object)
-  (send *pmi* :close-microwave)
-  
-  ;; push button
-  (send *pmi* :push-500w-button)
-  (send *pmi* :push-1min-button)
-  (send *pmi* :push-1min-button)
-  (send *pmi* :push-1min-button)
-  (send *pmi* :push-start-button)
-  
-  ;; wait for heating
-  (unix::sleep (* 3 60))
-  
-  ;; take object from microwave
-  (send *pmi* :open-microwave)
-  (send *pmi* :kanazawa-take-object)
-  (send *pmi* :close-microwave)
-  )
-

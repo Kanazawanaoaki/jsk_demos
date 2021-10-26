@@ -1211,7 +1211,7 @@
 
 
 ;; push-button primitive
-(defun push-primitive (coord &key (arm :larm) (w-thre -15) (axis :x)) ;; ex. (push-primitive (send *ih-knob-coords* :copy-worldcoords) :w-thre -15 :axis :x)
+(defun push-button-func (coord &key (arm :larm) (w-thre -15) (axis :x)) ;; ex. (push-button-func (send *ih-knob-coords* :copy-worldcoords) :w-thre -15 :axis :x)
   (send *cds* :newcoords coord)
   ;; (send *cds* :translate #f(100 0 0) :world)
   (send *cds* :translate #f(-100 0 0))
