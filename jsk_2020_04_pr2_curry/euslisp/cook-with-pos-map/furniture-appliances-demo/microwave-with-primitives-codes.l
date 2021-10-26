@@ -153,7 +153,7 @@
   
   ;; (send self :push-button (float-vector -70 -370 95)) ;; (float-vector -70 -370 105)
   ;; (push-button (float-vector -70 -380 85)) 
-  (push-button (float-vector -70 -380 95)) ;;奥行き，左右，高さ
+  (push-button (float-vector -70 -380 95)) ;;奥行き，左右，高さ ;; push-button primitive
   
   ;; reset-pose rarm
   (send *pr2* :head :neck-p :joint-angle 28) ;; これもどうしようかめっちゃ微妙...
@@ -171,7 +171,7 @@
   
   ;; (send self :push-button (float-vector -70 -390 110)) ;; (float-vector -70 -390 120)
   ;; (push-button (float-vector -70 -405 100))
-  (push-button (float-vector -70 -405 110))
+  (push-button (float-vector -70 -405 110)) ;; push-button primitive
   
   ;; reset-pose rarm
   (send *pr2* :head :neck-p :joint-angle 28) ;; これもどうしようかめっちゃ微妙...
@@ -189,7 +189,7 @@
   
   ;; (send self :push-button (float-vector -70 -410 185)) ;; (float-vector -70 -410 195)
   ;; (push-button (float-vector -60 -410 175))
-  (push-button (float-vector -60 -410 180))
+  (push-button (float-vector -60 -410 180)) ;; push-button primitive
   
   ;; reset-pose rarm
   (send *pr2* :head :neck-p :joint-angle 28) ;; これもどうしようかめっちゃ微妙...
@@ -206,7 +206,7 @@
   (send *microwave* :angle-vector (float-vector 180))
   
   ;; (send self :push-button (float-vector -70 -410 185)) ;; (float-vector -70 -410 195)
-  (push-button (float-vector -70 -415 70))
+  (push-button (float-vector -70 -415 70)) ;; push-button primitive
   
   ;; reset-pose rarm
   (send *pr2* :head :neck-p :joint-angle 28) ;; これもどうしようかめっちゃ微妙...
