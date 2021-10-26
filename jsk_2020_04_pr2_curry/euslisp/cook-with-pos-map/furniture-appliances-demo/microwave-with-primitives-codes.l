@@ -46,7 +46,7 @@
     
     (send *microwave* :move-to (make-coords :pos *microwave-pos* :rpy (car *microwave-rpy*)) :world)
     (send *microwave* :angle-vector (float-vector 180))
-1;5202;0c
+
     (send *pr2* :larm :angle-vector #f(60.0 74.0 70.0 -120.0 20.0 -30.0 180.0))
     
     ;; pre-open1 m-handleは書き方がやばいから(send *microwave* :get-handle)とかを使って書き換えて行きたい.
