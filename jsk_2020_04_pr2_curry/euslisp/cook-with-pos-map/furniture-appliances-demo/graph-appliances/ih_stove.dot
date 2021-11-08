@@ -1,0 +1,20 @@
+digraph ih_stove {
+   INST346 [label = "high-power" ];
+   INST347 [label = "high-heat" ];
+   INST348 [label = "medium-heat" ];
+   INST349 [label = "low-heat" ];
+   INST350 [label = "melting-fire" ];
+   INST351 [label = "on" ];
+   INST352 [label = "off" ];
+   INST347 -> INST352;
+   INST347 -> INST348[dir = both];
+   INST348 -> INST352;
+   INST348 -> INST349[dir = both];
+   INST349 -> INST352;
+   INST349 -> INST350[dir = both];
+   INST352 -> INST351;
+   INST346 -> INST352;
+   INST346 -> INST347[dir = both];
+   INST350 -> INST352;
+   INST351 -> INST348;
+}

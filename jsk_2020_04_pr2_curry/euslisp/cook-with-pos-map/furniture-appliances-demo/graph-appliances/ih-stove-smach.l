@@ -21,7 +21,7 @@
              ;; (:on :finish :done)
 
              (:on :rotate-knob :medium-heat)
-
+             
              (:melting-fire :push-knob :off)
              (:low-heat :push-knob :off)
              (:medium-heat :push-knob :off)
@@ -38,7 +38,7 @@
 
              (:high-heat :rotate-knob-left :medium-heat)
              (:high-heat :rotate-knob-right :high-power)
-
+             
              (:high-power :rotate-knob-left :high-heat)
              
              )

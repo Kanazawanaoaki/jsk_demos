@@ -1,4 +1,4 @@
-(load "package://jsk_2020_04_pr2_curry/euslisp/smach-test/furniture-appliances/graph-test/plan-ih-stove-smach.l")
+(load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/furniture-appliances-demo/graph-appliances/ih-stove-smach.l")
 
 (setq *g* (ih-stove-smach-test))
 

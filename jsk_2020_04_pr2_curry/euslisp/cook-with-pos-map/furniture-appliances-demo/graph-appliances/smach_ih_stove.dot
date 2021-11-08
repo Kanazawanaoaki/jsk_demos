@@ -1,0 +1,25 @@
+digraph smach_ih_stove {
+   CASE499 [label = "#<state #X5571db274ba0 :high-heat>" ];
+   CASE500 [label = ":done" ];
+   CASE501 [label = ":high-heat" ];
+   CASE502 [label = ":high-power" ];
+   CASE503 [label = ":medium-heat" ];
+   CASE504 [label = ":low-heat" ];
+   CASE505 [label = ":melting-fire" ];
+   CASE506 [label = ":off" ];
+   CASE507 [label = ":on" ];
+   CASE508 [label = ":init" ];
+   CASE507 -> CASE503;
+   CASE504 -> CASE505[dir = both];
+   CASE504 -> CASE506;
+   CASE508 -> CASE506;
+   CASE505 -> CASE506;
+   CASE501 -> CASE502[dir = both];
+   CASE501 -> CASE503[dir = both];
+   CASE501 -> CASE506;
+   CASE506 -> CASE507[dir = both];
+   CASE506 -> CASE500;
+   CASE502 -> CASE506;
+   CASE503 -> CASE504[dir = both];
+   CASE503 -> CASE506;
+}
