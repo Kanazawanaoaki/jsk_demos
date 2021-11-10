@@ -16,16 +16,16 @@
            '(
              (:init :success :off)
              (:off :finish :done)
-             (:off :push-knob-on :on)
-             (:on :push-knob-off :off)
+             (:off :push-knob :on)
+             (:on :push-knob :off)
 
-             (:on :rotate-knob :medium-heat)
+             (:on :rotate-knob-right :medium-heat)
              
-             (:melting-fire :push-knob-off :off)
-             (:low-heat :push-knob-off :off)
-             (:medium-heat :push-knob-off :off)
-             (:high-heat :push-knob-off :off)
-             (:high-power :push-knob-off :off)
+             (:melting-fire :push-knob :off)
+             (:low-heat :push-knob :off)
+             (:medium-heat :push-knob :off)
+             (:high-heat :push-knob :off)
+             (:high-power :push-knob :off)
 
              (:melting-fire :rotate-knob-right :low-heat)
 
