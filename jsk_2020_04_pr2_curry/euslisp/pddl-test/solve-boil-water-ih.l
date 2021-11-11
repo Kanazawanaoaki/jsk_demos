@@ -53,28 +53,29 @@
                            ))
        (instance pddl-action :init
                  :name "heat-ih"
-                 :parameters '((?OBJECT object))
-                 :precondition '((IH-OFF ?OBJECT)
+                 :parameters '()
+                 :precondition '((IH-OFF IH)
                                  )
-                 :effect '((IH-ON ?OBJECT)
-                           (NOT (IH-OFF ?OBJECT))
+                 :effect '((IH-ON IH)
+                           (NOT (IH-OFF IH))
                            ))
        (instance pddl-action :init
                  :name "boil-water"
                  :parameters '()
                  :precondition '((NOT (BOILED WATER))
                                  (IN WATER POT)
-                                 (IH-ON ih)
+                                 (ON POT IH)
+                                 (IH-ON IH)
                                  )
                  :effect '((BOILED WATER)
                            ))
        (instance pddl-action :init
                  :name "stop-ih"
-                 :parameters '((?OBJECT object))
-                 :precondition '((IH-ON ?OBJECT)
+                 :parameters '()
+                 :precondition '((IH-ON IH)
                                  )
-                 :effect '((IH-OFF ?OBJECT)
-                           (NOT (IH-ON ?OBJECT))
+                 :effect '((IH-OFF IH)
+                           (NOT (IH-ON IH))
                            ))
        ))
 
