@@ -1,0 +1,8 @@
+<launch>
+  <arg name="display_graph" default="true" />
+  <include file="$(find pddl_planner)/launch/pddl_ffha.launch" />
+  <node pkg="jsk_2020_04_pr2_curry" name="demo_boil_water_ih"
+        type="solve-boil-water-ih.l" >
+    <param name="display_graph" value="$(arg display_graph)" />
+  </node>
+</launch>
