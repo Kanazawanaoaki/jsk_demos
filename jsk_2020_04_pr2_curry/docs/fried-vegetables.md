@@ -29,3 +29,13 @@ roslaunch jsk_kitchen_knife_pr2 record_rosbag.launch
 
 移す部分とかにも，画像処理とか認識を入れていきたい．
 
+```
+roscd jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map
+roseus transfer-vegs-codes.l
+```
+
+## 炒める
+
+炒める動作．
+コンロ，混ぜる．
+
