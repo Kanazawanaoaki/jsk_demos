@@ -31,11 +31,15 @@ roslaunch jsk_kitchen_knife_pr2 record_rosbag.launch
 
 ```
 roscd jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map
-roseus transfer-vegs-codes.l
+roseus cutting-board-codes.l
+(now-cutting-board-transfer-bowl-1-all-with-fail-detection)
 ```
 
 ## 炒める
 
 炒める動作．
-コンロ，混ぜる．
+コンロ，混ぜる．コンロを使う部分，認識を入れる．道具の状態遷移図を入れるなど．
 
+```
+
+```
