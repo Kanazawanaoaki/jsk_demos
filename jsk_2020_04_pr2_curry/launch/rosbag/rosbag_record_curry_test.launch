@@ -32,13 +32,13 @@
               /kinect_head/depth_registered/throttled/camera_info
               /kinect_head/rgb/throttled/image_rect_color/compressed
               /kinect_head/depth_registered/throttled/image_rect/compressedDepth
-	      /prosilica/camera_info
-	      /prosilica/image_raw/compressed
-	      /right_endeffector/wrench
-	      /pr2_end_pose/right
-	      /left_endeffector/wrench
-	      /pr2_end_pose/left
-	      /smach_state_msg
+	          /prosilica/camera_info
+	          /prosilica/image_raw/compressed
+	          /right_endeffector/wrench
+	          /pr2_end_pose/right
+	          /left_endeffector/wrench
+	          /pr2_end_pose/left
+	          /smach_state_msg
               /audio"
         output="screen" />
 
