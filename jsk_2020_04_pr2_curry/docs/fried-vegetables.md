@@ -25,3 +25,7 @@ roseus pr2-kitchen_knife-interface.l
 roslaunch jsk_kitchen_knife_pr2 record_rosbag.launch
 ```
 
+## 移す
+
+移す部分とかにも，画像処理とか認識を入れていきたい．
+
