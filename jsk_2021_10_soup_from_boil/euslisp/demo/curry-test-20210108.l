@@ -2,6 +2,9 @@
 (load "package://jsk_2021_10_soup_from_boil/euslisp/util/interaction.l")
 (warn "please run (curry-0) or (curry-all)~%")
 
+(setq *debug-flag* nil);; tmp
+(setq *w-time* 2);; tmp
+
 ;; 最初に換気扇とIHの電源を入れていく，野菜を洗って台の上にセットしておく
 
 ;; ;; add for voice recognition
@@ -83,7 +86,8 @@
 
   ;; コンロの前まで移動する
   ;; (go-to-stove-with-speech-before)
-  (move-to-stove-with-speech-before)
+  ;; (move-to-stove-with-speech-before)
+  (move-to-stove-with-cable-check)
 
   ;; ボウル２・３をセットする
   (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/bowl-use-stove-codes.l")
@@ -95,7 +99,8 @@
 
   ;; キッチンの前に戻る
   ;; (go-to-kitchen-from-stove-with-speech-after)
-  (move-to-kitchen-with-speech-after)
+  ;; (move-to-kitchen-with-speech-after)
+  (move-to-kitchen-with-cable-check)
 
   ;; まな板をセットする
   (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/cutting-board-codes.l")
@@ -127,16 +132,18 @@
 
   ;; シンクの前に移動する
   ;; (go-to-sink-with-speech-before)
-  (move-to-sink-with-speech-before)
+  ;; (move-to-sink-with-speech-before)
+  (move-to-sink-with-cable-check)
 
-  ;; 人参を洗う
+   ;; 人参を洗う
   (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/water-use-codes.l")
   (update-pos)
   (now-wash-veg)
 
   ;; キッチンの前に戻る
   ;; (go-to-kitchen-from-sink-with-speech-after)
-  (move-to-kitchen-with-speech-after)
+  ;; (move-to-kitchen-with-speech-after)
+  (move-to-kitchen-with-cable-check)
 
   ;; 人参をまな板に置く
   (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/grasp-vegs-codes.l")
@@ -204,7 +211,8 @@
 
   ;; シンクの前に移動する
   ;; (go-to-sink-with-speech-before)
-  (move-to-sink-with-speech-before)
+  ;; (move-to-sink-with-speech-before)
+  (move-to-sink-with-cable-check)
 
   ;; じゃがいもを洗う
   (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/water-use-codes.l")
@@ -213,7 +221,8 @@
 
   ;; キッチンの前に戻る
   ;; (go-to-kitchen-from-sink-with-speech-after)
-  (move-to-kitchen-with-speech-after)
+  ;; (move-to-kitchen-with-speech-after)
+  (move-to-kitchen-with-cable-check)
 
   ;; じゃがいもをまな板に置く
   (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/grasp-vegs-codes.l")
@@ -565,18 +574,23 @@
 
 ;; defun util funcs
 (defun tmp-func ()
-  (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/ih-use-stove-codes.l")
+  ;; まな板をセットする
+  (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/cutting-board-codes.l")
   (update-pos)
+  (now-set-board-with-dialogue)
 
-  (look-at-pot)
-  (dotimes (i 10)
-    (unix:sleep 30)
-    (send *ri* :speak-jp "画像を記録します")
-    (unix:sleep 2)
-    ;; (rossrv-test)
-    (rossrv-test-double)
-    (send *ri* :speak-jp "記録しました")
-    )
+  ;; 道具３つをセットする
+  (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/tool-use-codes.l")
+  (update-pos)
+  (now-set-tools-with-dialogue) ;; 包丁，ピーラー，じゃがいもピーラーをセットする．
+  (reset-rarm)
+
+  (send *ri* :speak-jp "準備を行いました．確認して合図をして下さい")
+  ;; (curry-ok-wait)
+  (ok-wait)
+  (send *ri* :speak-jp "次の工程に移ります")
+
+  (warn "please run (curry-1) ~%")
   )
 
 

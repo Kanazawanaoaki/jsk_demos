@@ -1,0 +1,14 @@
+<launch>
+  <arg name="run_rviz" default="true" />
+  <arg name="rosbag" default="false" />
+  
+  <group if="$(arg run_rviz)">
+    <node if="$(arg rosbag)"
+          pkg="rviz" name="pr2_rviz" type="rviz"
+          args="-d $(find jsk_2020_04_pr2_curry)/config/tabletop_pr2_cutting_test_rosbag.rviz" />
+    <node unless="$(arg rosbag)"
+          pkg="rviz" name="pr2_rviz" type="rviz"
+          args="-d $(find jsk_2020_04_pr2_curry)/config/tabletop_pr2_cutting_test.rviz" />
+  </group>
+  
+</launch>

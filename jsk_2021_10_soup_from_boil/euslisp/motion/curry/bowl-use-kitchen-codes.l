@@ -137,6 +137,28 @@
   )
 
 ;; add for voice recognition
+(setq *data-flag* nil)
+(defun voice-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *data* (send *msg* :transcript))
+    (setq *data-flag* t)
+    (format t "data: ~A ~%" *data*)
+    )
+  )
+
+(defun dialogue-func ()
+  (ros::unsubscribe "/speech_to_text")
+  (setq *data-flag* nil)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+  (until *data-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (send *ri* :speak-jp "ありがとうございます")
+  (unix:sleep 1)
+  )
+
 (defun ok-grasp-larm (&rest args &key (gain 0.01) &allow-other-keys)
   (ok-wait)
   (send *ri* :start-grasp :larm :wait t :gain gain)
@@ -146,6 +168,8 @@
   (ok-wait)
   (send *ri* :start-grasp :rarm :wait t)
   )
+
+
 
 (defun receive-with-dialogue-larm (&rest args &key (gain 0.01) &allow-other-keys)
   ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
@@ -1560,7 +1584,8 @@
   
   ;; mcupを受け取る
   (send *ri* :speak-jp "計量カップを渡す準備をして，合図をして下さい")
-  (receive-with-dialogue-larm :gain 0.1)  
+  ;; (receive-with-dialogue-larm :gain 0.1)  
+  (receive-with-dialogue-larm)  
   
   (set-mcup)
   (warn "please run (put-mcup) ~%")

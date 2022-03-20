@@ -1,6 +1,6 @@
 (defun grasp-vegs-init ()
   ;; init
-  (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/move-to-kitchen-with-map.l")
+  (load "package://jsk_2021_10_soup_from_boil/euslisp/util/move-to-kitchen-with-map.l")
   
   ;; set global coodes
   (setq *potato-stand-coords* (make-coords :pos (float-vector 310.071 8313.284 30947) :rpy (float-vector 3.142 0 0)))

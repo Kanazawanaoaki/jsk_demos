@@ -1,6 +1,6 @@
 (defun tool-init ()
   ;; init
-  (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/move-to-kitchen-with-map.l")
+  (load "package://jsk_2021_10_soup_from_boil/euslisp/util/move-to-kitchen-with-map.l")
   
   ;; set tools
   (load "package://jsk_2021_10_soup_from_boil/euslisp/model/knife-new-attention.l")
@@ -21,7 +21,7 @@
 
   (load "package://jsk_2021_10_soup_from_boil/euslisp/model/ladle.l")
   (setq *ladle* (ladle))
-  (send *ladle* :newcoords (send *ladle-coords-1* :copy-worldcoords))
+  (send *ladle* :newcoords (send *ladle-coords-at-kitchen* :copy-worldcoords))
   
   (load "package://jsk_2021_10_soup_from_boil/euslisp/model/cooking-pot-73b2.l")
   (setq *pot* (cooking-pot))
@@ -574,7 +574,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
   
-  (send *arrow* :newcoords (send *ladle-coords-1* :copy-worldcoords))
+  (send *arrow* :newcoords (send *ladle-coords-at-kitchen* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad -90) :x)
   
   (send *arrow* :translate #f(60 0 100) :world)
@@ -1005,7 +1005,7 @@
 (defun grasp-ladle-0 ()
   (if (not (eql (send *ladle* :parent) nil))
       (send (send *ladle* :parent) :dissoc *ladle*))
-  (send *ladle* :newcoords (send *ladle-coords-0* :copy-worldcoords))
+  (send *ladle* :newcoords (send *ladle-coords-at-shelf* :copy-worldcoords))
   (send *arrow* :newcoords (send *ladle* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad -90) :x)
 
@@ -1162,7 +1162,7 @@
   (rarm-middle-pose)
   
   ;; ladleを置く位置
-  (send *arrow* :newcoords (send *ladle-coords-0* :copy-worldcoords))
+  (send *arrow* :newcoords (send *ladle-coords-at-shelf* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad -90) :x)
   (send *arrow* :translate #f(30 0 30) :world)
   (send *arrow* :translate (float-vector 350 0 0) :world)
