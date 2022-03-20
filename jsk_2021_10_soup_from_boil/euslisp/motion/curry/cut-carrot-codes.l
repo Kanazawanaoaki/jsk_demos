@@ -1,20 +1,20 @@
 (defun cut-carrot-init ()
   ;; init
   (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/tool-use-codes.l")
-  
+
   ;; set cutting board
   (load "package://jsk_2021_10_soup_from_boil/euslisp/model/cutting-board.l")
   (setq *cutting-board* (cutting-board))
   (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
-  
+
   ;; set global variables
   (setq adj 0)
   (setq adj2 0)
-  
-  
+
+
   (move-to-kitchen-irt)
   (objects (list *pr2* *scene* *cutting-board*))
-  (update-view)  
+  (update-view)
   )
 
 (cut-carrot-init)
@@ -43,7 +43,7 @@
   (when msg
     (when (send *msg* :boxes)
       (let ((cam-coords nil))
-        (setq tm2 (send *l* :get-latest-common-time "base_footprint" "head_mount_kinect_rgb_optical_frame"))    
+        (setq tm2 (send *l* :get-latest-common-time "base_footprint" "head_mount_kinect_rgb_optical_frame"))
         (setq *dim* (send *bbox* :dimensions))
         (setq width (* (send *dim* :x) 1000))
         (setq length (* (send *dim* :y) 1000))
@@ -58,7 +58,7 @@
           (setq tmp (- (+ (elt (send obj-coord :pos) 2) (/ height 2)) (+ (elt (send *cutting-board* :worldpos) 2) 10)))
           (send obj-coord :translate (float-vector 0 0 (- (/ height 2) (/ tmp 2))) :world)
           (setq height tmp)
-          
+
           (setq obj-pos (scale 0.001 (send obj-coord :worldpos)))
           (if (> width 0)
               (progn
@@ -131,6 +131,9 @@
 
          (setq msg (one-shot-subscribe *bbox-topic-name* jsk_recognition_msgs::BoundingBoxArray :timeout 2000))
          (when msg
+           (setq *width* 0)
+           (setq *length* 0)
+           (setq *height* 0)
            (object-pose-cb msg)
 
            ;; 中身が空なら抜ける
@@ -861,7 +864,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
-  (send *arrow* :translate (float-vector 0 0 (* offset -0.5)))  
+  (send *arrow* :translate (float-vector 0 0 (* offset -0.5)))
   (send *pr2* :rarm :inverse-kinematics
         *arrow*
         :move-target (car (send *knife* :attention))
@@ -875,10 +878,10 @@
   ;; (send *pkki* :cut-once *arrow* *height* :controller :nn)
   ;; (send *pkki* :cut-once *arrow* (- (elt (send (send *knife* :attention-attention0) :worldpos) 2) 30880) :controller :nn)
   (send *pkki* :cut-once *arrow* 30892 :controller :nn) ;; 新しいVer.用
-  
+
   ;; (setq avs (list))
   ;; (setq tms (list))
-  
+
   ;; (setq interval 10)
   ;; (dotimes (i (+ (round (/ *height* interval)) 1))
   ;;   (send *arrow* :translate (float-vector (* interval 2) 0 (/ interval -2)))
@@ -890,7 +893,7 @@
   ;;   (setq av (send *pr2* :angle-vector))
   ;;   (setq avs (append avs (list av)))
   ;;   (setq tms (append tms (list 600)))
-  
+
   ;;   (send *arrow* :translate (float-vector (* interval -2) 0 (/ interval -2)))
   ;;   (send *pr2* :rarm :inverse-kinematics
   ;;         *arrow*
@@ -900,16 +903,16 @@
   ;;   (setq av (send *pr2* :angle-vector))
   ;;   (setq avs (append avs (list av)))
   ;;   (setq tms (append tms (list 600)))
-  
+
   ;;   )
 
   ;; (send *ri* :angle-vector-sequence avs tms)
   ;; (send *ri* :wait-interpolation)
-  
-  ;; (send *pr2* :angle-vector (send *ri* :state :potentio-vector))  
-  
+
+  ;; (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+
   ;; (rossrv-test)
-  
+
   (warn "you can retry (cut-test), (continue-cut 4) or you want to finish please run (finish-pose)  ~%")
   (warn "or please run (set-cut-2) ~%")
   )
@@ -926,33 +929,22 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
 
   ;; 少し上に包丁を
   (send *arrow* :newcoords (send *cut-point-1* :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 (* *height* 1)))
-  
+
   ;;調整
   ;; (send *arrow* :translate #f(0 10 0))
   (send *arrow* :translate (float-vector 0 adj 0))
-  
+
   ;; (look-at-arrow)
   ;; (rossrv-test)
-  
+
   ;; 少し上にするために
   (setq offset 50)
-  
-  (send *arrow* :translate (float-vector 0 0 offset))  
-  (send *pr2* :rarm :inverse-kinematics
-        *arrow*
-        :move-target (car (send *knife* :attention))
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-  
-  (send *arrow* :translate (float-vector 0 0 (* offset -0.5)))  
+
+  (send *arrow* :translate (float-vector 0 0 offset))
   (send *pr2* :rarm :inverse-kinematics
         *arrow*
         :move-target (car (send *knife* :attention))
@@ -962,7 +954,17 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
-  (send *arrow* :translate (float-vector 0 0 (* offset -0.5)))  
+  (send *arrow* :translate (float-vector 0 0 (* offset -0.5)))
+  (send *pr2* :rarm :inverse-kinematics
+        *arrow*
+        :move-target (car (send *knife* :attention))
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *arrow* :translate (float-vector 0 0 (* offset -0.5)))
   (send *pr2* :rarm :inverse-kinematics
         *arrow*
         :move-target (car (send *knife* :attention))
@@ -1013,7 +1015,7 @@
 
 (defun avoid-pose ()
   (send *pr2* :angle-vector (send *ri* :state :potantio-vector))
-  
+
   ;; 包丁を上に上げる
   (send *arrow* :newcoords (send (car (send *knife* :attention)) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 100) :world)
@@ -1058,7 +1060,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
   (send *ri* :wait-interpolation)
-  
+
   ;; (setq *rav1* #f(-16.0652 5.94641 -77.1102 -121.467 184.962 -106.138 -192.692))
   ;; (send *pr2* :rarm :angle-vector *rav1*)
   (send *arrow* :newcoords (make-coords :pos (float-vector 673.153 8524.978 31130.399) :rpy (float-vector 3.141 0.122 -1.571)))
@@ -1069,7 +1071,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
-  
+
   ;; (setq *rav0* #f(-20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
   ;; (send *pr2* :rarm :angle-vector *rav0*)
   (send *arrow* :newcoords (make-coords :pos (float-vector 628.029 8828.539 31050.217) :rpy (float-vector -3.14 0.18 -0.086)))
@@ -1077,18 +1079,18 @@
         *arrow*
         :rotation-axis t
         :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)  
+  (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
-  
-  (warn "please run (reset-larm)~%")  
+
+  (warn "please run (reset-larm)~%")
   )
 
 (defun reset-larm ()
   ;; release carrot
   (send *pr2* :larm :end-coords :dissoc *carrot*)
   (send *ri* :stop-grasp :larm :wait t)
-  
+
   ;; 左手を少し上に
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 100) :world)
@@ -1111,7 +1113,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   ;; 手前にする
   ;; (setq *lav2* #f(41.8129 -20.2467 85.9536 -82.3235 -13.8272 -47.9804 -458.658))
   ;; (send *pr2* :larm :angle-vector *lav2*)
@@ -1123,7 +1125,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   ;; (setq *lav3* #f(75.8217 52.0712 108.49 -109.796 -2.86542 -9.47056 -401.362))
   ;; (send *pr2* :larm :angle-vector *lav3*)
   (send *arrow* :newcoords (make-coords :pos (float-vector 800.188 8310.893 30866.671) :rpy (float-vector 2.341 -0.222 -0.133)))
@@ -1133,14 +1135,14 @@
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 6000)
-  (send *ri* :wait-interpolation)  
+  (send *ri* :wait-interpolation)
 
   (setq *lav0* #f(75.0 50.0 110.0 -110.0 -20.0 -10.0 -10.0))
   (send *pr2* :larm :angle-vector *lav0*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 6000)
-  (send *ri* :wait-interpolation)  
-  
+  (send *ri* :wait-interpolation)
+
   (warn "please run (change-peeler)~&")
   )
 

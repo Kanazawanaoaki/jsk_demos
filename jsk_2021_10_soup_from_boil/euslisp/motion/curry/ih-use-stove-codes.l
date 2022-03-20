@@ -5,7 +5,8 @@
   ;; set objects
   (load "package://jsk_2021_10_soup_from_boil/euslisp/model/cooking-pot-73b2.l")
   (setq *pot* (cooking-pot))
-  (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+  ;; (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+  (send *pot* :newcoords (send *pot-coords-curry* :copy-worldcoords))
 
 
   ;; def global coords

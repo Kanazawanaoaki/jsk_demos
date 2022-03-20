@@ -35,10 +35,13 @@
 
      (setq msg (one-shot-subscribe *bbox-topic-name* jsk_recognition_msgs::BoundingBoxArray :timeout 2000))
      (when msg
+       (setq *width* 0)
+       (setq *length* 0)
+       (setq *height* 0)
        (object-pose-cb msg)
 
        ;; 中身が空なら抜ける
-       (unless (send *msg* :boxes) 
+       (unless (send *msg* :boxes)
          (progn
            (setq *end-flag* t)
            (return-from recognition)
@@ -51,8 +54,9 @@
        ;; カウントが５以上になったら抜ける
        (if (>= cnt 5)
            (progn
-           (setq *end-flag* t)
-           (return-from recognition)
+             (setq *end-flag* t)
+             (send *ri* :speak-jp "認識に失敗しました") ;; 失敗しました．
+             (return-from recognition)
            ))
        )
      ;; メッセージが来ていなかったら抜ける

@@ -6,7 +6,7 @@
   (load "package://jsk_2021_10_soup_from_boil/euslisp/model/knife-new-attention.l")
   (setq *knife* (knife))
   (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
-
+  
   (load "package://jsk_2021_10_soup_from_boil/euslisp/model/peeler.l")
   (setq *peeler* (peeler))
   (send *peeler* :newcoords (send *peeler-coords* :copy-worldcoords))
@@ -25,7 +25,8 @@
   
   (load "package://jsk_2021_10_soup_from_boil/euslisp/model/cooking-pot-73b2.l")
   (setq *pot* (cooking-pot))
-  (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+  ;; (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+  (send *pot* :newcoords (send *pot-coords-curry* :copy-worldcoords))
   
   ;; set equipment
   (load "package://jsk_2021_10_soup_from_boil/euslisp/model/shelf-door.l")

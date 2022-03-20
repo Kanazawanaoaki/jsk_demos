@@ -294,7 +294,8 @@
 
   ;; シンクの前に移動する
   ;; (go-to-sink-with-speech-before)
-  (move-to-sink-with-speech-before)
+  ;; (move-to-sink-with-speech-before)
+  (move-to-sink-with-cable-check)
 
   ;; たまねぎを洗う
   (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/water-use-codes.l")
@@ -303,7 +304,8 @@
 
   ;; キッチンの前に戻る
   ;; (go-to-kitchen-from-sink-with-speech-after)
-  (move-to-kitchen-with-speech-after)
+  ;; (move-to-kitchen-with-speech-after)
+  (move-to-kitchen-with-cable-check)
 
   ;; たまねぎをまな板に置く
   (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/grasp-vegs-codes.l")
@@ -356,7 +358,8 @@
 
   ;; コンロの前まで移動する
   ;; (go-to-stove-with-speech-before-and-after)
-  (move-to-stove-with-speech-before-and-after)
+  ;; (move-to-stove-with-speech-before-and-after)
+  (move-to-stove-with-cable-check)
 
   ;; 油を掛ける
   (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/bowl-use-stove-codes.l")
@@ -444,7 +447,8 @@
 
   ;; キッチン前に移動する
   ;; (go-to-kitchen-from-stove-with-speech-before)
-  (move-to-kitchen-with-speech-before)
+  ;; (move-to-kitchen-with-speech-before)
+  (move-to-kitchen-with-cable-check)
 
   ;; ;; ボウル１を鍋に移す ヘラは掴んでいる前提
   ;; (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/bowl-use-kitchen-codes.l")
@@ -465,6 +469,7 @@
   (now-grasp-mcup-with-fail-detection)
 
   ;; 水を汲んで注ぐのを繰り返す
+  (speech-before-move-with-rec)
   (setq pour-flag t)
   (until (not pour-flag)
          ;; (go-to-sink)
@@ -499,7 +504,8 @@
   (send *ri* :speak-jp "移動します")
   (unix:sleep 2)
   ;; (go-to-stove-with-speech-after)
-  (move-to-stove-with-speech-after)
+  ;; (move-to-stove-with-speech-after)
+  (move-to-stove-with-cable-check)
 
   (send *ri* :speak-jp "煮込む調理の準備を行いました．確認して合図をして下さい")
   ;; (curry-ok-wait)
@@ -574,23 +580,41 @@
 
 ;; defun util funcs
 (defun tmp-func ()
-  ;; まな板をセットする
-  (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/cutting-board-codes.l")
-  (update-pos)
-  (now-set-board-with-dialogue)
-
-  ;; 道具３つをセットする
+  ;; ピーラーを置く，包丁を掴む
   (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/tool-use-codes.l")
   (update-pos)
-  (now-set-tools-with-dialogue) ;; 包丁，ピーラー，じゃがいもピーラーをセットする．
+  ;; (put-peeler)
+  ;; (grasp-knife)
+  (grasp-knife-with-fail-detection)
+
+  ;; 人参切断
+  (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/cut-carrot-codes.l")
+  (update-pos)
+  (now-cut)
+
+  ;; 包丁を置く
+  (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/tool-use-codes.l")
+  (update-pos)
+  (put-knife)
   (reset-rarm)
 
-  (send *ri* :speak-jp "準備を行いました．確認して合図をして下さい")
+  ;; ;; ボウル１に移す動作
+  ;; (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/transfer-vegs-codes.l")
+  ;; (update-pos)
+  ;; (now-transfer-bowl-1-kitchen)
+  ;; (reset-larm)
+
+  ;; ボウル１に移す動作 まな板を持って移す
+  (load "package://jsk_2021_10_soup_from_boil/euslisp/motion/curry/cutting-board-codes.l")
+  (update-pos)
+  (now-cutting-board-transfer-bowl-1-all-with-fail-detection)
+
+  (send *ri* :speak-jp "じゃがいもの調理を行いました．確認して合図をして下さい")
   ;; (curry-ok-wait)
   (ok-wait)
   (send *ri* :speak-jp "次の工程に移ります")
 
-  (warn "please run (curry-1) ~%")
+  (warn "please run (curry-2) ~%")
   )
 
 
