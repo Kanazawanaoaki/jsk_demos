@@ -412,19 +412,22 @@
         ))
   )
 
-(defun move-rarm-to-ladle-at-shelf (&key (reverse nil))
+(defun move-rarm-to-ladle-at-shelf (&key (reverse nil) (send-ri t))
   ;; ladleを置く位置
   ;; 中間姿勢を多めに入れないと、IKがすぐに失敗する
-  (let (av0 av1 av2 av3 av4 ik-target av avs tms)
+  (let (av0 av1 av2 av3 av4 ik-target av avs tms ik-result (ik-fail-cnt 0))
     ;; Pre pose
     (setq ik-target (make-coords :pos (float-vector 570 8500 31100) :rpy (float-vector 3.14 0.0 0.0)))
     (send *pr2* :reset-manip-pose)
     (send *pr2* :torso :waist-z :joint-angle 325)
     (send *pr2* :head :look-at (send *shelf-look-coords* :worldpos))
-    (setq av0 (send *pr2* :rarm :inverse-kinematics
+    (setq ik-result (send *pr2* :rarm :inverse-kinematics
                     (send ik-target :copy-worldcoords)
                     :rotation-axis :z
                     :debug-view *debug-flag*))
+    (if (equal ik-result nil)
+        (setq ik-fail-cnt (+ ik-fail-cnt 1)))
+    (setq av0 (send *pr2* :angle-vector))
     ;; Set av1 ~ av4 おたまの先端を棚に入れるための姿勢
     (send (send *pr2* :rarm :end-coords) :dissoc *ladle*)
     (send *ladle* :newcoords (send *pr2* :rarm :end-coords :copy-worldcoords))
@@ -432,52 +435,69 @@
     (setq ik-target (send *ladle-coords-at-shelf* :copy-worldcoords))
     (send ik-target :rotate (deg2rad 45) :z)
     (send ik-target :rotate (deg2rad 45) :y)
-    (setq av1 (send *pr2* :rarm :inverse-kinematics
+    (setq ik-result (send *pr2* :rarm :inverse-kinematics
                     (send ik-target :translate #f(200 0 50) :world)
                     :move-target (car (send *ladle* :attention))
                     :rotation-axis :t
                     :debug-view *debug-flag*))
+    (if (equal ik-result nil)
+        (setq ik-fail-cnt (+ ik-fail-cnt 1)))
+    (setq av1 (send *pr2* :angle-vector))
 
     (send ik-target :rotate (deg2rad -30) :y)
     (send ik-target :rotate (deg2rad -30) :z)
     (send ik-target :translate #f(-50 0 50) :world)
-    (setq av2 (send *pr2* :rarm :inverse-kinematics
+    (setq ik-result (send *pr2* :rarm :inverse-kinematics
                     ik-target
                     :move-target (car (send *ladle* :attention))
                     :rotation-axis :z
                     :debug-view *debug-flag*))
+    (if (equal ik-result nil)
+        (setq ik-fail-cnt (+ ik-fail-cnt 1)))
+    (setq av2 (send *pr2* :angle-vector))
     (setq ik-target (send *ladle-coords-at-shelf* :copy-worldcoords))
     (send ik-target :rotate (deg2rad -90) :x)
     (send ik-target :translate #f(200 70 30) :world)
     (send ik-target :rotate (deg2rad -20) :z)
-    (setq av3 (send *pr2* :rarm :inverse-kinematics
+    (setq ik-result (send *pr2* :rarm :inverse-kinematics
                     (send ik-target :copy-worldcoords)
                     :rotation-axis t
                     :debug-view *debug-flag*))
+    (if (equal ik-result nil)
+        (setq ik-fail-cnt (+ ik-fail-cnt 1)))
+    (setq av3 (send *pr2* :angle-vector))
     (send ik-target :rotate (deg2rad 20) :z)
     (send ik-target :translate #f(0 30 -10) :world)
-    (setq av4 (send *pr2* :rarm :inverse-kinematics
+    (setq ik-result (send *pr2* :rarm :inverse-kinematics
                     (send ik-target :copy-worldcoords)
                     :rotation-axis t
                     :debug-view *debug-flag*))
+    (if (equal ik-result nil)
+        (setq ik-fail-cnt (+ ik-fail-cnt 1)))
+    (setq av4 (send *pr2* :angle-vector))
     (send *viewer* :draw-objects)
     (setq avs (list av0 av1 av2 av3 av4))
     (setq tms (list 2000 2000 2000 2000 1000))
     ;; 手を棚の奥にスライドさせる
     (dotimes (i 25)
       (send ik-target :translate (float-vector -10 0 0) :world)
-      (send *pr2* :rarm :inverse-kinematics
+      (setq ik-result (send *pr2* :rarm :inverse-kinematics
             ik-target
             :rotation-axis t
-            :debug-view nil)
+            :debug-view nil))
+      (if (equal ik-result nil)
+          (setq ik-fail-cnt (+ ik-fail-cnt 1)))
       (setq av (send *pr2* :angle-vector))
       (setq avs (append avs (list av)))
       (setq tms (append tms (list 400))))
     ;; 実機を動かす。:reverseのキーワード引数がtになると、動作を逆再生する。
-    (if reverse
-      (send *ri* :angle-vector-sequence (reverse avs) (reverse tms))
-      (send *ri* :angle-vector-sequence avs tms))
-    (send *ri* :wait-interpolation)))
+    (if send-ri
+        (progn
+          (if reverse
+              (send *ri* :angle-vector-sequence (reverse avs) (reverse tms))
+            (send *ri* :angle-vector-sequence avs tms))
+          (send *ri* :wait-interpolation)))
+    ik-fail-cnt))
 
 ;; おたまを棚の中に置く
 (defun put-ladle-at-shelf ()
