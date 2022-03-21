@@ -28,7 +28,7 @@
     (send ans-cds :rotate (deg2rad theta-num) :z :world)
     ans-cds))
 
-(defun make-random-cds-list (initial-cds &key (x 100) (y 50) (theta 30) (num 10)) ;; TODO？指定した範囲の境界部分，最大最初？とかは入るように最初にしてする？四隅とか回転はどうしようか．
+(defun make-random-cds-list (initial-cds &key (x 100) (y 50) (theta 30) (num 10)) ;; TODO？指定した範囲の境界部分，最大最小？四隅？とかは絶対に入るようにする？回転はどうしようか．
   (let (ans-cds-list list)
     (dotimes (i num)
       (setq ans-cds-list (append ans-cds-list (list (random-coords initial-cds :x x :y y :theta theta))))
