@@ -7,9 +7,10 @@
 
 (warn "please run (check) ~%")
 
-;; TODO random-coordsやmake-random-cds-list，checkも引数に関数（とpr2-spot-listも？）をとるようにしてチェックするようにする？ IKでも場所によって重要度とかがある？他のIKが大事な部分もこれで出来るようにする．
+;; TODO random-coordsやmake-random-cds-list，checkも引数に関数（とpr2-spot-listも？）をとるようにしてチェックするようにして/util/ik-check.lとかに入れる？
+;; 他のIKが大事な部分もこれで出来るようにする． 今回はmove-rarm-to-ladle-at-shelfを少し変更して，IK失敗をカウントして返り値として返すようにして，:send-riの引数で*ri*に送るかどうかを指定できるようにして時短に．
 
-;; 今回はmove-rarm-to-ladle-at-shelfを少し変更して，IK失敗をカウントして返り値として返すようにして，:send-riの引数で*ri*に送るかどうかを指定できるようにして時短に．
+;; メモ IKでも場所によって重要度とかがある？
 
 (defun random-coords (initial-cds &key (x 100) (y 50) (theta 30))
   (let (ans-cds x-num y-num theta-num)
