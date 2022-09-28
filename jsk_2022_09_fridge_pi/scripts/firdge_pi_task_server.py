@@ -2,11 +2,25 @@
 # -*- coding: utf-8 -*-
 
 from jsk_2022_09_fridge_pi.srv import FridgePiOrder, FridgePiOrderResponse
+from std_msgs.msg import String
 import rospy
+
+
+robot_state = "unmovable"
+
+def state_cb(msg):
+    global robot_state
+    robot_state = msg.data
 
 def check_task_executable(task, message):
     # check task executable with robot state
-    return True
+    global robot_state
+    print("[Check] current robot state is : {}".format(robot_state))
+    if robot_state == "standby":
+        # TODO check with task infomation (precondition? and planning?)
+        return True
+    else:
+        return False
 
 def order_do_task(task, message):
     # do task
@@ -33,7 +47,8 @@ def firdge_pi_task(req):
 
 if __name__ == "__main__":
     rospy.init_node('firdge_pi_task_server')
-    s = rospy.Service('firdge_pi_task', FridgePiOrder, firdge_pi_task)
+    sub = rospy.Subscriber("robot_state/state", String, state_cb)
+    service = rospy.Service('firdge_pi_task', FridgePiOrder, firdge_pi_task)
 
     # spin() keeps Python from exiting until node is shutdown
     rospy.spin()

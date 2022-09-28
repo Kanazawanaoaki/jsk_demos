@@ -6,38 +6,38 @@
 
 (ros::roseus "robot_state_smach")
 
-(setq *is-moveable* nil)
+(setq *is-movable* nil)
 (setq *task-doing* nil)
 
-(defun moveable-cb (msg)
-  (setq *is-moveable* (send msg :data))
+(defun movable-cb (msg)
+  (setq *is-movable* (send msg :data))
   )
 (defun task-cb (msg)
   (setq *task-doing* (send msg :data))
   )
 
-(ros::subscribe "robot_state/is_moveable" std_msgs::Bool #'moveable-cb)
+(ros::subscribe "robot_state/is_movable" std_msgs::Bool #'movable-cb)
 (ros::subscribe "robot_state/task_doing" std_msgs::Bool #'task-cb)
 (ros::advertise "robot_state/state" std_msgs::string 1)
 
 (defun func-unmovable (&rest args)
   (format t "Execute state unmovable~%")
-  (setq *is-moveable* nil)
+  (setq *is-movable* nil)
   (ros::rate 10)
-  (until *is-moveable*
+  (until *is-movable*
          (setq msg (instance std_msgs::string :init))
          (send msg :data "unmovable")
          (ros::publish "robot_state/state" msg)
          (ros::spin-once)
          )
-  :make-moveable)
+  :make-movable)
 
 (defun func-standby (&rest args)
   (format t "Execute state standby~%")
   (setq *task-doing* nil)
-  (setq *is-moveable* t)
+  (setq *is-movable* t)
   (ros::rate 10)
-  (while (and (not *task-doing*) *is-moveable*)
+  (while (and (not *task-doing*) *is-movable*)
     (setq msg (instance std_msgs::string :init))
     (send msg :data "standby")
     (ros::publish "robot_state/state" msg)
@@ -70,13 +70,13 @@
     ;; select a node as start-node
     (send sm :start-state :unmovable)
     ;; from and to nodes are selected by name or symbol
-    (send sm :add-transition :unmovable :standby :make-moveable)
+    (send sm :add-transition :unmovable :standby :make-movable)
     (send sm :add-transition :standby :unmovable :become-unmovable)
     (send sm :add-transition :standby :task-in-operation :start-task)
     (send sm :add-transition :task-in-operation :standby :finish-task)
     sm ))
 
-(defun exec-robot-state-smach () (setq count 0) (exec-state-machine (robot-state-smach)))
+(defun exec-robot-state-smach () (exec-state-machine (robot-state-smach)))
 
 (warn ";;(exec-robot-state-smach)~%")
 (exec-robot-state-smach)
