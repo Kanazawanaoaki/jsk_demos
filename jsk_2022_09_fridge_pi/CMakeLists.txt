@@ -7,7 +7,7 @@ project(jsk_2022_09_fridge_pi)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED roscpp rospy std_msgs message_generation)
+find_package(catkin REQUIRED roscpp rospy std_msgs message_generation genmsg actionlib_msgs)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -53,19 +53,23 @@ find_package(catkin REQUIRED roscpp rospy std_msgs message_generation)
 add_service_files(
   FILES
   FridgePiOrder.srv
+  DemoOrder.srv
 )
 
 ## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
+add_action_files(
+  DIRECTORY action
+  FILES
+  DoDishes.action
+  DoTasks.action
+  AddTwoInts.action
+)
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
   std_msgs  # Or other packages containing msgs
+  actionlib_msgs
 )
 
 ################################################

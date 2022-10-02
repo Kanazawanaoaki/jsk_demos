@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from jsk_2022_09_fridge_pi.srv import FridgePiOrder, FridgePiOrderResponse
+from jsk_2022_09_fridge_pi.srv import FridgePiOrder, FridgePiOrderResponse, DemoOrder, DemoOrderRequest
 from std_msgs.msg import String
 import rospy
 
+# import roslib; roslib.load_manifest('jsk_2022_09_fridge_pi')
+# import actionlib
+# from jsk_2022_09_fridge_pi.msg import *
 
-robot_state = "unmovable"
+# robot_state = "unmovable" # tmp not check in robot
+robot_state = "standby"
 
 def state_cb(msg):
     global robot_state
@@ -24,9 +28,23 @@ def check_task_executable(task, message):
 
 def order_do_task(task, message):
     # do task
-    return True
+    # goal = DoTasksGoal()
+    # client.send_goal(goal)
+    # result = client.wait_for_result(rospy.Duration.from_sec(5.0))
+    # print(result)
+    demo_name = "fridge_door_close_demo"
+    fridge_pi_demo = rospy.ServiceProxy(demo_name, DemoOrder)
 
-def firdge_pi_task(req):
+    print("Requesting %s, %s"%(task, message))
+
+    # simplified style
+    resp1 = fridge_pi_demo(task, message)
+
+    print("result : {}".format(resp1.success))
+    print("message : {}".format(resp1.message))
+    return resp1.success
+
+def fridge_pi_task(req):
     print("Requested task is {}".format(req.task))
     print("messeage : {}".format(req.message))
     res = FridgePiOrderResponse()
@@ -46,9 +64,13 @@ def firdge_pi_task(req):
     return res
 
 if __name__ == "__main__":
-    rospy.init_node('firdge_pi_task_server')
-    sub = rospy.Subscriber("robot_state/state", String, state_cb)
-    service = rospy.Service('firdge_pi_task', FridgePiOrder, firdge_pi_task)
+    rospy.init_node('fridge_pi_task_server')
+    # sub = rospy.Subscriber("robot_state/state", String, state_cb) # tmp not check in robot
+    service = rospy.Service('fridge_pi_task', FridgePiOrder, fridge_pi_task)
+    # client = actionlib.SimpleActionClient('do_tasks', DoTaskAction)
+    # client.wait_for_server()
 
     # spin() keeps Python from exiting until node is shutdown
     rospy.spin()
+    # import ipdb
+    # ipdb.set_trace()

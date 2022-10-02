@@ -1,4 +1,4 @@
-(require :pr2-interface "package://pr2eus/pr2-interface.l")
+(require :fetch-interface "package://fetcheus/fetch-interface.l")
 (require :eng2-scene "package://jsk_maps/src/eng2-scene.l")
 ;; (load "package://jsk_2022_09_fridge_pi/euslisp/demos/fridge-door-close-20220924-02.l")
 (ros::roseus-add-srvs "jsk_2022_09_fridge_pi")
@@ -8,14 +8,14 @@
   ;; init 73B2 room
   (unless (boundp '*scene*) (setq *scene* (make-eng2-scene)))
 
-  ;; init PR2
-  (unless (boundp '*pr2*) (setq *pr2* (instance pr2-sensor-robot :init)))
-  (unless (boundp '*ri*) (setq *ri* (instance pr2-interface :init)))
-  (setq *robot* *pr2*)
-  (setq *pr2-fridge-door-spot* (make-coords :pos (float-vector 1537.223 9271.157 29999.747) :rpy (float-vector 1.565 0.0 -0.003)))
-  (send *pr2* :move-to (send *pr2-fridge-door-spot* :copy-worldcoords) :world)
+  ;; init FETCH
+  (unless (boundp '*fetch*) (setq *fetch* (instance fetch-sensor-robot :init)))
+  (unless (boundp '*ri*) (setq *ri* (instance fetch-interface :init)))
+  (setq *robot* *fetch*)
+  (setq *fetch-fridge-door-spot* (make-coords :pos (float-vector 1537.223 9271.157 29999.747) :rpy (float-vector 1.565 0.0 -0.003)))
+  (send *fetch* :move-to (send *fetch-fridge-door-spot* :copy-worldcoords) :world)
 
-  (objects (list *scene* *pr2*))
+  (objects (list *scene* *fetch*))
   )
 
 (defun demo-exec (req)
@@ -28,13 +28,13 @@
 
 ;; def utils
 (defun update-view ()
-  (send *pr2* :copy-worldcoords)
+  (send *fetch* :copy-worldcoords)
   (send *viewer* :draw-objects)
-  (send *irtviewer* :look-all *pr2*)
+  (send *irtviewer* :look-all *fetch*)
   )
 
 (defun update-pos ()
-  (send *pr2* :move-to (send *ri* :state :worldcoords) :world)
+  (send *fetch* :move-to (send *ri* :state :worldcoords) :world)
   (update-view)
   (print (send *ri* :state :worldcoords))
   )
@@ -43,7 +43,7 @@
   (if (send *ri* :simulation-modep)
       (progn
         (format t "Kinematics Simulator ~%")
-        (setq *start-spot* (send *pr2-fridge-door-spot* :copy-worldcoords))
+        (setq *start-spot* (send *fetch-fridge-door-spot* :copy-worldcoords))
         )
       (progn
         (update-pos)
@@ -153,13 +153,13 @@
 
 ;; demo programs
 (defun transfer-to-move-pose ()
-  (send *pr2* :reset-pose)
+  (send *fetch* :reset-pose)
   (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
   )
 
 (defun move-to-fridge-door-spot()
   (transfer-to-move-pose)
-  (send *pr2* :move-to (send *pr2-fridge-door-spot* :copy-worldcoords) :world)
+  (send *fetch* :move-to (send *fetch-fridge-door-spot* :copy-worldcoords) :world)
   (send *ri* :clear-costmap)
   (send *ri* :move-to (make-coords :pos #f(1537.223 9271.157 0) :rpy (float-vector 1.565 0.0 -0.003)) :frame-id "/map")
   (print (send *ri* :state :worldcoords))
@@ -180,7 +180,7 @@
 
 (defun return-to-start-stop ()
   (transfer-to-move-pose)
-  (send *pr2* :move-to (send *start-spot* :copy-worldcoords) :world)
+  (send *fetch* :move-to (send *start-spot* :copy-worldcoords) :world)
   (send *ri* :clear-costmap)
   (send *ri* :move-to (send *start-spot* :copy-worldcoords) :frame-id "/map")
   (print (send *ri* :state :worldcoords))
@@ -204,11 +204,16 @@
 (init)
 (store-start-spot)
 (update-view)
+(if (send *ri* :simulation-modep)
+    (format t "Kinematics Simulator ~%")
+    (progn
+      (load "package://jsk_fetch_startup/euslisp/navigation-utils.l")
+      ))
 
 ;; (warn ";; please run (fridge-door-demo) ~%")
 
 ;; service call server
-(ros::roseus "pr2_fridge_door_close")
+(ros::roseus "fetch_fridge_door_close")
 (ros::advertise-service "fridge_door_close_demo" jsk_2022_09_fridge_pi::DemoOrder #'demo-exec)
 (do-until-key
     (ros::spin-once))
