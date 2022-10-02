@@ -16,3 +16,29 @@ roslaunch rosbridge_server rosbridge_websocket.launch
 ```
 rosrun m5stack_ros roslibpy_fridge_door.py
 ```
+
+## tmp exec
+
+### in fridge pi
+```
+roslaunch rosbridge_server rosbridge_websocket.launch
+rosrun m5stack_ros roslibpy_fridge_door.py
+```
+
+### in pr1040 connected terminal
+
+```
+roslaunch rosbridge_server rosbridge_websocket.launch
+rosrun jsk_2022_09_fridge_pi pr2_state_publisher.py
+rosrun jsk_2022_09_fridge_pi fridge_pi_task_server.py
+rosrun jsk_2022_09_fridge_pi pr2-fridge-door-close.l
+```
+
+### in fetch15 connected terminal
+
+```
+roslaunch rosbridge_server rosbridge_websocket.launch
+rosrun jsk_2022_09_fridge_pi fetch_state_publisher.py
+rosrun jsk_2022_09_fridge_pi fridge_pi_task_server.py
+rosrun jsk_2022_09_fridge_pi fetch-fridge-door-close.l
+```

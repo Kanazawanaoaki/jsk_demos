@@ -27,6 +27,52 @@
     m))
 
 ;; def utils
+(defun change-dynm-params (&rest args)
+  (ros::set-dynamic-reconfigure-param
+   "/move_base_node/DWAPlannerROS" "xy_goal_tolerance" :double 0.10)
+  (ros::set-dynamic-reconfigure-param
+   "/move_base_node/DWAPlannerROS" "yaw_goal_tolerance" :double 0.087)  ;; 5deg
+  (ros::set-dynamic-reconfigure-param
+   "/move_base_node/global_costmap" "footprint_padding" :double 0.03)
+  (ros::set-dynamic-reconfigure-param
+   "/move_base_node/local_costmap" "footprint_padding" :double 0.03)
+  t)
+
+(defun store-params (&rest args)
+  (defparameter *xy-goal-tolerance*
+    (ros::get-param "/move_base_node/DWAPlannerROS/xy_goal_tolerance"))
+  (defparameter *yaw-goal-tolerance*
+    (ros::get-param "/move_base_node/DWAPlannerROS/yaw_goal_tolerance"))
+  (defparameter *global-footprint-padding*
+    (ros::get-param "/move_base_node/global_costmap/footprint_padding"))
+  (defparameter *local-footprint-padding*
+    (ros::get-param "/move_base_node/local_costmap/footprint_padding"))
+  (defparameter *look-at-human-enabled*
+    (send (one-shot-subscribe "look_at_human/enabled" std_msgs::Bool) :data))
+  (call-service "look_at_human/stop" (instance std_srvs::EmptyRequest :init))
+  t)
+
+(defun restore-params (&rest args)
+  (when (boundp '*xy-goal-tolerance*)
+    (ros::set-dynamic-reconfigure-param
+     "/move_base_node/DWAPlannerROS" "xy_goal_tolerance"
+     :double *xy-goal-tolerance*))
+  (when (boundp '*yaw-goal-tolerance*)
+    (ros::set-dynamic-reconfigure-param
+     "/move_base_node/DWAPlannerROS" "yaw_goal_tolerance"
+     :double *yaw-goal-tolerance*))
+  (when (boundp '*global-footprint-padding*)
+    (ros::set-dynamic-reconfigure-param
+     "/move_base_node/global_costmap" "footprint_padding"
+     :double *global-footprint-padding*))
+  (when (boundp '*local-footprint-padding*)
+    (ros::set-dynamic-reconfigure-param
+     "/move_base_node/local_costmap" "footprint_padding"
+     :double *local-footprint-padding*))
+  (when (and (boundp '*look-at-human-enabled*) *look-at-human-enabled*)
+    (call-service "look_at_human/start" (instance std_srvs::EmptyRequest :init)))
+  t)
+
 (defun update-view ()
   (send *pr2* :copy-worldcoords)
   (send *viewer* :draw-objects)
@@ -155,6 +201,7 @@
 (defun transfer-to-move-pose ()
   (send *pr2* :reset-pose)
   (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
   )
 
 (defun move-to-fridge-door-spot()
@@ -204,6 +251,7 @@
 (init)
 (store-start-spot)
 (update-view)
+(change-dynm-params)
 
 ;; (warn ";; please run (fridge-door-demo) ~%")
 

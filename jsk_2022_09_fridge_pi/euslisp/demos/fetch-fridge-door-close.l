@@ -151,6 +151,68 @@
   (replay-rav-list rav-list)
   )
 
+
+(defun replay-rec-list-fetch (rec-list &key (time 200) (reverse nil))
+  (if reverse
+      (setq rec-list (reverse rec-list))
+    )
+  (setq rec-length (length rec-list))
+  (format t "length of rec-list : ~A ~%" rec-length)
+  (send *robot* :angle-vector (send *ri* :state :potentio-vector))
+  (setq now-head-y (send *robot* :head-neck-y :joint-angle))
+  (setq now-head-p (send *robot* :head-neck-p :joint-angle))
+
+  (setq avs (list))
+  (setq tms (list))
+  (dolist (rec rec-list)
+    ;; (send *robot* :head-neck-y :joint-angle now-head-y)
+    ;; (send *robot* :head-neck-p :joint-angle now-head-p)
+    ;; (send *robot* :head-neck-y :joint-angle -0.005299)
+    ;; (send *robot* :head-neck-p :joint-angle 52.746)
+    ;; (send *robot* :head-neck-y :joint-angle 0.0)
+    ;; (send *robot* :head-neck-p :joint-angle 60.0)
+    (send *robot* :head-neck-y :joint-angle *initial-head-neck-y*)
+    (send *robot* :head-neck-p :joint-angle *initial-head-neck-p*)
+    (setq ik-res (send *robot* :inverse-kinematics
+		       rec
+		       ))
+    (if (equal ik-res nil)
+	(progn
+	  (setq *ik-fail-flag* t)
+	  (return-from replay-rec-list)
+	  )
+	)
+    (setq avs (append avs (list (send *robot* :angle-vector))))
+    (setq tms (append tms (list time)))
+    )
+  (send *ri* :angle-vector-sequence avs tms)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun replay-short-rec-list-fetch (rec-list)
+  ;; (send *robot* :angle-vector *initial-av*)
+  ;; (send *robot* :head-neck-y :joint-angle 0.0)
+  ;; (send *robot* :head-neck-p :joint-angle 60.0)
+  (send *robot* :head-neck-y :joint-angle *initial-head-neck-y*)
+  (send *robot* :head-neck-p :joint-angle *initial-head-neck-p*)
+  (setq ik-res (send *robot* :inverse-kinematics
+                     (elt rec-list 0)
+                     ))
+  (if (equal ik-res nil)
+      (progn
+        (setq *ik-fail-flag* t)
+        (return-from replay-short-rec-list-fetch)
+        )
+    )
+  ;; (send *ri* :angle-vector (send *robot* :angle-vector) 2000)
+  ;; (send *ri* :wait-interpolation)
+  (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
+  ;; (send *ri* :wait-interpolation)
+  (unix:usleep 3500000)
+
+  (replay-rec-list-fetch rec-list)
+  )
+
 ;; demo programs
 (defun transfer-to-move-pose ()
   (send *fetch* :reset-pose)
@@ -168,14 +230,35 @@
 (defun close-fridge-door ()
   (load-cook-file :file_name "fridge-door-close-20220924-02.l")
 
-  ;; initial-pose
-  (set-initial-av)
+  ;; ;; initial-pose
+  (send *robot* :torso_lift_joint :joint-angle 200)
+  (send *ri* :angle-vector (send *robot* :angle-vector) 8000)
+  (send *ri* :start-grasp)
+  (send *ri* :wait-interpolation)
 
+  ;; (set-initial-av)
+  (send *robot* :inverse-kinematics
+        (make-coords :pos #f(1989.065 9691.167 31064.82) :rpy #f(2.041 -1.077 -1.859)))
+  (send *ri* :angle-vector (send *robot* :angle-vector) 3000)
+  (send *ri* :start-grasp)
+  (send *ri* :wait-interpolation)
   ;; repaly avs
-  (replay-short-rav-list *cook-short-rav-list*)
+  ;; (replay-short-rav-list *cook-short-rav-list*)
+  (replay-short-rec-list-fetch (rav2rec *cook-short-rav-list*))
 
   ;; return to initial-pose
-  (set-initial-av)
+  ;; (set-initial-av)
+  (send *robot* :rarm :inverse-kinematics
+        (make-coords :pos #f(1989.065 9691.167 31064.82) :rpy #f(2.041 -1.077 -1.859)))
+  (send *ri* :angle-vector (send *robot* :angle-vector) 3000)
+  (send *ri* :start-grasp)
+  (send *ri* :wait-interpolation)
+
+  (send *robot* :rarm :inverse-kinematics
+        (make-coords :pos #f(1662.261 9320.837 30937.402) :rpy #f(-2.771 -1.489 -0.431)))
+  (send *ri* :angle-vector (send *robot* :angle-vector) 3000)
+  (send *ri* :start-grasp)
+  (send *ri* :wait-interpolation)
   )
 
 (defun return-to-start-stop ()
@@ -190,15 +273,16 @@
   (store-start-spot)
   (if (send *ri* :simulation-modep)
       (format t "Kinematics Simulator ~%")
-      (progn
-        (move-to-fridge-door-spot)
-        ))
+    (progn
+      (undock)
+      (move-to-fridge-door-spot)
+      ))
   (close-fridge-door)
   (if (send *ri* :simulation-modep)
       (format t "Kinematics Simulator ~%")
-      (progn
-        (return-to-start-stop)
-        ))
+    (progn
+      (return-to-start-stop)
+      ))
   )
 
 (init)
