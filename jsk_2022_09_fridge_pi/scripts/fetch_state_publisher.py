@@ -2,11 +2,13 @@
 # -*- coding: utf-8 -*-
 
 import rospy
+import time
 import roslibpy
 
 class rosbridge_client:
     def __init__(self):
-        self.ros_client = roslibpy.Ros('133.11.216.106', 9090)
+        # self.ros_client = roslibpy.Ros('133.11.216.106', 9090)
+        self.ros_client = roslibpy.Ros('133.11.216.67', 9090)
         print("wait for server")
         self.publisher = roslibpy.Topic(
             self.ros_client, '/fetch_robot_state', 'std_msgs/Bool')
@@ -18,7 +20,7 @@ class rosbridge_client:
     def start_thread(self):
         while True:
             if self.ros_client.is_connected:
-                self.publisher.publish(roslibpy.Message({'data': True})
+                self.publisher.publish(roslibpy.Message({'data': True}))
             else:
                 print("Disconnect")
                 break

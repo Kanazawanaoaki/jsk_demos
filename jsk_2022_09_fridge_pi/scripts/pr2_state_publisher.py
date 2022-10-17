@@ -3,11 +3,14 @@
 
 import rospy
 import roslibpy
+import time
 from pr2_msgs.msg import PowerState
 
 class rosbridge_client:
     def __init__(self):
-        self.ros_client = roslibpy.Ros('133.11.216.106', 9090)
+        rospy.init_node('pr2_state_publisher', anonymous=True)
+        # self.ros_client = roslibpy.Ros('133.11.216.106', 9090)
+        self.ros_client = roslibpy.Ros('133.11.216.67', 9090)
         print("wait for server")
         self.publisher = roslibpy.Topic(
             self.ros_client, '/pr2_robot_state', 'std_msgs/Bool')
