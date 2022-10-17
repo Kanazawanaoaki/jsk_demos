@@ -131,7 +131,7 @@
     ans-list))
 
 (defun summarize-cook-datas (&key (thre 0.5))
-  (setq *place-short-rav-list* (summarize-rav *cook-short-rav-list* :threshold thre))
+  (setq *cook-short-rav-list* (summarize-rav *cook-short-rav-list* :threshold thre))
   )
 
 (defun load-cook-file (&key (file_name "tmp-cook-teaching-data.l") (summarize t) (thre 0.5))
