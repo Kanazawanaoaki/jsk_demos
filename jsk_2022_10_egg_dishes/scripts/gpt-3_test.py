@@ -11,11 +11,13 @@ if __name__ == "__main__":
     parser.add_argument('-t','--temperature', default=0.0, type=float)
     parser.add_argument('-e','--echo', action='store_true')
     parser.add_argument('-p','--prompt', default="My favorite monster in Dragon Quest is")
+    parser.add_argument('-m','--model', default="text-davinci-002")
     args = parser.parse_args()
     API_KEY = args.key
     temperature = args.temperature
     echo = args.echo
     prompt = args.prompt
+    model = args.model
     # API_KEY = "受け取ったAPI key"
     openai.api_key = API_KEY
 
@@ -25,7 +27,7 @@ if __name__ == "__main__":
     #                                     prompt=prompt,
     #                                     temperature=temperature,
     #                                     echo=echo)
-    response = openai.Completion.create(engine="text-davinci-002",
+    response = openai.Completion.create(engine=model,
                                         prompt=prompt,
                                         temperature=temperature,
                                         echo=echo)
