@@ -10,7 +10,6 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-f','--file', default="test.txt")
-
     args = parser.parse_args()
     file_name = args.file
     print("text file loaded from {}".format(file_name))
