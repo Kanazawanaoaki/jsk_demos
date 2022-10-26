@@ -7,8 +7,12 @@
 
 ### MeCab
 ```
-python3 mecab_test.py -f omelette.txt
+python3 mecab_file_test.py -f ../recipes/omelette.txt
 ```
+```
+python3 mecab_text_test.py -t バターが溶けたら卵をフライパンに注ぐ．
+```
+
 
 ### googletrans
 ```
