@@ -25,3 +25,14 @@ python3 gpt-3_test.py -k [YOUR API KEY] -t 0.0 -e -p 'Please put "The water boil
 '
 ```
 
+
+### Make prompt
+日本語の単語，あるいは英語の単語から(-p 引数)でも対の意味になるpromptを生成できる．
+```
+python3 make_prompt.py -k [YOUR API KEY] -j 液体になった卵
+```
+
+それを複数実行するパターン．
+```
+python3 test_make_prompt.py -k [YOUR API KEY]
+```
