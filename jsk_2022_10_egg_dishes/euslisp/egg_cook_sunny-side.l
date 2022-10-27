@@ -2,7 +2,7 @@
 
 (load "package://jsk_2022_10_egg_dishes/euslisp/pr2_cook_tmp.l")
 
-(setq *yes-query* "Boiled water")
+(setq *yes-query* "Cooked egg")
 (setq *yes-flag* nil)
 
 (defun reset-manip-pose ()
