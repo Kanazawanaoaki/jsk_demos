@@ -2,6 +2,9 @@
 
 (load "package://jsk_2022_10_egg_dishes/euslisp/pr2_cook_tmp.l")
 
+(setq *yes-query* "Boiled water")
+(setq *yes-flag* nil)
+
 (defun reset-manip-pose ()
   (send *robot* :reset-manip-pose)
   (send *ri* :angle-vector (send *robot* :angle-vector) 5000)
@@ -33,9 +36,17 @@
   )
 
 
+(defun state-cb (msg)
+  (print msg)
+  (setq *hoge*)
+  ()
+  )
+
 (defun do-exec ()
+  (setq *yes-flag* nil)
   ;; subscribeして沸騰していたら，pourを実行するプログラムを書く
-  (ros::subscribe *topic-name* jsk_recognition_msgs::BoundingBoxArray #'object-pose-cb 1)
+  (ros::subscribe "/inference_probability_sma/state" std_msgs::String #'state-cb 1)
+  ;; while なんちゃら
   )
 
 (defun pour-egg-to-pot ()
