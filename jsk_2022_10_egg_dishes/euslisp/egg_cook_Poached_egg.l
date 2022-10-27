@@ -2,7 +2,6 @@
 
 (load "package://jsk_2022_10_egg_dishes/euslisp/pr2_cook_tmp.l")
 
-
 (defun reset-manip-pose ()
   (send *robot* :reset-manip-pose)
   (send *ri* :angle-vector (send *robot* :angle-vector) 5000)
@@ -36,6 +35,7 @@
 
 (defun do-exec ()
   ;; subscribeして沸騰していたら，pourを実行するプログラムを書く
+  (ros::subscribe *topic-name* jsk_recognition_msgs::BoundingBoxArray #'object-pose-cb 1)
   )
 
 (defun pour-egg-to-pot ()
