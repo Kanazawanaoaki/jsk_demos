@@ -34,8 +34,12 @@ if __name__ == "__main__":
         print(ans.text)
         pos_words = ans.text
 
-        prompt = 'Please put the negation of "{}"'.format(pos_words)
+        # prompt = 'Please put the negation of "{}"'.format(pos_words)
         # prompt = 'Please put the exact opposite of "{}"'.format(pos_words)
+        # prompt = 'Please list some possible antonyms for "{}"'.format(pos_words)
+        # prompt = 'Please list some possible negation of "{}"'.format(pos_words)
+        # prompt = 'Please give me some candidates for the negation of "{}"'.format(pos_words)
+        prompt = '\nPlease list some possible negation of \"{}\"\n'.format(pos_words)
         print(prompt)
 
         response = openai.Completion.create(engine=model,
