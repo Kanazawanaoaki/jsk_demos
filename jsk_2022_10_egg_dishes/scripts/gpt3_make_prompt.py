@@ -11,13 +11,14 @@ if __name__ == "__main__":
     parser.add_argument('-k','--key', default="", help="受け取ったAPI key")
     parser.add_argument('-t','--temperature', default=0.0, type=float)
     parser.add_argument('-e','--echo', action='store_true')
-    parser.add_argument('-p','--prompt', default="沸騰している水")
+    parser.add_argument('-j','--japanese', default="沸騰している水")
+    parser.add_argument('-en','--english', default="")
     parser.add_argument('-m','--model', default="text-davinci-002")
     args = parser.parse_args()
     API_KEY = args.key
     temperature = args.temperature
     echo = args.echo
-    t_prompt = args.prompt
+    j_prompt = args.japanese
     model = args.model
     # API_KEY = "受け取ったAPI key"
     openai.api_key = API_KEY
@@ -25,8 +26,7 @@ if __name__ == "__main__":
     # prompt_list = ["水が沸騰する", "バターが溶ける", "牛乳と卵がうまく混ざる", "卵に火が通る", "白身が固まる"]
     # prompt_list = ["水が沸騰する", "バターが溶ける", "牛乳と卵がうまく混ざる", "卵に火が通る", "卵の白身が固まる"]
     # prompt_list = ["沸騰した水", "液体のバター", "混ざっている牛乳と卵", "固体になった卵", "固まった卵の白身"]
-    prompt_list = ["水が沸騰する", "バターが溶ける", "牛乳と卵がうまく混ざる", "卵に火が通って固体になる", "卵に火が通る"]
-
+    prompt_list = [j_prompt]
     words_list = []
 
     for t_prompt in prompt_list:
@@ -37,6 +37,9 @@ if __name__ == "__main__":
         # print(ans)
         print(ans.text)
         verb_words = ans.text
+
+        if args.english != "":
+            pos_words = args.english
 
         # prompt = 'Please put the negation of "{}"'.format(pos_words)
         # prompt = 'Please put the exact opposite of "{}"'.format(pos_words)
