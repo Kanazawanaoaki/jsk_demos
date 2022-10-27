@@ -1,0 +1,64 @@
+<launch>
+  <arg name="collect_data" default="true" />
+  <arg name="project_name" default="cook_data" />
+
+  <node name="cook_data_collection"
+        pkg="jsk_data" type="data_collection_server.py"
+	    clear_params="true"
+        output="screen" if="$(arg collect_data)">
+    <rosparam subst_value="true">
+      message_filters: true
+      approximate_sync: true
+      save_dir: $(find jsk_2022_10_egg_dishes)/datas/$(arg project_name)/datas
+      slop: 0.1
+      wait_save_request: true
+      method: request
+      topics:
+          - name: /kinect_head/rgb/image_rect_color
+            msg_class: sensor_msgs/Image
+            fname: image_rect_coler.png
+            savetype: ColorImage
+          - name: /kinect_head/depth_registered/image_rect
+            msg_class: sensor_msgs/Image
+            fname: depth_image_rect.pkl
+            savetype: DepthImage
+          - name: /k4a/rgb/image_rect_color
+            msg_class: sensor_msgs/Image
+            fname: azure_kinect_rgb.png
+            savetype: ColorImage
+    </rosparam>
+  </node>
+
+  <node name="cook_data_collection_rosbag"
+        pkg="jsk_data" type="data_collection_server.py"
+        clear_params="true"
+        output="screen" if="$(arg collect_data)">
+    <rosparam subst_value="true">
+      message_filters: true
+      approximate_sync: true
+      save_dir: $(find jsk_2022_10_egg_dishes)/datas/$(arg project_name)/bags
+      method: timer
+      rosbag: true
+      rosbag_topics:
+           - /rosout
+           - /tf
+           - /joint_states
+           - /right_endeffector/wrench
+           - /left_endeffector/wrench
+           - /r_gripper_controller/state
+           - /l_gripper_controller/state
+           - /kinect_head/rgb/camera_info
+           - /kinect_head/depth_registered/camera_info
+           - /kinect_head/rgb/image_rect_color/compressed
+           - /kinect_head/depth_registered/image_rect/compressedDepth
+           - /k4a/rgb/camera_info
+           - /k4a/rgb/image_rect_color/compressed
+           - /k4a/depth_to_rgb/camera_info
+           - /k4a/depth_to_rgb/image_raw/compressed
+           - /k4a/depth/camera_info
+           - /k4a/depth/image_rect_raw/compressedDepth
+           - /audio
+    </rosparam>
+  </node>
+
+</launch>

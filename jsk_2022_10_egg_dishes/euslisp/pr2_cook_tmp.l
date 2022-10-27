@@ -1580,7 +1580,11 @@
   (setq *initial-head-neck-p*   (send *robot* :head-neck-p :joint-angle))
   )
 
-(defun cook-teach ()
+(defun cook-teach (&key (initial-teach nil))
+  (if initial-teach
+      (cook-initial-pose-teaching)
+    )
+
   (set-initial-av)
 
   ;; 混ぜかたを教わる
@@ -1642,6 +1646,15 @@
    )
   )
 
+(defun cook-replay-once (&key (save_img t) (save_bag nil) (rosbag_time 5))
+  (set-initial-av)
+
+  (unix:sleep 2)
+  (replay-short-rav-list *cook-short-rav-list*)
+
+  (set-initial-av)
+  )
+
 (defun dump-cook-file (&key (file_name "tmp-cook-teaching-data.l"))
   (dump-loadable-structure file_name *initial-av* *cook-short-rav-list*)
   ;; (dump-loadable-structure file_name *initial-av* *cook-short-rav-list* *initial-head-neck-y* *initial-head-neck-p*)
@@ -1667,7 +1680,10 @@
   )
 
 
-(defun cook-pick-and-pour-teaching-detail ()
+(defun cook-pick-and-pour-teaching-detail (&key (initial-teach nil))
+  (if initial-teach
+      (cook-initial-pose-teaching)
+    )
   ;; 掴むまでの最初の動作教示
   (set-initial-av)
   (send *ri* :stop-grasp :rarm :wait t)
@@ -1704,7 +1720,7 @@
   (setq *release-short-rav-list* (elt release-ans 0))
   (setq *release-short-rec-list* (elt release-ans 1))
 
-  ;; 戻し方を教わる
+  ;; 初期姿勢に戻る
   (set-initial-av)
   )
 
