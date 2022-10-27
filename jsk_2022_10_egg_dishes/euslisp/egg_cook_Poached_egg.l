@@ -38,15 +38,41 @@
 
 (defun state-cb (msg)
   (print msg)
-  (setq *hoge*)
-  ()
+  (setq *hoge* msg)
+  (setq data (send msg :data))
+  (if (equal data *yes-query*)
+      (setq *yes-flag* t)
+      )
   )
 
 (defun do-exec ()
-  (setq *yes-flag* nil)
   ;; subscribeして沸騰していたら，pourを実行するプログラムを書く
   (ros::subscribe "/inference_probability_sma/state" std_msgs::String #'state-cb 1)
   ;; while なんちゃら
+  (setq *yes-flag* nil)
+  (until *yes-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (pour-egg-to-pot)
+
+  (ros::unsubscribe "/inference_probability_sma/state")
+  )
+
+(defun do-exec-tmp ()
+  ;; subscribeして沸騰していたら，pourを実行するプログラムを書く
+  (ros::subscribe "/inference_probability_sma/state" std_msgs::String #'state-cb 1)
+  ;; while なんちゃら
+  (setq *yes-flag* nil)
+  (until *yes-flag*
+         (print 1)
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (print 2)
+  ;; (pour-egg-to-pot)
+
+  (ros::unsubscribe "/inference_probability_sma/state")
   )
 
 (defun pour-egg-to-pot ()
