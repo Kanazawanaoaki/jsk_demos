@@ -1619,6 +1619,7 @@
   (if save_img
       (progn
         ;; データの保存
+        (set-initial-av)
         (trigger-request "/cook_data_collection/save_request")
         ))
 
@@ -1630,6 +1631,46 @@
 
    (set-initial-av)
 
+   ;; (do-until-key
+   ;;  (print "wait key")
+   ;;  )
+   (if save_img
+       (progn
+         ;; データの保存
+         (trigger-request "/cook_data_collection/save_request")
+         ))
+
+   (if save_bag
+       (progn
+         ;; データの保存
+         (start-data-collection :service "cook_data_collection_rosbag/start_request");; rosbag収集開始
+         (unix:sleep rosbag_time)
+         (end-data-collection :service "cook_data_collection_rosbag/end_request");; rosbag収集終了
+         ))
+   )
+  )
+
+
+(defun cook-replay-wait (&key (save_img t) (save_bag nil) (rosbag_time 5))
+  (if save_img
+      (progn
+        ;; データの保存
+        (set-initial-av)
+        (trigger-request "/cook_data_collection/save_request")
+        ))
+
+  (while t
+   (set-initial-av)
+
+   (unix:sleep 2)
+   (replay-short-rav-list *cook-short-rav-list*)
+
+   (set-initial-av)
+
+   (do-until-key
+    (print "wait key")
+    (unix:sleep 1)
+    )
    (if save_img
        (progn
          ;; データの保存
