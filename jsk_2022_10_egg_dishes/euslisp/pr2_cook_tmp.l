@@ -5,7 +5,7 @@
 
 (format t "init ~%")
 (load "package://jsk_2022_10_egg_dishes/euslisp/pr2-utils.l")
-(load "package://jsk_2022_10_egg_dishes/euslisp/red-cup.l")
+(load "package://jsk_2022_10_egg_dishes/euslisp/models/red-cup.l")
 
 (defun setup()
   (pr2-init)

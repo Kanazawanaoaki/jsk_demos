@@ -93,19 +93,19 @@
   )
 
 (defun pour-egg-to-pan ()
-  (load-cook-pour-file :file_name "cook_pour_bowl_to_pan_data_20221027_01.l")
+  (load-cook-pour-file :file_name "av-files/cook_pour_bowl_to_pan_data_20221027_01.l")
   (cook-pick-and-pour-short-replay-test)
   (reset-manip-pose)
   )
 
 (defun pour-egg-to-pot ()
-  (load-cook-pour-file :file_name "cook_pour_bowl_to_pot_data_20221027_02.l")
+  (load-cook-pour-file :file_name "av-files/cook_pour_bowl_to_pot_data_20221027_02.l")
   (cook-pick-and-pour-short-replay-test)
   (reset-manip-pose)
   )
 
 (defun stop-ih ()
-  (load-cook-file :file_name "cook_data_stop-ih_20221027_02.l")
+  (load-cook-file :file_name "av-files/cook_data_stop-ih_20221027_02.l")
   (send *ri* :start-grasp :rarm :wait t)
   (cook-replay-once)
   (reset-manip-pose)

@@ -1,0 +1,4 @@
+pour(oil, pan)
+pour(egg, pan)
+fire-on(stove)
+START-CONDITION(cooked egg, fire-off(stove))

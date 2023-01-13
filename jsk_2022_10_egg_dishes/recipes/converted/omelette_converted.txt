@@ -1,0 +1,6 @@
+pour(milk, bowl)
+STOP-CONDITION(mixed milk and eggs, mix(milk, egg))
+pour(butter, pan)
+fire-on(stove)
+START-CONDITION(melted butter, pour(egg, pan))
+START-CONDITION(cooked eggs, fire-off(stove))

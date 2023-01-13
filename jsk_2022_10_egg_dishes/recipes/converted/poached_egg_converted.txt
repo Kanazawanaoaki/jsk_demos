@@ -1,0 +1,4 @@
+pour(water, pot)
+fire-on(stove)
+START-CONDITION(Boild water, pour(egg, pot))
+fire-off(stove)
