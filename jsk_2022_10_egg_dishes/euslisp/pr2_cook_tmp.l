@@ -16,8 +16,6 @@
   ;; (objects (list *robot* *co* *rcup*))
   )
 
-
-
 (defun save_image()
   (let (res
 	get-obj-pose-srv

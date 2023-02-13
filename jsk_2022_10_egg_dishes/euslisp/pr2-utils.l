@@ -13,6 +13,12 @@
   ;; (ros::advertise "/pr2_imitation/controller/target_state" informatized_body_msgs::TargetState 1)
   )
 
+(defun reset-manip-pose ()
+  (send *robot* :reset-manip-pose)
+  (send *ri* :angle-vector (send *robot* :angle-vector) 5000)
+  (send *ri* :wait-interpolation)
+  )
+
 (defun get-image-latent (&key (filename "/tmp/target.png"))
   (get-image-latent-base "pr2_imitation" :filename filename))
 

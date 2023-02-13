@@ -14,14 +14,6 @@
       wait_save_request: true
       method: request
       topics:
-          - name: /kinect_head/rgb/image_rect_color
-            msg_class: sensor_msgs/Image
-            fname: image_rect_coler.png
-            savetype: ColorImage
-          - name: /kinect_head/depth_registered/image_rect
-            msg_class: sensor_msgs/Image
-            fname: depth_image_rect.pkl
-            savetype: DepthImage
           - name: /k4a/rgb/image_rect_color
             msg_class: sensor_msgs/Image
             fname: azure_kinect_rgb.png
