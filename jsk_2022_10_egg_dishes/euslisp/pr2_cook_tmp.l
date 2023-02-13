@@ -1,6 +1,7 @@
 #!/usr/bin/env roseus
 
 (ros::load-ros-manifest "roseus")
+(ros::load-ros-package "stvlm")
 (ros::roseus "pr2_cook_with_teaching_motion")
 
 (format t "init ~%")
@@ -1788,6 +1789,32 @@
   (set-initial-av)
   )
 
+(defun cook-pick-short-replay-test ()
+  ;; 初期姿勢になる
+  (set-initial-av)
+  (send *ri* :stop-grasp :rarm :wait t)
+  (unix:sleep 2)
+
+  ;; つかむまでの最初の動作
+  (replay-short-rav-list *first-pregrasp-short-rav-list*)
+  (unix:sleep 1)
+  (send *ri* :start-grasp :rarm :wait t)
+  )
+
+(defun cook-pour-short-replay-test ()
+  ;; 掴んだあとの動作
+  (replay-short-rav-list *after-grasp-short-rav-list*)
+  (unix:sleep 1)
+
+  ;; 手を離す動作
+  (send *ri* :stop-grasp :rarm :wait t)
+  (unix:sleep 2)
+  (replay-rav-list *release-short-rav-list*)
+
+  (unix:sleep 2)
+  (set-initial-av)
+  )
+
 (defun dump-cook-pour-file (&key (file_name "tmp-cook-pour-teaching-data.l"))
   (dump-loadable-structure file_name *initial-av* *first-pregrasp-short-rav-list* *after-grasp-short-rav-list* *release-short-rav-list*)
   ;; (dump-loadable-structure file_name *initial-av* *cook-short-rav-list* *initial-head-neck-y* *initial-head-neck-p*)
@@ -1817,11 +1844,26 @@
   )
 
 
-(manequine-end)
+;; add for stvlm
+(defun clip-query-change (&key (yes-query "Melted butter") (no-query "Hard butter"))
+  (let (prompt)
+    (setq prompt (format nil "~A;~A" yes-query no-query))
+    (ros::set-dynamic-reconfigure-param "/clip_ros_client" "clip_queries" :string prompt)
+    (format t "clip prompt is changed to ~A ~%" prompt)
+    ))
+
+(defun stvlm-command (&key (yes-query "Melted butter") (no-query "Hard butter") (raw-threshold 0.4) (sma-threshold 0.5))
+  (let (res)
+    (setq req (instance stvlm::StateChangeRecognitionRequest :init))
+    (send req :yes_query yes-query)
+    (send req :no_query no-query)
+    (send req :raw_theshold raw-threshold)
+    (send req :sma_theshold sma-threshold)
+    (setq res (ros::service-call "/state_recognition/command" req t))
+    (format t "stvlm command is sent! ~%")
+    (format t "result : ~A ~%" res)
+    )
+  )
+
+;; (manequine-end)
 (setup)
-;; (send *robot* :reset-pose)
-;; ;; (send *robot* :reset-manip-pose)
-;; (send *robot* :head-neck-y :joint-angle 0.0)
-;; (send *robot* :head-neck-p :joint-angle 60.0)
-;; (send *ri* :angle-vector (send *robot* :angle-vector) 6000)
-;; (send *ri* :wait-interpolation)
