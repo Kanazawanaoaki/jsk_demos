@@ -384,14 +384,14 @@
     )
   )
 
-(defun set-initial-av ()
+(defun set-initial-av (&key (time 4000))
   ;; (manequine-end)
   (send *robot* :angle-vector *initial-av*)
   ;; (send *robot* :head-neck-y :joint-angle 0.0)
   ;; (send *robot* :head-neck-p :joint-angle 60.0)
   (send *robot* :head-neck-y :joint-angle *initial-head-neck-y*)
   (send *robot* :head-neck-p :joint-angle *initial-head-neck-p*)
-  (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
+  (send *ri* :angle-vector (send *robot* :angle-vector) time)
   (send *ri* :wait-interpolation)
   )
 
@@ -434,7 +434,7 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun replay-short-rav-list (rav-list)
+(defun replay-short-rav-list (rav-list &key (time 200) (reverse nil))
   ;; (send *robot* :head-neck-y :joint-angle 0.0)
   ;; (send *robot* :head-neck-p :joint-angle 60.0)
   (send *robot* :head-neck-y :joint-angle *initial-head-neck-y*)
@@ -443,7 +443,7 @@
   (send *ri* :angle-vector (send *robot* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
-  (replay-rav-list rav-list)
+  (replay-rav-list rav-list :time time)
   )
 
 (defun replay-rec-list (rec-list &key (time 200) (reverse nil))
@@ -1803,16 +1803,15 @@
 
 (defun cook-pour-short-replay-test ()
   ;; 掴んだあとの動作
-  (replay-short-rav-list *after-grasp-short-rav-list*)
+  (replay-short-rav-list *after-grasp-short-rav-list* :time 150)
   (unix:sleep 1)
 
   ;; 手を離す動作
   (send *ri* :stop-grasp :rarm :wait t)
-  (unix:sleep 2)
-  (replay-rav-list *release-short-rav-list*)
+  (unix:sleep 1)
+  (replay-rav-list *release-short-rav-list* :time 100)
 
-  (unix:sleep 2)
-  (set-initial-av)
+  (set-initial-av :time 1000)
   )
 
 (defun dump-cook-pour-file (&key (file_name "tmp-cook-pour-teaching-data.l"))

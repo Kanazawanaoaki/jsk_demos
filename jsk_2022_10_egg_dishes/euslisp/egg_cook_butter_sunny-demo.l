@@ -2,10 +2,12 @@
 
 (load "package://jsk_2022_10_egg_dishes/euslisp/pr2_cook_tmp.l")
 
-(setq *yes-query-butter* "Melted butter")
-(setq *no-query-butter* "Hard butter")
-(setq *raw-thre-butter* 0.7607421875) ;;tmp
-(setq *sma-thre-butter* 0.73505859375) ;;tmp
+(setq *yes-query-butter* "Melted lquid butter")
+(setq *no-query-butter* "Hard solid butter")
+;; (setq *raw-thre-butter* 0.7607421875) ;;tmp
+;; (setq *sma-thre-butter* 0.73505859375) ;;tmp
+(setq *raw-thre-butter* 0.8) ;;tmp
+(setq *sma-thre-butter* 0.8) ;;tmp
 
 (setq *yes-query-sunny* "Cooked egg")
 (setq *no-query-sunny* "Raw egg")
@@ -13,12 +15,6 @@
 (setq *sma-thre-sunny* 0.9404296875) ;;tmp
 
 (setq *yes-flag* nil)
-
-(defun reset-manip-pose ()
-  (send *robot* :reset-manip-pose)
-  (send *ri* :angle-vector (send *robot* :angle-vector) 5000)
-  (send *ri* :wait-interpolation)
-  )
 
 (defun check-pot-place-before ()
   (send *ri* :stop-grasp :larm :wait t)
@@ -94,7 +90,7 @@
   )
 
 (defun do-exec-pour (&key (already_set nil))
-  (send *ri* :speak-jp "バターが溶けたら卵をフライパンに注ぐの調理を行います")
+  (send *ri* :speak-jp "バターが溶けたら卵をフライパンに注ぐ調理を行います")
   (stvlm-start-butter)
   (setq *yes-query* *yes-query-butter*)
   ;; subscribeしてバターが溶けていたら，pourを実行する
@@ -113,7 +109,7 @@
   )
 
 (defun do-exec-stop ()
-  (send *ri* :speak-jp "卵に火が通ったら火を止めるの調理を行います")
+  (send *ri* :speak-jp "卵に火が通ったら火を止める調理を行います")
   (stvlm-start-sunny)
   (setq *yes-query* *yes-query-sunny*)
   ;; subscribeして火が通っていたら，ihを消す
@@ -154,7 +150,7 @@
       (cook-pour-short-replay-test)
     (cook-pick-and-pour-short-replay-test)
     )
-  (reset-manip-pose)
+  (reset-manip-pose :time 2000)
   )
 
 (defun pour-egg-to-pot ()
@@ -179,4 +175,5 @@
   (do-exec-pour :already_set t)
   (clip-set-to-sunny)
   (do-exec-stop)
+  (send *ri* :speak-jp "目玉焼きの調理を完了しました")
   )
