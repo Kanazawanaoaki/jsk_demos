@@ -4,13 +4,13 @@
 
 (setq *yes-query-butter* "Melted butter")
 (setq *no-query-butter* "Hard butter")
-(setq *raw-thre-butter* 0.5) ;;tmp
-(setq *sma-thre-butter* 0.5) ;;tmp
+(setq *raw-thre-butter* 0.7607421875) ;;tmp
+(setq *sma-thre-butter* 0.73505859375) ;;tmp
 
 (setq *yes-query-sunny* "Cooked egg")
 (setq *no-query-sunny* "Raw egg")
-(setq *raw-thre-sunny* 0.5) ;;tmp
-(setq *sma-thre-sunny* 0.5) ;;tmp
+(setq *raw-thre-sunny* 0.93994140625) ;;tmp
+(setq *sma-thre-sunny* 0.9404296875) ;;tmp
 
 (setq *yes-flag* nil)
 
@@ -50,8 +50,25 @@
   (setq *hoge* msg)
   (setq data (send msg :data))
   (if (equal data *yes-query*)
-      (setq *yes-flag* t)
-      )
+      (progn
+        (setq *yes-flag* t)
+        (send *ri* :speak-jp "状態変化を認識しました")
+        ))
+  )
+
+(defun ok-voice-cb (msg)
+  (when msg
+    (setq *msg* msg)
+    (setq *voice-data* (send *msg* :transcript))
+    (setq *voice-data-flag* t)
+    (format t "voice-data: ~A ~%" *voice-data*)
+    (if (equal *voice-data* '("OK"))
+        (progn
+          (send *ri* :speak-jp "ありがとうございます")
+          (format t "了解しました！ ~%" *voice-data*)
+          (setq *yes-flag* t)
+          ))
+    )
   )
 
 (defun clip-set-to-butter ()
@@ -77,10 +94,12 @@
   )
 
 (defun do-exec-pour (&key (already_set nil))
+  (send *ri* :speak-jp "バターが溶けたら卵をフライパンに注ぐの調理を行います")
   (stvlm-start-butter)
   (setq *yes-query* *yes-query-butter*)
   ;; subscribeしてバターが溶けていたら，pourを実行する
   (ros::subscribe "/inference_probability_sma/state" std_msgs::String #'state-cb 1)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'ok-voice-cb)
   ;; while なんちゃら
   (setq *yes-flag* nil)
   (until *yes-flag*
@@ -90,13 +109,16 @@
   (pour-egg-to-pan :already_set already_set)
 
   (ros::unsubscribe "/inference_probability_sma/state")
+  (ros::unsubscribe "/speech_to_text")
   )
 
 (defun do-exec-stop ()
+  (send *ri* :speak-jp "卵に火が通ったら火を止めるの調理を行います")
   (stvlm-start-sunny)
   (setq *yes-query* *yes-query-sunny*)
   ;; subscribeして火が通っていたら，ihを消す
   (ros::subscribe "/inference_probability_sma/state" std_msgs::String #'state-cb 1)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'ok-voice-cb)
   ;; while なんちゃら
   (setq *yes-flag* nil)
   (until *yes-flag*
@@ -106,11 +128,13 @@
   (stop-ih)
 
   (ros::unsubscribe "/inference_probability_sma/state")
+  (ros::unsubscribe "/speech_to_text")
   )
 
 (defun do-exec-tmp ()
   ;; subscribeして沸騰していたら，pourを実行するプログラムを書く
   (ros::subscribe "/inference_probability_sma/state" std_msgs::String #'state-cb 1)
+  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'ok-voice-cb)
   ;; while なんちゃら
   (setq *yes-flag* nil)
   (until *yes-flag*
