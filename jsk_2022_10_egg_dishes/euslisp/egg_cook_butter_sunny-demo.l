@@ -6,13 +6,17 @@
 (setq *no-query-butter* "Hard solid butter")
 ;; (setq *raw-thre-butter* 0.7607421875) ;;tmp
 ;; (setq *sma-thre-butter* 0.73505859375) ;;tmp
-(setq *raw-thre-butter* 0.8) ;;tmp
-(setq *sma-thre-butter* 0.8) ;;tmp
+;; (setq *raw-thre-butter* 0.81) ;;tmp
+;; (setq *sma-thre-butter* 0.81) ;;tmp
+(setq *raw-thre-butter* 0.81) ;;tmp
+(setq *sma-thre-butter* 0.81) ;;tmp
 
 (setq *yes-query-sunny* "Cooked egg")
 (setq *no-query-sunny* "Raw egg")
-(setq *raw-thre-sunny* 0.93994140625) ;;tmp
-(setq *sma-thre-sunny* 0.9404296875) ;;tmp
+;; (setq *raw-thre-sunny* 0.93994140625) ;;tmp
+;; (setq *sma-thre-sunny* 0.9404296875) ;;tmp
+(setq *raw-thre-sunny* 0.88) ;;tmp
+(setq *sma-thre-sunny* 0.88) ;;tmp
 
 (setq *yes-flag* nil)
 
@@ -150,6 +154,8 @@
       (cook-pour-short-replay-test)
     (cook-pick-and-pour-short-replay-test)
     )
+  (clip-set-to-sunny)
+  (stvlm-start-sunny)
   (reset-manip-pose :time 2000)
   )
 
@@ -173,7 +179,6 @@
 
 (defun cook-sunny-demo () ;; before start you shold set-before-pour
   (do-exec-pour :already_set t)
-  (clip-set-to-sunny)
   (do-exec-stop)
   (send *ri* :speak-jp "目玉焼きの調理を完了しました")
   )

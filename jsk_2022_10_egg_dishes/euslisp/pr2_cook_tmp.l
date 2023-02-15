@@ -2,6 +2,7 @@
 
 (ros::load-ros-manifest "roseus")
 (ros::load-ros-package "stvlm")
+(ros::load-ros-manifest "speech_recognition_msgs")
 (ros::roseus "pr2_cook_with_teaching_motion")
 
 (format t "init ~%")

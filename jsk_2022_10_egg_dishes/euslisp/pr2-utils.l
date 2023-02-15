@@ -13,7 +13,7 @@
   ;; (ros::advertise "/pr2_imitation/controller/target_state" informatized_body_msgs::TargetState 1)
   )
 
-(defun reset-manip-pose (&key (time 5000)
+(defun reset-manip-pose (&key (time 5000))
   (send *robot* :reset-manip-pose)
   (send *ri* :angle-vector (send *robot* :angle-vector) time)
   (send *ri* :wait-interpolation)
