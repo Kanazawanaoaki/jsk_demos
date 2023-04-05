@@ -2,23 +2,27 @@
 
 (load "package://jsk_2022_10_egg_dishes/euslisp/pr2_cook_tmp.l")
 
+;; global variables
 (setq *yes-query-butter* "Melted lquid butter")
 (setq *no-query-butter* "Hard solid butter")
 ;; (setq *raw-thre-butter* 0.7607421875) ;;tmp
 ;; (setq *sma-thre-butter* 0.73505859375) ;;tmp
 ;; (setq *raw-thre-butter* 0.81) ;;tmp
 ;; (setq *sma-thre-butter* 0.81) ;;tmp
-(setq *raw-thre-butter* 0.81) ;;tmp
-(setq *sma-thre-butter* 0.81) ;;tmp
+(setq *raw-thre-butter* 0.87) ;;tmp
+(setq *sma-thre-butter* 0.87) ;;tmp
 
 (setq *yes-query-sunny* "Cooked egg")
 (setq *no-query-sunny* "Raw egg")
 ;; (setq *raw-thre-sunny* 0.93994140625) ;;tmp
 ;; (setq *sma-thre-sunny* 0.9404296875) ;;tmp
-(setq *raw-thre-sunny* 0.88) ;;tmp
-(setq *sma-thre-sunny* 0.88) ;;tmp
+;; (setq *raw-thre-sunny* 0.87) ;;tmp
+;; (setq *sma-thre-sunny* 0.87) ;;tmp
+(setq *raw-thre-sunny* 0.90) ;;tmp
+(setq *sma-thre-sunny* 0.90) ;;tmp
 
 (setq *yes-flag* nil)
+(setq *speak-jp* t)
 
 (defun check-pot-place-before ()
   (send *ri* :stop-grasp :larm :wait t)
@@ -52,7 +56,8 @@
   (if (equal data *yes-query*)
       (progn
         (setq *yes-flag* t)
-        (send *ri* :speak-jp "状態変化を認識しました")
+        (if *speak-jp* (send *ri* :speak-jp "状態変化を認識しました")
+          (send *ri* :speak-en "I recognized the state change."))
         ))
   )
 
@@ -64,7 +69,8 @@
     (format t "voice-data: ~A ~%" *voice-data*)
     (if (equal *voice-data* '("OK"))
         (progn
-          (send *ri* :speak-jp "ありがとうございます")
+          (if *speak-jp* (send *ri* :speak-jp "ありがとうございます")
+            (send *ri* :speak-en "Thank you!"))
           (format t "了解しました！ ~%" *voice-data*)
           (setq *yes-flag* t)
           ))
@@ -94,7 +100,8 @@
   )
 
 (defun do-exec-pour (&key (already_set nil))
-  (send *ri* :speak-jp "バターが溶けたら卵をフライパンに注ぐ調理を行います")
+  (if *speak-jp* (send *ri* :speak-jp "バターが溶けたら卵をフライパンに注ぐ調理を行います")
+    (send *ri* :speak-en "I do the cooking, when the butter is melted pour the eggs into the pan."))
   (stvlm-start-butter)
   (setq *yes-query* *yes-query-butter*)
   ;; subscribeしてバターが溶けていたら，pourを実行する
@@ -113,7 +120,8 @@
   )
 
 (defun do-exec-stop ()
-  (send *ri* :speak-jp "卵に火が通ったら火を止める調理を行います")
+  (if *speak-jp* (send *ri* :speak-jp "卵に火が通ったら火を止める調理を行います")
+    (send *ri* :speak-en "I do the cooking, when the eggs are cooked, turn off the fire."))
   (stvlm-start-sunny)
   (setq *yes-query* *yes-query-sunny*)
   ;; subscribeして火が通っていたら，ihを消す
@@ -166,7 +174,8 @@
   )
 
 (defun stop-ih ()
-  (load-cook-file :file_name "av-files/cook_data_stop-ih_20221027_02.l")
+  ;; (load-cook-file :file_name "av-files/cook_data_stop-ih_20221027_02.l")
+  (load-cook-file :file_name "av-files/cook_data_stop-ih_20230405_01.l")
   (send *ri* :start-grasp :rarm :wait t)
   (cook-replay-once)
   (reset-manip-pose)
@@ -180,5 +189,6 @@
 (defun cook-sunny-demo () ;; before start you shold set-before-pour
   (do-exec-pour :already_set t)
   (do-exec-stop)
-  (send *ri* :speak-jp "目玉焼きの調理を完了しました")
+  (if *speak-jp* (send *ri* :speak-jp "目玉焼きの調理を完了しました")
+    (send *ri* :speak-en "I have finished cooking the sunny-side up"))
   )

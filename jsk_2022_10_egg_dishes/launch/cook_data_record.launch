@@ -21,6 +21,29 @@
     </rosparam>
   </node>
 
+  <node name="place_data_collection"
+        pkg="jsk_data" type="data_collection_server.py"
+	    clear_params="true"
+        output="screen" if="$(arg collect_data)">
+    <rosparam subst_value="true">
+      message_filters: true
+      approximate_sync: true
+      save_dir: $(find jsk_2022_10_egg_dishes)/datas/$(arg project_name)/datas
+      slop: 0.1
+      wait_save_request: true
+      method: request
+      topics:
+          - name: /k4a/rgb/image_rect_color
+            msg_class: sensor_msgs/Image
+            fname: place_azure_kinect_rgb.png
+            savetype: ColorImage
+          - name: /kinect_head/rgb/image_rect_color/
+            msg_class: sensor_msgs/Image
+            fname: place_kinect_image_rect_color.png
+            savetype: ColorImage
+    </rosparam>
+  </node>
+
   <node name="cook_data_collection_rosbag"
         pkg="jsk_data" type="data_collection_server.py"
         clear_params="true"
