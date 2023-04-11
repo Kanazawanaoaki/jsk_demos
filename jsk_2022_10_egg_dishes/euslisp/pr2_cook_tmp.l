@@ -7,174 +7,7 @@
 
 (format t "init ~%")
 (load "package://jsk_2022_10_egg_dishes/euslisp/pr2-utils.l")
-(load "package://jsk_2022_10_egg_dishes/euslisp/models/red-cup.l")
-
-(defun setup()
-  (pr2-init)
-  (setq *robot* *pr2*)
-  (setq *rcup* (red-cup))
-  (setq *co* (make-coords))
-  (objects *robot*)
-  ;; (objects (list *robot* *co* *rcup*))
-  )
-
-(defun save_image()
-  (let (res
-	get-obj-pose-srv
-	obj-pose-res
-	)
-
-    (setq empty-srv (instance std_srvs::EmptyRequest :init))
-    (setq obj-pose-res (ros::service-call
-			"aero_new_image_collection"
-			empty-srv))
-    (format t "image saved ~%")
-    ))
-
-(defun save_single_rgb_image()
-  (let (res
-	get-obj-pose-srv
-	obj-pose-res
-	)
-
-    (setq empty-srv (instance std_srvs::EmptyRequest :init))
-    (setq obj-pose-res (ros::service-call
-			"aero_new_single_rgb_image_collection"
-			empty-srv))
-    (format t "image saved ~%")
-    ))
-
-(defun setup_table()
-  (setq *table_pose* (get_table))
-  )
-
-;; kanazawa devel
-(defun save_data ()
-  ;; (let (res)
-  (setq req (instance std_srvs::TriggerRequest :init))
-  (setq res (ros::service-call "tabletop_data_collection/save_request" req t))
-  (format t "data saved! ~%")
-    ;; )
-    )
-
-(defun save_data_wait ()
-  ;; (let (res)
-  (setq save-flag nil)
-  (until save-flag
-	 (setq req (instance std_srvs::TriggerRequest :init))
-	 (setq res (ros::service-call "tabletop_data_collection/save_request" req t))
-	 (if (send res :success)
-	     (setq save-flag t)
-	   ))
-  (format t "data saved! ~%")
-  ;; )
-  )
-
-(defun dissoc-rcup ()
-  (if (not (eql (send *rcup* :parent) nil))
-      (send (send *rcup* :parent) :dissoc *rcup*))
-  )
-
-(defun assoc-rcup ()
-  (dissoc-rcup)
-  (let (local-cds)
-    (setq local-cds (make-cascoords))
-    (send local-cds :newcoords (send (send *rcup* :handle-handle0) :copy-worldcoords))
-    (send local-cds :assoc *rcup*)
-    (send local-cds :newcoords (send (send *robot* :rarm :end-coords) :copy-worldcoords))
-    (send local-cds :dissoc *rcup*)
-    )
-  (send *viewer* :draw-objects)
-  (send (send *robot* :rarm :end-coords) :assoc *rcup*)
-  )
-
-(defun receive-object ()
-  ;; (send *co* :newcoords (make-coords :pos #f(550 -200 900)))
-  (send *co* :newcoords (make-coords :pos #f(550 -200 900) :rpy #f(0 0 -1.571)))
-  (send *robot* :rarm :inverse-kinematics
-	*co*
-        :rotation-axis t
-	:revert-if-fail nil)
-  (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-  (send *ri* :stop-grasp :rarm :wait t)
-  (send *ri* :speak-jp "物体を握らせて下さい")
-  (unix:sleep 3)
-  (send *ri* :start-grasp :rarm :wait t)
-
-  (assoc-rcup)
-  )
-
-(defun place-object (coords) ;; objectをcoordsに置く
-  ;; 置く動作
-  (send *co* :newcoords (send coords :copy-worldcoords))
-  (send *co* :translate #f(-100 0 100))
-  (send *robot* :rarm :inverse-kinematics
-	*co*
-	:move-target *rcup*
-        :rotation-axis t
-	:revert-if-fail nil)
-  (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
-  (send *co* :translate #f(100 0 -100))
-  (send *robot* :rarm :inverse-kinematics
-	*co*
-	:move-target *rcup*
-        :rotation-axis t
-	:revert-if-fail nil)
-  (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
-
-  ;; 離す
-  (send *ri* :stop-grasp :rarm :wait t)
-  (send (send *robot* :rarm :end-coords) :dissoc *rcup*)
-
-  (send *co* :newcoords (send (send *robot* :rarm :end-coords) :copy-worldcoords))
-  (send *co* :translate #f(-100 0 0))
-  (send *robot* :rarm :inverse-kinematics
-	*co*
-        :rotation-axis t
-	:revert-if-fail nil)
-  (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
-
-  ;; 初期姿勢に
-  (send *robot* :reset-manip-pose)
-  (send *ri* :angle-vector (send *robot* :angle-vector) 6000)
-  )
-
-(defun pick-object (coords)
-  ;; 掴む動作
-  (dissoc-rcup)
-  (send *rcup* :newcoords (send coords :copy-worldcoords))
-  (send *co* :newcoords (send (send *rcup* :handle-handle0) :copy-worldcoords))
-  (send *co* :translate #f(-100 0 0))
-  (send *robot* :rarm :inverse-kinematics
-	*co*
-        :rotation-axis t
-	:revert-if-fail nil)
-  (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
-  (send *co* :translate #f(100 0 0))
-  (send *robot* :rarm :inverse-kinematics
-	*co*
-        :rotation-axis t
-	:revert-if-fail nil)
-  (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
-
-  ;; 離す
-  (send *ri* :stop-grasp :rarm :wait t)
-  (send (send *robot* :rarm :end-coords) :dissoc *rcup*)
-
-  (send *co* :newcoords (send (send *robot* :rarm :end-coords) :copy-worldcoords))
-  (send *co* :translate #f(-100 0 0))
-  (send *robot* :rarm :inverse-kinematics
-	*co*
-        :rotation-axis t
-	:revert-if-fail nil)
-  (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
-
-  ;; 初期姿勢に
-  (send *robot* :reset-manip-pose)
-  (send *ri* :angle-vector (send *robot* :angle-vector) 6000)
-  )
+(setq *co* (make-coords))
 
 ;; with teaching
 (defun ok-wait ()
@@ -208,7 +41,7 @@
 
   (send *co* :newcoords (make-coords :pos #f(550 -200 900) :rpy #f(0 0 -1.571)))
   (send *robot* :rarm :inverse-kinematics
-	*co*
+        *co*
         :rotation-axis t
 	:revert-if-fail nil)
   (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
@@ -558,7 +391,7 @@
   (send *robot* :reset-manip-pose)
   (send *co* :newcoords (make-coords :pos #f(550 -200 900) :rpy #f(0 0 -1.571)))
   (send *robot* :rarm :inverse-kinematics
-	*co*
+        *co*
         :rotation-axis t
 	:revert-if-fail nil)
   (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
@@ -1550,15 +1383,6 @@
   (manequine-end)
   (send *robot* :reset-manip-pose)
 
-  ;; (send *robot* :head-neck-y :joint-angle 0.0)
-  ;; (send *robot* :head-neck-p :joint-angle 60.0)
-
-  ;; (send *co* :newcoords (make-coords :pos #f(550 -200 900) :rpy #f(0 0 -1.571)))
-  ;; (send *robot* :rarm :inverse-kinematics
-  ;;   *co*
-  ;;       :rotation-axis t
-  ;;   :revert-if-fail nil)
-  ;; (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
   (send *ri* :stop-grasp :rarm :wait t)
@@ -1568,8 +1392,8 @@
 
   (wait-ok-manequine :arm (list "rarm" "larm")) ;; OKと言われるまでマネキンモード
   (send *robot* :angle-vector (send *ri* :state :potentio-vector))
-  ;; (send *robot* :head-neck-y :joint-angle 0.0)
-  ;; (send *robot* :head-neck-p :joint-angle 60.0)
+  (send *robot* :head-neck-y :joint-angle 0.0)
+  (send *robot* :head-neck-p :joint-angle 50.0)
   (setq *initial-av* (send *robot* :angle-vector))
   (unix:sleep 2)
   (send *ri* :start-grasp :rarm :wait t) ;; TODO 持つ強さ？
@@ -1592,7 +1416,8 @@
   (unix:sleep 2)
   (wait-ok-manequine)
   (send *robot* :head-neck-y :joint-angle 0.0)
-  (send *robot* :head-neck-p :joint-angle 60.0)
+  ;; (send *robot* :head-neck-p :joint-angle 60.0)
+  (send *robot* :head-neck-p :joint-angle 50.0)
   (send *robot* :angle-vector (send *ri* :state :potentio-vector))
   (setq *cook-initial-av* (send *robot* :angle-vector))
   (setq *cook-initial-rec* (send *robot* :rarm :end-coords))
@@ -1817,7 +1642,6 @@
 
 (defun dump-cook-pour-file (&key (file_name "tmp-cook-pour-teaching-data.l"))
   (dump-loadable-structure file_name *initial-av* *first-pregrasp-short-rav-list* *after-grasp-short-rav-list* *release-short-rav-list*)
-  ;; (dump-loadable-structure file_name *initial-av* *cook-short-rav-list* *initial-head-neck-y* *initial-head-neck-p*)
   (format t "data dumped in ~A ~%" file_name)
   )
 
@@ -1843,7 +1667,6 @@
   (format t "release-short-rav-list size : ~A ~%" (length *release-short-rav-list*))
   )
 
-
 ;; add for stvlm
 (defun clip-query-change (&key (yes-query "Melted butter") (no-query "Hard butter"))
   (let (prompt)
@@ -1866,4 +1689,3 @@
   )
 
 ;; (manequine-end)
-(setup)

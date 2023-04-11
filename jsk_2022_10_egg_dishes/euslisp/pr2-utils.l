@@ -1,16 +1,10 @@
 (load "package://pr2eus/pr2-interface.l")
-;; (load "package://informatized_body_core/euslisp/informatized-body-core.l")
-;; (load "package://informatized_body_utils/euslisp/informatized-body-utils.l")
-;; (load "package://informatized_body_core/euslisp/informatized-body-core.l")
-;; (initialize-ibm-core "pr2_imitation")
-;; (initialize-ibm-utils "pr2_imitation")
 
 (defun init-pr2 ()
   (pr2-init)
   (setq *robot* *pr2*)
   (objects *robot*)
   (send *robot* :reset-manip-pose) ;; TODO change
-  ;; (ros::advertise "/pr2_imitation/controller/target_state" informatized_body_msgs::TargetState 1)
   )
 
 (defun reset-manip-pose (&key (time 5000))
@@ -19,21 +13,7 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun get-image-latent (&key (filename "/tmp/target.png"))
-  (get-image-latent-base "pr2_imitation" :filename filename))
-
-(defun save-image (&key (filename "/tmp/target.png"))
-  (save-image-base "pr2_imitation" :filename filename))
-
-(defun sample-codes ()
-  (send *ri* :stop-grasp)
-  (send *ri* :start-grasp)
-  (send *ri* :state :potentio-vector)
-  (send *robot* :reset-manip-pose)
-  (send *ri* :angle-vector (send *robot* :angle-vector))
-  )
-
-;; add for kanazawa yaml handling
+;; add for yaml handling
 (defun load-yaml-config (config-file)
   (let ((control_joints nil))
     (unix:system (format nil "rosparam load ~A yaml_load_eus" config-file))
@@ -52,8 +32,6 @@
     (format t "now path is ~A ~%" file-path)
     (load-yaml-config file-path)
     ))
-
-;; ;; add for kanazawa data record
 
 ;; dialog
 (ros::load-ros-manifest "speech_recognition_msgs")
@@ -170,25 +148,4 @@
     (format t "controller service response: ~A ~%" (send res :ok))
     ))
 
-;; data_collection
-(ros::load-ros-manifest "std_srvs")
-
-(defun trigger-request (service)
-  (setq req (instance std_srvs::TriggerRequest :init))
-  (setq res (ros::service-call service req t))
-  )
-
-(defun start-data-collection (&key (service "data_collection_rosbag_test/start_request"))
-  (trigger-request service)
-  )
-
-(defun end-data-collection (&key (service "data_collection_rosbag_test/end_request"))
-  (trigger-request service)
-  )
-
-;; data collection duka
-(defun data-collection-start (&key (filename nil))
-  (data-collection-start-base "pr2_imitation" :filename filename))
-
-(defun data-collection-stop ()
-  (data-collection-stop-base "pr2_imitation"))
+;; 

@@ -101,12 +101,12 @@
 (defun update-view ()
   (send *pr2* :copy-worldcoords)
   (send *viewer* :draw-objects)
-  (send *irtviewer* :look-all *pr2*)           
+  (send *irtviewer* :look-all *pr2*)
   )
 
 (defun update-scene ()
   (objects (list *scene* *pr2*))
-  (send *irtviewer* :look-all *pr2*)           
+  (send *irtviewer* :look-all *pr2*)
   )
 
 (defun update-pos ()
@@ -618,14 +618,14 @@
 
 (defun speech-after-move ()
   (send *ri* :speak-jp "電源ケーブルを挿して，合図して下さい")
-  
+
   (ros::unsubscribe "/speech_to_text")
   (setq *ok-flag* nil)
   (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
   (until *ok-flag*
 	 (ros::spin-once)
 	 (ros::sleep)
-	 )  
+	 )
   (send *ri* :speak-jp "ありがとうございます．調理を再開します")
   )
 
@@ -645,7 +645,7 @@
   )
 
 (defun go-to-stove-with-speech-before-and-after ()
-  ;; kitchen spotからstoveに移動し，拠点も移動させる  
+  ;; kitchen spotからstoveに移動し，拠点も移動させる
   (speech-before-move)
   (unix:sleep *w-time*)
   (go-to-stove)
@@ -672,7 +672,7 @@
   ;; kitchen spot(拠点)からsinkに移動する
   (speech-before-move)
   (unix:sleep *w-time*)
-  (go-to-sink)  
+  (go-to-sink)
   )
 
 (defun go-to-kitchen-from-sink-with-speech-after ()
@@ -885,3 +885,154 @@
   (after-move)
   )
 
+;; add for correct robot coords
+
+;; correct with touch
+(setq *ih-panel-coords* (make-coords :pos (float-vector 563 7940 30865) :rpy (float-vector  3.044 1.407 2.87)))
+(defun correct-robot-coords-ih-touch ()
+  (when (send *ri* :simulation-modep)
+    (send *pr2* :move-to
+          (make-coords :pos #f(1247.602 8254.205 30013.269) :rpy #f(3.132 0.018 -0.008)) :world)
+    (return-from correct-ih-knob-coords))
+  ;; ;; random coords when kinematics simulator
+  ;; (if (send *ri* :simulation-modep)
+  ;;   (send *pr2* :move-to (send (random-coords (send *arrange-spot* :copy-worldcoords) :x 10 :y 10 :theta 5) :copy-worldcoords) :world))
+
+  (send *ri* :speak-jp "IHコンロの位置を触って確認します")
+  (set-pose)
+  (update-pos)
+  (send *ri* :start-grasp :larm :wait t)
+
+  ;; Mainly copied from (push-knob)
+  ;; Pre pose
+  (let (av1 av2 av3)
+    (send *pr2* :rarm :move-end-pos #f(0 200 0) :world)
+    (setq av1 (send *pr2* :angle-vector))
+    (send *pr2* :larm :inverse-kinematics
+          (send *ih-knob-coords* :copy-worldcoords))
+    (send *pr2* :larm :move-end-pos #f(100 200 250) :world)
+    (send *pr2* :larm :move-end-rot 90 :x)
+    (setq av2 (send *pr2* :angle-vector))
+    (send *pr2* :larm :move-end-pos #f(-150 0 0) :world)
+    (setq av3 (send *pr2* :angle-vector))
+    (send *ri* :angle-vector-sequence
+          (list av1 av2 av3) (list 1000 2000 2000))
+    (send *ri* :wait-interpolation))
+  (update-view)
+
+  ;; Detect z direction
+  (let (av avs tms)
+    (dotimes (i 15)
+      (send *pr2* :larm :move-end-pos #f(0 0 -10) :world)
+      (setq av (send *pr2* :angle-vector))
+      (setq avs (append avs (list av)))
+      (setq tms (append tms (list 200))))
+    (send *ri* :angle-vector-sequence avs tms)
+    (cancel-motion-when-touch :arm :larm :direction :z :threshold -15))
+  (update-view)
+
+  (let (av1 av2 av3)
+    (send *pr2* :larm :move-end-pos #f(150 -30 100) :world)
+    (setq av1 (send *pr2* :angle-vector))
+    (send *pr2* :larm :move-end-pos #f(0 -50 -150) :world)
+    (setq av2 (send *pr2* :angle-vector))
+    (send *pr2* :larm :move-end-pos #f(0 30 -160) :world)
+    (send *pr2* :larm :move-end-rot -90 :x)
+    (setq av3 (send *pr2* :angle-vector))
+    (send *ri* :angle-vector-sequence
+          (list av1 av2 av3) (list 1000 1000 1000))
+    (send *ri* :wait-interpolation))
+  (update-view)
+
+  ;; Detect x direction for the next y ditection
+  (let (av avs tms)
+    (dotimes (i 15)
+      (send *pr2* :larm :move-end-pos #f(-10 0 0) :world)
+      (setq av (send *pr2* :angle-vector))
+      (setq avs (append avs (list av)))
+      (setq tms (append tms (list 200))))
+    (send *ri* :angle-vector-sequence avs tms)
+    (cancel-motion-when-touch :arm :larm :direction :x :threshold -15)
+    (send *pr2* :larm :move-end-pos #f(5 0 0) :world))
+  (update-view)
+
+  ;; Detect y direction of *ih-knob-coords*
+  (let (av avs tms)
+    (dotimes (i 25)
+      (send *pr2* :larm :move-end-pos #f(0 -10 0) :world)
+      (setq av (send *pr2* :angle-vector))
+      (setq avs (append avs (list av)))
+      (setq tms (append tms (list 400))))
+    (send *ri* :angle-vector-sequence avs tms)
+    (cancel-motion-when-touch :arm :larm :direction :y :threshold -5))
+  (update-view)
+
+  ;; Calculate *ih-knob-coords*
+  (unix:usleep (* 100 1000))
+  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+  (let* ((ih-knob-coords (copy-object *ih-knob-coords*))
+         (fingertip (send (send *pr2* :larm :end-coords :copy-worldcoords)
+                          :translate #f(20 0 0) :local))
+         (new-ih-knob-coords (send fingertip :translate #f(0 -55 85) :world))
+         diff)
+    ;; Update *pr2* worldcoords
+    (setq diff (v- (send *ih-knob-coords* :worldpos)
+                   (send new-ih-knob-coords :worldpos)))
+    (send *pr2* :translate diff :world)
+    (format t "*pr2* coords is updated to ~A~%"
+            (send *pr2* :worldcoords)))
+
+  ;; Reset PR2 left arm
+  (send *pr2* :larm :move-end-pos #f(100 0 0) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
+  (update-view)
+  )
+
+;; correct with recognition
+(require :detection-interface "package://jsk_perception/euslisp/detection_interface.l")
+(defparameter *detection-topic* "/ObjectDetection")
+(defvar *correct-distance-threshold* 25.0)
+(defvar *correct-rotation-threshold* 0.09)
+
+(defun correct-robot-coords-ih-touch ()
+  (let ((reach-flag nil)
+        (idealcds (make-coords :pos (float-vector 775 100 0)
+                               :rpy (float-vector 0.05 0 0)))
+        (cds))
+    (while (null reach-flag)
+      (setq cds (check-detection :type "panel" :speak-name "panel" :timeout 10 :speak nil))
+      (send *obj* :reset-coords)
+      (send *obj* :transform cds)
+      (dump-structure *standard-output*
+                      (list (send *pr2* :copy-worldcoords)
+                            (send cds :copy-worldcoords)))
+      (setq cds
+            (make-coords :pos
+                         (float-vector (elt (send cds :worldpos) 0)
+                                       (elt (send cds :worldpos) 1) 0)
+                         :rpy (list (elt (car (rpy-angle (send cds :worldrot))) 0)
+                                    0 0)))
+      (setq diffcds (send (send idealcds :inverse-transformation)
+                          :transform (send cds :worldcoords) :world))
+
+      (warn "~%~A -> ~A / ~A~%" diffcds cds idealcds)
+      (ros::ros-info "DIFF: ~A" diffcds)
+      (if (and (< (norm (float-vector (elt (send diffcds :worldpos) 0)
+                                      (elt (send diffcds :worldpos) 1)))
+                  *correct-distance-threshold*)
+               (< (abs (elt (car (rpy-angle (send diffcds :worldrot))) 0))
+                  *correct-rotation-threshold*))
+          (progn ;;  there is not difference
+            (format t "reached to ideal coords! ~%")
+            (setq reach-flag t)
+            )
+        (progn ;;  there is much difference
+          (send *ri* :go-pos-unsafe
+                (/ (elt (send diffcds :worldpos) 0) 1100.0)
+                (/ (elt (send diffcds :worldpos) 1) 1100.0)
+                (* 0.9 (rad2deg (elt (car (rpy-angle (send diffcds :worldrot))) 0))))
+          (send *ri* :ros-wait 0.5 :spin-self t :spin t) ;; attention-check ...
+          ))
+      ))
+  )
