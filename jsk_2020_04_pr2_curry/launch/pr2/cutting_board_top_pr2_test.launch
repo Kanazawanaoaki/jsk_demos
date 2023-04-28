@@ -41,6 +41,7 @@
   <!-- decompress -->
   <include file="$(find jsk_2020_04_pr2_curry)/launch/pr2/pr2_decompress.launch" if="$(arg run_decompress)">
     <arg name="manager" value="$(arg manager)" />
+    <arg name="launch_manager" value="false" />
     <arg name="RGB_CAMERA_INFO" value="$(arg RGB_CAMERA_INFO)" />
     <arg name="RGB_IMAGE" value="$(arg RGB_IMAGE)" />
     <arg name="RGB_REMOTE_IMAGE" value="$(arg RGB_REMOTE_IMAGE)" />
