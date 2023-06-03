@@ -148,4 +148,6 @@
     (format t "controller service response: ~A ~%" (send res :ok))
     ))
 
+
+(init-pr2)
 ;; 
