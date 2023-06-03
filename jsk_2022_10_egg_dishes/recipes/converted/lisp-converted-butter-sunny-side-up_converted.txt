@@ -1,0 +1,4 @@
+(pour "butter" "frying pan" )
+(fire-on "stove" )
+(START-CONDITION "melted liquid butter" '(pour "egg" "frying pan" ))
+(START-CONDITION "cooked egg" '(fire-off "stove" ))
