@@ -393,7 +393,7 @@
   (send *robot* :rarm :inverse-kinematics
         *co*
         :rotation-axis t
-	:revert-if-fail nil)
+        :revert-if-fail nil)
   (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
@@ -1645,7 +1645,7 @@
   (format t "data dumped in ~A ~%" file_name)
   )
 
-(defun summarize-cook-pour-datas (&key (thre 0.5)) ;;TODO リスト処理で書き換えたい
+(defun summarize-cook-pour-datas (&key (thre 0.5)) ;;TODO リストのリスト処理で書き換えたい
   (setq *first-pregrasp-short-rav-list* (summarize-rav *first-pregrasp-short-rav-list* :threshold thre))
   (setq *after-grasp-short-rav-list* (summarize-rav *after-grasp-short-rav-list* :threshold thre))
   (setq *release-short-rav-list* (summarize-rav *release-short-rav-list* :threshold thre))

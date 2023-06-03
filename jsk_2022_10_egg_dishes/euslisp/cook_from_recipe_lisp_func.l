@@ -1,6 +1,7 @@
 #!/usr/bin/env roseus
 
 (load "package://jsk_2022_10_egg_dishes/euslisp/pr2_cook_tmp.l")
+(load "package://jsk_2022_10_egg_dishes/euslisp/wrench.l")
 
 ;; global variables
 (setq *yes-query-butter* "Melted lquid butter")
@@ -83,14 +84,17 @@
   (cook-pick-short-replay-test)
   )
 
-(defun pour-egg-to-pan (&key (already_set nil))
+(defun pour-egg-to-pan (&key (already_set nil) (set-after t))
   (load-cook-pour-file :file_name "av-files/cook_pour_bowl_to_pan_data_20221027_01.l")
   (if already_set
       (cook-pour-short-replay-test)
     (cook-pick-and-pour-short-replay-test)
     )
-  (clip-set-to-sunny)
-  (stvlm-start-sunny)
+  (if set-after
+      (progn
+        (clip-set-to-sunny)
+        (stvlm-start-sunny)
+        ))
   (reset-manip-pose :time 2000)
   )
 
@@ -117,7 +121,7 @@
   (format t "pour ~A to ~A ~%" ing tool)
   (cond
    ((and (equal ing "egg") (equal tool "pan"))
-    (pour-egg-to-pan)
+    (pour-egg-to-pan :set-after nil)
     )
    ((and (equal ing "egg") (equal tool "pot"))
     (pour-egg-to-pot)
@@ -131,13 +135,88 @@
    )
   )
 
+(defun move-until-touch (&rest args &key (arm :rarm))
+  (let (av avs tms)
+    (dotimes (i 15)
+      (send *pr2* arm :move-end-pos #f(10 0 0) :world)
+      (setq av (send *pr2* :angle-vector))
+      (setq avs (append avs (list av)))
+      (setq tms (append tms (list 400)))
+      )
+    (send *ri* :angle-vector-sequence avs tms))
+
+  (cancel-motion-when-touch :arm arm :direction :x :threshold -15)
+  )
+
+(defun rotate-knob (&rest args &key (deg 30) (arm :larm) &allow-other-keys)
+  ;; rotate
+  (let (av avs tms (ik-target (send (send *pr2* arm :end-coords) :copy-worldcoords)))
+    (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+    (if (> deg 0)
+      (progn
+        (dotimes (i (/ deg 10))
+          (send ik-target :rotate (deg2rad 10) :x)
+          (send *pr2* arm :inverse-kinematics
+                (send ik-target :copy-worldcoords)
+                :rotation-axis t
+                :debug-view nil)
+          (setq av (send *pr2* :angle-vector))
+          (setq avs (append avs (list av)))
+          (setq tms (append tms (list 200)))
+          ))
+      (dotimes (i (/ (* deg -1) 10))
+        (send ik-target :rotate (deg2rad -10) :x)
+        (send *pr2* arm :inverse-kinematics
+              (send ik-target :copy-worldcoords)
+              :rotation-axis t
+              :debug-view nil)
+        (setq av (send *pr2* :angle-vector))
+        (setq avs (append avs (list av)))
+        (setq tms (append tms (list 200)))
+        )
+      )
+    (send *ri* :angle-vector-sequence avs tms)
+    (send *ri* :wait-interpolation)
+    )
+  )
+
 (defun fire-on (tool)
   (format t "on ~A  ~%" tool)
-  ;; (start-ih)?
   (load-cook-file :file_name "av-files/cook_data_stop-ih_20230405_01.l")
   (send *ri* :start-grasp :rarm :wait t)
   (cook-replay-once)
-  ;; TODO rotate and release?
+
+  ;; grasp knob
+  (send *ri* :move-gripper :rarm 0.08)
+
+  (let ((ik-target (make-coords :pos (float-vector 540 -50 700) :rpy (float-vector -0.008 -0.028 3.108))))
+    (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+    (send *pr2* :rarm :inverse-kinematics
+          (send ik-target :copy-worldcoords)
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector))
+    (send *ri* :wait-interpolation)
+
+    ;; (move-until-touch)
+    ;; (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+    ;; (send ik-target :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+    ;; (send ik-target :translate #f(-10 0 0) :world)
+    ;; (send *pr2* :rarm :inverse-kinematics
+    ;;       (send ik-target :copy-worldcoords)
+    ;;       :rotation-axis t
+    ;;       :debug-view nil)
+    ;; (send *ri* :angle-vector (send *pr2* :angle-vector))
+    ;; (send *ri* :wait-interpolation)
+    )
+
+  (send *ri* :start-grasp :rarm :wait t :gain 100)
+  ;; rotate
+  (rotate-knob :deg 30 :arm :rarm)
+  ;; release
+  (send *ri* :stop-grasp :rarm :wait t)
+  (set-initial-av)
+  (reset-manip-pose)
   )
 
 (defun fire-off (tool)

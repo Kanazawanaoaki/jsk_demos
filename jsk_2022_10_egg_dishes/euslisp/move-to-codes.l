@@ -178,7 +178,7 @@
   (until *ok-flag*
          (ros::spin-once)
          (ros::sleep)
-         )  
+         )
   (send *ri* :speak-jp "ありがとうございます")
   (unix:sleep *w-time*)
   )
@@ -209,7 +209,7 @@
              )
            )
          )
-  
+
   (send *ri* :speak-jp "次の行動に移ります")
   (unix:sleep *w-time*)
   )
@@ -230,7 +230,7 @@
              )
            )
          )
-  
+
   (send *ri* :speak-jp "次の行動に移ります")
   (unix:sleep *w-time*)
   )
@@ -893,7 +893,7 @@
   (when (send *ri* :simulation-modep)
     (send *pr2* :move-to
           (make-coords :pos #f(1247.602 8254.205 30013.269) :rpy #f(3.132 0.018 -0.008)) :world)
-    (return-from correct-ih-knob-coords))
+    (return-from correct-robot-coords-ih-touch))
   ;; ;; random coords when kinematics simulator
   ;; (if (send *ri* :simulation-modep)
   ;;   (send *pr2* :move-to (send (random-coords (send *arrange-spot* :copy-worldcoords) :x 10 :y 10 :theta 5) :copy-worldcoords) :world))
@@ -995,7 +995,7 @@
 (defvar *correct-distance-threshold* 25.0)
 (defvar *correct-rotation-threshold* 0.09)
 
-(defun correct-robot-coords-ih-touch ()
+(defun correct-robot-coords-ih-rec ()
   (let ((reach-flag nil)
         (idealcds (make-coords :pos (float-vector 775 100 0)
                                :rpy (float-vector 0.05 0 0)))
