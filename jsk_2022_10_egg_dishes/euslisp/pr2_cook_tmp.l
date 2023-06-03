@@ -268,7 +268,7 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun replay-short-rav-list (rav-list &key (time 200) (reverse nil))
+(defun replay-short-rav-list (rav-list &key (time 150) (reverse nil)) ;; time 200
   ;; (send *robot* :head-neck-y :joint-angle 0.0)
   ;; (send *robot* :head-neck-p :joint-angle 60.0)
   (send *robot* :head-neck-y :joint-angle *initial-head-neck-y*)

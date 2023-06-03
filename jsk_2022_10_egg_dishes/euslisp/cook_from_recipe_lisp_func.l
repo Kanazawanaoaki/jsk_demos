@@ -10,8 +10,10 @@
 ;; (setq *sma-thre-butter* 0.73505859375) ;;tmp
 ;; (setq *raw-thre-butter* 0.81) ;;tmp
 ;; (setq *sma-thre-butter* 0.81) ;;tmp
-(setq *raw-thre-butter* 0.87) ;;tmp
-(setq *sma-thre-butter* 0.87) ;;tmp
+;; (setq *raw-thre-butter* 0.87) ;;tmp
+;; (setq *sma-thre-butter* 0.87) ;;tmp
+(setq *raw-thre-butter* 0.91) ;;tmp
+(setq *sma-thre-butter* 0.91) ;;tmp
 
 (setq *yes-query-sunny* "Cooked egg")
 (setq *no-query-sunny* "Raw egg")
@@ -19,8 +21,10 @@
 ;; (setq *sma-thre-sunny* 0.9404296875) ;;tmp
 ;; (setq *raw-thre-sunny* 0.87) ;;tmp
 ;; (setq *sma-thre-sunny* 0.87) ;;tmp
-(setq *raw-thre-sunny* 0.90) ;;tmp
-(setq *sma-thre-sunny* 0.90) ;;tmp
+;; (setq *raw-thre-sunny* 0.90) ;;tmp
+;; (setq *sma-thre-sunny* 0.90) ;;tmp
+(setq *raw-thre-sunny* 0.95) ;;tmp
+(setq *sma-thre-sunny* 0.95) ;;tmp
 
 (setq *yes-flag* nil)
 (setq *speak-jp* t)
@@ -104,6 +108,13 @@
   (reset-manip-pose)
   )
 
+(defun pour-butter-to-pan ()
+  ;; (load-cook-pour-file :file_name "av-files/cook_pour_butter_bowl_to_pan_data_20230603_01.l")
+  (load-cook-pour-file :file_name "av-files/cook_pour_butter_bowl_to_pan_data_20230603_02.l")
+  (cook-pick-and-pour-short-replay-test)
+  (reset-manip-pose :time 2000)
+  )
+
 (defun stop-ih ()
   ;; (load-cook-file :file_name "av-files/cook_data_stop-ih_20221027_02.l")
   (load-cook-file :file_name "av-files/cook_data_stop-ih_20230405_01.l")
@@ -120,15 +131,14 @@
 (defun pour (ing tool)
   (format t "pour ~A to ~A ~%" ing tool)
   (cond
-   ((and (equal ing "egg") (equal tool "pan"))
+   ((and (equal ing "egg") (equal tool "frying pan"))
     (pour-egg-to-pan :set-after nil)
     )
    ((and (equal ing "egg") (equal tool "pot"))
     (pour-egg-to-pot)
     )
-   ((and (equal ing "butter") (equal tool "pan"))
-    (pour-egg-to-pot)
-    ;; TODO butter
+   ((and (equal ing "butter") (equal tool "frying pan"))
+    (pour-butter-to-pan)
     )
    (t
     (print "Sorry. this ing and tool pattern is not defined"))
@@ -152,6 +162,9 @@
   ;; rotate
   (let (av avs tms (ik-target (send (send *pr2* arm :end-coords) :copy-worldcoords)))
     (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+    (send *pr2* :head-neck-y :joint-angle *initial-head-neck-y*)
+    (send *pr2* :head-neck-p :joint-angle *initial-head-neck-p*)
+
     (if (> deg 0)
       (progn
         (dotimes (i (/ deg 10))
@@ -235,10 +248,10 @@
     (setq *sma-thre* *sma-thre-butter*)
     )
    ((equal condition "cooked egg")
-    (setq *yes-query* *yes-query-egg*)
-    (setq *no-query* *no-query-egg*)
-    (setq *raw-thre* *raw-thre-egg*)
-    (setq *sma-thre* *sma-thre-egg*)
+    (setq *yes-query* *yes-query-sunny*)
+    (setq *no-query* *no-query-sunny*)
+    (setq *raw-thre* *raw-thre-sunny*)
+    (setq *sma-thre* *sma-thre-sunny*)
     )
    )
   ;; set
@@ -261,7 +274,7 @@
   )
 
 (defun cook-demo-from-recipe ()
-  ;; TODO args recipe-name など
+  ;; TODO args recipe-name などいれたい
   (load "package://jsk_2022_10_egg_dishes/recipes/converted/lisp-converted-butter-sunny-side-up_converted.txt")
   )
 
