@@ -87,12 +87,16 @@
   ;; (send *arrow* :transform now-trans)
   )
 
-(defun pr2-move ()
+(defun pr2-move (&key (move-real nil))
   (setq now-coords (make-coords :pos (float-vector (elt (send *arrow* :worldpos) 0) (elt (send *arrow* :worldpos) 1) 0)))
   (setq theta (car (car (rpy-angle *current-rot*))))
 
   (send now-coords :rotate theta :z :local)
   (send *robot* :move-to (send now-coords :copy-worldcoords))
+  (if move-real
+      (progn
+        (send *ri* :go-pos (* (elt (send now-coords :worldpos) 0) 0.001) (* (elt (send now-coords :worldpos) 1) 0.001) theta)
+        ))
   )
 
 (format t "please exec (get-current-coords) (show-camera-coords) (pr2-move) ~%")
