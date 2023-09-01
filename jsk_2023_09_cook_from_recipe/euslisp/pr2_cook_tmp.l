@@ -1,12 +1,12 @@
 #!/usr/bin/env roseus
 
 (ros::load-ros-manifest "roseus")
-(ros::load-ros-package "stvlm")
+(ros::load-ros-package "lc_state_recognition")
 (ros::load-ros-manifest "speech_recognition_msgs")
 (ros::roseus "pr2_cook_with_teaching_motion")
 
 (format t "init ~%")
-(load "package://jsk_2022_10_egg_dishes/euslisp/pr2-utils.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2-utils.l")
 (setq *co* (make-coords))
 
 ;; with teaching
@@ -1667,7 +1667,7 @@
   (format t "release-short-rav-list size : ~A ~%" (length *release-short-rav-list*))
   )
 
-;; add for stvlm
+;; add for lc_state_recognition
 (defun clip-query-change (&key (yes-query "Melted butter") (no-query "Hard butter"))
   (let (prompt)
     (setq prompt (format nil "~A;~A" yes-query no-query))
@@ -1675,15 +1675,15 @@
     (format t "clip prompt is changed to ~A ~%" prompt)
     ))
 
-(defun stvlm-command (&key (yes-query "Melted butter") (no-query "Hard butter") (raw-threshold 0.4) (sma-threshold 0.5))
+(defun lc_state_recognition-command (&key (yes-query "Melted butter") (no-query "Hard butter") (raw-threshold 0.4) (sma-threshold 0.5))
   (let (res)
-    (setq req (instance stvlm::StateChangeRecognitionRequest :init))
+    (setq req (instance lc_state_recognition::StateChangeRecognitionRequest :init))
     (send req :yes_query yes-query)
     (send req :no_query no-query)
     (send req :raw_threshold raw-threshold)
     (send req :sma_threshold sma-threshold)
     (setq res (ros::service-call "/state_recognition/command" req t))
-    (format t "stvlm command is sent! ~%")
+    (format t "lc_state_recognition command is sent! ~%")
     (format t "result : ~A ~%" res)
     )
   )

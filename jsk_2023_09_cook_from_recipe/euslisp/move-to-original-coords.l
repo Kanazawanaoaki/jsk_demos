@@ -1,6 +1,6 @@
 (load "package://pr2eus/pr2-interface.l")
 (load "models/arrow-object.l")
-(ros::load-ros-manifest "jsk_2022_10_egg_dishes")
+(ros::load-ros-manifest "jsk_2023_09_cook_from_recipe")
 
 (defun init-pr2 ()
   (pr2-init)
@@ -14,7 +14,7 @@
 
 (defun calc-pnp-request ()
   (let (req res)
-    (setq req (instance jsk_2022_10_egg_dishes::CalcPnpRequest :init))
+    (setq req (instance jsk_2023_09_cook_from_recipe::CalcPnpRequest :init))
     (setq res (ros::service-call "calc_pnp_with_superglue" req t))
     (if (send res :success)
         (return-from calc-pnp-request res)

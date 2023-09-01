@@ -16,5 +16,5 @@
   )
 
 (format t "~%")
-(load "package://jsk_2022_10_egg_dishes/recipes/converted/lisp-converted-butter-sunny-side-up_converted.txt")
+(load "package://jsk_2023_09_cook_from_recipe/recipes/converted/lisp-converted-butter-sunny-side-up_converted.txt")
 

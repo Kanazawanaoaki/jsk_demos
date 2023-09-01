@@ -1,6 +1,23 @@
-# jsk_2020_10_egg_dishes
+# jsk_2023_09_cook_from_recipe
 
-レシピからの卵料理デモ
+レシピからの料理デモ
+
+
+## Setup
+```
+mkdir -p ~/ros/cooking_ws/src
+cd ~/ros/cooking_ws
+source /opt/ros/noetic/setup.bash
+catkin init
+cd ~/ros/cooking_ws/src
+git clone git@github.com:Kanazawanaoaki/jsk_demos.git -b cook-from-recipe
+cp jsk_demos/jsk_2023_09_cook_from_recipe/rosinstall ./.rosinstall
+wstool up
+cd ~/ros/cooking_ws/
+rosdep install --from-paths --ignore-src -y -r src
+catkin b jsk_2023_09_cook_from_recipe
+source ~/ros/cooking_ws/devel/setup.bash
+```
 
 ## tmp scripts
 
@@ -39,8 +56,8 @@ python3 test_make_prompt.py -k [YOUR API KEY]
 
 ## 見学対応デモ
 環境を作る．
-https://github.com/Kanazawanaoaki/STVLM  
-https://github.com/mqcmd196/vision_and_language_ros/tree/main/clip  
+https://github.com/Kanazawanaoaki/lc_state_recognition
+https://github.com/mqcmd196/vision_and_language_ros/tree/main/clip
 
 azure-kinectが立ち上がっているか確認.
 立ち上がっていなかったら，pr1040nをrebootする．
@@ -64,18 +81,18 @@ roscd clip_ros_client/launch/
 roslaunch clip_ros_client clip_ros.launch host:=localhost port:=8888 INPUT_IMAGE:=/apply_mask_image/output gui:=true
 ```
 ```
-roslaunch stvlm exec_rec.launch decomp:=true run_rviz:=false
+roslaunch lc_state_recognition exec_rec.launch decomp:=true run_rviz:=false
 ```
 rqtで/mask_image_generatorと/rect_added_image_publisherのparamを変更して，画角等を色々調整する．
 
 手元のPCでrvizを立ち上げる
 ```
-roslaunch stvlm rviz.launch
+roslaunch lc_state_recognition rviz.launch
 ```
 
 動作実行
 ```
-roscd jsk_2022_10_egg_dishes/euslisp
+roscd jsk_2023_09_cook_from_recipe/euslisp
 rlwrap roseus egg_cook_butter_sunny-demo.l
 (set-demo) ;; before demo
 (cook-sunny-demo) ;; exec demo

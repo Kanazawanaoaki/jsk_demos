@@ -1,8 +1,9 @@
 #!/usr/bin/env roseus
 
-(load "package://jsk_2022_10_egg_dishes/euslisp/pr2_cook_tmp.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_tmp.l")
 
-(setq *yes-query* "Boiled water")
+(setq *yes-query-butter* "Melted butter")
+(setq *yes-query-omelette* "Cooked eggs")
 (setq *yes-flag* nil)
 
 (defun reset-manip-pose ()
@@ -45,8 +46,9 @@
       )
   )
 
-(defun do-exec ()
-  ;; subscribeして沸騰していたら，pourを実行するプログラムを書く
+(defun do-exec-pour ()
+  (setq *yes-query* *yes-query-butter*)
+  ;; subscribeしてバターが溶けていたら，pourを実行するプログラムを書く
   (ros::subscribe "/inference_probability_sma/state" std_msgs::String #'state-cb 1)
   ;; while なんちゃら
   (setq *yes-flag* nil)
@@ -54,7 +56,22 @@
          (ros::spin-once)
          (ros::sleep)
          )
-  (pour-egg-to-pot)
+  (pour-egg-to-pan)
+
+  (ros::unsubscribe "/inference_probability_sma/state")
+  )
+
+(defun do-exec-stop ()
+  (setq *yes-query* *yes-query-omelette*)
+  ;; subscribeしてバターが溶けていたら，pourを実行するプログラムを書く
+  (ros::subscribe "/inference_probability_sma/state" std_msgs::String #'state-cb 1)
+  ;; while なんちゃら
+  (setq *yes-flag* nil)
+  (until *yes-flag*
+         (ros::spin-once)
+         (ros::sleep)
+         )
+  (stop-ih)
 
   (ros::unsubscribe "/inference_probability_sma/state")
   )
@@ -75,6 +92,12 @@
   (ros::unsubscribe "/inference_probability_sma/state")
   )
 
+(defun pour-egg-to-pan ()
+  (load-cook-pour-file :file_name "av-files/cook_pour_bowl_to_pan_data_20221027_01.l")
+  (cook-pick-and-pour-short-replay-test)
+  (reset-manip-pose)
+  )
+
 (defun pour-egg-to-pot ()
   (load-cook-pour-file :file_name "av-files/cook_pour_bowl_to_pot_data_20221027_02.l")
   (cook-pick-and-pour-short-replay-test)
@@ -82,7 +105,13 @@
   )
 
 (defun stop-ih ()
-  (load-cook-file :file_name "av-files/cook_data_stop-ih_20221027_01.l")
+  (load-cook-file :file_name "av-files/cook_data_stop-ih_20221027_02.l")
+  (send *ri* :start-grasp :rarm :wait t)
   (cook-replay-once)
   (reset-manip-pose)
+  )
+
+(defun cook-omelette ()
+  (do-exec-pour)
+  (do-exec-stop)
   )

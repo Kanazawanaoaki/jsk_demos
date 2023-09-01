@@ -25,7 +25,7 @@ from geometry_msgs.msg import PointStamped
 from sensor_msgs.msg import Image, CameraInfo
 from cv_bridge import CvBridge
 
-from jsk_2022_10_egg_dishes.srv import CalcPnp, CalcPnpResponse
+from jsk_2023_09_cook_from_recipe.srv import CalcPnp, CalcPnpResponse
 import tf
 
 torch.set_grad_enabled(False)

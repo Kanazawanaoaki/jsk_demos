@@ -9,7 +9,7 @@
     <rosparam subst_value="true">
       message_filters: true
       approximate_sync: true
-      save_dir: $(find jsk_2022_10_egg_dishes)/datas/$(arg project_name)/datas
+      save_dir: $(find jsk_2023_09_cook_from_recipe)/datas/$(arg project_name)/datas
       slop: 0.1
       wait_save_request: true
       method: request
@@ -28,7 +28,7 @@
     <rosparam subst_value="true">
       message_filters: true
       approximate_sync: true
-      save_dir: $(find jsk_2022_10_egg_dishes)/datas/$(arg project_name)/datas
+      save_dir: $(find jsk_2023_09_cook_from_recipe)/datas/$(arg project_name)/datas
       slop: 0.1
       wait_save_request: true
       method: request
@@ -51,7 +51,7 @@
     <rosparam subst_value="true">
       message_filters: true
       approximate_sync: true
-      save_dir: $(find jsk_2022_10_egg_dishes)/datas/$(arg project_name)/bags
+      save_dir: $(find jsk_2023_09_cook_from_recipe)/datas/$(arg project_name)/bags
       method: timer
       rosbag: true
       rosbag_topics:

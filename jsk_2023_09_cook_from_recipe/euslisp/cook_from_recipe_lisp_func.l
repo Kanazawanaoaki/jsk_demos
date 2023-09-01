@@ -1,7 +1,7 @@
 #!/usr/bin/env roseus
 
-(load "package://jsk_2022_10_egg_dishes/euslisp/pr2_cook_tmp.l")
-(load "package://jsk_2022_10_egg_dishes/euslisp/wrench.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_tmp.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/wrench.l")
 
 ;; global variables
 (setq *yes-query-butter* "Melted lquid butter")
@@ -97,7 +97,7 @@
   (if set-after
       (progn
         (clip-set-to-sunny)
-        (stvlm-start-sunny)
+        (lc_state_recognition-start-sunny)
         ))
   (reset-manip-pose :time 2000)
   )
@@ -256,7 +256,7 @@
    )
   ;; set
   (clip-query-change :yes-query *yes-query* :no-query *no-query*)
-  (stvlm-command :yes-query *yes-query* :no-query *no-query* :raw-threshold *raw-thre* :sma-threshold *sma-thre*)
+  (lc_state_recognition-command :yes-query *yes-query* :no-query *no-query* :raw-threshold *raw-thre* :sma-threshold *sma-thre*)
 
   ;; subscribeして条件を満たしていたら，actionを実行する．
   (ros::subscribe "/inference_probability_sma/state" std_msgs::String #'state-cb 1)
@@ -275,7 +275,7 @@
 
 (defun cook-demo-from-recipe ()
   ;; TODO args recipe-name などいれたい
-  (load "package://jsk_2022_10_egg_dishes/recipes/converted/lisp-converted-butter-sunny-side-up_converted.txt")
+  (load "package://jsk_2023_09_cook_from_recipe/recipes/converted/lisp-converted-butter-sunny-side-up_converted.txt")
   )
 
 (format t "~%")

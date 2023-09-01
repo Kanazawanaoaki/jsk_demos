@@ -1,0 +1,15 @@
+<launch>
+  <arg name="use_view" default="True" />
+
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/pr2_decompress.launch"/>
+
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/original_place/pr2_original_image_collection.launch" />
+
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/original_place/screeen_point.launch" >
+    <arg name="USE_VIEW" value="$(arg use_view)" />
+  </include>
+
+  <node name="superglue_and_pnp"
+        pkg="jsk_2023_09_cook_from_recipe" type="ros_pnp_estimate.py"
+        output="screen" />
+</launch>

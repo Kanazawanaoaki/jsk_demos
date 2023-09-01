@@ -1,6 +1,6 @@
 #!/usr/bin/env roseus
 
-(load "package://jsk_2022_10_egg_dishes/euslisp/pr2_cook_tmp.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_tmp.l")
 
 ;; global variables
 (setq *yes-query-butter* "Melted lquid butter")
@@ -85,12 +85,12 @@
   (clip-query-change :yes-query *yes-query-sunny* :no-query *no-query-sunny*)
   )
 
-(defun stvlm-start-butter ()
-  (stvlm-command :yes-query *yes-query-butter* :no-query *no-query-butter* :raw-threshold *raw-thre-butter* :sma-threshold *sma-thre-butter*)
+(defun lc_state_recognition-start-butter ()
+  (lc_state_recognition-command :yes-query *yes-query-butter* :no-query *no-query-butter* :raw-threshold *raw-thre-butter* :sma-threshold *sma-thre-butter*)
   )
 
-(defun stvlm-start-sunny ()
-  (stvlm-command :yes-query *yes-query-sunny* :no-query *no-query-sunny* :raw-threshold *raw-thre-sunny* :sma-threshold *sma-thre-sunny*)
+(defun lc_state_recognition-start-sunny ()
+  (lc_state_recognition-command :yes-query *yes-query-sunny* :no-query *no-query-sunny* :raw-threshold *raw-thre-sunny* :sma-threshold *sma-thre-sunny*)
   )
 
 
@@ -102,7 +102,7 @@
 (defun do-exec-pour (&key (already_set nil))
   (if *speak-jp* (send *ri* :speak-jp "バターが溶けたら卵をフライパンに注ぐ調理を行います")
     (send *ri* :speak-en "I do the cooking, when the butter is melted pour the eggs into the pan."))
-  (stvlm-start-butter)
+  (lc_state_recognition-start-butter)
   (setq *yes-query* *yes-query-butter*)
   ;; subscribeしてバターが溶けていたら，pourを実行する
   (ros::subscribe "/inference_probability_sma/state" std_msgs::String #'state-cb 1)
@@ -122,7 +122,7 @@
 (defun do-exec-stop ()
   (if *speak-jp* (send *ri* :speak-jp "卵に火が通ったら火を止める調理を行います")
     (send *ri* :speak-en "I do the cooking, when the eggs are cooked, turn off the fire."))
-  (stvlm-start-sunny)
+  (lc_state_recognition-start-sunny)
   (setq *yes-query* *yes-query-sunny*)
   ;; subscribeして火が通っていたら，ihを消す
   (ros::subscribe "/inference_probability_sma/state" std_msgs::String #'state-cb 1)
@@ -163,7 +163,7 @@
     (cook-pick-and-pour-short-replay-test)
     )
   (clip-set-to-sunny)
-  (stvlm-start-sunny)
+  (lc_state_recognition-start-sunny)
   (reset-manip-pose :time 2000)
   )
 
