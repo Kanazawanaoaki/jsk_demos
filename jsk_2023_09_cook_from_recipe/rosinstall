@@ -8,3 +8,6 @@
 - git:
     local-name: vil_ros
     uri: git@github.com:Kanazawanaoaki/vil_ros.git
+- git:
+    local-name: jsk-ros-pkg/jsk_common
+    uri: git@github.com:jsk-ros-pkg/jsk_common.git

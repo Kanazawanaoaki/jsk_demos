@@ -34,7 +34,9 @@
   <!-- Use depend as a shortcut for packages that are both build and exec dependencies -->
   <depend>message_generation</depend>
   <depend>lc_state_recognition</depend>
-  <depend>vil_ros</depend>
+  <depend>vil_msgs</depend>
+  <depend>vision_and_language_ros</depend>
+  <depend>jsk_rosbag_tools</depend>
   <!--   Note that this is equivalent to the following: -->
   <!--   <build_depend>roscpp</build_depend> -->
   <!--   <exec_depend>roscpp</exec_depend> -->
