@@ -39,7 +39,8 @@ class PnpPoseEstimaterNode:
 
         # パラメータの設定
         self.top_k_num = 50
-        self.original_image_path='/home/kanazawa/Desktop/data/tmp/pr2-head-rgbd-images/1692882437486995277/pr2_rgb_image_rect_color_request.png' # Path to the original location image
+        # self.original_image_path='/home/kanazawa/Desktop/data/tmp/pr2-head-rgbd-images/1692882437486995277/pr2_rgb_image_rect_color_request.png' # Path to the original location image
+        self.original_image_path='/home/kanazawa/Desktop/data/tmp/pr2-head-rgbd-images/1695566918924009496/pr2_rgb_image_rect_color_request.png' # Path to the original location image
 
         self.rot0, self.rot1 = 0, 0
 
@@ -216,18 +217,23 @@ class PnpPoseEstimaterNode:
 
         # point screenpointで現在の3次元座標を取得
         screenpoint_results = []
-        for x, y in current_img_points:
+        original_img_results = []
+        for current_img, original_img in zip(current_img_points, original_img_points):
+            x = current_img[0]
+            y = current_img[1]
             point = self.call_screenpoint_service(x, y)
             if point:
                 screenpoint_results.append([point.x, point.y, point.z])
+                original_img_results.append(original_img)
 
         print(screenpoint_results)
 
         # PnP法の計算
-        image_points = np.array(original_img_points)
-        object_points = np.array(screenpoint_results)
+        image_points = np.array(original_img_results).astype('float32')
+        object_points = np.array(screenpoint_results).astype('float64')
+        print(len(image_points), len(object_points))
 
-        retval, rvec, tvec = cv2.solvePnP(object_points, image_points, self.camera_matrix, self.dist_coeffs)
+        retval, rvec, tvec = cv2.solvePnP(object_points.astype('float64'), image_points.astype('float32'), self.camera_matrix, self.dist_coeffs)
         rotation_matrix, _ = cv2.Rodrigues(rvec)
 
         print("回転行列:")

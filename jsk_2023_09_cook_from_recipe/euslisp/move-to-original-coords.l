@@ -12,6 +12,12 @@
 
 (init-pr2)
 
+(defun pr2-reset-move-pose ()
+  (send *pr2* :reset-pose)
+  (send *pr2* :head-neck-p :joint-angle 30)
+  (send *ri* :angle-vector (send *pr2* :angle-vector))
+  )
+
 (defun calc-pnp-request ()
   (let (req res)
     (setq req (instance jsk_2023_09_cook_from_recipe::CalcPnpRequest :init))

@@ -2,7 +2,7 @@
   <!-- c.f. https://jsk-common.readthedocs.io/en/latest/jsk_data/node_scripts/data_collection_server.html , https://github.com/start-jsk/jsk_apc/blob/master/demos/selective_dualarm_stowing/launch/bimanual_stow_data_collection.launch#L130-L202 -->
   <arg name="collect_data" default="true" />
 
-  <node name="pr2_place_data_collection"
+  <node name="pr2_original_place_data_collection"
         pkg="jsk_data" type="data_collection_server.py"
         output="screen" if="$(arg collect_data)">
     <rosparam subst_value="true">
