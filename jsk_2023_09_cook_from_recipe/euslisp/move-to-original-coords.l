@@ -70,14 +70,23 @@
 (defun show-camera-coords ()
   (send *arrow* :newcoords (send (send *robot* :head_mount_kinect_rgb_optical_frame_lk) :copy-worldcoords))
 
+  ;; ;; そのままのバージョン
   ;; (setq now-trans (make-coords :pos *current-pos* :rot *current-rot*))
   ;; (send *arrow* :transform now-trans)
 
-  ;; TODO
-  (setq tmp-coords (make-coords :rot *current-rot*))
-  (setq inv-rot (send (send tmp-coords :inverse-transformation) :rot))
-  (setq now-trans (make-coords :pos *current-pos* :rot inv-rot))
-  (send *arrow* :transform now-trans)
+  ;; 逆だったバージョン これっぽい
+  (setq now-trans (make-coords :pos *current-pos* :rot *current-rot*))
+  (setq inv-trans (send now-trans :inverse-transformation))
+  (send *arrow* :transform inv-trans)
+
+  ;; TODO old
+  ;; (setq tmp-coords (make-coords :rot *current-rot*))
+  ;; (setq inv-rot (send (send tmp-coords :inverse-transformation) :rot))
+  ;; (setq now-trans (make-coords :pos *current-pos* :rot inv-rot))
+  ;; (send *arrow* :transform now-trans)
+
+
+
 
   ;; (send *arrow* :translate *current-pos*)
   ;; (setq now-trans (make-coords :rot *current-rot*))
