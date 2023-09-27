@@ -4,7 +4,7 @@
 ### 初期位置の保存
 ```
 roslaunch jsk_2023_09_cook_from_recipe pr2_original_image_collection.launch
-'''
+```
 をした状態で，
 ```
 rosservice call /pr2_original_place_data_collection/save_request
