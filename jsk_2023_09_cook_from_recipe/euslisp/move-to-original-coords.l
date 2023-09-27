@@ -14,7 +14,7 @@
 
 (defun pr2-reset-move-pose ()
   (send *pr2* :reset-pose)
-  (send *pr2* :head-neck-p :joint-angle 30)
+  (send *pr2* :head-neck-p :joint-angle 40) ;; old 30
   (send *ri* :angle-vector (send *pr2* :angle-vector))
   )
 
@@ -57,14 +57,15 @@
 (defun get-current-coords ()
   (let ((result-flag nil)
         (current-res))
+    ;; TODO add wait?
     (while (equal result-flag nil)
       (setq current-res (calc-pnp-request))
       (setq *current-rot* (plane-rot-to-matrix (send current-res :rotation_matrix)))
       (setq *current-pos* (scale 1000 (send current-res :position_vector)))
       (if (< (norm *current-pos*) 3000)
           (setq result-flag t)
-          ))
-    ;; TODO check  normが閾値以上ならもう一度
+        ))
+    (format t "current pos norm ~A ~%" (norm *current-pos*))
     ))
 
 (defun show-camera-coords ()
@@ -104,13 +105,18 @@
 
 (defun pr2-move (&key (move-real nil))
   (setq now-coords (make-coords :pos (float-vector (elt (send *arrow* :worldpos) 0) (elt (send *arrow* :worldpos) 1) 0)))
-  (setq theta (car (car (rpy-angle *current-rot*))))
+  (setq theta (rad2deg (car (car (rpy-angle *current-rot*)))))
 
+  (send *pr2* :move-to (make-coords)) ;; 原点に
   (send now-coords :rotate theta :z :local)
-  (send *robot* :move-to (send now-coords :copy-worldcoords))
+  (print (* (elt (send now-coords :worldpos) 0) 0.001))
+  (print (* (elt (send now-coords :worldpos) 1) 0.001))
+  (print theta)
+  ;; (send *robot* :move-to (send now-coords :copy-worldcoords))
   (if move-real
       (progn
         (send *ri* :go-pos (* (elt (send now-coords :worldpos) 0) 0.001) (* (elt (send now-coords :worldpos) 1) 0.001) theta)
+        ;; (send *ri* :go-pos-unsafe (* (elt (send now-coords :worldpos) 0) 0.001) (* (elt (send now-coords :worldpos) 1) 0.001) theta)
         ))
   )
 

@@ -11,3 +11,6 @@
 - git:
     local-name: jsk-ros-pkg/jsk_common
     uri: git@github.com:jsk-ros-pkg/jsk_common.git
+- git:
+    local-name: jsk-ros-pkg/jsk_robot
+    uri: git@github.com:jsk-ros-pkg/jsk_robot.git

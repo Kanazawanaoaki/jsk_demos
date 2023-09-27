@@ -40,7 +40,8 @@ class PnpPoseEstimaterNode:
         # パラメータの設定
         self.top_k_num = 50
         # self.original_image_path='/home/kanazawa/Desktop/data/tmp/pr2-head-rgbd-images/1692882437486995277/pr2_rgb_image_rect_color_request.png' # Path to the original location image
-        self.original_image_path='/home/kanazawa/Desktop/data/tmp/pr2-head-rgbd-images/1695566918924009496/pr2_rgb_image_rect_color_request.png' # Path to the original location image
+        # self.original_image_path='/home/kanazawa/Desktop/data/tmp/pr2-head-rgbd-images/1695566918924009496/pr2_rgb_image_rect_color_request.png' # Path to the original location image
+        self.original_image_path='/home/kanazawa/Desktop/data/tmp/pr2-head-rgbd-images/20230927_head_image/1695803328597333273/pr2_rgb_image_rect_color_request.png' # Path to the original location image
 
         self.rot0, self.rot1 = 0, 0
 
