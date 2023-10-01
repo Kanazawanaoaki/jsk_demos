@@ -4,7 +4,7 @@
   <include file="$(find pddl_planner)/launch/pddl_ffha.launch" />
   <node pkg="jsk_2023_09_cook_from_recipe" name="tmp_demo_pour_tea"
         launch-prefix="$(arg launch_prefix)"
-        type="solve-pour-oil.l" >
+        type="solve-sunny.l" >
     <param name="display_graph" value="$(arg display_graph)" />
   </node>
 </launch>
