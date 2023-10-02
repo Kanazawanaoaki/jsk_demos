@@ -15,7 +15,7 @@
 ;;set cooking-variables
 (setq *cooking-variables* '((WATER . object)
                             (EGG . object)
-                            (THIRTY-SECONDS . how)
+                            ;; (THIRTY-SECONDS . state)
                             (COOKED-EGG . state)
                             (BOILED-WATER . state)
                             (VORTEXED-WATER . state)
@@ -40,7 +40,7 @@
                                           (ON POT STOVE))
                                         '((SET-STOVE LOW)) ;; set(stove, low)
                                         '((IN WATER POT) ;; mix(water, vortexed water,spoon)
-                                          (MIXED WATER VORTEXED-WATER SPOON)
+                                          (STIRRED WATER VORTEXED-WATER SPOON)
                                           (ON SPOON STOVE))
                                         '((IN EGG POT) ;; pour(egg, pot, gently)
                                           (ON BOWL STOVE))
@@ -73,9 +73,11 @@
 (format t ";;The plan by cooking PDDL is as follows: ~%")
 (setq *plan-list* (list))
 (dolist (cooking-result *cooking-result-list*)
-  (dolist (plan-unit (cdr (elt cooking-result 2)))
-    (print plan-unit)
-    (setq *plan-list* (append *plan-list* (list plan-unit)))
-    ))
+  (if (> (length cooking-result) 2)
+      (progn
+        (dolist (plan-unit (cdr (elt cooking-result 2)))
+          (print plan-unit)
+          (setq *plan-list* (append *plan-list* (list plan-unit)))
+          ))))
 
 (if *exit-on-end* (ros::exit))

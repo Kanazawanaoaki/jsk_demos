@@ -11,10 +11,10 @@
                              (IN ?obj1 - object ?obj2 - object)
                              (ROBOT-AT ?spot - spot)
                              (HOLD ?obj - object ?arm - arm)
-                             (HEATED ?obj - object ?how - how)
+                             (HEATED ?obj - object ?state - state)
                              (COOKED ?obj - object ?state - state)
                              (BOILED ?obj - object ?state - state)
-                             (MIXED ?obj - object ?state - state ?tool - object)
+                             (STIRRED ?obj - object ?state - state ?tool - object)
                              (WASHED ?obj - object)
                              (WATERFLOW)
                              (STOVE-ON)
@@ -109,13 +109,13 @@
                            (NOT (IN ?CONTENT ?FROM))))
        (instance pddl-action :init
                  :name "heat"
-                 :parameters '((?OBJECT object) (?HOW how))
+                 :parameters '((?OBJECT object) (?STATE state))
                  :precondition '((IN ?OBJECT FRYING-PAN)
                                  (ON FRYING-PAN STOVE)
                                  (ROBOT-AT STOVE)
                                  (STOVE-ON)
                                  )
-                 :effect '((HEATED ?OBJECT ?HOW)
+                 :effect '((HEATED ?OBJECT ?STATE)
                            ))
        (instance pddl-action :init
                  :name "cook"
@@ -138,15 +138,15 @@
                  :effect '((BOILED ?OBJECT ?STATE)
                            ))
        (instance pddl-action :init
-                 :name "mix"
+                 :name "stir"
                  :parameters '((?OBJECT ?TOOL ?VESSEL object) (?STATE state) (?SPOT spot) (?ARM arm))
                  :precondition '((IN ?OBJECT ?VESSEL)
                                  (ON ?VESSEL ?SPOT)
                                  (ROBOT-AT ?SPOT)
                                  (HOLD ?TOOL ?ARM)
-                                 (NOT (MIXED ?OBJECT ?STATE ?TOOL))
+                                 (NOT (STIRRED ?OBJECT ?STATE ?TOOL))
                                  )
-                 :effect '((MIXED ?OBJECT ?STATE ?TOOL)
+                 :effect '((STIRRED ?OBJECT ?STATE ?TOOL)
                            ))
        (instance pddl-action :init
                  :name "fetch-water"

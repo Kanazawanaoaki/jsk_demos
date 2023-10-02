@@ -15,7 +15,7 @@
 ;;set cooking-variables
 (setq *cooking-variables* '((OIL . object)
                             (EGG . object)
-                            (THIRTY-SECONDS . how)
+                            (THIRTY-SECONDS . state)
                             (COOKED-EGG . state)
                             ))
 
@@ -68,9 +68,11 @@
 (format t ";;The plan by cooking PDDL is as follows: ~%")
 (setq *plan-list* (list))
 (dolist (cooking-result *cooking-result-list*)
-  (dolist (plan-unit (cdr (elt cooking-result 2)))
-    (print plan-unit)
-    (setq *plan-list* (append *plan-list* (list plan-unit)))
-    ))
+  (if (> (length cooking-result) 2)
+      (progn
+        (dolist (plan-unit (cdr (elt cooking-result 2)))
+          (print plan-unit)
+          (setq *plan-list* (append *plan-list* (list plan-unit)))
+          ))))
 
 (if *exit-on-end* (ros::exit))
