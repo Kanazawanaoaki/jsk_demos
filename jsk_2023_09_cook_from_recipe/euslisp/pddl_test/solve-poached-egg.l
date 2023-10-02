@@ -13,33 +13,38 @@
 ;;
 
 ;;set cooking-variables
-(setq *cooking-variables* '((OIL . object)
+(setq *cooking-variables* '((WATER . object)
                             (EGG . object)
                             (THIRTY-SECONDS . how)
                             (COOKED-EGG . state)
+                            (BOILED-WATER . state)
+                            (VORTEXED-WATER . state)
+                            (THREE-MINUTES . state)
                             ))
 
 ;; 調理の初期条件
 (setq *cooking-initial-condision* '((ROBOT-AT STOVE)
-                                    (ON OIL STOVE)
-                                    (ON EGG STOVE)
-                                    (ON FRYING-PAN STOVE)
+                                    (ON MEASURING-CUP KITCHEN)
+                                    (IN EGG BOWL)
+                                    (ON BOWL STOVE)
+                                    (ON POT STOVE)
+                                    (ON SPOON STOVE)
                                     (NOT (STOVE-ON))
+                                    (NOT (WATERFLOW))
                                     ))
 
+;; TODO 卵を割る話など
 ;; 調理レシピ記述から
-(setq *cooking-target-conditions* (list '((IN OIL FRYING-PAN) ;; pour(salad oil, frying pan)
-                                          (ON OIL STOVE)
-                                          (ON FRYING-PAN STOVE))
-                                        '((IN OIL FRYING-PAN) ;; heat(oil, 30 seconds)
-                                          (ON FRYING-PAN STOVE)
-                                          (HEATED OIL THIRTY-SECONDS))
-                                        '((IN EGG FRYING-PAN) ;; pour(egg, frying pan)
-                                          (ON EGG STOVE) ;; TODO need update
-                                          (ON FRYING-PAN STOVE))
-                                        '((IN EGG FRYING-PAN) ;; cook(egg, cooked egg)
-                                          (ON EGG STOVE)
-                                          (COOKED EGG COOKED-EGG))
+(setq *cooking-target-conditions* (list '((IN WATER POT) ;; boil(water, boiled water, pot)
+                                          (BOILED WATER BOILED-WATER)
+                                          (ON POT STOVE))
+                                        '((SET-STOVE LOW)) ;; set(stove, low)
+                                        '((IN WATER POT) ;; mix(water, vortexed water,spoon)
+                                          (MIXED WATER VORTEXED-WATER SPOON)
+                                          (ON SPOON STOVE))
+                                        '((IN EGG POT) ;; pour(egg, pot, gently)
+                                          (ON BOWL STOVE))
+                                        '((BOILED EGG THREE-MINUTES)) ;; boil(egg, 3 minutes)
                                         '((NOT (STOVE-ON)) ;; end
                                           (NOT (WATERFLOW)))
                                         ))
@@ -60,9 +65,17 @@
 
 (setq gr (make-graph-from-pddl-results *cooking-result-list* :node-name :pprint))
 
-(send gr :write-to-pdf "kanazawa_cook_sunny.pdf")
+(send gr :write-to-pdf "kanazawa_cook_poached_egg.pdf")
 
 (when (ros::get-param "~display_graph" "true")
-  (piped-fork "xdg-open kanazawa_cook_sunny.pdf"))
+  (piped-fork "xdg-open kanazawa_cook_poached_egg.pdf"))
+
+(format t ";;The plan by cooking PDDL is as follows: ~%")
+(setq *plan-list* (list))
+(dolist (cooking-result *cooking-result-list*)
+  (dolist (plan-unit (cdr (elt cooking-result 2)))
+    (print plan-unit)
+    (setq *plan-list* (append *plan-list* (list plan-unit)))
+    ))
 
 (if *exit-on-end* (ros::exit))
