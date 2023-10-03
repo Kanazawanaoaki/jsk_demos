@@ -6,15 +6,16 @@
 (setq *domain* (instance pddl-domain :init :name 'kanazawa_cook))
 (send *domain* :requirements '(:typing))
 (send *domain* :types '(object spot arm how state))
-(send *domain* :constants '(WATER FRYING-PAN POT BOWL MEASURING-CUP SPOON KNIFE - object LARM RARM - arm SINK STOVE KITCHEN - spot LOW MIDDLE HIGH - state))
+(send *domain* :constants '(WATER - object MIXTURE - mixture FRYING-PAN POT BOWL MEASURING-CUP - vessel SPOON KNIFE WHISK - tool LARM RARM - arm SINK STOVE KITCHEN - spot LOW MIDDLE HIGH - state))
 (send *domain* :predicates '((ON ?obj - object ?spot - spot)
-                             (IN ?obj1 - object ?obj2 - object)
+                             (IN ?obj - object ?vessel - vessel)
                              (ROBOT-AT ?spot - spot)
                              (HOLD ?obj - object ?arm - arm)
                              (HEATED ?obj - object ?state - state)
                              (COOKED ?obj - object ?state - state)
                              (BOILED ?obj - object ?state - state)
-                             (STIRRED ?obj - object ?state - state ?tool - object)
+                             (STIRRED ?obj - object ?state - state ?tool - tool)
+                             (MIXED ?mixture - mixture ?ing1 - object ?ing2 - object ?tool -tool)
                              (WASHED ?obj - object)
                              (WATERFLOW)
                              (STOVE-ON)
@@ -91,15 +92,15 @@
 
        (instance pddl-action :init
                  :name "pour"
-                 :parameters '((?FROM ?TO object) (?ARM arm) (?SPOT spot))
-                 :precondition '((HOLD ?FROM ?ARM)
+                 :parameters '((?OBJECT object) (?VESSEL vessel) (?ARM arm) (?SPOT spot))
+                 :precondition '((HOLD ?OBJECT ?ARM)
                                  (ROBOT-AT ?SPOT)
-                                 (ON ?TO ?SPOT)
+                                 (ON ?VESSEL ?SPOT)
                                  )
-                 :effect '((IN ?FROM ?TO)))
+                 :effect '((IN ?OBJECT ?VESSEL)))
        (instance pddl-action :init
                  :name "transfer"
-                 :parameters '((?CONTENT ?FROM ?TO object) (?ARM arm) (?SPOT spot))
+                 :parameters '((?CONTENT object) (?FROM ?TO vessel) (?ARM arm) (?SPOT spot))
                  :precondition '((HOLD ?FROM ?ARM)
                                  (ROBOT-AT ?SPOT)
                                  (ON ?TO ?SPOT)
@@ -139,7 +140,7 @@
                            ))
        (instance pddl-action :init
                  :name "stir"
-                 :parameters '((?OBJECT ?TOOL ?VESSEL object) (?STATE state) (?SPOT spot) (?ARM arm))
+                 :parameters '((?OBJECT object) (?TOOL tool) (?VESSEL vessel) (?STATE state) (?SPOT spot) (?ARM arm))
                  :precondition '((IN ?OBJECT ?VESSEL)
                                  (ON ?VESSEL ?SPOT)
                                  (ROBOT-AT ?SPOT)
@@ -147,6 +148,23 @@
                                  (NOT (STIRRED ?OBJECT ?STATE ?TOOL))
                                  )
                  :effect '((STIRRED ?OBJECT ?STATE ?TOOL)
+                           ))
+       (instance pddl-action :init
+                 :name "mix"
+                 :parameters '((?MIXTURE mixture) (?ING-ONE ?ING-TWO object) (?VESSEL vessel) (?TOOL tool) (?SPOT spot) (?ARM arm))
+                 :precondition '((IN ?ING-ONE ?VESSEL)
+                                 (IN ?ING-TWO ?VESSEL)
+                                 (NOT (= ?ING-ONE ?ING-TWO))
+                                 (ON ?VESSEL ?SPOT)
+                                 (ROBOT-AT ?SPOT)
+                                 (HOLD ?TOOL ?ARM)
+                                 (NOT (MIXED ?MIXTURE ?ING-ONE ?ING-TWO ?TOOL))
+                                 (NOT (IN ?MIXTURE ?VESSEL))
+                                 )
+                 :effect '((MIXED ?MIXTURE ?ING-ONE ?ING-TWO ?TOOL)
+                           (IN ?MIXTURE ?VESSEL)
+                           (NOT (IN ?ING-ONE ?VESSEL))
+                           (NOT (IN ?ING-TWO ?VESSEL))
                            ))
        (instance pddl-action :init
                  :name "fetch-water"

@@ -16,12 +16,9 @@
 (setq *cooking-variables* '((EGG . object)
                             (MILK . object)
                             (SALT . object)
-
-                            ;; (THIRTY-SECONDS . state)
-                            ;; (COOKED-EGG . state)
-                            ;; (BOILED-WATER . state)
-                            ;; (VORTEXED-WATER . state)
-                            ;; (THREE-MINUTES . state)
+                            ;; (BUTTER . object)
+                            ;; (SMALL-BOWL . vessel)
+                            (EGG-MIXTURE . mixture)
                             ))
 
 ;; 調理の初期条件
@@ -30,6 +27,9 @@
                                     (ON BOWL KITCHEN)
                                     (ON SALT KITCHEN)
                                     (ON MILK KITCHEN)
+                                    (ON WHISK KITCHEN)
+                                    ;; (IN BUTTER SMALL-BOWL)
+                                    ;; (ON SMALL-BOWL STOVE)
                                     (ON FRYING-PAN STOVE)
                                     (NOT (STOVE-ON))
                                     (NOT (WATERFLOW))
@@ -54,9 +54,13 @@
                                           (ON MILK KITCHEN))
                                         '((IN SALT BOWL) ;; pour(salt, bowl)
                                           (ON SALT KITCHEN))
-                                        ;; '((IN EGG BOWL) ;; mix(egg milk, egg and milk mixed well)
-                                        ;;   (IN MILK BOWL)
-                                        ;;   (MIXED ON SALT KITCHEN)) TODO
+                                        '((MIXED EGG-MIXTURE EGG MILK WHISK) ;; mix(egg milk, egg and milk mixed well)
+                                          (IN EGG-MIXTURE BOWL))
+
+                                        ;; '((IN BUTTER FRYING-PAN) ;; pour(butter, frying pan)
+                                        ;;   (ON BUTTER STOVE))
+
+                                        ;; '((HEATED BUTTER MELTED)) ;; heat(butter, melt)
                                         '((NOT (STOVE-ON)) ;; end
                                           (NOT (WATERFLOW)))
                                         ))
@@ -90,10 +94,10 @@
 
 (setq gr (make-graph-from-pddl-results *cooking-result-list* :node-name :pprint))
 
-(send gr :write-to-pdf "kanazawa_cook_poached_egg.pdf")
+(send gr :write-to-pdf "kanazawa_cook_scrambled_egg.pdf")
 
 (when (ros::get-param "~display_graph" "true")
-  (piped-fork "xdg-open kanazawa_cook_poached_egg.pdf"))
+  (piped-fork "xdg-open kanazawa_cook_scrambled_egg.pdf"))
 
 (format t ";;The plan by cooking PDDL is as follows: ~%")
 (setq *plan-list* (list))
