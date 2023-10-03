@@ -1,10 +1,6 @@
 <launch>
   <arg name="display_graph" default="true" />
   <arg name="launch_prefix" default="" />
-  <include file="$(find pddl_planner)/launch/pddl_ffha.launch" />
-  <!-- <node pkg="jsk_2023_09_cook_from_recipe" name="tmp_demo_pour_tea" -->
-  <!--       launch-prefix="$(arg launch_prefix)" -->
-  <!--       type="solve-pour-oil.l" > -->
-  <!--   <param name="display_graph" value="$(arg display_graph)" /> -->
-  <!-- </node> -->
+  <!-- <include file="$(find pddl_planner)/launch/pddl_ffha.launch" /> -->
+  <include file="$(find pddl_planner)/launch/pddl_ff.launch" />
 </launch>

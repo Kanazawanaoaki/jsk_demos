@@ -77,10 +77,13 @@
                            (NOT (SET-STOVE ?BEFORE))))
        (instance pddl-action :init
                  :name "turn-off-stove"
-                 :parameters '()
+                 :parameters '((?BEFORE state))
                  :precondition '((ROBOT-AT STOVE)
+                                 (SET-STOVE ?BEFORE)
                                  (STOVE-ON))
-                 :effect '((NOT (STOVE-ON))))
+                 :effect '((NOT (STOVE-ON))
+                           (NOT (SET-STOVE ?BEFORE))
+                           ))
        (instance pddl-action :init
                  :name "wash"
                  :parameters '((?OBJECT object) (?ARM arm))
