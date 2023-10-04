@@ -17,10 +17,12 @@
                             (MILK . object)
                             (SALT . object)
                             (BUTTER . object)
+                            (SCRAMBLED-EGG . object)
                             (SMALL-BOWL . vessel)
                             (EGG-MIXTURE . mixture)
                             (MELTED . state)
                             (SURROUNDINGS-HARDENED . state)
+                            (WHOLE-MIXTURE-TENDER . state)
                             ))
 
 ;; 調理の初期条件
@@ -33,24 +35,12 @@
                                     (IN BUTTER SMALL-BOWL)
                                     (ON SMALL-BOWL STOVE)
                                     (ON FRYING-PAN STOVE)
+                                    (ON WOODEN-SPATULA STOVE)
                                     (NOT (STOVE-ON))
                                     (NOT (WATERFLOW))
                                     ))
 
 ;; TODO 卵を割る話など
-
-;; crack(egg, bowl)
-;; pour(milk, bowl)
-;; pour(salt, bowl)
-;; mix(egg milk, egg and milk mixed well)
-;; pour(butter, frying pan)
-;; heat(butter, melt)
-;; pour(egg, frying pan)
-;; heat(egg mixture, Egg mixture that have hardened around)
-;; stir-fry(egg mixture, the whole mixture will be tender, 30-40 times quickly with a wooden spatula)
-;; turn-off(stove)
-;; serve(scrambled egg, dish)
-
 ;; 調理レシピ記述から
 (setq *cooking-target-conditions* (list '((IN MILK BOWL) ;; pour(milk, bowl)
                                           (ON MILK KITCHEN))
@@ -69,8 +59,9 @@
                                         '((HEATED EGG-MIXTURE SURROUNDINGS-HARDENED) ;; heat(egg mixture, Egg mixture that have hardened around)
                                           (MIXED EGG-MIXTURE EGG MILK WHISK))
 
-                                        ;; '((HEATED EGG-MIXTURE SURROUNDINGS-HARDENED) ;; stir-fry(egg mixture, the whole mixture will be tender, 30-40 times quickly with a wooden spatula)
-                                        ;;   (MIXED EGG-MIXTURE EGG MILK WHISK))
+                                        '((STIR-FRIED SCRAMBLED-EGG EGG-MIXTURE WHOLE-MIXTURE-TENDER WOODEN-SPATULA) ;; stir-fry(egg mixture, the whole mixture will be tender, 30-40 times quickly with a wooden spatula)
+                                          (IN SCRAMBLED-EGG FRYING-PAN)
+                                          (ON WOODEN-SPATULA STOVE))
 
                                         '((NOT (STOVE-ON)) ;; end
                                           (NOT (WATERFLOW)))

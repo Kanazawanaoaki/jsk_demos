@@ -6,7 +6,7 @@
 (setq *domain* (instance pddl-domain :init :name 'kanazawa_cook))
 (send *domain* :requirements '(:typing))
 (send *domain* :types '(object spot arm how state))
-(send *domain* :constants '(WATER - object MIXTURE - mixture FRYING-PAN POT BOWL MEASURING-CUP - vessel SPOON KNIFE WHISK - tool LARM RARM - arm SINK STOVE KITCHEN - spot LOW MIDDLE HIGH - state))
+(send *domain* :constants '(WATER - object MIXTURE - mixture FRYING-PAN POT BOWL MEASURING-CUP - vessel SPOON KNIFE WHISK WOODEN-SPATULA - tool LARM RARM - arm SINK STOVE KITCHEN - spot LOW MIDDLE HIGH - state))
 (send *domain* :predicates '((ON ?obj - object ?spot - spot)
                              (IN ?obj - object ?vessel - vessel)
                              (ROBOT-AT ?spot - spot)
@@ -14,6 +14,7 @@
                              (HEATED ?obj - object ?state - state)
                              (COOKED ?obj - object ?state - state)
                              (BOILED ?obj - object ?state - state)
+                             (STIR-FRIED ?output - object ?input - object ?state - state ?tool - tool)
                              (STIRRED ?obj - object ?state - state ?tool - tool)
                              (MIXED ?mixture - mixture ?ing1 - object ?ing2 - object ?tool -tool)
                              (WASHED ?obj - object)
@@ -168,6 +169,20 @@
                            (IN ?MIXTURE ?VESSEL)
                            (NOT (IN ?ING-ONE ?VESSEL))
                            (NOT (IN ?ING-TWO ?VESSEL))
+                           ))
+       (instance pddl-action :init
+                 :name "stir-fry"
+                 :parameters '((?OUTPUT ?INPUT object) (?VESSEL vessel) (?TOOL tool) (?STATE state) (?SPOT spot) (?ARM arm))
+                 :precondition '((IN ?INPUT ?VESSEL)
+                                 (ON ?VESSEL ?SPOT)
+                                 (ROBOT-AT ?SPOT)
+                                 (HOLD ?TOOL ?ARM)
+                                 (NOT (STIR-FRIED ?OUTPUT ?INPUT ?STATE ?TOOL))
+                                 (NOT (IN ?OUTPUT ?VESSEL))
+                                 )
+                 :effect '((STIR-FRIED ?OUTPUT ?INPUT ?STATE ?TOOL)
+                           (IN ?OUTPUT ?VESSEL)
+                           (NOT (IN ?INPUT ?VESSEL))
                            ))
        (instance pddl-action :init
                  :name "fetch-water"
