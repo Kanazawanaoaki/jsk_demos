@@ -12,6 +12,7 @@
                              (IN ?obj - object ?vessel - vessel)
                              (ROBOT-AT ?spot - spot)
                              (HOLD ?obj - object ?arm - arm)
+                             (HOLD-OBJECT ?arm - arm)
                              (HEATED ?ing - ingredient ?state - state)
                              (COOKED ?ing - ingredient ?state - state)
                              (BOILED ?ing - ingredient ?state - state)
@@ -32,15 +33,19 @@
                  :name "hold"
                  :parameters '((?OBJECT object) (?ARM arm) (?SPOT spot))
                  :precondition '((ON ?OBJECT ?SPOT)
-                                 (ROBOT-AT ?SPOT))
+                                 (ROBOT-AT ?SPOT)
+                                 (NOT (HOLD-OBJECT ?ARM)))
                  :effect '((HOLD ?OBJECT ?ARM)
+                           (HOLD-OBJECT ?ARM)
                            (NOT (ON ?OBJECT ?SPOT))))
        (instance pddl-action :init
                  :name "place"
                  :parameters '((?OBJECT object) (?ARM arm) (?SPOT spot))
                  :precondition '((HOLD ?OBJECT ?ARM)
+                                 (HOLD-OBJECT ?ARM)
                                  (ROBOT-AT ?SPOT))
                  :effect '((NOT (HOLD ?OBJECT ?ARM))
+                           (NOT (HOLD-OBJECT ?ARM))
                            (ON ?OBJECT ?SPOT)))
        (instance pddl-action :init
                  :name "move-to"
@@ -53,37 +58,42 @@
                            (NOT (ROBOT-AT ?FROM))))
        (instance pddl-action :init
                  :name "open-tap"
-                 :parameters '()
+                 :parameters '((?ARM arm))
                  :precondition '((ROBOT-AT SINK)
+                                 (NOT (HOLD-OBJECT ?ARM))
                                  (NOT (WATERFLOW)))
                  :effect '((WATERFLOW)))
        (instance pddl-action :init
                  :name "close-tap"
-                 :parameters '()
+                 :parameters '((?ARM arm))
                  :precondition '((ROBOT-AT SINK)
+                                 (NOT (HOLD-OBJECT ?ARM))
                                  (WATERFLOW))
                  :effect '((NOT (WATERFLOW))))
        (instance pddl-action :init
                  :name "turn-on-stove"
-                 :parameters '()
+                 :parameters '((?ARM arm))
                  :precondition '((ROBOT-AT STOVE)
+                                 (NOT (HOLD-OBJECT ?ARM))
                                  (NOT (STOVE-ON)))
                  :effect '((STOVE-ON)
                            (SET-STOVE MIDDLE)))
        (instance pddl-action :init
                  :name "set-stove"
-                 :parameters '((?BEFORE ?AFTER state))
+                 :parameters '((?BEFORE ?AFTER state) (?ARM arm))
                  :precondition '((ROBOT-AT STOVE)
                                  (STOVE-ON)
                                  (SET-STOVE ?BEFORE)
+                                 (NOT (HOLD-OBJECT ?ARM))
                                  (NOT (SET-STOVE ?AFTER)))
                  :effect '((SET-STOVE ?AFTER)
                            (NOT (SET-STOVE ?BEFORE))))
        (instance pddl-action :init
                  :name "turn-off-stove"
-                 :parameters '((?BEFORE state))
+                 :parameters '((?BEFORE state) (?ARM arm))
                  :precondition '((ROBOT-AT STOVE)
                                  (SET-STOVE ?BEFORE)
+                                 (NOT (HOLD-OBJECT ?ARM))
                                  (STOVE-ON))
                  :effect '((NOT (STOVE-ON))
                            (NOT (SET-STOVE ?BEFORE))
@@ -158,13 +168,14 @@
                            ))
        (instance pddl-action :init
                  :name "mix"
-                 :parameters '((?MIXTURE ingredient) (?ING-ONE ?ING-TWO ingredient) (?VESSEL vessel) (?TOOL tool) (?SPOT spot) (?ARM arm))
+                 :parameters '((?MIXTURE ingredient) (?ING-ONE ?ING-TWO ingredient) (?VESSEL vessel) (?TOOL tool) (?SPOT spot) (?ARM1 ?ARM2 arm))
                  :precondition '((IN ?ING-ONE ?VESSEL)
                                  (IN ?ING-TWO ?VESSEL)
                                  (NOT (= ?ING-ONE ?ING-TWO))
                                  (ON ?VESSEL ?SPOT)
                                  (ROBOT-AT ?SPOT)
-                                 (HOLD ?TOOL ?ARM)
+                                 (HOLD ?TOOL ?ARM1)
+                                 (NOT (HOLD-OBJECT ?ARM2))
                                  (NOT (MIXED ?MIXTURE ?ING-ONE ?ING-TWO ?TOOL))
                                  (NOT (IN ?MIXTURE ?VESSEL))
                                  )
@@ -175,11 +186,12 @@
                            ))
        (instance pddl-action :init
                  :name "stir-fry"
-                 :parameters '((?INPUT ingredient) (?VESSEL vessel) (?TOOL tool) (?STATE state) (?SPOT spot) (?ARM arm))
+                 :parameters '((?INPUT ingredient) (?VESSEL vessel) (?TOOL tool) (?STATE state) (?SPOT spot) (?ARM1 ?ARM2 arm))
                  :precondition '((IN ?INPUT ?VESSEL)
                                  (ON ?VESSEL ?SPOT)
                                  (ROBOT-AT ?SPOT)
-                                 (HOLD ?TOOL ?ARM)
+                                 (HOLD ?TOOL ?ARM1)
+                                 (NOT (HOLD-OBJECT ?ARM2))
                                  (NOT (STIR-FRIED ?INPUT ?STATE ?TOOL))
                                  ;; (NOT (IN ?OUTPUT ?VESSEL))
                                  )
