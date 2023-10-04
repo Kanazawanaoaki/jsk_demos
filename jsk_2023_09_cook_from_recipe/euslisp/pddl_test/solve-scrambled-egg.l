@@ -13,13 +13,14 @@
 ;;
 
 ;;set cooking-variables
-(setq *cooking-variables* '((EGG . object)
-                            (MILK . object)
-                            (SALT . object)
-                            (BUTTER . object)
-                            (SCRAMBLED-EGG . object)
+(setq *cooking-variables* '((EGG . ingredient)
+                            (MILK . ingredient)
+                            (SALT . ingredient)
+                            (BUTTER . ingredient)
+                            ;; (SCRAMBLED-EGG . object)
                             (SMALL-BOWL . vessel)
-                            (EGG-MIXTURE . mixture)
+                            ;; (EGG-MIXTURE . mixture)
+                            (EGG-MIXTURE . ingredient)
                             (MELTED . state)
                             (SURROUNDINGS-HARDENED . state)
                             (WHOLE-MIXTURE-TENDER . state)

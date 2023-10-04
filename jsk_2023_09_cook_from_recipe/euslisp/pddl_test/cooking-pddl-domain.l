@@ -5,19 +5,21 @@
 
 (setq *domain* (instance pddl-domain :init :name 'kanazawa_cook))
 (send *domain* :requirements '(:typing))
-(send *domain* :types '(object spot arm how state))
-(send *domain* :constants '(WATER - object MIXTURE - mixture FRYING-PAN POT BOWL MEASURING-CUP - vessel SPOON KNIFE WHISK WOODEN-SPATULA - tool LARM RARM - arm SINK STOVE KITCHEN - spot LOW MIDDLE HIGH - state))
+(send *domain* :types '(object ingredient spot arm how state))
+;; (send *domain* :constants '(WATER - ingredient MIXTURE - mixture FRYING-PAN POT BOWL MEASURING-CUP - vessel SPOON KNIFE WHISK WOODEN-SPATULA - tool LARM RARM - arm SINK STOVE KITCHEN - spot LOW MIDDLE HIGH - state))
+(send *domain* :constants '(WATER MIXTURE - ingredient FRYING-PAN POT BOWL MEASURING-CUP - vessel SPOON KNIFE WHISK WOODEN-SPATULA - tool LARM RARM - arm SINK STOVE KITCHEN - spot LOW MIDDLE HIGH - state))
 (send *domain* :predicates '((ON ?obj - object ?spot - spot)
                              (IN ?obj - object ?vessel - vessel)
                              (ROBOT-AT ?spot - spot)
                              (HOLD ?obj - object ?arm - arm)
-                             (HEATED ?obj - object ?state - state)
-                             (COOKED ?obj - object ?state - state)
-                             (BOILED ?obj - object ?state - state)
+                             (HEATED ?ing - ingredient ?state - state)
+                             (COOKED ?ing - ingredient ?state - state)
+                             (BOILED ?ing - ingredient ?state - state)
                              ;; (STIR-FRIED ?output - object ?input - object ?state - state ?tool - tool)
-                             (STIR-FRIED ?object - object ?state - state ?tool - tool)
-                             (STIRRED ?obj - object ?state - state ?tool - tool)
-                             (MIXED ?mixture - mixture ?ing1 - object ?ing2 - object ?tool -tool)
+                             (STIR-FRIED ?ing - ingredient ?state - state ?tool - tool)
+                             (STIRRED ?ing - ingredient ?state - state ?tool - tool)
+                             ;; (MIXED ?mixture - mixture ?ing1 - object ?ing2 - object ?tool -tool)
+                             (MIXED ?mixture - ingredient ?ing1 - object ?ing2 - object ?tool -tool)
                              (WASHED ?obj - object)
                              (WATERFLOW)
                              (STOVE-ON)
@@ -97,7 +99,7 @@
 
        (instance pddl-action :init
                  :name "pour"
-                 :parameters '((?OBJECT object) (?VESSEL vessel) (?ARM arm) (?SPOT spot))
+                 :parameters '((?OBJECT ingredient) (?VESSEL vessel) (?ARM arm) (?SPOT spot))
                  :precondition '((HOLD ?OBJECT ?ARM)
                                  (ROBOT-AT ?SPOT)
                                  (ON ?VESSEL ?SPOT)
@@ -105,7 +107,7 @@
                  :effect '((IN ?OBJECT ?VESSEL)))
        (instance pddl-action :init
                  :name "transfer"
-                 :parameters '((?CONTENT object) (?FROM ?TO vessel) (?ARM arm) (?SPOT spot))
+                 :parameters '((?CONTENT ingredient) (?FROM ?TO vessel) (?ARM arm) (?SPOT spot))
                  :precondition '((HOLD ?FROM ?ARM)
                                  (ROBOT-AT ?SPOT)
                                  (ON ?TO ?SPOT)
@@ -115,7 +117,7 @@
                            (NOT (IN ?CONTENT ?FROM))))
        (instance pddl-action :init
                  :name "heat"
-                 :parameters '((?OBJECT object) (?STATE state))
+                 :parameters '((?OBJECT ingredient) (?STATE state))
                  :precondition '((IN ?OBJECT FRYING-PAN)
                                  (ON FRYING-PAN STOVE)
                                  (ROBOT-AT STOVE)
@@ -125,7 +127,7 @@
                            ))
        (instance pddl-action :init
                  :name "cook"
-                 :parameters '((?OBJECT object) (?STATE state))
+                 :parameters '((?OBJECT ingredient) (?STATE state))
                  :precondition '((IN ?OBJECT FRYING-PAN)
                                  (ON FRYING-PAN STOVE)
                                  (ROBOT-AT STOVE)
@@ -135,7 +137,7 @@
                            ))
        (instance pddl-action :init
                  :name "boil"
-                 :parameters '((?OBJECT object) (?STATE state))
+                 :parameters '((?OBJECT ingredient) (?STATE state))
                  :precondition '((IN ?OBJECT POT)
                                  (ON POT STOVE)
                                  (ROBOT-AT STOVE)
@@ -145,7 +147,7 @@
                            ))
        (instance pddl-action :init
                  :name "stir"
-                 :parameters '((?OBJECT object) (?TOOL tool) (?VESSEL vessel) (?STATE state) (?SPOT spot) (?ARM arm))
+                 :parameters '((?OBJECT ingredient) (?TOOL tool) (?VESSEL vessel) (?STATE state) (?SPOT spot) (?ARM arm))
                  :precondition '((IN ?OBJECT ?VESSEL)
                                  (ON ?VESSEL ?SPOT)
                                  (ROBOT-AT ?SPOT)
@@ -156,7 +158,7 @@
                            ))
        (instance pddl-action :init
                  :name "mix"
-                 :parameters '((?MIXTURE mixture) (?ING-ONE ?ING-TWO object) (?VESSEL vessel) (?TOOL tool) (?SPOT spot) (?ARM arm))
+                 :parameters '((?MIXTURE ingredient) (?ING-ONE ?ING-TWO ingredient) (?VESSEL vessel) (?TOOL tool) (?SPOT spot) (?ARM arm))
                  :precondition '((IN ?ING-ONE ?VESSEL)
                                  (IN ?ING-TWO ?VESSEL)
                                  (NOT (= ?ING-ONE ?ING-TWO))
@@ -173,7 +175,7 @@
                            ))
        (instance pddl-action :init
                  :name "stir-fry"
-                 :parameters '((?INPUT object) (?VESSEL vessel) (?TOOL tool) (?STATE state) (?SPOT spot) (?ARM arm))
+                 :parameters '((?INPUT ingredient) (?VESSEL vessel) (?TOOL tool) (?STATE state) (?SPOT spot) (?ARM arm))
                  :precondition '((IN ?INPUT ?VESSEL)
                                  (ON ?VESSEL ?SPOT)
                                  (ROBOT-AT ?SPOT)
