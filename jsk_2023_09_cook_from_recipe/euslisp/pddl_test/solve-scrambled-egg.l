@@ -20,7 +20,6 @@
                             ;; (SCRAMBLED-EGG . object)
                             (SMALL-BOWL . vessel)
                             (EGG-MIXTURE . mixture)
-                            (EGG-MIXTURE . ingredient)
                             (MELTED . state)
                             (SURROUNDINGS-HARDENED . state)
                             (WHOLE-MIXTURE-TENDER . state)

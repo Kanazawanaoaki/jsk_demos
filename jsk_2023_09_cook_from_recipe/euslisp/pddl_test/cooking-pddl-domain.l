@@ -2,21 +2,15 @@
 ;; domain
 ;;
 
-
 (setq *domain* (instance pddl-domain :init :name 'kanazawa_cook))
 (send *domain* :requirements '(:typing))
-(send *domain* :types '(object ingredient vessel tool spot arm state))
-
-;; (send *domain* :types '(
-;;                         ingredient vessel tool  - object
-;;                         mixutre - ingredient
-;;                         spot
-;;                         arm
-;;                         state))
-
+(send *domain* :types '(ingredient vessel tool  - object
+                        mixture - ingredient
+                        spot
+                        arm
+                        state))
 
 (send *domain* :constants '(WATER MIXTURE - ingredient MIXTURE - mixture FRYING-PAN POT BOWL MEASURING-CUP - vessel SPOON KNIFE WHISK WOODEN-SPATULA - tool ARM1 ARM2 - arm SINK STOVE KITCHEN - spot LOW MIDDLE HIGH - state))
-;; (send *domain* :constants '(WATER MIXTURE - ingredient FRYING-PAN POT BOWL MEASURING-CUP - vessel SPOON KNIFE WHISK WOODEN-SPATULA - tool ARM1 ARM2 - arm SINK STOVE KITCHEN - spot LOW MIDDLE HIGH - state))
 (send *domain* :predicates '((ON ?obj - object ?spot - spot)
                              (IN ?obj - object ?vessel - vessel)
                              (ROBOT-AT ?spot - spot)
@@ -29,7 +23,6 @@
                              (STIR-FRIED ?ing - ingredient ?state - state ?tool - tool)
                              (STIRRED ?ing - ingredient ?state - state ?tool - tool)
                              (MIXED ?mixture - mixture ?ing1 - ingredient ?ing2 - ingredient ?tool -tool)
-                             ;; (MIXED ?mixture - ingredient ?ing1 - ingredient ?ing2 - ingredient ?tool -tool)
                              (WASHED ?obj - object)
                              (WATERFLOW)
                              (STOVE-ON)
@@ -178,7 +171,6 @@
                            ))
        (instance pddl-action :init
                  :name "mix"
-                 ;; :parameters '((?MIXTURE ingredient) (?ING-ONE ?ING-TWO ingredient) (?VESSEL vessel) (?TOOL tool) (?SPOT spot) (?ARM1 ?ARM2 arm))
                  :parameters '((?MIXTURE mixture) (?ING-ONE ?ING-TWO ingredient) (?VESSEL vessel) (?TOOL tool) (?SPOT spot) (?ARM1 ?ARM2 arm))
                  :precondition '((IN ?ING-ONE ?VESSEL)
                                  (IN ?ING-TWO ?VESSEL)
