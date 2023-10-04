@@ -13,8 +13,8 @@
 ;;
 
 ;;set cooking-variables
-(setq *cooking-variables* '((OIL . object)
-                            (EGG . object)
+(setq *cooking-variables* '((OIL . ingredient)
+                            (EGG . ingredient)
                             (THIRTY-SECONDS . state)
                             (COOKED-EGG . state)
                             ))

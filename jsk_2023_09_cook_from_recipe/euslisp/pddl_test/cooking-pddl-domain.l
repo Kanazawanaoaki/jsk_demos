@@ -5,7 +5,7 @@
 
 (setq *domain* (instance pddl-domain :init :name 'kanazawa_cook))
 (send *domain* :requirements '(:typing))
-(send *domain* :types '(object ingredient spot arm how state))
+(send *domain* :types '(object ingredient spot arm state))
 ;; (send *domain* :constants '(WATER - ingredient MIXTURE - mixture FRYING-PAN POT BOWL MEASURING-CUP - vessel SPOON KNIFE WHISK WOODEN-SPATULA - tool LARM RARM - arm SINK STOVE KITCHEN - spot LOW MIDDLE HIGH - state))
 (send *domain* :constants '(WATER MIXTURE - ingredient FRYING-PAN POT BOWL MEASURING-CUP - vessel SPOON KNIFE WHISK WOODEN-SPATULA - tool LARM RARM - arm SINK STOVE KITCHEN - spot LOW MIDDLE HIGH - state))
 (send *domain* :predicates '((ON ?obj - object ?spot - spot)

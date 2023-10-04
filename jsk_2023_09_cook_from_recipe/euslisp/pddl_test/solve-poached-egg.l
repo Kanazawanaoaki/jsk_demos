@@ -13,9 +13,7 @@
 ;;
 
 ;;set cooking-variables
-(setq *cooking-variables* '((WATER . object)
-                            (EGG . object)
-                            ;; (THIRTY-SECONDS . state)
+(setq *cooking-variables* '((EGG . ingredient)
                             (COOKED-EGG . state)
                             (BOILED-WATER . state)
                             (VORTEXED-WATER . state)
