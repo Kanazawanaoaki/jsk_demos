@@ -59,8 +59,10 @@
                                         '((HEATED EGG-MIXTURE SURROUNDINGS-HARDENED) ;; heat(egg mixture, Egg mixture that have hardened around)
                                           (MIXED EGG-MIXTURE EGG MILK WHISK))
 
-                                        '((STIR-FRIED SCRAMBLED-EGG EGG-MIXTURE WHOLE-MIXTURE-TENDER WOODEN-SPATULA) ;; stir-fry(egg mixture, the whole mixture will be tender, 30-40 times quickly with a wooden spatula)
-                                          (IN SCRAMBLED-EGG FRYING-PAN)
+                                        ;; '((STIR-FRIED SCRAMBLED-EGG EGG-MIXTURE WHOLE-MIXTURE-TENDER WOODEN-SPATULA) ;; stir-fry(egg mixture, the whole mixture will be tender, 30-40 times quickly with a wooden spatula)
+                                        ;;   (IN SCRAMBLED-EGG FRYING-PAN)
+                                        '((STIR-FRIED EGG-MIXTURE WHOLE-MIXTURE-TENDER WOODEN-SPATULA) ;; stir-fry(egg mixture, the whole mixture will be tender, 30-40 times quickly with a wooden spatula)
+                                          (IN EGG-MIXTURE FRYING-PAN)
                                           (ON WOODEN-SPATULA STOVE))
 
                                         '((NOT (STOVE-ON)) ;; end

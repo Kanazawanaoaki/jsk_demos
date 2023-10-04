@@ -14,7 +14,8 @@
                              (HEATED ?obj - object ?state - state)
                              (COOKED ?obj - object ?state - state)
                              (BOILED ?obj - object ?state - state)
-                             (STIR-FRIED ?output - object ?input - object ?state - state ?tool - tool)
+                             ;; (STIR-FRIED ?output - object ?input - object ?state - state ?tool - tool)
+                             (STIR-FRIED ?object - object ?state - state ?tool - tool)
                              (STIRRED ?obj - object ?state - state ?tool - tool)
                              (MIXED ?mixture - mixture ?ing1 - object ?ing2 - object ?tool -tool)
                              (WASHED ?obj - object)
@@ -172,17 +173,17 @@
                            ))
        (instance pddl-action :init
                  :name "stir-fry"
-                 :parameters '((?OUTPUT ?INPUT object) (?VESSEL vessel) (?TOOL tool) (?STATE state) (?SPOT spot) (?ARM arm))
+                 :parameters '((?INPUT object) (?VESSEL vessel) (?TOOL tool) (?STATE state) (?SPOT spot) (?ARM arm))
                  :precondition '((IN ?INPUT ?VESSEL)
                                  (ON ?VESSEL ?SPOT)
                                  (ROBOT-AT ?SPOT)
                                  (HOLD ?TOOL ?ARM)
-                                 (NOT (STIR-FRIED ?OUTPUT ?INPUT ?STATE ?TOOL))
-                                 (NOT (IN ?OUTPUT ?VESSEL))
+                                 (NOT (STIR-FRIED ?INPUT ?STATE ?TOOL))
+                                 ;; (NOT (IN ?OUTPUT ?VESSEL))
                                  )
-                 :effect '((STIR-FRIED ?OUTPUT ?INPUT ?STATE ?TOOL)
-                           (IN ?OUTPUT ?VESSEL)
-                           (NOT (IN ?INPUT ?VESSEL))
+                 :effect '((STIR-FRIED ?INPUT ?STATE ?TOOL)
+                           ;; (IN ?OUTPUT ?VESSEL)
+                           ;; (NOT (IN ?INPUT ?VESSEL))
                            ))
        (instance pddl-action :init
                  :name "fetch-water"
