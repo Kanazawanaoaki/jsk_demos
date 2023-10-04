@@ -36,7 +36,7 @@
 ;; (send *domain* :types '(object ingredient vessel state))
 ;; (send *domain* :constants '(EGG MILK EGG-MIXTURE - ingredient BOWL CUP - vessel COOKED - state))
 (send *domain* :types '(ingredient vessel tool  - object
-                                   mixutre - ingredient
+                                   mixture - ingredient
                                    state))
 (send *domain* :constants '(EGG MILK - ingredient EGG-MIXTURE - mixture BOWL CUP - vessel COOKED - state))
 
