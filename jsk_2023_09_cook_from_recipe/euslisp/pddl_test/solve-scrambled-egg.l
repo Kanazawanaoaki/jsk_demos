@@ -127,4 +127,9 @@
           (setq *plan-list* (append *plan-list* (list plan-unit)))
           ))))
 
+(defun show-final-condition ()
+  (setq current-result (elt *cooking-result-list* (- (length *cooking-result-list*)1)))
+  (print (elt (elt current-result 1) (- (length (elt current-result 1) ) 1)))
+  t)
+
 (if *exit-on-end* (ros::exit))
