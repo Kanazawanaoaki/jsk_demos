@@ -7,10 +7,13 @@
 
 ;; load domain
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/cooking-pddl-domain.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/cooking-pddl-utils.l")
 
 ;;
 ;; problem and solve
 ;;
+
+(setq *file-name* "kanazawa_cook_scrambled_egg.pdf")
 
 ;;set cooking-variables
 (setq *cooking-variables* '((EGG . ingredient)
@@ -26,7 +29,7 @@
                             ))
 
 ;; 調理の初期条件
-(setq *cooking-initial-condision* '((ROBOT-AT STOVE)
+(setq *cooking-initial-condition* '((ROBOT-AT STOVE)
                                     (IN EGG BOWL)
                                     (ON BOWL KITCHEN)
                                     (ON SALT KITCHEN)
@@ -96,40 +99,8 @@
                                           )
                                         ))
 
-(setq *cooking-result-list* (list))
-(setq current-condition *cooking-initial-condision*)
-
-(dolist (current-target *cooking-target-conditions*)
-  (setq current-problem (instance pddl-problem :init :name 'current_problem :domain 'kanazawa_cook))
-  (send current-problem :objects *cooking-variables*)
-  (send current-problem :initial-condition current-condition)
-  (send current-problem :goal-condition current-target)
-  (pprint (setq current-result (solve-pddl-planning *domain* current-problem)))
-  (setq current-condition (elt (elt current-result 1) (- (length (elt current-result 1) ) 1)))
-  (setq *cooking-result-list* (append *cooking-result-list* (list current-result)))
-  )
-
-
-(setq gr (make-graph-from-pddl-results *cooking-result-list* :node-name :pprint))
-
-(send gr :write-to-pdf "kanazawa_cook_scrambled_egg.pdf")
-
-(when (ros::get-param "~display_graph" "true")
-  (piped-fork "xdg-open kanazawa_cook_scrambled_egg.pdf"))
-
-(format t ";;The plan by cooking PDDL is as follows: ~%")
-(setq *plan-list* (list))
-(dolist (cooking-result *cooking-result-list*)
-  (if (> (length cooking-result) 2)
-      (progn
-        (dolist (plan-unit (cdr (elt cooking-result 2)))
-          (print plan-unit)
-          (setq *plan-list* (append *plan-list* (list plan-unit)))
-          ))))
-
-(defun show-final-condition ()
-  (setq current-result (elt *cooking-result-list* (- (length *cooking-result-list*)1)))
-  (print (elt (elt current-result 1) (- (length (elt current-result 1) ) 1)))
-  t)
+(setq *cooking-result-list* (exec-pddl-state *cooking-initial-condition* *cooking-target-conditions* *cooking-variables* *domain*))
+(setq *plan-list* (view-pddl-result *cooking-result-list* *file-name*))
+(setq *current-final-condition* (show-final-condition *cooking-result-list*))
 
 (if *exit-on-end* (ros::exit))
