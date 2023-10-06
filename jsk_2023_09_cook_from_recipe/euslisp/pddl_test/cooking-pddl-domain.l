@@ -194,6 +194,7 @@
                                  (ON ?VESSEL ?SPOT)
                                  (ROBOT-AT ?SPOT)
                                  (HOLD ?TOOL ?ARM1)
+                                 (STOVE-ON)
                                  (NOT (HOLD-OBJECT ?ARM2))
                                  (NOT (STIR-FRIED ?INPUT ?STATE ?TOOL))
                                  ;; (NOT (IN ?OUTPUT ?VESSEL))
