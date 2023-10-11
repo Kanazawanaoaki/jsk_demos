@@ -1,0 +1,106 @@
+#!/usr/bin/env roseus
+
+(setq *exit-on-end* (string= "__log:=" (subseq (car (last lisp::*eustop-argument*)) 0 7)))
+
+(load "package://pddl_planner/src/pddl-result-graph.l")
+(load "package://pddl_planner/src/eus-pddl-client.l")
+
+;; load domain
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/cooking-pddl-domain.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/cooking-pddl-utils.l")
+
+;;
+;; problem and solve
+;;
+
+(setq *file-name* "kanazawa_cook_scrambled_egg.pdf")
+
+;;set cooking-variables
+(setq *cooking-variables* '((EGG . ingredient)
+                            (MILK . ingredient)
+                            (SALT . ingredient)
+                            (BUTTER . ingredient)
+                            ;; (SCRAMBLED-EGG . object)
+                            (SMALL-BOWL . vessel)
+                            (EGG-MIXTURE . mixture)
+                            (MELTED . state)
+                            (SURROUNDINGS-HARDENED . state)
+                            (WHOLE-MIXTURE-TENDER . state)
+                            ))
+
+;; 調理の初期条件
+(setq *cooking-initial-condition* '((ROBOT-AT STOVE)
+                                    (IN EGG BOWL)
+                                    (ON BOWL KITCHEN)
+                                    (ON SALT KITCHEN)
+                                    (ON MILK KITCHEN)
+                                    (ON WHISK KITCHEN)
+                                    (IN BUTTER SMALL-BOWL)
+                                    (ON SMALL-BOWL STOVE)
+                                    (ON FRYING-PAN STOVE)
+                                    (ON WOODEN-SPATULA STOVE)
+                                    (NOT (STOVE-ON))
+                                    (NOT (WATERFLOW))
+                                    ))
+
+;; TODO 卵を割る話など
+;; 調理レシピ記述から
+(setq *cooking-target-conditions* (list '((IN MILK BOWL) ;; pour(milk, bowl)
+                                          ;; (ON MILK KITCHEN)
+                                          (NOT (HOLD-OBJECT ARM1))
+                                          (NOT (HOLD-OBJECT ARM2))
+                                          )
+                                        '((IN SALT BOWL) ;; pour(salt, bowl)
+                                          ;; (ON SALT KITCHEN)
+                                          (NOT (HOLD-OBJECT ARM1))
+                                          (NOT (HOLD-OBJECT ARM2))
+                                          )
+                                        '((MIXED EGG-MIXTURE EGG MILK WHISK) ;; mix(egg milk, egg and milk mixed well)
+                                          (IN EGG-MIXTURE BOWL)
+                                          ;; (ON WHISK KITCHEN)
+                                          (NOT (HOLD-OBJECT ARM1))
+                                          (NOT (HOLD-OBJECT ARM2))
+                                          )
+                                        '((IN BUTTER FRYING-PAN) ;; pour(butter, frying pan)
+                                          (NOT (HOLD-OBJECT ARM1))
+                                          (NOT (HOLD-OBJECT ARM2))
+                                          ;; (ON SMALL-BOWL STOVE)
+                                          )
+                                        '((HEATED BUTTER MELTED) ;; heat(butter, melt)
+                                          (IN BUTTER FRYING-PAN)
+                                          (NOT (HOLD-OBJECT ARM1))
+                                          (NOT (HOLD-OBJECT ARM2))
+                                          )
+                                        '((IN EGG-MIXTURE FRYING-PAN) ;; pour(egg, frying pan)
+                                          (MIXED EGG-MIXTURE EGG MILK WHISK)
+                                          ;; (ON BOWL STOVE)
+                                          (NOT (HOLD-OBJECT ARM1))
+                                          (NOT (HOLD-OBJECT ARM2))
+                                          )
+                                        '((HEATED EGG-MIXTURE SURROUNDINGS-HARDENED) ;; heat(egg mixture, Egg mixture that have hardened around)
+                                          (MIXED EGG-MIXTURE EGG MILK WHISK)
+                                          (NOT (HOLD-OBJECT ARM1))
+                                          (NOT (HOLD-OBJECT ARM2))
+                                          )
+
+                                        ;; '((STIR-FRIED SCRAMBLED-EGG EGG-MIXTURE WHOLE-MIXTURE-TENDER WOODEN-SPATULA) ;; stir-fry(egg mixture, the whole mixture will be tender, 30-40 times quickly with a wooden spatula)
+                                        ;;   (IN SCRAMBLED-EGG FRYING-PAN)
+                                        '((STIR-FRIED EGG-MIXTURE WHOLE-MIXTURE-TENDER WOODEN-SPATULA) ;; stir-fry(egg mixture, the whole mixture will be tender, 30-40 times quickly with a wooden spatula)
+                                          (IN EGG-MIXTURE FRYING-PAN)
+                                          ;; (ON WOODEN-SPATULA STOVE)
+                                          (NOT (HOLD-OBJECT ARM1))
+                                          (NOT (HOLD-OBJECT ARM2))
+                                          )
+
+                                        '((NOT (STOVE-ON)) ;; end
+                                          (NOT (WATERFLOW))
+                                          (NOT (HOLD-OBJECT ARM1))
+                                          (NOT (HOLD-OBJECT ARM2))
+                                          )
+                                        ))
+
+(setq *cooking-result-list* (exec-pddl-state *cooking-initial-condition* *cooking-target-conditions* *cooking-variables* *domain*))
+(setq *plan-list* (view-pddl-result *cooking-result-list* *file-name*))
+(setq *current-final-condition* (show-final-condition *cooking-result-list*))
+
+(if *exit-on-end* (ros::exit))
