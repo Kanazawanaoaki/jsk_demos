@@ -1,0 +1,11 @@
+(setq *basic-cooking-target-conditions* (list
+                                         '((IN MILK BOWL))
+                                         '((IN SALT BOWL))
+                                         '((MIXED EGG-MIXTURE EGG MILK WHISK)
+                                           (IN EGG-MIXTURE BOWL))
+                                         '((IN BUTTER FRYING-PAN))
+                                         '((HEATED BUTTER MELTED))
+                                         '((IN EGG-MIXTURE FRYING-PAN))
+                                         '((HEATED EGG-MIXTURE SURROUNDINGS-HARDENED))
+                                         '((STIR-FRIED EGG-MIXTURE WHOLE-MIXTURE-TENDER WOODEN-SPATULA))
+                                         ))
