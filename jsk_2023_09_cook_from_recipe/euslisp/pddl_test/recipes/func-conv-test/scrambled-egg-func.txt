@@ -1,0 +1,6 @@
+mix(egg, milk, egg-mixture, bowl, whisk)
+pour(butter, frying-pan)
+heat(butter, melt)
+pour(egg-mixture, frying-pan)
+heat(egg-mixture, surroundings-hardened)
+stir-fry(egg-mixture, whole-mixture-tender, wooden-spatula)

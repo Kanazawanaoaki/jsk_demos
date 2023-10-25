@@ -30,11 +30,7 @@
     (setq target-list (append target-list (list end-cond)))
     target-list))
 
-
-(defun read-file (file-name)
-  (format t "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/recipes/~A ~%" file-name)
-  (load (format nil "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/recipes/~A" file-name))
-
+(defun cook-condition-conversion ()
   (setq *cooking-target-conditions* (convert-basic-list-to-target-list *basic-cooking-target-conditions*))
   (print *cooking-target-conditions*)
 
@@ -43,9 +39,16 @@
   (setq *current-final-condition* (show-final-condition *cooking-result-list*))
   )
 
+(defun read-file (file-name)
+  (format t "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/recipes/~A ~%" file-name)
+  (load (format nil "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/recipes/~A" file-name))
+  (cook-condition-conversion)
+  )
+
 ;; ;; sunny-side-up.l
 ;; ;;set cooking-variables
 ;; (setq *cooking-variables* '((OIL . ingredient)
+;;                             (SALAD-OIL . ingredient)
 ;;                             (EGG . ingredient)
 ;;                             (THIRTY-SECONDS . state)
 ;;                             (COOKED-EGG . state)
@@ -54,6 +57,7 @@
 ;; ;; 調理の初期条件
 ;; (setq *cooking-initial-condition* '((ROBOT-AT STOVE)
 ;;                                     (ON OIL STOVE)
+;;                                     (ON SALAD-OIL STOVE)
 ;;                                     (IN EGG BOWL)
 ;;                                     (ON BOWL STOVE)
 ;;                                     (ON FRYING-PAN STOVE)
@@ -89,6 +93,7 @@
                             (SMALL-BOWL . vessel)
                             (EGG-MIXTURE . mixture)
                             (MELTED . state)
+                            (MELT . state)
                             (SURROUNDINGS-HARDENED . state)
                             (WHOLE-MIXTURE-TENDER . state)
                             ))
