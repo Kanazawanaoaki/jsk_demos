@@ -1,0 +1,8 @@
+- git:
+    local-name: jsk_3rdparty
+    uri: https://github.com/jsk-ros-pkg/jsk_3rdparty
+    version: master
+- git:
+    local-name: jsk_demos
+    uri: https://github.com/iory/jsk_demos
+    version: teaching-object-2023-09-20

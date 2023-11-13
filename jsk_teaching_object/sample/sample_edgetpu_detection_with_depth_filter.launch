@@ -1,0 +1,14 @@
+<launch>
+
+  <arg name="gui" default="true" />
+
+  <include file="$(find jsk_teaching_object)/sample/include/play_daily_object.xml" >
+  </include>
+
+  <include file="$(find jsk_teaching_object)/launch/edgetpu_detection_with_depth_filter.launch" >
+    <arg name="INPUT_IMAGE" value="/openni_camera/rgb/image_raw" />
+    <arg name="INPUT_DEPTH" value="/openni_camera/depth_registered/hw_registered/image_rect" />
+    <arg name="gui" value="$(arg gui)" />
+  </include>
+
+</launch>

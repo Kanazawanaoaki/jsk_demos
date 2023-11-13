@@ -1,0 +1,129 @@
+<launch>
+
+  <arg name="gui" default="true" />
+  <arg name="device" default="0" />
+  <arg name="video_device" default="/dev/video22" />
+  <arg name="audio_device" default="plughw:2,0" />
+  <arg name="input_image" default="/usb_cam/image_raw" />
+  <arg name="root_image_path" default="/etc/opt/teaching-object/2023-09-21" />
+
+  <node name="usb_cam"
+        pkg="usb_cam" type="usb_cam_node"
+        output="screen" clear_params="true" >
+    <rosparam subst_value="true" >
+      video_device: $(arg video_device)
+      image_height: 1080
+      image_width: 1920
+    </rosparam>
+  </node>
+
+  <node name="remove_bg_node"
+        pkg="jsk_teaching_object" type="remove_bg_node.py"
+        output="screen"
+        respawn="true" >
+    <remap from="~input" to="$(arg input_image)" />
+    <rosparam subst_value="true">
+    </rosparam>
+  </node>
+
+  <node name="publish_text"
+        pkg="jsk_teaching_object" type="publish_text.py"
+        output="screen"
+        respawn="true" >
+    <rosparam subst_value="true">
+    </rosparam>
+  </node>
+
+  <!-- <node name="register_object" -->
+  <!--       pkg="jsk_teaching_object" type="register_object.py" > -->
+  <!--   <remap from="~image" to="$(arg input_image)" /> -->
+  <!--   <rosparam subst_value="true"> -->
+  <!--     root_image_path: $(arg root_image_path) -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+
+  <node name="show_image_publisher"
+        pkg="jsk_teaching_object" type="show_image_publisher.py"
+        clear_params="true"
+        respawn="true" >
+    <rosparam subst_value="true">
+      root_image_path: $(arg root_image_path)
+    </rosparam>
+  </node>
+
+  <include file="$(find jsk_teaching_object)/launch/speech_recognition.launch" >
+    <arg name="device" value="$(arg audio_device)" />
+  </include>
+
+  <!-- object detection -->
+  <node name="fg_node"
+        pkg="fg_ros" type="fg_node.py"
+        output="screen"
+        clear_params="true"
+        required="false">
+    <remap from="~input" to="$(arg input_image)" />
+    <rosparam subst_value="true">
+      model_path: $(find jsk_teaching_object)/trained_data/yolo7/2023-09-19-mechanical-objects.pt
+      score_thresh: 0.4
+      nms_thresh: 0.45
+      device: $(arg device)
+      class_names: ['lmガイド', 'others', 'カップリング', 'スライダー', 'ベース', 'ホルダーa', 'ボールねじ', 'モーター']
+    </rosparam>
+  </node>
+
+  <node name="label_image_decomposer_instance"
+        pkg="jsk_teaching_object" type="label_image_decomposer.py"
+        output="screen" clear_params="true" >
+    <remap from="~input" to="/fg_node/output" />
+    <remap from="~input/label" to="/fg_node/output/label_ins" />
+    <remap from="~output/label_viz" to="~output/viz" />
+    <rosparam subst_value="true" >
+      approximate_sync: false
+      use_label_array: false
+      only_label: false
+      queue_size: 30
+      alpha: 0.5
+    </rosparam>
+  </node>
+
+  <node name="draw_rects"
+        pkg="jsk_teaching_object" type="draw_rects.py"
+        output="screen"
+        clear_params="true" >
+    <remap from="~input" to="label_image_decomposer_instance/output/viz" />
+    <remap from="~input/rects" to="fg_node/output/rects" />
+    <remap from="~input/class" to="fg_node/output/class" />
+    <remap from="~output" to="/yolo7" />
+    <rosparam subst_value="true">
+      font_path: $(find jsk_teaching_object)/font_data/NotoSansJP-Regular.otf
+      use_classification_result: true
+      label_size: 64
+      show_proba: true
+    </rosparam>
+  </node>
+
+  <node name="tile_image_2x1"
+        pkg="jsk_teaching_object" type="tile_image.py"
+        output="screen">
+    <remap from="~output" to="~output_cpu" />
+    <rosparam subst_value="true">
+      input_topics: [$(arg input_image), /yolo7]
+      shape: [1, 2]
+      no_sync: true
+      draw_topic_name: true
+    </rosparam>
+  </node>
+
+  <node name="r8_5_look_server"
+        pkg="jsk_teaching_object" type="r8_5_look.py"
+        output="screen">
+  </node>
+
+  <group if="$(arg gui)" >
+    <node name="$(anon rviz)"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_teaching_object)/launch/config/2023-09-20.rviz" >
+    </node>
+  </group>
+
+</launch>

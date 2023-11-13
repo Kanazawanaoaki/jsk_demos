@@ -1,0 +1,52 @@
+<package format="3">
+
+  <name>jsk_teaching_object</name>
+  <version>0.0.5</version>
+  <description>
+    Object teaching package.
+  </description>
+
+  <license>BSD</license>
+  <maintainer email="yanokura@jsk.imi.i.u-tokyo.ac.jp">Iori Yanokura</maintainer>
+  <author email="k-okada@jsk.t.u-tokyo.ac.jp">Iori Yanokura</author>
+  <author email="yanokura@jsk.imi.i.u-tokyo.ac.jp">Iori Yanokura</author>
+  <author email="shifan@jsk.imi.i.u-tokyo.ac.jp">shifan</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>catkin_virtualenv</build_depend>
+
+  <!-- ALPHABETICAL ORDER -->
+  <build_depend>actionlib</build_depend>
+  <build_depend>actionlib_msgs</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>dynamic_reconfigure</build_depend>
+  <build_depend>jsk_data</build_depend>
+  <build_depend>jsk_topic_tools</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <!-- ALPHABETICAL ORDER -->
+
+  <!-- ALPHABETICAL ORDER -->
+  <build_depend condition="$ROS_PYTHON_VERSION == 2">cv_bridge_python3</build_depend>
+  <build_depend condition="$ROS_PYTHON_VERSION == 3">cv_bridge</build_depend>
+  <exec_depend>compressed_image_transport</exec_depend>
+  <exec_depend>coral_usb</exec_depend>
+  <exec_depend>dynamic_reconfigure</exec_depend>
+  <exec_depend>fg_ros</exec_depend>
+  <exec_depend>jsk_data</exec_depend>
+  <exec_depend>jsk_perception</exec_depend>
+  <exec_depend>jsk_recognition_msgs</exec_depend>
+  <exec_depend>jsk_rviz_plugins</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>opencv_apps</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>google_cloud_texttospeech</exec_depend>
+  <exec_depend>ros_speech_recognition</exec_depend>
+  <!-- ALPHABETICAL ORDER -->
+
+  <export>
+    <pip_requirements>requirements.txt</pip_requirements>
+  </export>
+
+</package>

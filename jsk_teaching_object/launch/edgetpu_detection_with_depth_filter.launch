@@ -1,0 +1,100 @@
+<launch>
+  <arg name="INPUT_IMAGE"/>
+  <arg name="INPUT_DEPTH"/>
+  <arg name="model_file"
+       default="package://jsk_teaching_object/trained_data/20220420-120316-dataset-20-daily-objects.tflite"/>
+  <arg name="label_file"
+       default="package://jsk_teaching_object/sample/data/daily-objects-labels.txt"/>
+  <arg name="depth_threshold" default="1.5"/>
+  <arg name="gui" default="true" />
+
+  <!-- filter background as mask based on depth_threshold -->
+  <node name="depth_image_filter"
+        pkg="jsk_perception" type="depth_image_filter.py"
+        output="screen" respawn="true">
+    <remap from="~input" to="$(arg INPUT_DEPTH)" />
+    <remap from="~output/mask" to="$(arg INPUT_DEPTH)/mask" />
+    <rosparam subst_value="true" >
+      threshold: $(arg depth_threshold)
+    </rosparam>
+  </node>
+
+  <!-- morphology operation on mask to handle transparent bottle and other noisy pixels -->
+  <node name="morphology_close" pkg="opencv_apps" type="morphology" >
+    <remap from="image" to="$(arg INPUT_DEPTH)/mask" />
+    <remap from="~image" to="$(arg INPUT_DEPTH)/mask/close_operation" />
+    <param name="use_camera_info" value="false" />
+    <param name="debug_view" value="false" />
+    <param name="queue_size" value="10" />
+    <param name="morph_operator" value="1" />
+    <param name="morph_element" value="0" />
+    <param name="morph_size" value="40" />
+  </node>
+  <node name="morphology_open" pkg="opencv_apps" type="morphology" >
+    <remap from="image" to="$(arg INPUT_DEPTH)/mask/close_operation" />
+    <remap from="~image" to="$(arg INPUT_DEPTH)/mask/open_operation" />
+    <param name="use_camera_info" value="false" />
+    <param name="debug_view" value="false" />
+    <param name="queue_size" value="10" />
+    <param name="morph_operator" value="0" />
+    <param name="morph_element" value="0" />
+    <param name="morph_size" value="40" />
+  </node>
+
+  <!-- use filtered mask to extract foreground rgb image -->
+  <node name="apply_mask_image"
+        pkg="nodelet" type="nodelet"
+        args="standalone jsk_perception/ApplyMaskImage">
+    <remap from="~input" to="$(arg INPUT_IMAGE)" />
+    <remap from="~input/mask" to="$(arg INPUT_DEPTH)/mask/open_operation" />
+    <remap from="~output" to="$(arg INPUT_IMAGE)/depth_filtered" />
+    <remap from="~output/mask" to="$(arg INPUT_IMAGE)/depth_filtered/mask" />
+    <rosparam>
+      approximate_sync: true
+      clip: false
+      cval: 0
+    </rosparam>
+  </node>
+
+  <!-- TPU object detection based on foreground image -->
+  <include file="$(find coral_usb)/launch/edgetpu_tile_object_detector.launch">
+    <arg name="INPUT_IMAGE" value="$(arg INPUT_IMAGE)/depth_filtered" />
+    <arg name="IMAGE_TRANSPORT" value="raw" />
+    <arg name="model_file" value="$(arg model_file)" />
+    <arg name="label_file" value="$(arg label_file)" />
+  </include>
+
+  <!-- support Japanese name as class name -->
+  <node name="draw_rects_with_classification_result"
+        pkg="jsk_teaching_object" type="draw_rects.py"
+        output="screen"
+        clear_params="true" >
+    <remap from="~input" to="$(arg INPUT_IMAGE)" />
+    <remap from="~input/rects" to="/edgetpu_tile_object_detector/output/rects" />
+    <remap from="~input/class" to="/edgetpu_tile_object_detector/output/class" />
+    <rosparam subst_value="true">
+      queue_size: 100
+      font_path: $(find jsk_recognition_utils)/font_data/NotoSansJP-Regular.otf
+      use_classification_result: true
+      label_size: 16
+    </rosparam>
+  </node>
+
+  <group ns="draw_rects_with_classification_result" >
+    <node name="republish"
+          pkg="image_transport" type="republish"
+          args="raw compressed">
+      <remap from="in" to="output" />
+      <remap from="out" to="output" />
+    </node>
+  </group>
+
+  <!-- visualize resutls -->
+  <group if="$(arg gui)" >
+    <node name="image_view01"
+          pkg="image_view" type="image_view">
+      <remap from="image" to="draw_rects_with_classification_result/output" />
+    </node>
+  </group>
+
+</launch>

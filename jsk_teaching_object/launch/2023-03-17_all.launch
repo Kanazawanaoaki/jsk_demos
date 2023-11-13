@@ -1,0 +1,15 @@
+<launch>
+
+  <arg name="device" default="-1" />
+
+  <include file="$(find realsense2_camera)/launch/rs_rgbd.launch" >
+  </include>
+
+  <include file="$(find jsk_teaching_object)/sample/sample_multi_euclidean_cluster_extraction.launch" >
+  </include>
+
+  <include file="$(find jsk_teaching_object)/sample/sample_thk_items_detection_onsight.launch" >
+    <arg name="device" value="$(arg device)" />
+  </include>
+
+</launch>

@@ -1,0 +1,8 @@
+- git:
+    local-name: jsk-ros-pkg/jsk_demos
+    uri: https://github.com/iory/jsk_demos
+    version: teaching-object-2023-09-20
+- git:
+    local-name: seed-solutions/r8_5_ros_pkg
+    uri: git@github.com:iory/r8_5_ros_pkg.git
+    version: main
