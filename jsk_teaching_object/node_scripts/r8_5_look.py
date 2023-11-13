@@ -2,29 +2,25 @@
 
 from pathlib import Path
 
-from eos import current_time_str
-from eos import makedirs
-import rospy
 import actionlib
 import numpy as np
-from r8_5_interface import R85
-from r8_5_interface import R85ROSRobotInterface
+import rospy
+import trimesh
+from eos import current_time_str, makedirs
+from pybsc.image_utils import imwrite
+from r8_5_interface import R85, R85ROSRobotInterface
+from ros_speak import speak_jp
 from scipy.spatial.distance import cdist
 from skrobot.coordinates import Coordinates
-from skrobot.coordinates.math import angle_between_vectors
-from skrobot.coordinates.math import rotation_matrix_from_axis
-from skrobot.model import Axis
-from skrobot.model import MeshLink
+from skrobot.coordinates.math import (angle_between_vectors,
+                                      rotation_matrix_from_axis)
+from skrobot.model import Axis, MeshLink
 from skrobot.viewers import TrimeshSceneViewer
-import trimesh
-from pybsc.image_utils import imwrite
 
-from ros_speak import speak_jp
+from jsk_teaching_object.msg import (TakeActionAction, TakeActionResult,
+                                     TakeImagePhotoAction,
+                                     TakeImagePhotoResult)
 from jsk_teaching_object.topic_subscriber import ImageSubscriber
-from jsk_teaching_object.msg import TakeImagePhotoAction
-from jsk_teaching_object.msg import TakeImagePhotoResult
-from jsk_teaching_object.msg import TakeActionAction
-from jsk_teaching_object.msg import TakeActionResult
 
 
 def find_best_order(angles):

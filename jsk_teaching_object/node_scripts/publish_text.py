@@ -5,17 +5,15 @@ from __future__ import print_function
 
 import os
 import readline
-import rospy
 import sys
-import std_msgs.msg
 from collections import deque
 
-from sound_play.msg import SoundRequest
-from std_msgs.msg import ColorRGBA
-from std_msgs.msg import Float32
-from sound_play.msg import SoundRequestActionGoal
-from speech_recognition_msgs.msg import SpeechRecognitionCandidates
+import rospy
+import std_msgs.msg
 from jsk_rviz_plugins.msg import OverlayText
+from sound_play.msg import SoundRequest, SoundRequestActionGoal
+from speech_recognition_msgs.msg import SpeechRecognitionCandidates
+from std_msgs.msg import ColorRGBA, Float32
 
 try:
     input = raw_input

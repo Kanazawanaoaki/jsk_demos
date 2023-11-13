@@ -1,18 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import cv2
+import gdown
+import numpy as np
+import rospy
 from cv_bridge import CvBridge
 from jsk_topic_tools import ConnectionBasedTransport
-import rospy
-import cv2
-import numpy as np
-
+from rembg import remove
 from sensor_msgs.msg import Image
 
-import gdown
-from jsk_teaching_object.remove_bg import remove_background
-from rembg import remove
 from jsk_teaching_object.put_text import put_text_to_image
+from jsk_teaching_object.remove_bg import remove_background
 
 
 class RemoveBGNode(ConnectionBasedTransport):

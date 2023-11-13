@@ -1,6 +1,6 @@
-import rospy
 import actionlib
 import actionlib_msgs.msg
+import rospy
 
 from jsk_teaching_object.msg import TakeActionAction
 from jsk_teaching_object.msg import TakeActionGoal

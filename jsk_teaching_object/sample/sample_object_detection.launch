@@ -1,30 +1,21 @@
 <launch>
 
-  <arg name="gui" default="true" />
-  <arg name="input_image" default="/usb_cam/image_raw" />
+  <param name="/use_sim_time" value="true"/>
 
-  <include file="$(find jsk_teaching_object)/sample/include/play_rosbag.xml" >
-    <arg name="input_rosbag" value="$(find jsk_teaching_object)/sample/data/hand_camera_for_box_industrial-image-compressed.bag" />
-  </include>
+  <node name="rosbag_play" pkg="rosbag" type="play"
+        args="$(find jsk_teaching_object)/sample/data/2023-11-16-drink-object.bag --clock --loop"/>
 
-  <node name="object_detection_node"
-        pkg="jsk_teaching_object" type="detection_node.py"
-        output="screen"
-        clear_params="true"
-        respawn="true">
-    <remap from="~input" to="$(arg input_image)" />
-    <rosparam subst_value="true">
-      model_path: $(find jsk_teaching_object)/trained_data/2023-03-01/model.pth
-      class_name_path: $(find jsk_teaching_object)/trained_data/2023-03-01/class_names.txt
-    </rosparam>
-  </node>
-
-  <!-- visualize resutls -->
-  <group if="$(arg gui)" >
-    <node name="image_view01"
-          pkg="image_view" type="image_view">
-      <remap from="image" to="/object_detection_node/output/image" />
+  <group ns="usb_cam">
+    <node name="republish"
+          pkg="image_transport" type="republish"
+          args="compressed raw">
+      <remap from="in" to="image_raw"/>
+      <remap from="out" to="image_raw"/>
     </node>
   </group>
+
+  <include file="$(find jsk_teaching_object)/launch/object_detection.launch" >
+    <arg name="launch_usb_cam" value="false" />
+  </include>
 
 </launch>

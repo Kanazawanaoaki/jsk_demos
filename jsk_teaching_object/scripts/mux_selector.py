@@ -18,12 +18,15 @@ If the type of the monitored topic is unknown, you can set the type with `~topic
 [{'name': '/joy1', 'type': 'sensor_msgs/Joy'}, {'name': '/joy2', 'type': 'sensor_msgs/Joy'}, ...]
 """
 
-import rospy
 import sys
+import traceback
+
 import roslib.message
+import rospy
 import rostopic
 from topic_tools.srv import MuxSelect
-import traceback
+
+
 if sys.version_info.major < 3:
     import thread
 else:

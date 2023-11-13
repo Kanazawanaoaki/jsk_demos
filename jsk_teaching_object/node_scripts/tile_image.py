@@ -2,21 +2,23 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import division
-import math
 
 import collections
+import itertools
+import math
 import sys
-import cv2
-import cv_bridge
-from jsk_topic_tools import ConnectionBasedTransport
-import message_filters
-import rospy
-from sensor_msgs.msg import Image
-import itertools, pkg_resources
 from distutils.version import StrictVersion
 from threading import Lock
+
+import cv2
+import cv_bridge
+import message_filters
 import numpy as np
 import PIL
+import pkg_resources
+import rospy
+from jsk_topic_tools import ConnectionBasedTransport
+from sensor_msgs.msg import Image
 
 
 def centerize(src, dst_shape, margin_color=None):
@@ -119,11 +121,9 @@ def get_tile_image(imgs, tile_shape=None, result_img=None, margin_color=None,
 
 
 def colorize_cluster_indices(image, cluster_indices, alpha=0.3, image_alpha=1):
-    from skimage.color import rgb2gray
-    from skimage.color import gray2rgb
+    from skimage.color import gray2rgb, rgb2gray
+    from skimage.color.colorlabel import DEFAULT_COLORS, color_dict
     from skimage.util import img_as_float
-    from skimage.color.colorlabel import DEFAULT_COLORS
-    from skimage.color.colorlabel import color_dict
     image = img_as_float(rgb2gray(image))
     image = gray2rgb(image) * image_alpha + (1 - image_alpha)
     height, width = image.shape[:2]

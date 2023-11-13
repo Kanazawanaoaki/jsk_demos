@@ -7,10 +7,10 @@ import sys
 import tempfile
 import time
 
-import six
-from eos import makedirs
 from eos import current_time_str
+from eos import makedirs
 from pybsc import run_command
+import six
 
 
 def run_ssh_task(

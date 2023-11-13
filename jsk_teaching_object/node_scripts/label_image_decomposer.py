@@ -4,20 +4,18 @@ import sys
 
 import cv2
 import matplotlib
-matplotlib.use('Agg')  # NOQA
-import matplotlib.cm
-import numpy as np
-import scipy.ndimage
 
+matplotlib.use('Agg')  # NOQA
 import cv_bridge
 import dynamic_reconfigure.server
-from jsk_topic_tools import ConnectionBasedTransport
-from jsk_topic_tools import warn_no_remap
+import matplotlib.cm
 import message_filters
+import numpy as np
 import rospy
-from sensor_msgs.msg import Image
-
+import scipy.ndimage
 from jsk_perception.cfg import LabelImageDecomposerConfig
+from jsk_topic_tools import ConnectionBasedTransport, warn_no_remap
+from sensor_msgs.msg import Image
 
 
 def bounding_rect_of_mask(img, mask):
@@ -161,11 +159,9 @@ def get_tile_image(imgs, tile_shape=None, result_img=None, margin_color=None,
 
 
 def colorize_cluster_indices(image, cluster_indices, alpha=0.3, image_alpha=1):
-    from skimage.color import rgb2gray
-    from skimage.color import gray2rgb
+    from skimage.color import gray2rgb, rgb2gray
+    from skimage.color.colorlabel import DEFAULT_COLORS, color_dict
     from skimage.util import img_as_float
-    from skimage.color.colorlabel import DEFAULT_COLORS
-    from skimage.color.colorlabel import color_dict
     image = img_as_float(rgb2gray(image))
     image = gray2rgb(image) * image_alpha + (1 - image_alpha)
     height, width = image.shape[:2]

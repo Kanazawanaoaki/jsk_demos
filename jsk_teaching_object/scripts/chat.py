@@ -5,13 +5,14 @@ from __future__ import print_function
 
 import os
 import readline
-import rospy
 import sys
 import threading
 
+import rospy
 from sound_play.msg import SoundRequest
 from sound_play.msg import SoundRequestActionGoal
 from speech_recognition_msgs.msg import SpeechRecognitionCandidates
+
 
 try:
     input = raw_input

@@ -5,9 +5,8 @@ import os
 import sys
 
 import rospy
-from sensor_msgs.msg import Image
 from jsk_topic_tools import ConnectionBasedTransport
-
+from sensor_msgs.msg import Image
 
 # cv_bridge_python3 import
 if os.environ['ROS_PYTHON_VERSION'] == '3':

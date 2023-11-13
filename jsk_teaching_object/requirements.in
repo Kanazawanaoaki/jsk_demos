@@ -1,5 +1,6 @@
 extendedos
 gdown
+git+https://github.com/iory/scikit-robot.git@master#egg=scikit-robot
 matplotlib
 moviepy
 numba==0.56.4
@@ -8,11 +9,12 @@ openai
 opencv-python
 pillow==9.4.0
 pybsc
+r8_5_interface
 rembg
 ros-speak
 shapely
 torch
 torchvision
-git+https://github.com/iory/scikit-robot.git@master#egg=scikit-robot
-r8_5_interface
 trimesh
+ultralytics
+dill

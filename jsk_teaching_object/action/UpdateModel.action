@@ -1,4 +1,4 @@
 string model_path
-string class_name_path
+string[] class_names
 ---
 ---

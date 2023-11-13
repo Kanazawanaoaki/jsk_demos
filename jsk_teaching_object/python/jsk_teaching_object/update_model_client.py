@@ -1,9 +1,8 @@
-import rospy
 import actionlib
 import actionlib_msgs.msg
-
 from fg_ros.msg import UpdateModelAction
 from fg_ros.msg import UpdateModelGoal
+import rospy
 
 
 _update_model_clients = {}

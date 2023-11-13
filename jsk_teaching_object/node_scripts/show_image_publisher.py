@@ -2,33 +2,28 @@
 # -*- coding: utf-8 -*-
 
 import warnings
+
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 import os
+import re
 import sys
-from threading import Lock
-from pathlib import Path
 from collections import defaultdict
+from functools import lru_cache
+from pathlib import Path
+from threading import Lock
 
 import cv2
-import numpy as np
-
-from std_msgs.msg import String
-import dynamic_reconfigure.server
-import rospy
-from jsk_perception.cfg import ImagePublisherConfig
-from sensor_msgs.msg import CameraInfo
-from sensor_msgs.msg import Image, CompressedImage
-
-import re
-from PIL import Image as PIL_Image
 import cv_bridge
-from cv_bridge import getCvType
-from pybsc.image_utils import squared_padding_image
-
-from functools import lru_cache
-
+import dynamic_reconfigure.server
 import gdown
-from pybsc.image_utils import imread
+import numpy as np
+import rospy
+from cv_bridge import getCvType
+from jsk_perception.cfg import ImagePublisherConfig
+from PIL import Image as PIL_Image
+from pybsc.image_utils import imread, squared_padding_image
+from sensor_msgs.msg import CameraInfo, CompressedImage, Image
+from std_msgs.msg import String
 
 from jsk_teaching_object.put_text import put_text_to_image
 
@@ -37,6 +32,30 @@ from jsk_teaching_object.put_text import put_text_to_image
 def cached_imread(img_path, image_width=500):
     return squared_padding_image(
         imread(img_path, 'bgra'), image_width)
+
+
+def create_image_grid(root_image_path, image_caption, font_path, label_size, pos, encoding, cnt, grid_size=(5, 5), canvas_size=(2500, 2500), text_color=(255, 255, 255), background_color=(127, 127, 127, 255)):
+    target_names = sorted(list(set([path.parent.name for path in sorted(root_image_path.glob('*/*.jpg'))])))
+    canvas = np.zeros((*canvas_size, 4), dtype=np.uint8)
+    grid_rows, grid_cols = grid_size
+    cell_width, cell_height = canvas_size[0] // grid_cols, canvas_size[1] // grid_rows
+
+    for i in range(grid_rows):
+        for j in range(grid_cols):
+            if i * grid_cols + j >= len(target_names):
+                break
+            target_name = target_names[i * grid_cols + j]
+            filenames = sorted(list((root_image_path / target_name).glob('*.jpg')))
+            cnt[target_name] = (cnt[target_name] + 1) % len(filenames)
+            img = cached_imread(str(filenames[cnt[target_name]]), min(cell_width, cell_height))
+            img = put_text_to_image(img, target_name, pos, font_path, label_size, color=text_color, background_color=background_color, offset_x=10)
+            canvas[i * cell_height : (i + 1) * cell_height, j * cell_width : (j + 1) * cell_width] = img
+
+    caption_image = np.zeros((label_size * 2, canvas_size[0], 4), dtype=np.uint8)
+    caption_image = put_text_to_image(caption_image, image_caption, (10, label_size + label_size / 2.0), font_path, label_size, color=text_color, background_color=background_color, offset_x=10)
+    canvas = np.concatenate([caption_image, canvas], axis=0)
+
+    return canvas
 
 
 class ShowImagePublisher(object):
@@ -48,7 +67,7 @@ class ShowImagePublisher(object):
             '~font_path',
             gdown.cached_download('https://github.com/googlefonts/noto-cjk/raw/main/Sans/OTF/Japanese/NotoSansCJKjp-Regular.otf'))
         self.label_size = 64
-        self.pos = (10, self.label_size + self.label_size / 2.0)
+        self.text_pos = (10, self.label_size + self.label_size / 2.0)
         self.encoding = rospy.get_param('~encoding', 'bgra8')
         self.frame_id = rospy.get_param('~frame_id', 'camera')
 
@@ -61,45 +80,17 @@ class ShowImagePublisher(object):
         self.root_image_path = rospy.get_param('~root_image_path')
 
         self.root_image_path = Path(self.root_image_path)
+        self.cnt = defaultdict(int)
 
         self.cnt = defaultdict(int)
         with self.lock:
             if self.root_image_path is not None:
-                target_names = sorted(list(
-                    set([path.parent.name for path in sorted(self.root_image_path.glob('*/*.jpg'))])))
-                canvas = np.zeros((2500, 2500, 4), dtype=np.uint8)
-                for i in range(5):
-                    for j in range(5):
-                        if i * 5 + j >= len(target_names):
-                            break
-                        target_name = target_names[i * 5 + j]
-                        img = cached_imread(
-                            str(sorted(list((self.root_image_path / target_names[i * 5 + j]).glob('*.jpg')))[0]), 500)
-                        color = (127, 127, 127, 255)
-                        img = put_text_to_image(
-                            img, target_name, self.pos, self.font_path,
-                            self.label_size,
-                            color=(255, 255, 255),
-                            background_color=tuple(color),
-                            offset_x=10)
-                        canvas[i * 500 : ((i + 1) * 500),
-                               j * 500 : ((j + 1) * 500)] = img
-                        self.cnt[target_name] = 0
-                caption_image = np.zeros((100, 2500, 4), dtype=np.uint8)
-                caption_image = put_text_to_image(
-                    caption_image, self.image_caption, (10, self.label_size + self.label_size / 2.0),
-                    self.font_path,
-                    self.label_size,
-                    color=(255, 255, 255),
-                    background_color=tuple(color),
-                    offset_x=10)
-                canvas = np.concatenate([
-                    caption_image,
-                    canvas,
-                ], axis=0)
+                canvas = create_image_grid(
+                    self.root_image_path, self.image_caption, self.font_path,
+                    self.label_size, self.text_pos, self.encoding,
+                    self.cnt)
                 self.imgmsg, self.compmsg = \
                     self.cv2_to_imgmsg(canvas, self.encoding)
-
         self.update_timer = rospy.Timer(rospy.Duration(self.update_interval), self.update_image)
         self.publish_timer = rospy.Timer(rospy.Duration(1. / rate), self.publish)
 
@@ -108,38 +99,9 @@ class ShowImagePublisher(object):
             return
 
         with self.lock:
-            target_names = sorted(list(
-                set([path.parent.name for path in sorted(self.root_image_path.glob('*/*.jpg'))])))
-            canvas = np.zeros((2500, 2500, 4), dtype=np.uint8)
-            for i in range(5):
-                for j in range(5):
-                    if i * 5 + j >= len(target_names):
-                        break
-                    target_name = target_names[i * 5 + j]
-                    filenames = sorted(list((self.root_image_path / target_names[i * 5 + j]).glob('*.jpg')))
-                    self.cnt[target_name] = (self.cnt[target_name] + 1) % len(filenames)
-                    img = cached_imread(str(filenames[self.cnt[target_name]]), 500)
-                    color = (127, 127, 127, 255)
-                    img = put_text_to_image(
-                        img, target_name, self.pos, self.font_path,
-                        self.label_size,
-                        color=(255, 255, 255),
-                        background_color=tuple(color),
-                        offset_x=10)
-                    canvas[i * 500 : ((i + 1) * 500),
-                           j * 500 : ((j + 1) * 500)] = img
-            caption_image = np.zeros((100, 2500, 4), dtype=np.uint8)
-            caption_image = put_text_to_image(
-                caption_image, self.image_caption, (10, self.label_size + self.label_size / 2.0),
-                self.font_path,
-                self.label_size,
-                color=(255, 255, 255),
-                background_color=tuple(color),
-                offset_x=10)
-            canvas = np.concatenate([
-                caption_image,
-                canvas,
-            ], axis=0)
+            canvas = create_image_grid(
+                self.root_image_path, self.image_caption, self.font_path,
+                self.label_size, self.text_pos, self.encoding, self.cnt)
             self.imgmsg, self.compmsg = \
                 self.cv2_to_imgmsg(canvas, self.encoding)
 

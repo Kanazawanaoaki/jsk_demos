@@ -1,26 +1,26 @@
 #!/usr/bin/env python3
 
-import threading
 from enum import IntEnum
 import os
 import os.path as osp
 from pathlib import Path
+import threading
 
-import yaml
 import cv2
+from eos import current_time_str
+from eos import makedirs
 import openai
 from openai.openai_object import OpenAIObject
 from ros_speak import speak_jp
 import rospy
-from eos import makedirs
-from eos import current_time_str
 from speech_recognition_msgs.msg import SpeechRecognitionCandidates
+import yaml
 
-from jsk_teaching_object.topic_subscriber import ImageSubscriber
 from jsk_teaching_object.remote import train_in_remote
-from jsk_teaching_object.update_model_client import update_model
-from jsk_teaching_object.take_image_photo_client import take_image_photo
 from jsk_teaching_object.take_action_client import take_action
+from jsk_teaching_object.take_image_photo_client import take_image_photo
+from jsk_teaching_object.topic_subscriber import ImageSubscriber
+from jsk_teaching_object.update_model_client import update_model
 
 
 def write_names_from_yaml(yaml_file_path, output_file_path):

@@ -1,25 +1,19 @@
 #!/usr/bin/env python
 
-import os.path as osp
 import os
+import os.path as osp
 import sys
 
-import numpy as np
-from PIL import Image
-from PIL import ImageDraw
-from PIL import ImageFont
 import dynamic_reconfigure.server
-from jsk_recognition_msgs.msg import ClassificationResult
-from jsk_recognition_msgs.msg import RectArray
-from jsk_topic_tools import ConnectionBasedTransport
-from jsk_topic_tools import warn_no_remap
 import message_filters
 import numpy as np
 import rospy
 import sensor_msgs.msg
+from jsk_recognition_msgs.msg import ClassificationResult, RectArray
+from jsk_topic_tools import ConnectionBasedTransport, warn_no_remap
+from PIL import Image, ImageDraw, ImageFont
 
 from jsk_teaching_object.cfg import DrawRectsConfig
-
 
 # OpenCV import for python3
 if os.environ['ROS_PYTHON_VERSION'] == '3':

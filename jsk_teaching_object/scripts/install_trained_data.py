@@ -67,16 +67,9 @@ def main():
 
     download_data(
         pkg_name=PKG,
-        path='trained_data/yolo7/2023-03-16-16-30-best.pt',
-        url='https://drive.google.com/uc?id=1s5FkxTq51Ry4cs8ga4IKPlSTtfh-34x_',  # NOQA
-        md5='6d608067400c314223d66c5a7819e88c',
-    )
-
-    download_data(
-        pkg_name=PKG,
-        path='trained_data/yolo7/2023-09-19-mechanical-objects.pt',
-        url='https://drive.google.com/uc?id=1dhpCT1wXNuppZ0mmEUWSupBPMQkHV-it',  # NOQA
-        md5='732b8ac8e62b2071edb01f392054449c',
+        path='trained_data/yolo8/2023-11-13-drink-objects.pt',
+        url='https://drive.google.com/uc?id=1tRgNWLeijTQDFIKC08NNQPz1jbU74wX9',  # NOQA
+        md5='c314689832c141341e0c7b2bc4cf7d93',
     )
 
 

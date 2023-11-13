@@ -30,6 +30,7 @@ catkin_python_setup()
 # Dynamic reconfigure support
 generate_dynamic_reconfigure_options(
   cfg/DrawRects.cfg
+  cfg/InstanceSegmentation.cfg
 )
 
 generate_messages(
@@ -50,7 +51,6 @@ catkin_generate_virtualenv(
   ISOLATE_REQUIREMENTS FALSE
   CHECK_VENV FALSE
 )
-
 
 file(GLOB SCRIPT_PROGRAMS scripts/*.py)
 catkin_install_python(

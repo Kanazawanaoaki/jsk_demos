@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import rospy
 from ros_speak import speak_jp
+import rospy
 
 
 if __name__ == '__main__':
