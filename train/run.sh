@@ -63,5 +63,4 @@ docker run --rm \
        ${TTY_OPT} train-object-detection-from-images $cmd
 
 message 32 "Done generating model file for pytorch object detection"
-message 32 " - ${DATASET_DIR}/generated_data/yolov7-seg-coco/weights/best.pt"
-message 32 " - ${DATASET_DIR}/generated_data/from_images_dir.yaml"
+message 32 " - ${outpath}/train/weights/best.pt"
