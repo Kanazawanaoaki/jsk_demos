@@ -48,6 +48,13 @@ def main():
     #     extract=False,
     # )
 
+    download_data(
+        pkg_name=PKG,
+        path='font_data/NotoSansJP-Regular.otf',
+        url='https://github.com/googlefonts/noto-cjk/raw/main/Sans/OTF/Japanese/NotoSansCJKjp-Regular.otf',  # NOQA
+        md5='6d57a40c6695bd46457315e2a9dc757a',
+    )
+
 
 if __name__ == '__main__':
     main()
