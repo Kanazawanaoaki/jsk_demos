@@ -11,6 +11,7 @@ git clone --single-branch https://github.com/iory/jsk_demos -b jsk-teaching-obje
 source /opt/ros/noetic/setup.bash
 rosdep update
 rosdep install -y -r --from-paths . --ignore-src
+cd ~/jsk_teaching_object
 catkin build jsk_teaching_object
 source devel/setup.bash
 ```
