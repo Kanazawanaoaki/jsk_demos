@@ -1,0 +1,36 @@
+<launch>
+
+  <arg name="run_rviz" default="false" />
+
+  <arg name="view" default="false"/>
+  <arg name="image_from" default="/k4a/rgb/image_rect_color"/>
+  <arg name="image_to" default="/k4a/rgb/image_decompress"/>
+  <arg name="throttle_hz" default="10"/>
+
+  <group ns="clip_test">
+    <node name="image_transport" pkg="image_transport" type="republish" args="compressed">
+      <remap from="in" to="$(arg image_from)"/>
+      <remap from="out" to="$(arg image_to)"/>
+      <rosparam command="load" subst_value="true">
+        queue_size: 1
+      </rosparam>
+    </node>
+
+    <node name="image_throttle" pkg="topic_tools" type="throttle" args="messages $(arg image_to) $(arg throttle_hz)"/>
+
+    <node name="raw_image_view" pkg="image_view" type="image_view" if="$(arg view)">
+      <remap from="image" to="$(arg image_to)_throttle"/>
+    </node>
+  </group>
+
+  <node name="rect_added_image_publisher" pkg="jsk_2023_09_cook_from_recipe"
+        type="rect_added_image_publisher.py" output="screen" clear_params="true"/>
+
+  <node name="moving_average_node" pkg="jsk_2023_09_cook_from_recipe"
+        type="moving_average_node.py" output="screen" clear_params="true"/>
+
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/rviz.launch" if="$(arg run_rviz)">
+    <arg name="config_name" value="cook_broccolil.rviz" />
+  </include>
+
+</launch>

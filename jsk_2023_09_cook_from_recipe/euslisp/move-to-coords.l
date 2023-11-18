@@ -449,6 +449,13 @@
   (print (send *ri* :state :worldcoords))
   )
 
+(defun move-to-stove-front-ri-direct ()
+  (send *ri* :clear-costmap)
+  (send *ri* :move-to (make-coords :pos #f(1300 7950 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
+  (print (send *ri* :state :worldcoords))
+  )
+
+
 (defun move-to-microwave-ri-direct ()
   ;; 電子レンジまで移動する
   (send *ri* :clear-costmap)

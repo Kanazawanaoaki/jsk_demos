@@ -25,8 +25,9 @@
   (send *ri* :speak-jp "ありがとうございます")
   )
 
-(defun wait-ok-manequine (&key (arm (list "rarm")))
+(defun wait-ok-manequine (&key (arm (list "rarm")) (time 0))
   ;; okと言われるまで待つ
+  (unix:sleep time)
   (manequine-mode :arm arm :start t)
   (ok-wait)
   (manequine-end)
@@ -103,9 +104,11 @@
   (setq *initial-head-neck-p* (elt *initial-av* 16))
   )
 
-(defun summarize-rav (rav-list &key (threshold 0.1))
+(defun summarize-rav (rav-list &key (threshold 0.1) (larm nil))
   (let (ans-list rec-list)
-    (setq rec-list (rav2rec rav-list))
+    (if larm
+        (setq rec-list (rav2rec rav-list :arm :larm))
+      (setq rec-list (rav2rec rav-list)))
     (setq ans-list (list (elt rav-list 0)))
     (setq now-index 0)
     (dotimes (i (- (length rav-list) 1))
@@ -135,14 +138,14 @@
   (setq *pick-short-rav-list* (summarize-rav *pick-short-rav-list* :threshold thre))
   )
 
-(defun rav2rec (rav-list)
+(defun rav2rec (rav-list &key (arm :rarm))
   (setq tmp-av (send *robot* :angle-vector))
   (format t "length of rav-list : ~A ~%" (length rav-list))
 
   (setq rec-list (list))
   (dolist (rav rav-list)
-    (send *robot* :rarm :angle-vector rav)
-    (setq now-rec (send (send *robot* :rarm :end-coords) :copy-worldcoords))
+    (send *robot* arm :angle-vector rav)
+    (setq now-rec (send (send *robot* arm :end-coords) :copy-worldcoords))
     (setq rec-list (append rec-list (list now-rec)))
     )
   (send *robot* :angle-vector tmp-av)
@@ -239,7 +242,7 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun replay-rav-list (rav-list &key (time 200) (reverse nil))
+(defun replay-rav-list (rav-list &key (time 200) (reverse nil) (larm nil))
   (if reverse
       (setq rav-list (reverse rav-list))
     )
@@ -260,7 +263,9 @@
     ;; (send *robot* :head-neck-p :joint-angle 60.0)
     (send *robot* :head-neck-y :joint-angle *initial-head-neck-y*)
     (send *robot* :head-neck-p :joint-angle *initial-head-neck-p*)
-    (send *robot* :rarm :angle-vector av)
+    (if larm
+        (send *robot* :larm :angle-vector av)
+      (send *robot* :rarm :angle-vector av))
     (setq avs (append avs (list (send *robot* :angle-vector))))
     (setq tms (append tms (list time)))
     )
@@ -268,19 +273,21 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun replay-short-rav-list (rav-list &key (time 150) (reverse nil)) ;; time 200
+(defun replay-short-rav-list (rav-list &key (time 150) (larm nil)) ;; time 200
   ;; (send *robot* :head-neck-y :joint-angle 0.0)
   ;; (send *robot* :head-neck-p :joint-angle 60.0)
   (send *robot* :head-neck-y :joint-angle *initial-head-neck-y*)
   (send *robot* :head-neck-p :joint-angle *initial-head-neck-p*)
-  (send *robot* :rarm :angle-vector (elt rav-list 0))
+  (if larm
+      (send *robot* :larm :angle-vector (elt rav-list 0))
+    (send *robot* :rarm :angle-vector (elt rav-list 0)))
   (send *ri* :angle-vector (send *robot* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
-  (replay-rav-list rav-list :time time)
+  (replay-rav-list rav-list :time time :larm larm)
   )
 
-(defun replay-rec-list (rec-list &key (time 200) (reverse nil))
+(defun replay-rec-list (rec-list &key (time 200) (reverse nil) (larm nil))
   (if reverse
       (setq rec-list (reverse rec-list))
     )
@@ -301,9 +308,13 @@
     ;; (send *robot* :head-neck-p :joint-angle 60.0)
     (send *robot* :head-neck-y :joint-angle *initial-head-neck-y*)
     (send *robot* :head-neck-p :joint-angle *initial-head-neck-p*)
-    (setq ik-res (send *robot* :rarm :inverse-kinematics
-		       rec
-		       ))
+    (if larm
+        (setq ik-res (send *robot* :larm :inverse-kinematics
+                           rec
+                           ))
+      (setq ik-res (send *robot* :rarm :inverse-kinematics
+                         rec
+                         )))
     (if (equal ik-res nil)
 	(progn
 	  (setq *ik-fail-flag* t)
@@ -317,28 +328,36 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun replay-short-rec-list (rec-list)
-  (send *robot* :angle-vector *initial-av*)
+(defun replay-short-rec-list (rec-list &key (time 150) (larm nil) (trans-vec #f(0 0 0 )))
   ;; (send *robot* :head-neck-y :joint-angle 0.0)
   ;; (send *robot* :head-neck-p :joint-angle 60.0)
   (send *robot* :head-neck-y :joint-angle *initial-head-neck-y*)
   (send *robot* :head-neck-p :joint-angle *initial-head-neck-p*)
-  (setq ik-res (send *robot* :rarm :inverse-kinematics
-                     (elt rec-list 0)
-                     ))
+  (setq initial-rec-coords (make-cascoords))
+  (send initial-rec-coords :newcoords (send (elt rec-list 0) :copy-worldcoords))
+  (setq assoced-rec-list (assoc-rec-list rec-list initial-rec-coords))
+  (send initial-rec-coords :translate trans-vec)
+
+  (if larm
+      (setq ik-res (send *robot* :larm :inverse-kinematics
+                         (elt assoced-rec-list 0)
+                         ))
+    (setq ik-res (send *robot* :rarm :inverse-kinematics
+                       (elt assoced-rec-list 0)
+                       )))
   (if (equal ik-res nil)
       (progn
         (setq *ik-fail-flag* t)
         (return-from replay-short-rec-list)
         )
     )
-  ;; (send *ri* :angle-vector (send *robot* :angle-vector) 2000)
+  (send *ri* :angle-vector (send *robot* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+  ;; (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
   ;; (send *ri* :wait-interpolation)
-  (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
-  ;; (send *ri* :wait-interpolation)
-  (unix:usleep 3500000)
+  ;; (unix:usleep 3500000)
 
-  (replay-rec-list rec-list)
+  (replay-rec-list assoced-rec-list :time time :larm larm)
   )
 
 (defun record-rav-key ()
@@ -358,9 +377,9 @@
   rav-list
   )
 
-(defun record-rav-voice ()
+(defun record-rav-voice (&key (arm "rarm"))
   ;; okと言われるまで待つ
-  (manequine-mode :arm (list "rarm") :start t)
+  (manequine-mode :arm (list arm) :start t)
   (ros::unsubscribe "/speech_to_text")
   (setq *ok-flag* nil)
   (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
@@ -369,8 +388,15 @@
   (ros::rate 10)
   (until *ok-flag*
          (send *robot* :angle-vector (send *ri* :state :potentio-vector))
-         (setq now-rav (send *robot* :rarm :angle-vector))
-         (setq now-rec (send (send *robot* :rarm :end-coords) :copy-worldcoords))
+         (if (equal arm "rarm")
+             (progn
+               (setq now-rav (send *robot* :rarm :angle-vector))
+               (setq now-rec (send (send *robot* :rarm :end-coords) :copy-worldcoords))
+               )
+           (progn
+             (setq now-rav (send *robot* :larm :angle-vector))
+             (setq now-rec (send (send *robot* :larm :end-coords) :copy-worldcoords))
+             ))
          (format t "now rav : ~A" now-rav)
          (setq rav-list (append rav-list (list now-rav)))
          (setq rec-list (append rec-list (list now-rec)))
@@ -1379,13 +1405,15 @@
 
 
 ;; cook test
-(defun cook-initial-pose-teaching () ;; 道具を握らせて貰って初期姿勢を教わる
+(defun cook-initial-pose-teaching (&key (larm nil)) ;; 道具を握らせて貰って初期姿勢を教わる
   (manequine-end)
   (send *robot* :reset-manip-pose)
 
   (send *ri* :wait-interpolation)
 
-  (send *ri* :stop-grasp :rarm :wait t)
+  (if larm
+      (send *ri* :stop-grasp :larm :wait t)
+    (send *ri* :stop-grasp :rarm :wait t))
 
   (send *ri* :speak-jp "初期姿勢を教えて下さい")
   (unix:sleep 2)
@@ -1401,12 +1429,12 @@
 
   ;; tmp
   (setq *initial-head-neck-y* (send *robot* :head-neck-y :joint-angle))
-  (setq *initial-head-neck-p*   (send *robot* :head-neck-p :joint-angle))
+  (setq *initial-head-neck-p* (send *robot* :head-neck-p :joint-angle))
   )
 
-(defun cook-teach (&key (initial-teach nil))
+(defun cook-teach (&key (initial-teach nil) (larm nil))
   (if initial-teach
-      (cook-initial-pose-teaching)
+      (cook-initial-pose-teaching :larm larm)
     )
 
   (set-initial-av)
@@ -1414,23 +1442,34 @@
   ;; 混ぜかたを教わる
   (send *ri* :speak-jp "調理動作の開始地点を教えて下さい")
   (unix:sleep 2)
-  (wait-ok-manequine)
+  (if larm
+      (wait-ok-manequine :arm (list "larm"))
+    (wait-ok-manequine :arm (list "rarm")))
   (send *robot* :head-neck-y :joint-angle 0.0)
   ;; (send *robot* :head-neck-p :joint-angle 60.0)
   (send *robot* :head-neck-p :joint-angle 50.0)
   (send *robot* :angle-vector (send *ri* :state :potentio-vector))
   (setq *cook-initial-av* (send *robot* :angle-vector))
-  (setq *cook-initial-rec* (send *robot* :rarm :end-coords))
+  (if larm
+      (setq *cook-initial-lec* (send *robot* :larm :end-coords))
+    (setq *cook-initial-rec* (send *robot* :rarm :end-coords)))
   (unix:sleep 2)
   (send *ri* :start-grasp :rarm :wait t) ;; TODO 持つ強さ？
 
   ;; 物体の置き方を教わる
   (send *ri* :speak-jp "調理動作を教えて下さい")
   (unix:sleep 2)
-  (setq place-ans (record-rav-voice))
-  (setq *cook-short-rav-list* (elt place-ans 0))
-  (setq *cook-short-rec-list* (elt place-ans 1))
-
+  (if larm
+      (progn
+          (setq place-ans (record-rav-voice :arm "larm"))
+          (setq *cook-short-lav-list* (elt place-ans 0))
+          (setq *cook-short-lec-list* (elt place-ans 1))
+          )
+    (progn
+      (setq place-ans (record-rav-voice))
+      (setq *cook-short-rav-list* (elt place-ans 0))
+      (setq *cook-short-rec-list* (elt place-ans 1))
+      ))
   (set-initial-av)
   )
 
@@ -1512,37 +1551,64 @@
    )
   )
 
-(defun cook-replay-once (&key (save_img t) (save_bag nil) (rosbag_time 5))
-  (set-initial-av)
+(defun cook-replay-once (&key (save_img t) (save_bag nil) (rosbag_time 5) (larm nil) (initial-av t))
+  (if initial-av
+      (set-initial-av))
 
   (unix:sleep 2)
-  (replay-short-rav-list *cook-short-rav-list*)
+  (if larm
+      (replay-short-rav-list *cook-short-lav-list* :larm t)
+    (replay-short-rav-list *cook-short-rav-list*))
 
-  (set-initial-av)
+  (if initial-av
+      (set-initial-av))
   )
 
-(defun dump-cook-file (&key (file_name "tmp-cook-teaching-data.l"))
-  (dump-loadable-structure file_name *initial-av* *cook-short-rav-list*)
+(defun cook-replay-rec-once (&key (save_img t) (save_bag nil) (rosbag_time 5) (larm nil) (initial-av t) (trans-vec #f(0 0 0)))
+  (if initial-av
+      (set-initial-av))
+
+  (unix:sleep 2)
+  (if larm
+      (progn
+        (setq *cook-short-lec-list* (rav2rec *cook-short-lav-list* :arm :larm))
+        (replay-short-rec-list *cook-short-lec-list* :larm t :trans-vec trans-vec)
+        )
+    (progn
+      (setq *cook-short-rec-list* (rav2rec *cook-short-rav-list*))
+      (replay-short-rec-list *cook-short-rec-list* :trans-vec trans-vec)
+    ))
+
+  (if initial-av
+      (set-initial-av))
+  )
+
+(defun dump-cook-file (&key (file_name "tmp-cook-teaching-data.l") (larm nil))
+  (if larm
+      (dump-loadable-structure file_name *initial-av* *cook-short-lav-list*)
+    (dump-loadable-structure file_name *initial-av* *cook-short-rav-list*))
   ;; (dump-loadable-structure file_name *initial-av* *cook-short-rav-list* *initial-head-neck-y* *initial-head-neck-p*)
   (format t "data dumped in ~A ~%" file_name)
   )
 
 
-(defun summarize-cook-datas (&key (thre 0.5))
-  (setq *cook-short-rav-list* (summarize-rav *cook-short-rav-list* :threshold thre))
+(defun summarize-cook-datas (&key (thre 0.5) (larm nil))
+  (if larm
+      (setq *cook-short-lav-list* (summarize-rav *cook-short-lav-list* :threshold thre :larm t))
+    (setq *cook-short-rav-list* (summarize-rav *cook-short-rav-list* :threshold thre)))
   )
 
-(defun load-cook-file (&key (file_name "tmp-cook-teaching-data.l") (summarize t) (thre 0.5))
+(defun load-cook-file (&key (file_name "tmp-cook-teaching-data.l") (summarize t) (thre 0.5) (larm nil))
   (load file_name)
   ;; summarize rav-list data if summarize t
   (if summarize
-      (summarize-cook-datas :thre thre)
+      (summarize-cook-datas :thre thre :larm larm)
       )
   (setq *initial-head-neck-y* (elt *initial-av* 15))
   ;; (setq *initial-head-neck-p* (elt *initial-av* 16))
   (setq *initial-head-neck-p* 50)
   (format t "data loaded from ~A ~%" file_name)
-  (format t "cook-short-rav-list size : ~A ~%" (length *cook-short-rav-list*))
+  ;; (format t "cook-short-rav-list size : ~A ~%" (length *cook-short-rav-list*))
   )
 
 
