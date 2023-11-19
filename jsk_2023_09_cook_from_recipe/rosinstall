@@ -1,13 +1,7 @@
 - git:
     local-name: jsk_demos
     uri: git@github.com:Kanazawanaoaki/jsk_demos.git
-    version: cook-from-recipe
-- git:
-    local-name: lc_state_recognition
-    uri: git@github.com:Kanazawanaoaki/lc_state_recognition.git
-- git:
-    local-name: vil_ros
-    uri: git@github.com:Kanazawanaoaki/vil_ros.git
+    version: sauteed-broccoli-with-butter
 - git:
     local-name: jsk-ros-pkg/jsk_common
     uri: git@github.com:jsk-ros-pkg/jsk_common.git

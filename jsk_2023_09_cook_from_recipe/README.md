@@ -2,7 +2,6 @@
 
 レシピからの料理デモ
 
-
 ## Setup
 ```
 mkdir -p ~/ros/cooking_ws/src
@@ -10,7 +9,7 @@ cd ~/ros/cooking_ws
 source /opt/ros/noetic/setup.bash
 catkin init
 cd ~/ros/cooking_ws/src
-git clone git@github.com:Kanazawanaoaki/jsk_demos.git -b cook-from-recipe
+git clone git@github.com:Kanazawanaoaki/jsk_demos.git -b sauteed-broccoli-with-butter
 cp jsk_demos/jsk_2023_09_cook_from_recipe/rosinstall ./.rosinstall
 wstool up
 cd ~/ros/cooking_ws/
@@ -19,81 +18,50 @@ catkin b jsk_2023_09_cook_from_recipe
 source ~/ros/cooking_ws/devel/setup.bash
 ```
 
-## tmp scripts
-
-
-### MeCab
+## exec demo
+### prepare
+in server pc
 ```
-python3 mecab_file_test.py -f ../recipes/omelette.txt
+roslaunch jsk_2023_09_cook_from_recipe cook_rec_for_broccoli.launch
 ```
+and
 ```
-python3 mecab_text_test.py -t バターが溶けたら卵をフライパンに注ぐ．
-```
-
-
-### googletrans
-```
-python3 googletrans_test.py -t 水が沸騰する
+## cd foundations/imagebind_scripts (https://github.com/Kanazawanaoaki/foundations/tree/pr2_cook_broccoli )
+python pr2_cook_imagebind_seq.py
 ```
 
-### GPT-3
+in exec pc
 ```
-python3 gpt-3_test.py -k [YOUR API KEY] -t 0.0 -e -p 'Please put "The water boils" in a noun form ending in water.
-'
-```
-
-
-### Make prompt
-日本語の単語，あるいは英語の単語から(-p 引数)でも対の意味になるpromptを生成できる．
-```
-python3 make_prompt.py -k [YOUR API KEY] -j 液体になった卵
+roslaunch jsk_2023_09_cook_from_recipe rviz.launch
 ```
 
-それを複数実行するパターン．
-```
-python3 test_make_prompt.py -k [YOUR API KEY]
-```
-
-## 見学対応デモ
-環境を作る．
-https://github.com/Kanazawanaoaki/lc_state_recognition
-https://github.com/mqcmd196/vision_and_language_ros/tree/main/clip
-
-azure-kinectが立ち上がっているか確認.
-立ち上がっていなかったら，pr1040nをrebootする．
-
-場所の移動．(TODO)
-
-移動後の位置確認．これらがそれなりに動く位置にする．
-```
-(stop-ih)
-(set-before-pour)
-(pour-egg-to-pan :already_set t)
-```
-
-サーバーPCで認識部分を色々立ち上げる
-```
-roscd clip_ros_client/../server
-bash run_server.sh
-```
-```
-roscd clip_ros_client/launch/
-roslaunch clip_ros_client clip_ros.launch host:=localhost port:=8888 INPUT_IMAGE:=/apply_mask_image/output gui:=true
-```
-```
-roslaunch lc_state_recognition exec_rec.launch decomp:=true run_rviz:=false
-```
-rqtで/mask_image_generatorと/rect_added_image_publisherのparamを変更して，画角等を色々調整する．
-
-手元のPCでrvizを立ち上げる
-```
-roslaunch lc_state_recognition rviz.launch
-```
-
-動作実行
+### move and set env
+move
 ```
 roscd jsk_2023_09_cook_from_recipe/euslisp
-rlwrap roseus egg_cook_butter_sunny-demo.l
-(set-demo) ;; before demo
-(cook-sunny-demo) ;; exec demo
+roseus move-to-coords.l
+(move-to-stove-front-ri-direct)
+```
+You can also check whether robot can operate ih-stove well.
+```
+roseus sauteed-broccoli-with-butter-demo.l
+(start-ih)
+(stop-ih)
+(start-ih :left t)
+(stop-ih :left t)
+```
+set env
+```
+roseus sauteed-broccoli-with-butter-demo.l
+(set-demo-before) ;; set spatula, pan and pot.
+```
+
+If gazing area with (gaze-left-pot) and (gaze-right-pan) is not correct, params should be fixed.
+
+### exec demo
+Before exec you should check `rostopic hz /k4a/rgb/image_rect_color/compressed` and if the topic is not come, you should ssh and reboot `pr1040n`.
+
+```
+roseus sauteed-broccoli-with-butter-demo.l
+(exec-demo)
 ```
