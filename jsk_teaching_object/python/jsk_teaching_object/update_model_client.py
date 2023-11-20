@@ -1,7 +1,7 @@
 import actionlib
 import actionlib_msgs.msg
-from fg_ros.msg import UpdateModelAction
-from fg_ros.msg import UpdateModelGoal
+from jsk_teaching_object.msg import UpdateModelAction
+from jsk_teaching_object.msg import UpdateModelGoal
 import rospy
 
 

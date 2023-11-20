@@ -16,7 +16,6 @@ from ros_speak import speak_jp
 import rospy
 from speech_recognition_msgs.msg import SpeechRecognitionCandidates
 
-from jsk_teaching_object.remote import train_in_remote
 from jsk_teaching_object.take_action_client import take_action
 from jsk_teaching_object.take_image_photo_client import take_image_photo
 from jsk_teaching_object.topic_subscriber import ImageSubscriber
@@ -42,7 +41,7 @@ def train_in_remote(
                  remote_image_path)
     client.execute_command("rm -rf /tmp/thk/gen_data/train*")
     client.execute_command_tmux(
-        f'cd /home/iory/junk/2023/11/train && python generate_data.py --from-images-dir {remote_image_path}/{Path(image_directory).name} --min-scale 0.2 --max-scale 0.6 -n 20000 --video-path /home/iory/ros/teaching_object/src/jsk_demos/jsk_teaching_object/sample/data/2023-11-16-drink-object/usb_cam--slash--image_raw--slash--compressed.mp4 --out {remote_image_path}/gen_data',
+        f'cd /home/iory/jsk_teaching_object/src/jsk_demos/train && python generate_data.py --from-images-dir {remote_image_path}/{Path(image_directory).name} --min-scale 0.2 --max-scale 0.6 -n 20000 --out {remote_image_path}/gen_data',
         session_name=session_name)
     trained_model_path = os.path.join(remote_image_path,
                                       'gen_data', 'train',
