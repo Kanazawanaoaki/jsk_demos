@@ -4,7 +4,7 @@ matplotlib
 moviepy
 numba==0.56.4
 numpy==1.23.5
-openai
+openai==0.28.0
 opencv-python
 pillow==9.4.0
 pybsc
