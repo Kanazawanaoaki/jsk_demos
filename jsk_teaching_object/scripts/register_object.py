@@ -6,15 +6,15 @@ import os.path as osp
 from pathlib import Path
 import threading
 
+from pybsc.ssh import SSHExecutor
 import cv2
-from eos import current_time_str
-from eos import makedirs
+from pybsc import current_time_str
+from pybsc import makedirs
 import openai
 from openai.openai_object import OpenAIObject
 from ros_speak import speak_jp
 import rospy
 from speech_recognition_msgs.msg import SpeechRecognitionCandidates
-import yaml
 
 from jsk_teaching_object.remote import train_in_remote
 from jsk_teaching_object.take_action_client import take_action
@@ -23,29 +23,47 @@ from jsk_teaching_object.topic_subscriber import ImageSubscriber
 from jsk_teaching_object.update_model_client import update_model
 
 
-def write_names_from_yaml(yaml_file_path, output_file_path):
-    with open(yaml_file_path, 'r') as yaml_file:
-        data = yaml.safe_load(yaml_file)
-        names = data.get('names', [])
-
-    with open(output_file_path, 'w') as output_file:
-        for name in names:
-            output_file.write(name + '\n')
+def train_in_remote(
+        image_directory,
+        output,
+        username="iory", ip='133.11.216.13',
+        bastion_username=None, bastion_ip=None,
+        output_username=None, output_ip=None,
+        identity_file=osp.join(osp.expanduser('~'), '.ssh', 'id_rsa'),
+        epoch=1,
+        batchsize=16):
+    client = SSHExecutor(ip, username,
+                         key_filepath=identity_file,
+                         bastion_host=bastion_ip,
+                         bastion_user=bastion_username)
+    remote_image_path = f'/tmp/thk'
+    session_name = 'project-t'
+    client.rsync(image_directory,
+                 remote_image_path)
+    client.execute_command("rm -rf /tmp/thk/gen_data/train*")
+    client.execute_command_tmux(
+        f'cd /home/iory/junk/2023/11/train && python generate_data.py --from-images-dir {remote_image_path}/{Path(image_directory).name} --min-scale 0.2 --max-scale 0.6 -n 20000 --video-path /home/iory/ros/teaching_object/src/jsk_demos/jsk_teaching_object/sample/data/2023-11-16-drink-object/usb_cam--slash--image_raw--slash--compressed.mp4 --out {remote_image_path}/gen_data',
+        session_name=session_name)
+    trained_model_path = os.path.join(remote_image_path,
+                                      'gen_data', 'train',
+                                      'weights', 'best.pt')
+    client.watch_dog(trained_model_path)
+    client.kill_tmux_session(session_name)
+    client.rsync(output,
+                 trained_model_path,
+                 is_upload=False)
+    return output
 
 
 def train(image_directory):
     filename = '{}.pt'.format(current_time_str())
-    saved_weight_filepath, saved_yaml_name = train_in_remote(
+    saved_weight_filepath = train_in_remote(
         image_directory=str(image_directory),
-        output=osp.join(osp.expanduser('~'), 'dataset', '2023-09-21', filename))
-    rospy.loginfo('Model saved {}'.format(saved_weight_filepath))
-
-    yaml_path = Path(saved_yaml_name)
-    txt_path = yaml_path.with_suffix('.txt')
-    write_names_from_yaml(yaml_path, txt_path)
-    update_model('/fg_node/update_model',
-                 saved_weight_filepath,
-                 txt_path)
+        output=osp.join(
+            osp.expanduser('~'), 'dataset', '2023-09-21', filename))
+    rospy.loginfo(
+        'Model saved {}'.format(saved_weight_filepath))
+    update_model('/object_detection/update_model', saved_weight_filepath, '')
     speak_jp('モデルの更新を行いました。', wait=True)
 
 

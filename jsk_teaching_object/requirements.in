@@ -1,4 +1,3 @@
-extendedos
 gdown
 git+https://github.com/iory/scikit-robot.git@master#egg=scikit-robot
 matplotlib

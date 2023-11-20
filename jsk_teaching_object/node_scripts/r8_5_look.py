@@ -6,7 +6,7 @@ import actionlib
 import numpy as np
 import rospy
 import trimesh
-from eos import current_time_str, makedirs
+from pybsc import current_time_str, makedirs
 from pybsc.image_utils import imwrite
 from r8_5_interface import R85, R85ROSRobotInterface
 from ros_speak import speak_jp
