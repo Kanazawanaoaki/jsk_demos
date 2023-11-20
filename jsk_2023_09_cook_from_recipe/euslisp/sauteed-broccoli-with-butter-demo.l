@@ -11,7 +11,7 @@
 (setq *initial-head-neck-y* 0)
 (setq *initial-head-neck-p* 50)
 
-(setq *state-thre* 0.7) ;; 0.8
+(setq *state-thre* 0.8) ;; 0.8
 
 (setq *yes-flag* nil)
 (setq *speak-jp* t)
@@ -126,7 +126,7 @@
   (let ((ik-target))
     (if left
         (setq ik-target (make-coords :pos (float-vector 642 -60 695) :rpy (float-vector -0.008 -0.028 3.108)))
-      (setq ik-target (make-coords :pos (float-vector 636 -183 698) :rpy (float-vector -0.008 -0.028 3.108)))
+      (setq ik-target (make-coords :pos (float-vector 646 -183 698) :rpy (float-vector -0.008 -0.028 3.108))) ;; (float-vector 636 -183 698)
       )
     ;; (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
     (send *pr2* :rarm :inverse-kinematics
@@ -160,9 +160,9 @@
 
 (defun gaze-left-pot ()
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "offset_x" :int 855)
+   "/rect_added_image_publisher" "offset_x" :int 850) ;; 855
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "offset_y" :int 330)
+   "/rect_added_image_publisher" "offset_y" :int 300) ;; 330
   (ros::set-dynamic-reconfigure-param
    "/rect_added_image_publisher" "width" :int 270)
   (ros::set-dynamic-reconfigure-param
@@ -171,9 +171,9 @@
 
 (defun gaze-right-pan ()
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "offset_x" :int 1240)
+   "/rect_added_image_publisher" "offset_x" :int 1240) ;; 1240
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "offset_y" :int 390)
+   "/rect_added_image_publisher" "offset_y" :int 350) ;; 390
   (ros::set-dynamic-reconfigure-param
    "/rect_added_image_publisher" "width" :int 270)
   (ros::set-dynamic-reconfigure-param
@@ -274,8 +274,9 @@
   (ros::unsubscribe "/speech_to_text")
 
   ;; 鍋から遠ざける
+  (unix:sleep 1)
   (send *pr2* :larm :angle-vector #f(27.5715 22.0148 51.6599 -44.6906 40.8698 -83.3365 -15.6292))
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
 
   (send *pr2* :larm :angle-vector #f(45.532 15.6265 43.8688 -52.2305 36.9455 -101.153 -32.4685))
@@ -468,6 +469,9 @@
   )
 
 (defun tmp-exec ()
+  (02-boil-broccoli-after-boil)
+  (03-stop-left-ih)
+  (04-start-right-ih)
   (05-transfer-boil-to-pan)
   (06-ready-for-stir-fry)
   (07-stir-fry-broccoli)
