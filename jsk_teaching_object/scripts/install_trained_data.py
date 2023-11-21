@@ -69,7 +69,7 @@ def main():
         pkg_name=PKG,
         path='trained_data/yolo8/2023-11-13-drink-objects.pt',
         url='https://drive.google.com/uc?id=1tRgNWLeijTQDFIKC08NNQPz1jbU74wX9',  # NOQA
-        md5='c314689832c141341e0c7b2bc4cf7d93',
+        md5='e6b9386e7e2937b183bb87a74e590857',
     )
 
 
