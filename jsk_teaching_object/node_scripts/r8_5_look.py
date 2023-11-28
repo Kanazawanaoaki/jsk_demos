@@ -2,6 +2,7 @@
 
 from pathlib import Path
 
+import os.path as osp
 import actionlib
 import numpy as np
 import rospy
@@ -83,6 +84,10 @@ class LookObject(object):
             auto_start=True)
         rospy.loginfo('take action action server started.')
 
+        self.cached_ik = rospy.get_param('~cached_ik', True)
+        rospy.loginfo('Cached ik is {}.'.format(
+            'enabled' if self.cached_ik else 'disabled'))
+
     def speak_jp(self, *args, **kwargs):
         # return speak_jp(*args, **kwargs)
         pass
@@ -102,6 +107,7 @@ class LookObject(object):
             v = self.v
 
         r.reset_pose()
+        r.r_zaxis_joint.joint_angle(relative=0.3)
         r.l_zaxis_joint.joint_angle(0.1)
         ri.angle_vector(r.angle_vector(), 5)
         ri.zmove_client(r.r_zaxis_joint.joint_angle(),
@@ -112,7 +118,7 @@ class LookObject(object):
         radius = 0.2
         m = trimesh.creation.icosphere(subdivisions=2, radius=radius)
         sphere = MeshLink(m)
-        sphere.translate((-0.5, -0.2, 1.2))
+        sphere.translate((-0.5, -0.4, 0.8))
         self.object_center_coords.newcoords(sphere.copy_worldcoords())
 
         avs = []
@@ -151,7 +157,15 @@ class LookObject(object):
 
         avs = sorted(avs, key=lambda item: (item[1][0], item[1][1]))
         av_onlys = [av[0] for av in avs]
-        for av in find_best_order(av_onlys)[0]:
+        cache_path = '/home/leus/cached_ik.npy'
+        if self.cached_ik and osp.exists(cache_path):
+            rospy.loginfo('Load cached ik from {}'.format(cache_path))
+            avs = np.load(cache_path)
+        else:
+            avs = find_best_order(av_onlys)[0]
+            np.save(cache_path, avs)
+            rospy.loginfo('Save cached ik to {}'.format(cache_path))
+        for av in avs:
             r.angle_vector(av)
             if self.debug:
                 v.redraw()
@@ -180,7 +194,15 @@ class LookObject(object):
         self.speak_jp('初期姿勢に戻ります。', wait=False)
 
         r.reset_pose()
-        ri.angle_vector(r.angle_vector(), 5)
+        fastest_time = ri.angle_vector_duration(
+            ri.angle_vector(),
+            r.angle_vector(),
+            controller_type=None)
+        rospy.loginfo('Send angle vector {} sec'.format(fastest_time))
+        ri.angle_vector(r.angle_vector(), fastest_time)
+        ri.zmove_client(r.r_zaxis_joint.joint_angle(),
+                        r.l_zaxis_joint.joint_angle(),
+                        fastest_time)
 
     def detection_pose(self, goal):
         ri = self.ri
