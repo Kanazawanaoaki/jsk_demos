@@ -7,5 +7,7 @@ import rospy
 if __name__ == '__main__':
     speak_jp(' ', wait=True)
     rospy.sleep(5.0)
-    speak_jp('サウンドプレイ、起動しました', wait=False)
+    volume = rospy.get_param('~volume', 0.1)
+    speak_jp('サウンドプレイ、起動しました', wait=False,
+             volume=volume)
     rospy.sleep(5.0)

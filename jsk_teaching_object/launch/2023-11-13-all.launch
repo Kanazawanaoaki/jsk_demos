@@ -2,6 +2,7 @@
 
   <arg name="gui" default="true" />
   <arg name="device" default="0" />
+  <arg name="volume" default="0.1" />
   <arg name="video_device" default="/dev/hbvcam_5m_af_right" />
   <arg name="audio_device" default="plughw:2,0" />
   <arg name="input_image" default="/usb_cam/image_raw" />
@@ -52,6 +53,7 @@
 
   <include file="$(find jsk_teaching_object)/launch/speech_recognition.launch" >
     <arg name="device" value="$(arg audio_device)" />
+    <arg name="volume" value="$(arg volume)" />
   </include>
 
   <!-- object detection -->

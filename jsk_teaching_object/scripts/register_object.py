@@ -80,6 +80,7 @@ class RegisterObject(object):
     def __init__(self):
         openai.api_key = os.environ['OPENAI_KEY']
 
+        self.volume = rospy.get_param('~volume', 0.1)
         self.root_image_path = Path(rospy.get_param('~root_image_path'))
         makedirs(self.root_image_path)
         self.image_subscriber = ImageSubscriber('~image')
@@ -114,7 +115,7 @@ class RegisterObject(object):
 
     def speak(self, msg, wait=True):
         rospy.loginfo(msg)
-        speak_jp(msg, wait=wait)
+        speak_jp(msg, wait=wait, volume=self.volume)
 
     def start(self):
         self.speak('物品を登録しますか。')
