@@ -8,7 +8,7 @@ numpy==1.23.5
 openai==0.28.0
 opencv-python
 pillow==9.4.0
-pybsc>=0.1.50
+pybsc>=0.1.51
 r8_5_interface>=0.0.3
 rembg
 ros-speak
