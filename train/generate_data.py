@@ -4,15 +4,14 @@ import logging
 from pathlib import Path
 import sys
 
-import numpy as np
-from pybsc import load_json
+import cv2
 from pybsc import makedirs
 from pybsc import run_command
 from pybsc import touch_gitignore
-from tqdm import tqdm
 
 from data import copy_others_to
 from generate import create_images
+from labelme_utils import parallel_labelme_to_yolo
 from remove_bg import remove_background_and_create_tile_images
 
 
@@ -32,6 +31,7 @@ def parse_arguments():
     parser.add_argument("--max-scale", default=0.6, type=float)
     parser.add_argument("--target-image-dir", type=str)
     parser.add_argument("--from-images-dir", type=str, default="")
+    parser.add_argument("--video-path", type=str, default="")
     parser.add_argument("--pretrained-model-path", type=str,
                         default="yolov8x-seg.pt")
     parser.add_argument("--compress-annotation-data", action="store_true")
@@ -40,7 +40,7 @@ def parse_arguments():
 
 if __name__ == "__main__":
     args = parse_arguments()
-    start_time = datetime.datetime.now()
+    start = datetime.datetime.now()
 
     # Ensure the image directory exists
     image_dir = Path(args.from_images_dir)
@@ -49,17 +49,27 @@ if __name__ == "__main__":
         sys.exit(1)
 
     outpath_base = Path(args.out).resolve()
-    run_command("rm -rf {}".format(outpath_base), shell=True)
+    makedirs(outpath_base)
     touch_gitignore(outpath_base)
 
     patterns = ["*.jpg", "*.JPG", "*.jpeg", "*.JPEG", "*.png", "*.PNG"]
     paths = [p for pattern in patterns for p in image_dir.glob(f"*/{pattern}")]
     target_names = remove_background_and_create_tile_images(
-        paths, outpath_base)
+        paths, outpath_base,
+        preprocess_only=True)
+    end = datetime.datetime.now()
+    print(end - start)
+
     rembg_path = outpath_base / "preprocessing" / "rembg"
     copy_others_to(rembg_path / 'others')
     target_names = sorted(list(set(target_names + ['others'])))
     print(target_names)
+
+    # remove labels and images
+    run_command(f'rm -rf {outpath_base / "images"}', shell=True)
+    run_command(f'rm -rf {outpath_base / "labels"}', shell=True)
+    end = datetime.datetime.now()
+    print(end - start)
 
     makedirs(args.out)
     create_images(
@@ -72,33 +82,18 @@ if __name__ == "__main__":
         min_scale=args.min_scale,
         max_scale=args.max_scale,
     )
+    end = datetime.datetime.now()
+    print(end - start)
 
     label2index = {name: i for i, name in enumerate(target_names)}
     train_path = (outpath_base / "images" / "train").resolve()
     val_path = (outpath_base / "images" / "val").resolve()
 
     for tgt_path in [train_path, val_path]:
-        label_dir = tgt_path.parent.parent / "labels" / tgt_path.name
-        makedirs(label_dir)
-        paths = list(sorted(tgt_path.glob("*.json")))
-        for idx, path in tqdm(enumerate(paths), total=len(paths)):
-            data = load_json(path)
-            lines = []
-            for shapes in data["shapes"]:
-                label = shapes["label"].lower()
-                if label not in label2index:
-                    continue
-                index = label2index[label]
-                points = shapes["points"]
-                width = data["imageWidth"]
-                height = data["imageHeight"]
-                xy = np.array(list(map(tuple, points)), dtype=np.float64)
-                xy[:, 0] /= width
-                xy[:, 1] /= height
-                lines.append(
-                    f'{index} {" ".join(map(str, xy.reshape(-1).tolist()))}')
-            with open(label_dir / path.with_suffix(".txt").name, "w") as f:
-                f.write("\n".join(lines))
+        parallel_labelme_to_yolo(tgt_path, label2index)
+
+    end = datetime.datetime.now()
+    print(end - start)
 
     yolo_yaml_data = {
         "path": f"{outpath_base}",
@@ -117,9 +112,39 @@ if __name__ == "__main__":
     with open(config_path, "w") as f:
         f.write(yaml.dump(yolo_yaml_data))
 
+    from ultralytics.utils import SETTINGS
     from ultralytics import YOLO
-
+    SETTINGS['wandb'] = False
+    run_command(f'rm -rf {outpath_base / "train*"}', shell=True)
     model = YOLO(args.pretrained_model_path)
     results = model.train(data=config_path, epochs=args.epoch, imgsz=640,
                           batch=args.batch_size,
-                          project=str(outpath_base))
+                          project=str(outpath_base),
+                          save_period=-1,
+                          save=False)
+    end = datetime.datetime.now()
+    print(end - start)
+
+    if len(args.video_path) > 0:
+        video_path = args.video_path
+        output_video_path = outpath_base / Path(video_path).name
+        cap = cv2.VideoCapture(video_path)
+        codec = cv2.VideoWriter_fourcc(*'mp4v')
+        fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+        video = None
+        while cap.isOpened():
+            success, frame = cap.read()
+            if success:
+                if video is None:
+                    print(f'Saved to {str(output_video_path)}')
+                    video = cv2.VideoWriter(
+                        str(output_video_path), fourcc,
+                        30.0, (frame.shape[1], frame.shape[0]))
+                results = model(frame)
+                annotated_frame = results[0].plot()
+                video.write(annotated_frame)
+            else:
+                break
+        cap.release()
+        video.release()
+        print(f'Saved to {str(output_video_path)}')

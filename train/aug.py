@@ -3,6 +3,7 @@ from functools import lru_cache
 from imgaug import augmenters as iaa
 import numpy as np
 from PIL import Image
+from pybsc.image_utils import imread
 from pybsc.image_utils import mask_to_bbox
 from pybsc.image_utils import rescale
 from pybsc.image_utils import resize_keeping_aspect_ratio_wrt_longside
@@ -12,20 +13,14 @@ from pybsc.image_utils import squared_padding_image
 
 @lru_cache(maxsize=None)
 def cached_imread(img_path, image_width=300):
-    pil_img = Image.open(img_path)
-    img = np.array(pil_img)
-    try:
-        img, mask = img[..., :3], img[..., 3]
-    except IndexError:
-        mask = 255 * np.ones((pil_img.height, pil_img.width), dtype=np.uint8)
-    pil_mask = Image.fromarray(mask)
-    pil_mask = resize_keeping_aspect_ratio_wrt_longside(
-        pil_mask, image_width, interpolation="nearest"
-    )
-    pil_img = Image.fromarray(img)
+    img = imread(img_path, 'bgra')
+    img, mask = img[..., :3], img[..., 3]
     pil_img = resize_keeping_aspect_ratio_wrt_longside(
-        pil_img, image_width, interpolation="bilinear"
-    )
+        img, image_width, interpolation="nearest")
+    pil_mask = resize_keeping_aspect_ratio_wrt_longside(
+        mask, image_width, interpolation="bilinear")
+    pil_img = Image.fromarray(pil_img)
+    pil_mask = Image.fromarray(pil_mask)
     return pil_img, pil_mask
 
 

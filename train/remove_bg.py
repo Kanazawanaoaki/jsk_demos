@@ -10,6 +10,7 @@ from typing import List
 
 import cv2
 import numpy as np
+from pybsc import checksum_md5
 from pybsc.image_utils import add_alpha_channel
 from pybsc.image_utils import apply_mask
 from pybsc.image_utils import create_tile_image
@@ -34,10 +35,18 @@ def rembg_worker(queue, pbar):
         if image_path is None:
             queue.task_done()
             break
-        process_images(
-            image_path, rembg_outpath,
-            rembg_org_img_outpath, img_and_rembg_outpath
-        )
+        image_path = Path(image_path)
+        rembg_outpath = Path(rembg_outpath)
+        md5 = checksum_md5(image_path)
+        md5_path = rembg_outpath \
+            / image_path.parent.name \
+            / f"{md5}.txt"
+        if not md5_path.exists():
+            process_images(
+                image_path, rembg_outpath,
+                rembg_org_img_outpath, img_and_rembg_outpath
+            )
+        md5_path.touch()
         queue.task_done()
         pbar.update()
 
@@ -78,7 +87,8 @@ def parallel_remove_background(paths: List[Path], outpath_base: Path):
     pbar.close()
 
 
-def remove_background_and_create_tile_images(paths, outpath_base):
+def remove_background_and_create_tile_images(paths, outpath_base,
+                                             preprocess_only=False):
     rembg_outpath = outpath_base / "preprocessing" / "rembg"
     rembg_org_img_outpath = outpath_base / "preprocessing" / "rembg_org"
     tile_image_outpath = outpath_base / "preprocessing" / "tile_rembg"
@@ -88,8 +98,10 @@ def remove_background_and_create_tile_images(paths, outpath_base):
 
     target_names = [
         dir.name
-        for dir in rembg_org_img_outpath.iterdir() if dir.is_dir()]
+        for dir in rembg_outpath.iterdir() if dir.is_dir()]
     target_names = sorted(list(set(target_names)))
+    if preprocess_only:
+        return target_names
 
     makedirs(tile_image_outpath)
     logging.info("Creating tile images")

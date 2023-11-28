@@ -2,6 +2,7 @@ import collections
 from collections import defaultdict
 import glob
 import json
+import multiprocessing
 import os
 import os.path as osp
 from pathlib import Path
@@ -20,6 +21,7 @@ import numpy as np
 from PIL import Image
 from pybsc import load_json
 from pybsc import makedirs
+from pybsc.parallel import parallel_tqdm
 from pybsc import save_json
 from sklearn.model_selection import train_test_split
 from tqdm import tqdm
@@ -724,3 +726,56 @@ def labelme2voc(input_dir, output_dir, labels, noviz=False):
                 loc="rb",
             )
             imgviz.io.imsave(out_insv_file, insv)
+
+
+def labelme_to_yolo_worker(queue, label2index, pbar):
+    while True:
+        path, label_dir = queue.get()
+        if path is None:
+            queue.task_done()
+            break
+        path = Path(path)
+        label_dir = Path(label_dir)
+
+        data = load_json(path)
+        lines = []
+        for shapes in data["shapes"]:
+            label = shapes["label"].lower()
+            if label not in label2index:
+                continue
+            index = label2index[label]
+            points = shapes["points"]
+            width = data["imageWidth"]
+            height = data["imageHeight"]
+            xy = np.array(list(map(tuple, points)), dtype=np.float64)
+            xy[:, 0] /= width
+            xy[:, 1] /= height
+            lines.append(
+                f'{index} {" ".join(map(str, xy.reshape(-1).tolist()))}')
+        with open(label_dir / path.with_suffix(".txt").name, "w") as f:
+            f.write("\n".join(lines))
+        queue.task_done()
+        pbar.update()
+
+
+def parallel_labelme_to_yolo(tgt_path: Path, label2index):
+    label_dir = tgt_path.parent.parent / "labels" / tgt_path.name
+    label_dir.mkdir(parents=True, exist_ok=True)
+    paths = list(sorted(tgt_path.glob("*.json")))
+
+    file_queue = multiprocessing.JoinableQueue()
+    jobs = multiprocessing.cpu_count()
+    with parallel_tqdm(total=len(paths)) as pbar:
+        procs = []
+        for _ in range(jobs):
+            proc = multiprocessing.Process(
+                target=labelme_to_yolo_worker,
+                args=(file_queue, label2index, pbar))
+            proc.start()
+            procs.append(proc)
+        for i, path in enumerate(paths):
+            file_queue.put((str(path), str(label_dir)))
+        for _ in range(jobs):
+            file_queue.put((None, None))
+        file_queue.join()
+    pbar.close()
