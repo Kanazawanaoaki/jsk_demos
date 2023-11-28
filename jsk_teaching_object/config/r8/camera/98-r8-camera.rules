@@ -1,0 +1,2 @@
+SUBSYSTEM=="video4linux", ATTRS{idVendor}=="337b", ATTRS{idProduct}=="090c", SYMLINK+="hbvcam_5m_af_right"
+SUBSYSTEM=="video4linux", ATTRS{idVendor}=="337b", ATTRS{idProduct}=="090c", SYMLINK+="hbvcam_5m_af_left"
