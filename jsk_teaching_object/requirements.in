@@ -1,5 +1,6 @@
 gdown
 git+https://github.com/iory/scikit-robot.git@master#egg=scikit-robot
+paramiko
 matplotlib
 moviepy
 numba==0.56.4
