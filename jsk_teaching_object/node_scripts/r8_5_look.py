@@ -249,4 +249,6 @@ class LookObject(object):
 if __name__ == '__main__':
     rospy.init_node('r8_5_look_server')
     act = LookObject()  # NOQA
+    # act.cached_ik = False
+    # act.look()
     rospy.spin()

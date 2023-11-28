@@ -26,10 +26,10 @@ def train_in_remote(
         image_directory,
         output,
         username="iory", ip='133.11.216.13',
-        bastion_username=None, bastion_ip=None,
+        bastion_username='iory', bastion_ip='dlbox2.jsk.imi.i.u-tokyo.ac.jp',
         output_username=None, output_ip=None,
         identity_file=osp.join(osp.expanduser('~'), '.ssh', 'id_rsa'),
-        epoch=1,
+        epoch=3,
         batchsize=16):
     client = SSHExecutor(ip, username,
                          key_filepath=identity_file,
@@ -41,7 +41,7 @@ def train_in_remote(
                  remote_image_path)
     client.execute_command("rm -rf /tmp/thk/gen_data/train*")
     client.execute_command_tmux(
-        f'cd /home/iory/jsk_teaching_object/src/jsk_demos/train && python generate_data.py --from-images-dir {remote_image_path}/{Path(image_directory).name} --min-scale 0.2 --max-scale 0.6 -n 20000 --out {remote_image_path}/gen_data',
+        f'cd /home/iory/jsk_teaching_object/src/jsk_demos/train && python generate_data.py --from-images-dir {remote_image_path}/{Path(image_directory).name} --min-scale 0.2 --max-scale 0.6 -n 4000 --out {remote_image_path}/gen_data',
         session_name=session_name)
     trained_model_path = os.path.join(remote_image_path,
                                       'gen_data', 'train',

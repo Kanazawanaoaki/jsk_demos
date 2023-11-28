@@ -9,7 +9,7 @@ openai==0.28.0
 opencv-python
 pillow==9.4.0
 pybsc
-r8_5_interface
+r8_5_interface>=0.0.3
 rembg
 ros-speak
 shapely
