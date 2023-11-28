@@ -13,7 +13,7 @@ from pybsc.image_utils import squared_padding_image
 
 @lru_cache(maxsize=None)
 def cached_imread(img_path, image_width=300):
-    img = imread(img_path, 'bgra')
+    img = imread(img_path, 'rgba')
     img, mask = img[..., :3], img[..., 3]
     pil_img = resize_keeping_aspect_ratio_wrt_longside(
         img, image_width, interpolation="nearest")
