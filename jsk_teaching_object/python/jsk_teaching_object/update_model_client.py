@@ -23,14 +23,6 @@ def update_model(topic_name, model_path, class_name_path,
         client.cancel_goal()
         client.wait_for_result(timeout=rospy.Duration(10))
     goal.model_path = model_path
-    print(model_path)
-    print(class_name_path)
-    class_names = []
-    with open(class_name_path, 'r') as f:
-        for line in f.readlines():
-            class_names.append(line.strip())
-
-    goal.class_names = class_names
     _update_model_clients[topic_name] = client
     client.send_goal(goal)
 

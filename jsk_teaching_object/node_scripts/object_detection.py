@@ -73,6 +73,7 @@ class ObjectDetectionNode(ConnectionBasedTransport):
         del self.model
         torch.cuda.empty_cache()
         with self.lock:
+            rospy.loginfo('Loading model {}'.format(model_path))
             self.model = YOLO(model_path)
             self.model = self.model.to(self.device)
         self.target_names = [name for _, name in self.model.names.items()]

@@ -85,13 +85,19 @@ class LookObject(object):
             auto_start=True)
         rospy.loginfo('take action action server started.')
 
+        self.take_default_pose_server = actionlib.SimpleActionServer(
+            '~take_default_pose',
+            TakeActionAction,
+            execute_cb=self.default_pose,
+            auto_start=True)
+        rospy.loginfo('take default pose action server started.')
+
         self.cached_ik = rospy.get_param('~cached_ik', True)
         rospy.loginfo('Cached ik is {}.'.format(
             'enabled' if self.cached_ik else 'disabled'))
 
     def speak_jp(self, *args, **kwargs):
-        # return speak_jp(*args, **kwargs)
-        pass
+        return speak_jp(*args, **kwargs)
 
     def take_image_photo_action(self, goal):
         self.look(topic_name=goal.image_topic_name,
@@ -162,7 +168,7 @@ class LookObject(object):
         self.speak_jp('画像を撮影するために見回します。', wait=False,
                       volume=self.volume)
 
-        cache_path = '/home/leus/cached_ik.npy'
+        cache_path = osp.join(osp.expanduser('~'), 'cached_ik.npy')
         if self.cached_ik and osp.exists(cache_path):
             rospy.loginfo('Load cached ik from {}'.format(cache_path))
             avs = np.load(cache_path)
@@ -205,6 +211,8 @@ class LookObject(object):
                       volume=self.volume)
 
         r.reset_pose()
+        r.r_zaxis_joint.joint_angle(0.3, relative=True)
+        r.l_zaxis_joint.joint_angle(0.1)
         fastest_time = ri.angle_vector_duration(
             ri.angle_vector(),
             r.angle_vector(),
@@ -215,22 +223,36 @@ class LookObject(object):
                         r.l_zaxis_joint.joint_angle(),
                         fastest_time)
 
+    def default_pose(self, goal):
+        ri = self.ri
+        r = self.r
+
+        r.reset_pose()
+        r.r_zaxis_joint.joint_angle(0.3, relative=True)
+        r.l_zaxis_joint.joint_angle(0.1)
+
+        fastest_time = ri.angle_vector_duration(
+            ri.angle_vector(),
+            r.angle_vector(),
+            controller_type=None)
+        rospy.loginfo('Send angle vector {} sec'.format(fastest_time))
+        ri.angle_vector(r.angle_vector(), fastest_time)
+        ri.zmove_client(r.r_zaxis_joint.joint_angle(),
+                        r.l_zaxis_joint.joint_angle(),
+                        fastest_time)
+        ri.wait_interpolation()
+
+        self.take_default_pose_server.set_succeeded(
+            TakeActionResult())
+
     def detection_pose(self, goal):
         ri = self.ri
         r = self.r
+
         r.reset_pose()
-        r.r_zaxis_joint.joint_angle(1.4)
+        r.r_zaxis_joint.joint_angle(0.3, relative=True)
+        r.l_zaxis_joint.joint_angle(0.1)
         r.r_shoulder_y_joint.joint_angle(np.pi / 2.0)
-
-        r.l_zaxis_joint.joint_angle(1.18)
-        r.l_shoulder_y_joint.joint_angle(0.75)
-        r.l_elbow_p1_joint.joint_angle(0.4)
-        r.l_elbow_p2_joint.joint_angle(0.4)
-        r.l_upper_arm_y_joint.joint_angle(0.0)
-        r.l_wrist_y_joint.joint_angle(0.0)
-        r.l_wrist_r_joint.joint_angle(np.pi / 2.0)
-        r.l_wrist_p_joint.joint_angle(0.0)
-
         fastest_time = ri.angle_vector_duration(
             ri.angle_vector(),
             r.angle_vector(),
