@@ -54,7 +54,7 @@ def train_in_remote(
     return output
 
 
-def train(image_directory):
+def train(image_directory, volume):
     filename = '{}.pt'.format(current_time_str())
     saved_weight_filepath = train_in_remote(
         image_directory=str(image_directory),
@@ -63,7 +63,7 @@ def train(image_directory):
     rospy.loginfo(
         'Model saved {}'.format(saved_weight_filepath))
     update_model('/object_detection/update_model', saved_weight_filepath, '')
-    speak_jp('モデルの更新を行いました。', wait=True)
+    speak_jp('モデルの更新を行いました。', wait=True, volume=volume)
 
 
 class STATE(IntEnum):
@@ -322,7 +322,8 @@ A: 2
         self.speak('物体を学習します。時間がかかりますがお待ちください。', wait=True)
         # tmp_path = '/home/iory/src/github.com/jsk-ros-pkg/jsk_demos/train/tiny_yamagata_items'
         # t = threading.Thread(target=train, args=(tmp_path,))
-        t = threading.Thread(target=train, args=(self.root_image_path,))
+        t = threading.Thread(target=train, args=(self.root_image_path,
+                                                 self.volume))
         t.start()
         # t.join()
         self.state = STATE.START

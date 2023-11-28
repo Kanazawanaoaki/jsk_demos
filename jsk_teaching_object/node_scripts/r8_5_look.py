@@ -58,6 +58,7 @@ class LookObject(object):
         ri = R85ROSRobotInterface(r)
         r.angle_vector(ri.angle_vector())
 
+        self.volume = rospy.get_param('~volume', 0.1)
         self.r = r
         self.ri = ri
         self.end_coords_axis = Axis.from_coords(r.rarm_end_coords)
@@ -97,23 +98,9 @@ class LookObject(object):
                   save_path=goal.save_path)
         self.take_image_photo_server.set_succeeded(TakeImagePhotoResult())
 
-    def look(self, topic_name=None, save_path=None):
-        if topic_name is not None and save_path is not None:
-            makedirs(save_path)
-            sub = ImageSubscriber(topic_name)
+    def look_around_ik(self):
         r = self.r
         ri = self.ri
-        if self.debug:
-            v = self.v
-
-        r.reset_pose()
-        r.r_zaxis_joint.joint_angle(relative=0.3)
-        r.l_zaxis_joint.joint_angle(0.1)
-        ri.angle_vector(r.angle_vector(), 5)
-        ri.zmove_client(r.r_zaxis_joint.joint_angle(),
-                        r.l_zaxis_joint.joint_angle(),
-                        5.0)
-        self.speak_jp('画像を撮影するために見回します。', wait=False)
 
         radius = 0.2
         m = trimesh.creation.icosphere(subdivisions=2, radius=radius)
@@ -154,14 +141,35 @@ class LookObject(object):
                 r.r_finger_upper_joint.joint_angle(-np.pi / 2.0)
                 avs.append((r.angle_vector(),
                             surface_point.worldpos()))
+        return avs
 
-        avs = sorted(avs, key=lambda item: (item[1][0], item[1][1]))
-        av_onlys = [av[0] for av in avs]
+    def look(self, topic_name=None, save_path=None):
+        if topic_name is not None and save_path is not None:
+            makedirs(save_path)
+            sub = ImageSubscriber(topic_name)
+        r = self.r
+        ri = self.ri
+        if self.debug:
+            v = self.v
+
+        r.reset_pose()
+        r.r_zaxis_joint.joint_angle(0.3, relative=True)
+        r.l_zaxis_joint.joint_angle(0.1)
+        ri.angle_vector(r.angle_vector(), 5)
+        ri.zmove_client(r.r_zaxis_joint.joint_angle(),
+                        r.l_zaxis_joint.joint_angle(),
+                        5.0)
+        self.speak_jp('画像を撮影するために見回します。', wait=False,
+                      volume=self.volume)
+
         cache_path = '/home/leus/cached_ik.npy'
         if self.cached_ik and osp.exists(cache_path):
             rospy.loginfo('Load cached ik from {}'.format(cache_path))
             avs = np.load(cache_path)
         else:
+            avs = self.look_around_ik()
+            avs = sorted(avs, key=lambda item: (item[1][0], item[1][1]))
+            av_onlys = [av[0] for av in avs]
             avs = find_best_order(av_onlys)[0]
             np.save(cache_path, avs)
             rospy.loginfo('Save cached ik to {}'.format(cache_path))
@@ -182,7 +190,8 @@ class LookObject(object):
             ri.wait_interpolation()
             rospy.sleep(2.0)
             if topic_name is not None and save_path is not None:
-                self.speak_jp('package://rostwitter/resource/camera.wav', wait=False)
+                self.speak_jp('package://rostwitter/resource/camera.wav', wait=False,
+                              volume=self.volume)
                 img = sub.take_image()
                 imwrite(
                     Path(save_path) / '{}.jpg'.format(current_time_str()),
@@ -190,8 +199,10 @@ class LookObject(object):
         if topic_name is not None and save_path is not None:
             del sub
 
-        self.speak_jp('画像を撮影し終わりました。', wait=True)
-        self.speak_jp('初期姿勢に戻ります。', wait=False)
+        self.speak_jp('画像を撮影し終わりました。', wait=True,
+                      volume=self.volume)
+        self.speak_jp('初期姿勢に戻ります。', wait=False,
+                      volume=self.volume)
 
         r.reset_pose()
         fastest_time = ri.angle_vector_duration(
