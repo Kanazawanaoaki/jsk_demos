@@ -178,11 +178,11 @@ class RegisterObject(object):
             self.wait_label()
         elif self.state == BaseState.SAVE_PHOTO.value:
             self.base_state()
-        elif self.state == BaseState.ASK_CONTINUE.value:
-            self.base_state()
         elif self.state == BaseState.UPDATE_MODEL.value:
             self.base_state()
         elif self.state == BaseState.AUTO_DEMO.value:
+            self.base_state()
+        else:
             self.base_state()
 
     def run(self):
