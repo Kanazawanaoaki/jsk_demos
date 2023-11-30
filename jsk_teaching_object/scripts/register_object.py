@@ -199,6 +199,13 @@ class RegisterObject(object):
         while not rospy.is_shutdown():
             rate.sleep()
             if self.speech_msg is None:
+                if self.state == BaseState.AUTO_DEMO.value:
+                    take_image_photo(
+                        '/r8_5_look_server/take_image_photo',
+                        '/usb_cam/image_raw', '',
+                        wait=True)
+                    self.speak(state_words[BaseState.REGISTER_OBJECT.value])
+                    rospy.sleep(10.0)
                 continue
 
             input_text = self.speech_msg.transcript[0]
@@ -234,12 +241,17 @@ class RegisterObject(object):
             elif answer == BaseState.ASK_WHAT.value:
                 self.speak("私は物体の画像を手についたカメラで撮影してデータベースに蓄えて学習することができます。「物体を登録して」や「学習して」、「認識結果を見せて」など言ってみてください。")
             elif answer == BaseState.AUTO_DEMO.value:
+                self.prev_state = self.state
+                self.state = BaseState.AUTO_DEMO.value
                 take_image_photo(
                     '/r8_5_look_server/take_image_photo',
                     '/usb_cam/image_raw', '',
                     wait=True)
+                self.speak(state_words[BaseState.REGISTER_OBJECT.value])
+                rospy.sleep(10.0)
             else:
                 self.speak('すいません、うまく解釈することができませんでした。言い方を変えてみてください。')
+                rospy.sleep(3.0)
 
     def reconfirm(self, label_name):
         self.speak('これは「{}」という名前ですか？'.format(label_name))
