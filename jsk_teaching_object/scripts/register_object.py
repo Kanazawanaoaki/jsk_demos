@@ -46,11 +46,11 @@ def request(prompt: str, retry: int = 5) -> OpenAIObject:
 def train_in_remote(
         image_directory,
         output,
-        username="iory", ip='133.11.216.13',
+        username="iory", ip='133.11.216.103',
         bastion_username='iory', bastion_ip='dlbox2.jsk.imi.i.u-tokyo.ac.jp',
         output_username=None, output_ip=None,
         identity_file=osp.join(osp.expanduser('~'), '.ssh', 'id_rsa'),
-        epoch=1,
+        epoch=3,
         batchsize=16,
         condition=None):
     client = SSHExecutor(ip, username,
@@ -63,7 +63,7 @@ def train_in_remote(
                  remote_image_path)
     client.execute_command("rm -rf {}/gen_data/train*".format(remote_image_path))
     client.execute_command_tmux(
-        f'cd /home/iory/jsk_teaching_object/src/jsk_demos/train && python generate_data.py --from-images-dir {remote_image_path}/{Path(image_directory).name} --min-scale 0.2 --max-scale 0.6 -n 100 --out {remote_image_path}/gen_data --epoch {epoch}',  # NOQA
+        f'cd /home/iory/jsk_teaching_object/src/jsk_demos/train && python generate_data.py --from-images-dir {remote_image_path}/{Path(image_directory).name} --min-scale 0.2 --max-scale 0.6 -n 4000 --out {remote_image_path}/gen_data --epoch {epoch}',  # NOQA
         session_name=session_name)
     trained_model_path = os.path.join(remote_image_path,
                                       'gen_data', 'train',
@@ -89,9 +89,10 @@ class BaseState(IntEnum):
     SAVE_PHOTO = 7
     NONE = 8
     WAIT_LABEL = 9
+    AUTO_DEMO = 10
 
 
-base_prompt = "あなたは日本語の対話システムです。システム（あなた）は、ユーザーに様々なメッセージを送り、ユーザーの返答を受け取ります。ユーザーの返答に基づき、以下の指示に従って適切な数字を返答してください。ユーザーが物品を登録する意思がある場合は「1」を返答。ユーザーが物品登録を終了する場合は「2」を返答。ユーザーがもう一度言ってほしいと言う場合は「3」を返答。ユーザーが物体モデルの学習を希望する場合は「4」を返答。ユーザーが認識結果を見せるように言う場合は「5」を返答。ユーザーが何ができるかを尋ねた場合には「6」を返答。ユーザーが画像撮影を続ける準備ができた場合は「7」、それ以外の返答の場合は「8」を返答。ユーザーの返答は以下です。数字のみを返答してください。"  # NOQA
+base_prompt = "あなたは日本語の対話システムです。システム（あなた）は、ユーザーに様々なメッセージを送り、ユーザーの返答を受け取ります。ユーザーの返答に基づき、以下の指示に従って適切な数字を返答してください。ユーザーが物品を登録する意思がある場合は「1」を返答。ユーザーが物品登録を終了する場合は「2」を返答。ユーザーがもう一度言ってほしいと言う場合は「3」を返答。ユーザーが物体モデルの学習を希望する場合は「4」を返答。ユーザーが認識結果を見せるように言う場合は「5」を返答。ユーザーが何ができるかを尋ねた場合には「6」を返答。ユーザーが画像撮影を続ける準備ができた場合は「7」、オートデモをするように依頼された場合は「10」、それ以外の返答の場合は「8」を返答。ユーザーの返答は以下です。数字のみを返答してください。"  # NOQA
 
 
 state_words = {
@@ -181,6 +182,8 @@ class RegisterObject(object):
             self.base_state()
         elif self.state == BaseState.UPDATE_MODEL.value:
             self.base_state()
+        elif self.state == BaseState.AUTO_DEMO.value:
+            self.base_state()
 
     def run(self):
         rate = rospy.Rate(10)
@@ -230,6 +233,11 @@ class RegisterObject(object):
                 self.show_inference()
             elif answer == BaseState.ASK_WHAT.value:
                 self.speak("私は物体の画像を手についたカメラで撮影してデータベースに蓄えて学習することができます。「物体を登録して」や「学習して」、「認識結果を見せて」など言ってみてください。")
+            elif answer == BaseState.AUTO_DEMO.value:
+                take_image_photo(
+                    '/r8_5_look_server/take_image_photo',
+                    '/usb_cam/image_raw', '',
+                    wait=True)
             else:
                 self.speak('すいません、うまく解釈することができませんでした。言い方を変えてみてください。')
 

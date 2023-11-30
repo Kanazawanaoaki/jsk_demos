@@ -150,6 +150,8 @@ class LookObject(object):
         return avs
 
     def look(self, topic_name=None, save_path=None):
+        if len(save_path) == 0:
+            save_path = None
         if topic_name is not None and save_path is not None:
             makedirs(save_path)
             sub = ImageSubscriber(topic_name)
@@ -253,6 +255,18 @@ class LookObject(object):
         r.r_zaxis_joint.joint_angle(0.3, relative=True)
         r.l_zaxis_joint.joint_angle(0.1)
         r.r_shoulder_y_joint.joint_angle(np.pi / 2.0)
+        fastest_time = ri.angle_vector_duration(
+            ri.angle_vector(),
+            r.angle_vector(),
+            controller_type=None)
+        rospy.loginfo('Send angle vector {} sec'.format(fastest_time))
+        ri.angle_vector(r.angle_vector(), fastest_time)
+        ri.zmove_client(r.r_zaxis_joint.joint_angle(),
+                        r.l_zaxis_joint.joint_angle(),
+                        fastest_time)
+        ri.wait_interpolation()
+
+        r.r_zaxis_joint.joint_angle(-0.3, relative=True)
         fastest_time = ri.angle_vector_duration(
             ri.angle_vector(),
             r.angle_vector(),
