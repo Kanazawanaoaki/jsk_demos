@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
 from threading import Lock
+import datetime
+import re
+import os.path as osp
+from pathlib import Path
 
 import actionlib
 import cv_bridge
@@ -19,6 +23,19 @@ from jsk_teaching_object.cfg import InstanceSegmentationConfig as Config
 from jsk_teaching_object.msg import UpdateModelAction, UpdateModelResult
 
 
+def get_latest_pt_file(path):
+    path = Path(path)
+    files = list(sorted(path.glob('*.pt')))
+    timestamps = []
+    for file in files:
+        match = re.search(r"(\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2})", str(file))
+        if match:
+            timestamp_str = match.group(1)
+            timestamp = datetime.datetime.strptime(timestamp_str, '%Y-%m-%d-%H-%M-%S')
+            timestamps.append((timestamp, file))
+    timestamps.sort(reverse=True)  # Sort in descending order
+    return timestamps[0][1] if timestamps else None
+
 class ObjectDetectionNode(ConnectionBasedTransport):
 
     def __init__(self):
@@ -30,7 +47,10 @@ class ObjectDetectionNode(ConnectionBasedTransport):
         self.ignore_class_names = rospy.get_param(
             '~ignore_class_names', ['others'])
 
-        weights = rospy.get_param('~model_path')
+        weights = rospy.get_param(
+            '~model_path',
+            get_latest_pt_file(
+                osp.expanduser(rospy.get_param('~root_image_path'))))
         device = rospy.get_param('~device', 0)
         if device < 0:
             device = 'cpu'
