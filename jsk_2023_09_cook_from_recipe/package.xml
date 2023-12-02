@@ -37,6 +37,7 @@
   <depend>vil_msgs</depend>
   <depend>vision_and_language_ros</depend>
   <depend>jsk_rosbag_tools</depend>
+  <depend>pr2eus_moveit</depend>
   <!--   Note that this is equivalent to the following: -->
   <!--   <build_depend>roscpp</build_depend> -->
   <!--   <exec_depend>roscpp</exec_depend> -->

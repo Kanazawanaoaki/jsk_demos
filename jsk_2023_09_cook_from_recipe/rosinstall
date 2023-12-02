@@ -1,7 +1,7 @@
 - git:
     local-name: jsk_demos
     uri: git@github.com:Kanazawanaoaki/jsk_demos.git
-    version: sauteed-broccoli-with-butter
+    version: cook-from-recipe
 - git:
     local-name: jsk-ros-pkg/jsk_common
     uri: git@github.com:jsk-ros-pkg/jsk_common.git
@@ -11,3 +11,7 @@
 - git:
     local-name: jsk-ros-pkg/jsk_planning
     uri: git@github.com:jsk-ros-pkg/jsk_planning.git
+- git:
+    local-name: moveit_pr2
+    uri: https://github.com/ros-planning/moveit_pr2.git
+    version: melodic-devel

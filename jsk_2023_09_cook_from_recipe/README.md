@@ -9,7 +9,7 @@ cd ~/ros/cooking_ws
 source /opt/ros/noetic/setup.bash
 catkin init
 cd ~/ros/cooking_ws/src
-git clone git@github.com:Kanazawanaoaki/jsk_demos.git -b sauteed-broccoli-with-butter
+git clone git@github.com:Kanazawanaoaki/jsk_demos.git -b cook-from-recipe
 cp jsk_demos/jsk_2023_09_cook_from_recipe/rosinstall ./.rosinstall
 wstool up
 cd ~/ros/cooking_ws/
@@ -18,7 +18,12 @@ catkin b jsk_2023_09_cook_from_recipe
 source ~/ros/cooking_ws/devel/setup.bash
 ```
 
-## exec demo
+## exec cook demo
+
+TODO
+
+
+## exec sauteed-broccoli-with-butter demo
 ### prepare
 in server pc
 ```
