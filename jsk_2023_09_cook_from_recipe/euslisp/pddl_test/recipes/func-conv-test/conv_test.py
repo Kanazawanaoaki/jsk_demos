@@ -14,10 +14,7 @@ def main(input_file):
     # 変数の初期化
     basic_cooking_target_conditions = []
 
-    # # 正規表現パターンの定義
-    # pattern = r"(\w+)\(([^,]+), ([^)]+)\)"
     # 正規表現パターンの定義
-    # pattern = r"(\w+)\(([^)]+)\)"
     pattern = r"([-\w]+)\(([^)]+)\)"
 
     # マッチした部分をリストに格納
@@ -27,11 +24,6 @@ def main(input_file):
     # マッチした行をループで処理
     for match in matches:
         print(match)
-
-        # function, arg1, arg2 = match
-        # # arg1 と arg2 を大文字に変換
-        # arg1 = arg1.upper()
-        # arg2 = arg2.upper()
 
         function, args = match
         # 引数をカンマで分割
@@ -63,15 +55,6 @@ def main(input_file):
         for condition in basic_cooking_target_conditions:
             file.write(' ' * 41 + f'\'{condition[0]}\n')
         file.write(' ' * 41 + '))\n')
-
-    # print(f'Results written to {output_file}')
-    # # 結果をファイルに書き込む
-    # with open('output.l', 'w') as file:
-    #     for condition in basic_cooking_target_conditions:
-    #         file.write(f'(({", ".join(condition)}))\n')
-
-    # # 結果を表示
-    # print(basic_cooking_target_conditions)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Cooking script')

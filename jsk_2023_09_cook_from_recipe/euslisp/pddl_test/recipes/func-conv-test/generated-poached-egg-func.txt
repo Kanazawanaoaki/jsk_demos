@@ -1,0 +1,6 @@
+pour(water, pot)
+heat(water, boiling)
+set-stove(low-heat)
+stir(water, whirlpool, spoon)
+pour(egg, pot)
+boil(egg, three-minutes)

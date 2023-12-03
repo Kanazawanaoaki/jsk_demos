@@ -1,5 +1,13 @@
 # cook from recipe PDDL test
 
+
+## convert func
+```
+cd func-conv-test
+python conv_test.py -i functions.txt
+```
+
+## pddl plan
 launch
 ```
 roslaunch only_planner.launch

@@ -129,9 +129,9 @@
                            (NOT (IN ?CONTENT ?FROM))))
        (instance pddl-action :init
                  :name "heat"
-                 :parameters '((?OBJECT ingredient) (?STATE state))
-                 :precondition '((IN ?OBJECT FRYING-PAN)
-                                 (ON FRYING-PAN STOVE)
+                 :parameters '((?OBJECT ingredient) (?VESSEL vessel) (?STATE state))
+                 :precondition '((IN ?OBJECT ?VESSEL)
+                                 (ON ?VESSEL STOVE)
                                  (ROBOT-AT STOVE)
                                  (STOVE-ON)
                                  )

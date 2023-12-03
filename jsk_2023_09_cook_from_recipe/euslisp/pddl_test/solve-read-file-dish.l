@@ -14,6 +14,7 @@
 ;;
 
 (setq *file-name* "kanazawa_cook_read_file_dish.pdf")
+(setq *plan-list* nil)
 
 (defun convert-basic-list-to-target-list (basic-list)
   (let ((target-list (list))
@@ -43,6 +44,16 @@
   (format t "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/recipes/~A ~%" file-name)
   (load (format nil "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/recipes/~A" file-name))
   (cook-condition-conversion)
+  )
+
+(defun dump-plan-file (file-name)
+  (if (null *plan-list*)
+      (format t "now plan-list is nill please exec ~%")
+    (progn
+      (format t "now plan is ~% ~A ~%" *plan-list*)
+      (dump-loadable-structure (format nil "recipes/planed/~A" file-name) *plan-list*)
+      (format t "data dumped in recipes/planed/~A ~%" file-name)
+      ))
   )
 
 ;; ;; sunny-side-up.l
@@ -84,33 +95,116 @@
 ;;                                     (NOT (WATERFLOW))
 ;;                                     ))
 
-;; scrambled-egg.l
+;; ;; scrambled-egg.l
+;; ;;set cooking-variables
+;; (setq *cooking-variables* '((EGG . ingredient)
+;;                             (MILK . ingredient)
+;;                             (SALT . ingredient)
+;;                             (BUTTER . ingredient)
+;;                             (SMALL-BOWL . vessel)
+;;                             (EGG-MIXTURE . mixture)
+;;                             (MELTED . state)
+;;                             (MELT . state)
+;;                             (SURROUNDINGS-HARDENED . state)
+;;                             (WHOLE-MIXTURE-TENDER . state)
+;;                             ))
+
+;; ;; 調理の初期条件
+;; (setq *cooking-initial-condition* '((ROBOT-AT STOVE)
+;;                                     (IN EGG BOWL)
+;;                                     (ON BOWL KITCHEN)
+;;                                     (ON SALT KITCHEN)
+;;                                     (ON MILK KITCHEN)
+;;                                     (ON WHISK KITCHEN)
+;;                                     (IN BUTTER SMALL-BOWL)
+;;                                     (ON SMALL-BOWL STOVE)
+;;                                     (ON FRYING-PAN STOVE)
+;;                                     (ON WOODEN-SPATULA STOVE)
+;;                                     (NOT (STOVE-ON))
+;;                                     (NOT (WATERFLOW))
+;;                                     ))
+
+
+
+;; generated-sunny-side-up-func-conv.l
 ;;set cooking-variables
 (setq *cooking-variables* '((EGG . ingredient)
-                            (MILK . ingredient)
-                            (SALT . ingredient)
-                            (BUTTER . ingredient)
-                            (SMALL-BOWL . vessel)
-                            (EGG-MIXTURE . mixture)
-                            (MELTED . state)
-                            (MELT . state)
-                            (SURROUNDINGS-HARDENED . state)
-                            (WHOLE-MIXTURE-TENDER . state)
+                            (SALAD-OIL . ingredient)
+                            (THIRTY-SECONDS . state)
+                            (HEAT-THROUGH . state)
+
+                            (OIL . ingredient)
+                            ;; (COOKED-EGG . state)
                             ))
 
 ;; 調理の初期条件
 (setq *cooking-initial-condition* '((ROBOT-AT STOVE)
+                                    (ON OIL STOVE)
+                                    (ON SALAD-OIL STOVE)
                                     (IN EGG BOWL)
-                                    (ON BOWL KITCHEN)
-                                    (ON SALT KITCHEN)
-                                    (ON MILK KITCHEN)
-                                    (ON WHISK KITCHEN)
-                                    (IN BUTTER SMALL-BOWL)
-                                    (ON SMALL-BOWL STOVE)
+                                    (ON BOWL STOVE)
                                     (ON FRYING-PAN STOVE)
-                                    (ON WOODEN-SPATULA STOVE)
                                     (NOT (STOVE-ON))
-                                    (NOT (WATERFLOW))
                                     ))
+
+;; ;; generated-poached-egg-func-conv.l
+;; ;;set cooking-variables
+;; (setq *cooking-variables* '((EGG . ingredient)
+;;                             (COOKED-EGG . state)
+;;                             (BOILING . state)
+;;                             (WHIRLPOOL . state)
+;;                             (THREE-MINUTES . state)
+;;                             (LOW-HEAT . state)
+
+;;                             (COOKED-EGG . state)
+;;                             (BOILED-WATER . state)
+;;                             (VORTEXED-WATER . state)
+;;                             ))
+
+;; ;; 調理の初期条件
+;; (setq *cooking-initial-condition* '((ROBOT-AT STOVE)
+;;                                     (ON MEASURING-CUP KITCHEN)
+;;                                     (IN EGG BOWL)
+;;                                     (ON BOWL STOVE)
+;;                                     (ON POT STOVE)
+;;                                     (ON SPOON STOVE)
+;;                                     (NOT (STOVE-ON))
+;;                                     (NOT (WATERFLOW))
+;;                                     ))
+
+;; ;; generated-scrambled-egg-func-conv.l
+;; ;;set cooking-variables
+;; (setq *cooking-variables* '((EGG . ingredient)
+;;                             (MILK . ingredient)
+;;                             (SALT . ingredient)
+;;                             (BUTTER . ingredient)
+;;                             (SMALL-BOWL . vessel)
+;;                             (EGG-MIXTURE . mixture)
+;;                             (MELTED-BUTTER . state)
+;;                             (MELT . state)
+;;                             (HALF-COOKED-EGG . state)
+;;                             (SOFT-SCRAMBLED-EGG . state)
+
+;;                             (SPATULA . tool)
+;;                             ;; (MELTED . state)
+;;                             ;; (SURROUNDINGS-HARDENED . state)
+;;                             ;; (WHOLE-MIXTURE-TENDER . state)
+;;                             ))
+
+;; ;; 調理の初期条件
+;; (setq *cooking-initial-condition* '((ROBOT-AT STOVE)
+;;                                     (IN EGG BOWL)
+;;                                     (ON BOWL KITCHEN)
+;;                                     (ON SALT KITCHEN)
+;;                                     (ON MILK KITCHEN)
+;;                                     (ON WHISK KITCHEN)
+;;                                     (IN BUTTER SMALL-BOWL)
+;;                                     (ON SMALL-BOWL STOVE)
+;;                                     (ON FRYING-PAN STOVE)
+;;                                     (ON WOODEN-SPATULA STOVE)
+;;                                     (ON SPATULA STOVE)
+;;                                     (NOT (STOVE-ON))
+;;                                     (NOT (WATERFLOW))
+;;                                     ))
 
 ;; (if *exit-on-end* (ros::exit))

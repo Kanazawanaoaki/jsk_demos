@@ -1,0 +1,6 @@
+mix(egg, milk, egg-mixture, bowl, whisk)
+pour(butter, frying-pan)
+heat(butter, melted-butter)
+pour(egg-mixture, frying-pan)
+cook(egg-mixture, half-cooked-egg)
+stir-fry(egg-mixture, soft-scrambled-egg, spatula)
