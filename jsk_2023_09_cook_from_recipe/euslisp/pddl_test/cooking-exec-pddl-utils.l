@@ -27,33 +27,9 @@
 (setq middle "middle")
 (setq high "high")
 
-;; egg
+;; egg cooked-egg boiling whirlpool three-minutes low-heat boiled-water vortexed-water
+;; milk salt butter small-bowl egg-mixture melted-butter melt 
 
-
-;; ;; generated-poached-egg-func-conv.l
-;; ;;set cooking-variables
-;; (setq *cooking-variables* '((EGG . ingredient)
-;;                             (COOKED-EGG . state)
-;;                             (BOILING . state)
-;;                             (WHIRLPOOL . state)
-;;                             (THREE-MINUTES . state)
-;;                             (LOW-HEAT . state)
-
-;;                             (COOKED-EGG . state)
-;;                             (BOILED-WATER . state)
-;;                             (VORTEXED-WATER . state)
-;;                             ))
-
-;; ;; 調理の初期条件
-;; (setq *cooking-initial-condition* '((ROBOT-AT STOVE)
-;;                                     (ON MEASURING-CUP KITCHEN)
-;;                                     (IN EGG BOWL)
-;;                                     (ON BOWL STOVE)
-;;                                     (ON POT STOVE)
-;;                                     (ON SPOON STOVE)
-;;                                     (NOT (STOVE-ON))
-;;                                     (NOT (WATERFLOW))
-;;                                     ))
 
 ;; ;; generated-scrambled-egg-func-conv.l
 ;; ;;set cooking-variables
