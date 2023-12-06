@@ -48,7 +48,7 @@
 
 (defun dump-plan-file (file-name)
   (if (null *plan-list*)
-      (format t "now plan-list is nill please exec ~%")
+      (format t "now plan-list is nill please exec (read-file)!! ~%")
     (progn
       (format t "now plan is ~% ~A ~%" *plan-list*)
       (dump-loadable-structure (format nil "recipes/planed/~A" file-name) *plan-list*)

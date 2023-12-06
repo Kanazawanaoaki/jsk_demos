@@ -2,9 +2,31 @@
 ;; utils
 ;;
 
+(setq *plan-list* nil)
+
 (defun load-planed-file (file-name)
   (format t "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/recipes/planed/~A ~%" file-name)
   (load (format nil "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/recipes/planed/~A" file-name))
+  )
+
+(defun view-plan-list ()
+  (if (null *plan-list*)
+      (format t "now plan-list is nill please exec (load-planed-file)!! ~%")
+    (progn
+      (dolist (plan *plan-list*)
+        (print plan)
+        )
+      ))
+  )
+
+(defun exec-plan-list ()
+  (if (null *plan-list*)
+      (format t "now plan-list is nill please exec (load-planed-file)!! ~%")
+    (progn
+      (dolist (plan *plan-list*)
+        (eval plan)
+        )
+      ))
   )
 
 ;; def variables
@@ -27,41 +49,32 @@
 (setq middle "middle")
 (setq high "high")
 
-;; egg cooked-egg boiling whirlpool three-minutes low-heat boiled-water vortexed-water
-;; milk salt butter small-bowl egg-mixture melted-butter melt 
+(setq egg "egg")
+(setq cooked-egg "cooked-egg")
+(setq boiling "boiling")
+(setq whirlpool "whirlpool")
+(setq three-minutes "three-minutes")
+(setq low-heat "low-heat")
+(setq boiled-water "boiled-water")
+(setq vortexed-water "vortexed-water")
+
+(setq milk "milk")
+(setq salt "salt")
+(setq butter "butter")
+(setq small-bowl "small-bowl")
+(setq egg-mixture "egg-mixture")
+(setq melted-butter "melted-butter")
+(setq melt "melt")
+(setq half-cooked-egg "half-cooked-egg")
+(setq soft-scrambled-egg "soft-scrambled-egg")
+(setq spatula "spatula")
+(setq melted "melted")
+(setq half-cooked-egg "half-cooked-egg")
+(setq whole-mixture-tender "whole-mixture-tender")
+
+(setq salad-oil "salad-oil")
+(setq thirty-seconds "thirty-seconds")
+(setq heat-through "heat-through")
+(setq oil "oil")
 
 
-;; ;; generated-scrambled-egg-func-conv.l
-;; ;;set cooking-variables
-;; (setq *cooking-variables* '((EGG . ingredient)
-;;                             (MILK . ingredient)
-;;                             (SALT . ingredient)
-;;                             (BUTTER . ingredient)
-;;                             (SMALL-BOWL . vessel)
-;;                             (EGG-MIXTURE . mixture)
-;;                             (MELTED-BUTTER . state)
-;;                             (MELT . state)
-;;                             (HALF-COOKED-EGG . state)
-;;                             (SOFT-SCRAMBLED-EGG . state)
-
-;;                             (SPATULA . tool)
-;;                             ;; (MELTED . state)
-;;                             ;; (SURROUNDINGS-HARDENED . state)
-;;                             ;; (WHOLE-MIXTURE-TENDER . state)
-;;                             ))
-
-;; ;; 調理の初期条件
-;; (setq *cooking-initial-condition* '((ROBOT-AT STOVE)
-;;                                     (IN EGG BOWL)
-;;                                     (ON BOWL KITCHEN)
-;;                                     (ON SALT KITCHEN)
-;;                                     (ON MILK KITCHEN)
-;;                                     (ON WHISK KITCHEN)
-;;                                     (IN BUTTER SMALL-BOWL)
-;;                                     (ON SMALL-BOWL STOVE)
-;;                                     (ON FRYING-PAN STOVE)
-;;                                     (ON WOODEN-SPATULA STOVE)
-;;                                     (ON SPATULA STOVE)
-;;                                     (NOT (STOVE-ON))
-;;                                     (NOT (WATERFLOW))
-;;                                     ))
