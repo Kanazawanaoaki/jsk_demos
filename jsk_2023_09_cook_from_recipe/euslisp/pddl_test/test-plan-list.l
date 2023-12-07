@@ -47,3 +47,7 @@
   (format t "(transfer ~A ~A ~A ~A ~A) ~%" content from to arm spot)
   )
 
+(defun heat (object vessel state)
+  (format t "(transfer ~A ~A ~A) ~%" object vessel state)
+  )
+
