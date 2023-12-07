@@ -23,7 +23,7 @@ from sensor_msgs.msg import Image
 
 
 Template = namedtuple('Template', ['name', 'image', 'thre', 'method'])
-Result = namedtuple('Result', ['score', 'found', 'top_left'])
+Result = namedtuple('Result', ['score', 'found', 'top_left', 'buttom_right'])
 
 
 class MatchTemplate(ConnectionBasedTransport):
@@ -97,14 +97,19 @@ class MatchTemplate(ConnectionBasedTransport):
                 result = Result(
                     score=score,
                     found=min_val < template.thre,
-                    top_left=min_loc)
+                    top_left=min_loc,
+                    buttom_right=max_loc)
             else:
                 score = max_val
                 result = Result(
                     score=score,
                     found=max_val > template.thre,
-                    top_left=max_loc)
+                    top_left=max_loc,
+                    buttom_right=min_loc)
             results[template.name] = result
+
+        ## TODO Add
+        print(results)
 
         # publish result
         msg = StringStamped(header=msg.header)
