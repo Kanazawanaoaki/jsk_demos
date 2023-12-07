@@ -1,0 +1,48 @@
+<launch>
+  <arg name="gui" default="true" />
+
+  <!-- <node name="raw_image_bgr" -->
+  <!--       pkg="jsk_perception" type="image_publisher.py"> -->
+  <!--   <remap from="~output" to="~image_color" /> -->
+  <!--   <remap from="~output/camera_info" to="~camera_info" /> -->
+  <!--   <rosparam subst_value="true"> -->
+  <!--     file_name: $(find jsk_2023_09_cook_from_recipe)/image/items_in_shelf.jpg -->
+  <!--     encoding: bgr8 -->
+  <!--     publish_info: true -->
+  <!--     fovx: 84.1 -->
+  <!--     fovy: 53.8 -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+
+  <!-- <node name="match_template" -->
+  <!--       pkg="jsk_2023_09_cook_from_recipe" type="match_template.py" -->
+  <!--       output="screen"> -->
+  <!--   <remap from="~image" to="/raw_image_bgr/image_color"/> -->
+  <!--   <rosparam command="load" -->
+  <!--             file="$(find jsk_2023_09_cook_from_recipe)/launch/template-test.yaml"/> -->
+  <!--   <rosparam> -->
+  <!--     show_probability: true -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+
+  <node name="image_publisher"
+        pkg="jsk_perception" type="image_publisher.py">
+    <rosparam subst_value="true">
+      file_name: $(find jsk_2023_09_cook_from_recipe)/image/elevator_inside_panel_eng2.png
+      publish_info: false
+    </rosparam>
+  </node>
+
+  <node name="match_template"
+        pkg="jsk_2023_09_cook_from_recipe" type="match_template.py"
+        output="screen">
+    <remap from="~image" to="/image_publisher/output"/>
+    <rosparam command="load"
+              file="$(find jsk_2023_09_cook_from_recipe)/launch/template-test2.yaml"/>
+    <rosparam>
+      show_probability: true
+    </rosparam>
+  </node>
+
+</launch>
+

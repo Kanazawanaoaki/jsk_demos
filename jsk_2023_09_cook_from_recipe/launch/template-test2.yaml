@@ -1,0 +1,7 @@
+method: CCOEFF
+template_list: TEST
+template:
+    TEST:
+        name: /test
+        path: "package://jsk_perception/sample/image/elevator_inside_panel_eng2_7f.png"
+        thre: 0.75

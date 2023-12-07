@@ -1,0 +1,7 @@
+method: CCOEFF
+template_list: TEST
+template:
+    TEST:
+        name: /test
+        path: "package://jsk_2023_09_cook_from_recipe/image/pai_no_mi.jpg"
+        thre: 0.75
