@@ -48,6 +48,29 @@
   )
 
 (defun heat (object vessel state)
-  (format t "(transfer ~A ~A ~A) ~%" object vessel state)
+  (format t "(heat ~A ~A ~A) ~%" object vessel state)
   )
 
+(defun cook (object state)
+  (format t "(cook ~A ~A) ~%" object state)
+  )
+
+(defun boil (object state)
+  (format t "(boil ~A ~A) ~%" object state)
+  )
+
+(defun stir (object tool vessel state spot arm)
+  (format t "(stir ~A ~A ~A ~A ~A ~A) ~%" object tool vessel state spot arm)
+  )
+
+(defun mix (mixture ing-one ing-two vessel tool spot arm1 arm2)
+  (format t "(mix ~A ~A ~A ~A ~A ~A ~A ~A) ~%" mixture ing-one ing-two vessel tool spot arm1 arm2)
+  )
+
+(defun stir-fry (input vessel tool state spot arm1 arm2)
+  (format t "(stir-fry ~A ~A ~A ~A ~A ~A ~A) ~%" input vessel tool state spot arm1 arm2)
+  )
+
+(defun fetch-water (arm)
+  (format t "(fetch-water ~A) ~%" arm)
+  )
