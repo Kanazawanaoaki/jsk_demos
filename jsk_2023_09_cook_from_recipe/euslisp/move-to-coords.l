@@ -4,13 +4,13 @@
 (defun init ()
   ;; init
   ;; (load "package://jsk_2020_04_pr2_curry/euslisp/model/my-eng2-coords.l")
-  
+
   ;; init ROS Node
   (ros::roseus "pr2-move-with-maps")
-  
+
   ;; init 73B2 room
   (unless (boundp '*scene*) (setq *scene* (make-eng2-scene)))
-  
+
   ;; init PR2
   (unless (boundp '*pr2*) (setq *pr2* (instance pr2-sensor-robot :init)))
   (unless (boundp '*ri*) (setq *ri* (instance pr2-interface :init)))
@@ -19,7 +19,7 @@
 
   (load "models/arrow-object.l")
   (setq *arrow* (arrow))
-  
+
   (objects (list *scene* *pr2*))
 
   ;; set global variables

@@ -260,37 +260,57 @@
 ;; defun action codes
 (defun hold (object arm spot)
   (format t "(hold ~A ~A ~A) ~%" object arm spot)
+  ;; (hold milk arm2 kitchen) (hold whisk arm1 kitchen) (hold bowl arm2 kitchen) (hold measuring-cup arm2 kitchen)
+  ;; (hold small-bowl arm2 stove) (hold spatula arm2 stove) (hold salad-oil arm2 stove) (hold bowl arm2 stove) (hold spoon arm2 stove) (hold bowl arm2 stove)
 
-  ;;
-  
   )
 
 (defun place (object arm spot)
   (format t "(place ~A ~A ~A) ~%" object arm spot)
+  ;; (place milk arm2 kitchen) (place whisk arm1 kitchen)
+  ;; (place small-bowl arm2 stove) (place bowl arm2 stove) (place spatula arm2 stove) (place salad-oil arm2 stove) (place measuring-cup arm2 stove) (place spoon arm2 stove)
+
   )
 
 (defun move-to (from to)
   (format t "(move-to ~A ~A) ~%" from to)
+  ;; (move-to stove kitchen) (move-to kitchen stove) (move-to kitchen sink) (move-to sink stove)
+  ;; move-to
+  (cond
+   ((string= to "stove")
+    (print "move-to stove")
+    )
+   ((string= to "hoge")
+    (print 1)
+    )
+   )
   )
 
 (defun open-tap (arm)
   (format t "(open-tap ~A) ~%" arm)
+  ;; (open-tap arm1)
   )
 
 (defun close-tap (arm)
   (format t "(close-tap ~A) ~%" arm)
+  ;; (close-tap arm1)
   )
 
 (defun turn-on-stove (arm)
   (format t "(turn-on-stove ~A) ~%" arm)
+  ;; (turn-on-stove arm1)
   )
 
 (defun set-stove (before after arm)
   (format t "(set-stove ~A ~A ~A) ~%" before after arm)
+  ;; (set-stove middle low-heat arm1)
   )
 
 (defun turn-off-stove (before arm)
   (format t "(turn-off-stove ~A ~A) ~%" before arm)
+  ;; (turn-off-stove middle arm1) (turn-off-stove low-heat arm1)
+
+  ;; stop-ih rarm
   )
 
 (defun wash (object arm)
@@ -299,38 +319,61 @@
 
 (defun pour (object vessel arm spot)
   (format t "(pour ~A ~A ~A ~A) ~%" object vessel arm spot)
+  ;; (pour milk bowl arm2 kitchen) (pour salad-oil frying-pan arm2 stove) 
   )
 
 (defun transfer (content from to arm spot)
   (format t "(transfer ~A ~A ~A ~A ~A) ~%" content from to arm spot)
+  ;; (transfer butter small-bowl frying-pan arm2 stove)
+  ;; (transfer egg-mixture bowl frying-pan arm2 stove) (transfer egg bowl frying-pan arm2 stove)
+  ;; (transfer egg bowl pot arm2 stove)
+  ;; (transfer water measuring-cup pot arm2 stove)
+
   )
 
 (defun heat (object vessel state)
   (format t "(heat ~A ~A ~A) ~%" object vessel state)
+  ;; (heat butter frying-pan melted-butter) (heat salad-oil frying-pan thirty-seconds) (heat water pot boiling)
+
+  ;; look frying-pan or pot
+
+  ;; watch cook state recognition
   )
 
 (defun cook (object state)
   (format t "(cook ~A ~A) ~%" object state)
+  ;; (cook egg-mixture half-cooked-egg) (cook egg heat-through)
+
+  ;; look frying-pan
+
   )
 
 (defun boil (object state)
   (format t "(boil ~A ~A) ~%" object state)
+  ;; (boil egg three-minutes)
   )
 
 (defun stir (object tool vessel state spot arm)
   (format t "(stir ~A ~A ~A ~A ~A ~A) ~%" object tool vessel state spot arm)
+  ;; (stir water spoon pot whirlpool stove arm2)
   )
 
 (defun mix (mixture ing-one ing-two vessel tool spot arm1 arm2)
   (format t "(mix ~A ~A ~A ~A ~A ~A ~A ~A) ~%" mixture ing-one ing-two vessel tool spot arm1 arm2)
+  ;; (mix egg-mixture egg milk bowl whisk kitchen arm1 arm2)
   )
 
 (defun stir-fry (input vessel tool state spot arm1 arm2)
   (format t "(stir-fry ~A ~A ~A ~A ~A ~A ~A) ~%" input vessel tool state spot arm1 arm2)
+  ;; (stir-fry egg-mixture frying-pan spatula soft-scrambled-egg stove arm2 arm1) 
   )
 
-(defun fetch-water (arm) ;; rarm
+(defun fetch-water (arm)
   (format t "(fetch-water ~A) ~%" arm)
+  ;; (fetch-water arm2)
+
+  ;; rarm
+
   )
 
 ;; exec
