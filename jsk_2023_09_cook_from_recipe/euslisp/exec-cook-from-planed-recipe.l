@@ -11,8 +11,6 @@
 (setq *speak-jp* t)
 
 
-
-
 ;;
 (defun check-pot-place-before ()
   (send *ri* :stop-grasp :larm :wait t)
@@ -275,16 +273,26 @@
 (defun move-to (from to)
   (format t "(move-to ~A ~A) ~%" from to)
   ;; (move-to stove kitchen) (move-to kitchen stove) (move-to kitchen sink) (move-to sink stove)
-  ;; move-to
-  (cond
-   ((string= to "stove")
-    (print "move-to stove")
-    )
-   ((string= to "hoge")
-    (print 1)
-    )
-   )
-  )
+  (let (move-suc-flag nil)
+    ;; move-to
+    (send *ri* :clear-costmap)
+    (cond
+     ((string= to "stove")
+      (print "move-to stove")
+      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8100 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+      )
+     ((string= to "kitchen")
+      (print "move-to kitchen")
+      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8500 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+      )
+     ((string= to "sink")
+      (print "move-to sink")
+      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1110 9100 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+      )
+     )
+    (format t "move-to result ~A" move-suc-flag)
+    (print (send *ri* :state :worldcoords))
+    ))
 
 (defun open-tap (arm)
   (format t "(open-tap ~A) ~%" arm)
