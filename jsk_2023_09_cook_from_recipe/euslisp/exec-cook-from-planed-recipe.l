@@ -2,6 +2,7 @@
 
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_tmp.l")
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/wrench.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/move-to-adjust.l")
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/cooking-exec-pddl-utils.l")
 
 ;; global variables
@@ -279,15 +280,16 @@
     (cond
      ((string= to "stove")
       (print "move-to stove")
-      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8100 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+      ;; (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8100 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8070 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
       )
      ((string= to "kitchen")
       (print "move-to kitchen")
-      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8500 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8500 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
       )
      ((string= to "sink")
       (print "move-to sink")
-      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1110 9100 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1110 9100 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
       )
      )
     (format t "move-to result ~A" move-suc-flag)
