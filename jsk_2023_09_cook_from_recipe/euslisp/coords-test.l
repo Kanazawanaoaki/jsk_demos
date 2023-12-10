@@ -62,18 +62,20 @@
 ;; (setq idealcds (make-coords :pos (float-vector 1148 313 0)
 ;;                             :rpy (float-vector 0.754 0 0)))
 
-;; (setq cds (make-coords :pos (float-vector 1134.241 321.186 1418.702)
-;;                        :rpy (float-vector 0.381 1.521 -2.795)))
+(setq cds (make-coords :pos (float-vector 1134.241 321.186 1418.702)
+                       :rpy (float-vector 0.381 1.521 -2.795)))
 ;; (setq cds (make-coords :pos (float-vector 1134.241 321.186 0)
 ;;                        :rpy (float-vector 0.381 0 0)))
 
 ;; (setq cds (make-coords :pos (float-vector 1185.391 59.003 1416.98)
 ;;                        :rpy (float-vector 0.021 1.528 -2.868)))
 
-(setq cds (make-coords :pos (float-vector 1009.382 586.861 1423.349)
-                       :rpy (float-vector 0.411 1.458 -3.035)))
+;; (setq cds (make-coords :pos (float-vector 1009.382 586.861 1423.349)
+;;                        :rpy (float-vector 0.411 1.458 -3.035)))
 ;; (setq cds (make-coords :pos (float-vector 1009.382 586.861 0)
 ;;                        :rpy (float-vector 0.411 1.458 -3.035)))
+
+;; (setq cds (make-coords :pos (float-vector 777 98 1112)))
 
 (setq idealcds-tmp (change-coords idealcds))
 (setq cds-tmp (change-coords cds))

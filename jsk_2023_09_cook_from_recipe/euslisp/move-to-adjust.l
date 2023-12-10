@@ -39,10 +39,49 @@
     )
   )
 
+(defun move-to-spot (to)
+  (let ((move-suc-flag nil)
+        (adjust-suc-flag nil))
+    ;; move-to
+    (send *ri* :clear-costmap)
+    (cond
+     ((string= to "stove")
+      (print "move-to stove")
+      ;; (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8100 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8070 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+      (when move-suc-flag
+        (setq adjust-suc-flag nil)
+        (until adjust-suc-flag
+               (setq adjust-suc-flag (move-with-adjust :move-spot :stove))
+               )
+        ))
+     ((string= to "kitchen")
+      (print "move-to kitchen")
+      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8500 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+      (when move-suc-flag
+        (setq adjust-suc-flag nil)
+        (until adjust-suc-flag
+               (setq adjust-suc-flag (move-with-adjust :move-spot :kitchen))
+               )
+        ))
+     ((string= to "sink")
+      (print "move-to sink")
+      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1110 9100 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+      (when move-suc-flag
+        (setq adjust-suc-flag nil)
+        (until adjust-suc-flag
+               (setq adjust-suc-flag (move-with-adjust :move-spot :sink))
+               )
+        ))
+     )
+    move-suc-flag
+    ))
+
+
 ;; c.f. https://github.com/jsk-ros-pkg/jsk_demos/blob/088b186ea8d02ebda8fee2dc411135f8fd813be1/jsk_demo_common/euslisp/pr2-action.l#L708-L856
 (defparameter *adjust-spot-object-cds* nil)
-(defun move-to-spot-with-adjust (&key (move-spot :stove) (ratio 1) (look-around nil) (head-pitch 14) (torso-lift 130) (move t) (wait t) (use-base nil))
-  (let (ret
+(defun move-with-adjust (&key (move-spot :stove) (ratio 1) (look-around nil) (head-pitch 14) (torso-lift 130) (move t) (wait t) (use-base nil))
+  (let ((ret nil)
         ;; (diffcds (make-coords :pos (float-vector 10000 10000 10000)))
         (distance-threshold 25.0)
         (rotation-threshold 0.09)
@@ -64,17 +103,22 @@
                               :rpy (float-vector 0.754 1.547 -2.402)))
            )
           (:sink
+           (setq spot-name "kitchen")
+           (setq speak-name "キッチン")
+           (setq detecion-topic "/point_pose_kitchen/ObjectDetection")
+           (setq idealcds ;; TODO
+                 (make-coords :pos (float-vector 780 100 0)
+                              :rpy (float-vector 0.0 0 0)))
+           )
+          (:sink
            (setq spot-name "sink")
            (setq speak-name "水道")
-           (setq detecion-topic "/point_pose_stove/ObjectDetection")
+           (setq detecion-topic "/point_pose_sink/ObjectDetection")
            (setq idealcds ;; TODO
                  (make-coords :pos (float-vector 780 100 0)
                               :rpy (float-vector 0.0 0 0)))
            )
           )
-;;     (print 1)
-;;     ))
-;; (defun test
     (cond
      ((not (send *ri* :simulation-modep)) ;; real mode
       (setq cds (check-detection :type spot-name :speak-name speak-name
