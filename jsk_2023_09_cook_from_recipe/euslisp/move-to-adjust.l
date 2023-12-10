@@ -92,22 +92,21 @@
       (dump-structure *standard-output*
                       (list (send *pr2* :copy-worldcoords)
                             (send cds :copy-worldcoords)))
+      ;; (setq cds
+      ;;       (make-coords :pos
+      ;;                    (float-vector (elt (send cds :worldpos) 0)
+      ;;                                  (elt (send cds :worldpos) 1) 0)
+      ;;                    :rpy (list (elt (car (rpy-angle (send cds :worldrot))) 0)
+      ;;                               0 0)))
       (setq cds
             (make-coords :pos
                          (float-vector (elt (send cds :worldpos) 0)
-                                       (elt (send cds :worldpos) 1) 0)
-                         :rpy (list (elt (car (rpy-angle (send cds :worldrot))) 0)
-                                    0 0)))
+                                       (elt (send cds :worldpos) 1)
+                                       0)
+                         :rot (send cds :copy-rot)))
 
       (setq diffcds (send (send idealcds :inverse-transformation)
                           :transform (send cds :worldcoords) :world))
-
-      ;; (setq diffcds
-      ;;       (make-coords :pos
-      ;;                    (float-vector (elt (send diffcds :worldpos) 0)
-      ;;                                  (elt (send diffcds :worldpos) 1) 0)
-      ;;                    :rpy (list (elt (car (rpy-angle (send diffcds :worldrot))) 0)
-      ;;                               0 0)))
 
       (warn "~%~A -> ~A / ~A~%" diffcds cds idealcds)
       (ros::ros-info "DIFF: ~A" diffcds)
@@ -126,43 +125,46 @@
         (if move
             (cond
              (wait
-              ;; (send *ri* :go-pos-unsafe
-              ;;       (/ (elt (send diffcds :worldpos) 0) 1100.0)
-              ;;       (/ (elt (send diffcds :worldpos) 1) 1100.0)
-              ;;       (* 0.9 (rad2deg (elt (car (rpy-angle (send diffcds :worldrot))) 0))))
-              (setq move-adjust-x (- (elt (send cds :worldpos) 0) (elt (send idealcds :worldpos) 0)))
-              (setq move-adjust-y (- (elt (send cds :worldpos) 1) (elt (send idealcds :worldpos) 1)))
+              (send *ri* :go-pos-unsafe
+                    (/ (elt (send diffcds :worldpos) 0) 1100.0)
+                    (/ (elt (send diffcds :worldpos) 1) 1100.0)
+                    (* 0.9 (rad2deg (elt (car (rpy-angle (send diffcds :worldrot))) 0))))
+              ;; (setq move-adjust-x (- (elt (send cds :worldpos) 0) (elt (send idealcds :worldpos) 0)))
+              ;; (setq move-adjust-y (- (elt (send cds :worldpos) 1) (elt (send idealcds :worldpos) 1)))
+              ;; ;; (setq move-adjust-theta
+              ;; ;;       (rad2deg (elt (car (rpy-angle (send diffcds :worldrot))) 0)))
               ;; (setq move-adjust-theta
-              ;;       (rad2deg (elt (car (rpy-angle (send diffcds :worldrot))) 0)))
-              (setq move-adjust-theta
-                    (- (rad2deg (car (car (rpy-angle (send cds :worldrot))))) (rad2deg (car (car (rpy-angle (send idealcds :worldrot)))))))
-              (warn "~A, ~A, ~A ~%" move-adjust-x move-adjust-y move-adjust-theta)
-              (send *ri* :go-pos-unsafe-no-wait
-                    (/ move-adjust-x 1100.0)
-                    (/ move-adjust-y 1100.0)
-                    (* 0.9 move-adjust-theta))
+              ;;       (- (rad2deg (car (car (rpy-angle (send cds :worldrot))))) (rad2deg (car (car (rpy-angle (send idealcds :worldrot)))))))
+              ;; (warn "~A, ~A, ~A ~%" move-adjust-x move-adjust-y move-adjust-theta)
+              ;; (send *ri* :go-pos-unsafe-no-wait
+              ;;       (/ move-adjust-x 1100.0)
+              ;;       (/ move-adjust-y 1100.0)
+              ;;       (* 0.9 move-adjust-theta))
+
               ;; wait ???
               (send *ri* :ros-wait 0.5 :spin-self t :spin t) ;; attention-check ...
               ;; (send *ri* :wait-interpolation)
               )
              (t
-              ;; (send *ri* :go-pos-unsafe-no-wait
-              ;;       (/ (elt (send diffcds :worldpos) 0) 1100.0)
-              ;;       (/ (elt (send diffcds :worldpos) 1) 1100.0)
-              ;;       (* 0.9 (rad2deg (elt (car (rpy-angle (send diffcds :worldrot))) 0))))
-              (setq move-adjust-x (- (elt (send cds :worldpos) 0) (elt (send idealcds :worldpos) 0)))
-              (setq move-adjust-y (- (elt (send cds :worldpos) 1) (elt (send idealcds :worldpos) 1)))
-              ;; (setq move-adjust-theta
-              ;;       (rad2deg (elt (car (rpy-angle (send diffcds :worldrot))) 0)))
-              (setq move-adjust-theta
-                    (- (rad2deg (car (car (rpy-angle (send idealcds :worldrot))))) (rad2deg (car (car (rpy-angle (send cds :worldrot)))))))
-              (warn "~A, ~A, ~A," )
               (send *ri* :go-pos-unsafe-no-wait
-                    (/ move-adjust-x 1100.0)
-                    (/ move-adjust-y 1100.0)
-                    (* 0.9 move-adjust-theta))
-              )))
-        ))
-      ) ;; /when cds
+                    (/ (elt (send diffcds :worldpos) 0) 1100.0)
+                    (/ (elt (send diffcds :worldpos) 1) 1100.0)
+                    (* 0.9 (rad2deg (elt (car (rpy-angle (send diffcds :worldrot))) 0))))
+
+              ;; (setq move-adjust-x (- (elt (send cds :worldpos) 0) (elt (send idealcds :worldpos) 0)))
+              ;; (setq move-adjust-y (- (elt (send cds :worldpos) 1) (elt (send idealcds :worldpos) 1)))
+              ;; ;; (setq move-adjust-theta
+              ;; ;;       (rad2deg (elt (car (rpy-angle (send diffcds :worldrot))) 0)))
+              ;; (setq move-adjust-theta
+              ;;       (- (rad2deg (car (car (rpy-angle (send idealcds :worldrot))))) (rad2deg (car (car (rpy-angle (send cds :worldrot)))))))
+              ;; (warn "~A, ~A, ~A," )
+              ;; (send *ri* :go-pos-unsafe-no-wait
+              ;;       (/ move-adjust-x 1100.0)
+              ;;       (/ move-adjust-y 1100.0)
+              ;;       (* 0.9 move-adjust-theta))
+              ;; ))
+              )
+             ))
+        ) ;; /when cds
     ret
     ))
