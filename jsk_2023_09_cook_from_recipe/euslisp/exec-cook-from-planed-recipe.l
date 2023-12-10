@@ -274,7 +274,7 @@
 (defun move-to (from to)
   (format t "(move-to ~A ~A) ~%" from to)
   ;; (move-to stove kitchen) (move-to kitchen stove) (move-to kitchen sink) (move-to sink stove)
-  (let (move-suc-flag nil)
+  (let ((move-suc-flag nil))
     ;; move-to
     (send *ri* :clear-costmap)
     (cond

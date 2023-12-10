@@ -20,12 +20,13 @@
       <!-- <remap from="mask" to="attention_clipper/output/mask"/> -->
       <!-- <param name="use_mask" value="$(arg use_mask)"/> -->
     </node>
-    <node name="stove_detector" pkg="jsk_perception" type="point_pose_extractor">
+    <node name="stove_detector" pkg="jsk_perception" type="point_pose_extractor" clear_params="true">
       <rosparam subst_value="true">
-        template_filename: $(find jsk_perception)/sample/image/pai_no_mi.jpg
+        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-stove-kinect.jpg
         window_name: stove_detector
-        object_width: 0.145
-        object_height: 0.128
+        object_width: 0.297
+        object_height: 0.210
+        <!-- relative_pos: '0.0 0.0 0.0  0.707107 0 -0.707107 0' -->
       </rosparam>
     </node>
   </group>
@@ -39,7 +40,7 @@
     </node>
     <node name="sink_detector" pkg="jsk_perception" type="point_pose_extractor">
       <rosparam subst_value="true">
-        template_filename: $(find jsk_perception)/sample/image/pai_no_mi.jpg
+        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-sink-kinect.jpg
         window_name: sink_detector
         object_width: 0.145
         object_height: 0.128

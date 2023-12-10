@@ -1,10 +1,10 @@
-(load "package://pr2eus/pr2-interface.l")
+(require :pr2-interface "package://pr2eus/pr2-interface.l")
 
 (defun init-pr2 ()
   (pr2-init)
   (setq *robot* *pr2*)
   (objects *robot*)
-  (send *robot* :reset-manip-pose) ;; TODO change
+  ;; (send *robot* :reset-manip-pose) ;; TODO change
   )
 
 (defun reset-manip-pose (&key (time 5000))

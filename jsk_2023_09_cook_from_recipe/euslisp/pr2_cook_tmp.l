@@ -44,7 +44,7 @@
   (send *robot* :rarm :inverse-kinematics
         *co*
         :rotation-axis t
-	:revert-if-fail nil)
+        :revert-if-fail nil)
   (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
@@ -238,6 +238,12 @@
   ;; (send *robot* :head-neck-p :joint-angle 60.0)
   (send *robot* :head-neck-y :joint-angle *initial-head-neck-y*)
   (send *robot* :head-neck-p :joint-angle *initial-head-neck-p*)
+  (send *ri* :angle-vector (send *robot* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun reset-pose ()
+  (send *robot* :reset-pose)
   (send *ri* :angle-vector (send *robot* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
   )
