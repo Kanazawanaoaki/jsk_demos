@@ -60,7 +60,7 @@
            (setq speak-name "IHコンロ")
            (setq detecion-topic "/point_pose_stove/ObjectDetection")
            (setq idealcds
-                 (make-coords :pos (float-vector 1148 313 0)
+                 (make-coords :pos (float-vector 1148 313 1423.349)
                               :rpy (float-vector 0.754 1.547 -2.402)))
            )
           (:sink
@@ -98,12 +98,13 @@
       ;;                                  (elt (send cds :worldpos) 1) 0)
       ;;                    :rpy (list (elt (car (rpy-angle (send cds :worldrot))) 0)
       ;;                               0 0)))
-      (setq cds
-            (make-coords :pos
-                         (float-vector (elt (send cds :worldpos) 0)
-                                       (elt (send cds :worldpos) 1)
-                                       0)
-                         :rot (send cds :copy-rot)))
+
+      ;; (setq cds
+      ;;       (make-coords :pos
+      ;;                    (float-vector (elt (send cds :worldpos) 0)
+      ;;                                  (elt (send cds :worldpos) 1)
+      ;;                                  0)
+      ;;                    :rot (send cds :copy-rot)))
 
       (setq diffcds (send (send idealcds :inverse-transformation)
                           :transform (send cds :worldcoords) :world))

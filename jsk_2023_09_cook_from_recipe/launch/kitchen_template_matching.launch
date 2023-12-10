@@ -27,6 +27,7 @@
         object_width: 0.297
         object_height: 0.210
         <!-- relative_pos: '0.0 0.0 0.0  0.707107 0 -0.707107 0' -->
+        <!-- relative_pose: '0.0 0.0 0.0  0.707107 0 -0.707107 0' -->
       </rosparam>
     </node>
   </group>
