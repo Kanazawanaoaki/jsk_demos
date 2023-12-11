@@ -4,7 +4,7 @@
 (setq *initial-head-neck-y* 0.0)
 (setq *initial-head-neck-p* 50.0)
 
-(defun set-objects-on-table (&key (object-name "ボウル1") (arm :rarm))
+(defun place-objects-on-table (&key (object-name "ボウル1") (arm :rarm) (set-flag nil) (grasp-flag nil))
   (let (pre-set-avs
         pre-set-val
         set-coords
@@ -12,21 +12,84 @@
     (cond
      ((string= object-name "ボウル1")
       (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041) #f(-45.3343 3.47451 -56.4107 -109.672 -99.5375 -114.592 104.776)))
-      (setq pre-set-val #f(-50 0 -50))
+      (setq pre-set-val #f(-50 0 50))
       (setq set-coords (make-coords :pos #f(600.991 -365.044 878.981) :rpy #f(-0.496 1.352 -2.114)))
       )
      ((string= object-name "ボウル0")
       (setq pre-set-avs (list #f(-28.2146 0.07681 -56.1994 -95.3798 -127.421 -97.0024 137.794)))
-      (setq pre-set-val #f(0 0 -100))
+      (setq pre-set-val #f(0 0 100))
       (setq set-coords (make-coords :pos #f(760.846 -230.582 846.976) :rpy #f(-0.353 1.158 -1.828)))
       )
-     ((string= object-name "ボウル0") ;; ここからTODO
-      (setq pre-set-avs (list #f(-28.2146 0.07681 -56.1994 -95.3798 -127.421 -97.0024 137.794)))
-      (setq pre-set-val #f(0 0 -100))
-      (setq set-coords (make-coords :pos #f(760.846 -230.582 846.976) :rpy #f(-0.353 1.158 -1.828)))
+     ((string= object-name "あぶら") ;; larm
+      (setq pre-set-avs (list #f(52.4453 35.9984 40.0064 -117.485 -211.029 -72.009 -15.0076)))
+      (setq pre-set-val #f(0 0 100))
+      (setq set-coords (make-coords :pos #f(737.741 557.918 924.705) :rpy #f(0.093 0.064 -3.107)))
+      )
+     ((string= object-name "ヘラ")
+      (setq pre-set-avs (list #f(-23.3076 50.4461 -21.9938 -121.268 -173.134 -64.7071 191.807)))
+      (setq pre-set-val #f(0 0 100))
+      (setq set-coords (make-coords :pos #f(617.101 -150.106 835.171) :rpy #f(0.013 0.078 0.012)))
       )
      )
-  )
+
+    (dolist (pre-set-av pre-set-avs)
+      (send *pr2* arm :angle-vector pre-set-av)
+      (send *ri* :angle-vector (send *pr2* :angle-vector))
+      (send *ri* :wait-interpolation)
+      )
+
+    (if set-flag
+        (progn
+          ;; 物体を握らせて貰う
+          (send *ri* :stop-grasp arm :wait t)
+          (send *ri* :speak-jp (format nil "~AをセットしてOKと言ってください" object-name))
+          (ok-wait)
+          (send *ri* :start-grasp arm :wait t)
+          ))
+    (if grasp-flag
+        (progn
+          ;; 物体を握るために手を開く
+          (send *ri* :stop-grasp arm :wait t)
+          ))
+
+    (send set-coords :translate pre-set-val :world)
+    (send *pr2* arm :inverse-kinematics
+          (send set-coords :copy-worldcoords)
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector))
+    (send *ri* :wait-interpolation)
+
+    (send set-coords :translate (scale -1 pre-set-val) :world)
+    (send *pr2* arm :inverse-kinematics
+          (send set-coords :copy-worldcoords)
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector))
+    (send *ri* :wait-interpolation)
+
+    (if grasp-flag
+        (progn
+          ;; 物体を握る
+          (send *ri* :start-grasp arm :wait t)
+          )
+      (send *ri* :stop-grasp arm :wait t) ;; 物体を置く
+      )
+
+    (send set-coords :translate pre-set-val :world)
+    (send *pr2* arm :inverse-kinematics
+          (send set-coords :copy-worldcoords)
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector))
+    (send *ri* :wait-interpolation)
+
+    (dolist (pre-set-av (reverse pre-set-avs))
+      (send *pr2* arm :angle-vector pre-set-av)
+      (send *ri* :angle-vector (send *pr2* :angle-vector))
+      (send *ri* :wait-interpolation)
+      )
+    ))
 
 (defun set-pot-on-stove (&key (arm :larm) (object-name "鍋"))
   (if (equal arm :larm)

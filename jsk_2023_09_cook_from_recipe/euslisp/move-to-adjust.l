@@ -8,6 +8,16 @@
 (defvar *use-voicetext* t)
 (defvar *use-english* nil)
 
+(setq *stove-offset-x* 0.0)
+(setq *stove-offset-y* 0.0)
+(setq *stove-offset-theta* 0.0)
+(setq *kitchen-offset-x* 0.0)
+(setq *kitchen-offset-y* 0.0)
+(setq *kitchen-offset-theta* 0.0)
+(setq *sink-offset-x* 0.0)
+(setq *sink-offset-y* 0.0)
+(setq *sink-offset-theta* 0.0)
+
 ;; (if (and (boundp '*use-voicetext*) *use-voicetext*)
 ;;     (cond
 ;;      ((and (boundp '*use-english*) *use-english*)
@@ -215,6 +225,23 @@
                  (< (abs (elt (car (rpy-angle (send diffcds :worldrot))) 0))
                     rotation-threshold)))
         (setq ret t)
+        (case move-spot
+              (:stove
+               (setq *stove-offset-x* (elt (send diffcds :worldpos) 0))
+               (setq *stove-offset-y* (elt (send diffcds :worldpos) 1))
+               (setq *stove-offset-theta* (elt (car (rpy-angle (send diffcds :worldrot))) 0))
+               )
+              (:kitchen
+               (setq *kitchen-offset-x* (elt (send diffcds :worldpos) 0))
+               (setq *kitchen-offset-y* (elt (send diffcds :worldpos) 1))
+               (setq *kitchen-offset-theta* (elt (car (rpy-angle (send diffcds :worldrot))) 0))
+               )
+              (:sink
+               (setq *sink-offset-x* (elt (send diffcds :worldpos) 0))
+               (setq *sink-offset-y* (elt (send diffcds :worldpos) 1))
+               (setq *sink-offset-theta* (elt (car (rpy-angle (send diffcds :worldrot))) 0))
+               )
+              )
         (if (not (send *ri* :simulation-modep)) ;; real mode
             (speak-jp "到着しました")
           ))
