@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <launch>
   <arg name="gui" default="true" />
 
@@ -59,8 +60,8 @@
       <rosparam subst_value="true">
         template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-sink-kinect.jpg
         window_name: sink_detector
-        object_width: 0.145
-        object_height: 0.128
+        object_width: 0.297
+        object_height: 0.210
       </rosparam>
     </node>
   </group>

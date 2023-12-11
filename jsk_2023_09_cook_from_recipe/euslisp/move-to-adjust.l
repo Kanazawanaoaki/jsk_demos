@@ -47,6 +47,25 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
 
+  (format t "wait ok !! ~%")
+  (ok-wait)
+
+  (reset-manip-pose :arm :larm :time 2000)
+  (reset-manip-pose :arm :rarm :time 2000)
+  (reset-pose)
+  )
+
+
+(defun check-sink-spot ()
+  (reset-manip-pose :arm :larm :time 2000)
+  (reset-manip-pose :arm :rarm :time 2000)
+
+  (send *pr2* :rarm :angle-vector #f(-32.5563 22.3727 -103.121 -112.907 109.776 -5.72958 229.4))
+  ;; (send *pr2* :larm :angle-vector #f(92.4848 41.8099 73.9639 -90.2619 -295.046 -15.2736 153.803))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (format t "wait ok !! ~%")
   (ok-wait)
 
   (reset-manip-pose :arm :larm :time 2000)
@@ -81,8 +100,9 @@
       (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8500 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
       (when move-suc-flag
         (setq adjust-suc-flag nil)
+        (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
         (until adjust-suc-flag
-               (reset-pose)
+               (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
                (format t "pr2 reset-pose ~%")
                (setq adjust-suc-flag (move-with-adjust :move-spot :kitchen))
                )
@@ -92,8 +112,9 @@
       (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1110 9100 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
       (when move-suc-flag
         (setq adjust-suc-flag nil)
+        (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
         (until adjust-suc-flag
-               (reset-pose)
+               (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
                (format t "pr2 reset-pose ~%")
                (setq adjust-suc-flag (move-with-adjust :move-spot :sink))
                )
@@ -108,7 +129,7 @@
 (defun move-with-adjust (&key (move-spot :stove) (ratio 1) (look-around nil) (head-pitch 14) (torso-lift 130) (move t) (wait t) (use-base nil))
   (let ((ret nil)
         ;; (diffcds (make-coords :pos (float-vector 10000 10000 10000)))
-        (distance-threshold 25.0) ;;25.0
+        (distance-threshold 20.0) ;;25.0
         (rotation-threshold 0.09) ;;0.09
         ;; idealcds
         ;; spot-name
@@ -134,17 +155,20 @@
            (setq spot-name "kitchen")
            (setq speak-name "キッチン")
            (setq detecion-topic "/point_pose_kitchen/ObjectDetection")
+           ;; (setq idealcds
+           ;;       (make-coords :pos (float-vector 1149.697 263.465 1292.455)
+           ;;                    :rpy (float-vector 0.235 1.503 -2.926)))
            (setq idealcds
-                 (make-coords :pos (float-vector 1149.697 263.465 1292.455)
-                              :rpy (float-vector 0.235 1.503 -2.926)))
+                 (make-coords :pos (float-vector 1163.785 266.85 1284.483)
+                              :rpy (float-vector 0.167 1.403 -3.019)))
            )
           (:sink
            (setq spot-name "sink")
            (setq speak-name "水道")
            (setq detecion-topic "/point_pose_sink/ObjectDetection")
-           (setq idealcds ;; TODO
-                 (make-coords :pos (float-vector 780 100 0)
-                              :rpy (float-vector 0.0 0 0)))
+           (setq idealcds
+                 (make-coords :pos (float-vector 1031.396 137.734 1282.394)
+                              :rpy (float-vector 0.258 1.499 -2.909)))
            )
           )
     (cond
