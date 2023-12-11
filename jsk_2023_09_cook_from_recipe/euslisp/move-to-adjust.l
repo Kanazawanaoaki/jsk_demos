@@ -3,6 +3,7 @@
 (require :pr2-pose "package://jsk_demo_common/euslisp/pr2-pose.l")
 (require :pr2-speack "package://pr2eus/speak.l")
 (require :pr2-interface "package://pr2eus/pr2-interface.l")
+(require :pr2-cook-tmp "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_tmp.l")
 
 (defvar *use-voicetext* t)
 (defvar *use-english* nil)
@@ -16,9 +17,7 @@
 
 
 (defun check-stove-spot ()
-  (send *pr2* :reset-manip-pose)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)
+  (reset-manip-pose)
 
   (let ((ik-target (make-coords :pos #f(450 -33.562 705) :rpy #f(0.0 0.0 -1.5708))
                    ))
@@ -39,19 +38,41 @@
     )
   )
 
+(defun check-kitchen-spot ()
+  (reset-manip-pose :arm :larm :time 2000)
+  (reset-manip-pose :arm :rarm :time 2000)
+
+  (send *pr2* :rarm :angle-vector #f(-62.8293 65.5928 -67.1327 -121.542 -176.365 -46.0305 106.586))
+  (send *pr2* :larm :angle-vector #f(37.3159 59.0989 86.3948 -121.483 -132.498 -72.5301 211.024))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (ok-wait)
+
+  (reset-manip-pose :arm :larm :time 2000)
+  (reset-manip-pose :arm :rarm :time 2000)
+  (reset-pose)
+  )
+
 (defun move-to-spot (to)
   (let ((move-suc-flag nil)
         (adjust-suc-flag nil))
     ;; move-to
     (send *ri* :clear-costmap)
+    (reset-move-pose :head-p 0.0 :torso 50.0 :tm 3000)
     (cond
      ((string= to "stove")
       (print "move-to stove")
       ;; (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8100 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
       (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8070 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+      (format t "move-to result ~A ~%" move-suc-flag)
       (when move-suc-flag
         (setq adjust-suc-flag nil)
+        (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
         (until adjust-suc-flag
+               ;; (reset-pose)
+               (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
+               (format t "pr2 reset-pose ~%")
                (setq adjust-suc-flag (move-with-adjust :move-spot :stove))
                )
         ))
@@ -61,6 +82,8 @@
       (when move-suc-flag
         (setq adjust-suc-flag nil)
         (until adjust-suc-flag
+               (reset-pose)
+               (format t "pr2 reset-pose ~%")
                (setq adjust-suc-flag (move-with-adjust :move-spot :kitchen))
                )
         ))
@@ -70,6 +93,8 @@
       (when move-suc-flag
         (setq adjust-suc-flag nil)
         (until adjust-suc-flag
+               (reset-pose)
+               (format t "pr2 reset-pose ~%")
                (setq adjust-suc-flag (move-with-adjust :move-spot :sink))
                )
         ))
@@ -83,8 +108,8 @@
 (defun move-with-adjust (&key (move-spot :stove) (ratio 1) (look-around nil) (head-pitch 14) (torso-lift 130) (move t) (wait t) (use-base nil))
   (let ((ret nil)
         ;; (diffcds (make-coords :pos (float-vector 10000 10000 10000)))
-        (distance-threshold 25.0)
-        (rotation-threshold 0.09)
+        (distance-threshold 25.0) ;;25.0
+        (rotation-threshold 0.09) ;;0.09
         ;; idealcds
         ;; spot-name
         ;; speak-name
@@ -98,17 +123,20 @@
            (setq spot-name "stove")
            (setq speak-name "IHコンロ")
            (setq detecion-topic "/point_pose_stove/ObjectDetection")
+           ;; (setq idealcds
+           ;;       (make-coords :pos (float-vector 1148 313 1423.349)
+           ;;                    :rpy (float-vector 0.754 1.547 -2.402)))
            (setq idealcds
-                 (make-coords :pos (float-vector 1148 313 1423.349)
-                              :rpy (float-vector 0.754 1.547 -2.402)))
+                 (make-coords :pos (float-vector 1145.287 325.273 1420.734)
+                              :rpy (float-vector 0.248 1.435 -2.965)))
            )
-          (:sink
+          (:kitchen
            (setq spot-name "kitchen")
            (setq speak-name "キッチン")
            (setq detecion-topic "/point_pose_kitchen/ObjectDetection")
-           (setq idealcds ;; TODO
-                 (make-coords :pos (float-vector 780 100 0)
-                              :rpy (float-vector 0.0 0 0)))
+           (setq idealcds
+                 (make-coords :pos (float-vector 1149.697 263.465 1292.455)
+                              :rpy (float-vector 0.235 1.503 -2.926)))
            )
           (:sink
            (setq spot-name "sink")
@@ -210,6 +238,8 @@
               ;; ))
               )
              ))
-        ) ;; /when cds
+        )
+       )
+      ) ;; /when cds
     ret
     ))

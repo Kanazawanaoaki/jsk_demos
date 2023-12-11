@@ -276,7 +276,7 @@
   ;; (move-to stove kitchen) (move-to kitchen stove) (move-to kitchen sink) (move-to sink stove)
   (let ((move-suc-flag nil))
     (setq move-suc-flag (move-to-spot to))
-    (format t "move-to result ~A" move-suc-flag)
+    (format t "move-to result ~A ~%" move-suc-flag)
     (print (send *ri* :state :worldcoords))
     ))
 

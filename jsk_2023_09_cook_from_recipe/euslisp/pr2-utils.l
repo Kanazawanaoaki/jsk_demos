@@ -1,16 +1,10 @@
 (require :pr2-interface "package://pr2eus/pr2-interface.l")
 
 (defun init-pr2 ()
-  (pr2-init)
-  (setq *robot* *pr2*)
+  (unless (boundp '*ri*) (pr2-init))
+  (unless (boundp '*robot*) (setq *robot* *pr2*))
   (objects *robot*)
   ;; (send *robot* :reset-manip-pose) ;; TODO change
-  )
-
-(defun reset-manip-pose (&key (time 5000))
-  (send *robot* :reset-manip-pose)
-  (send *ri* :angle-vector (send *robot* :angle-vector) time)
-  (send *ri* :wait-interpolation)
   )
 
 ;; add for yaml handling

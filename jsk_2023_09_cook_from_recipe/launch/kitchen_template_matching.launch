@@ -22,7 +22,8 @@
     </node>
     <node name="stove_detector" pkg="jsk_perception" type="point_pose_extractor" clear_params="true">
       <rosparam subst_value="true">
-        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-stove-kinect.jpg
+        <!-- template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-stove-kinect.jpg -->
+        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-stove-kinect-cropped.jpg
         window_name: stove_detector
         object_width: 0.297
         object_height: 0.210

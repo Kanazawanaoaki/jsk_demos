@@ -248,6 +248,33 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun reset-manip-pose (&key (time 5000) (arm :arms) (head-p 50.0) (head-y 0.0))
+  (case arm
+        (:arms
+         (send *robot* :reset-manip-pose)
+         )
+        (:rarm
+         (send *robot* :rarm :angle-vector #f(-75.0 50.0 -110.0 -110.0 20.0 -10.0 -10.0))
+         )
+        (:larm
+         (send *robot* :larm :angle-vector #f(75.0 50.0 110.0 -110.0 -20.0 -10.0 -10.0))
+         )
+        )
+  (send *pr2* :head-neck-p :joint-angle head-p)
+  (send *pr2* :head-neck-y :joint-angle head-y)
+  (send *ri* :angle-vector (send *robot* :angle-vector) time)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun reset-move-pose (&key (head-p 0.0) (torso 50.0) (tm 2000))
+  (send *robot* :angle-vector (send *ri* :state :potentio-vector))
+  (send *robot* :torso_lift_joint :joint-angle torso)
+  (send *robot* :head-neck-y :joint-angle 0.0)
+  (send *robot* :head-neck-p :joint-angle head-p)
+  (send *ri* :angle-vector (send *robot* :angle-vector) tm)
+  (send *ri* :wait-interpolation)
+  )
+
 (defun replay-rav-list (rav-list &key (time 200) (reverse nil) (larm nil))
   (if reverse
       (setq rav-list (reverse rav-list))
