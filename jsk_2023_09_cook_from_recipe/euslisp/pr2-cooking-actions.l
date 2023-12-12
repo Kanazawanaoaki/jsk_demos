@@ -7,6 +7,56 @@
 (setq *yes-flag* nil)
 (setq *speak-jp* t)
 
+
+(defun stir-fry-cook-stove (&key (object-name "egg-mixture") (vessel "フライパン") (tool "ヘラ") (state "soft-scrambled-egg") (spot "stove"))
+  (let ((pre-set-avs (list))
+        cook-from-now-file-name
+        now-msg
+        model_file
+        target_state
+        )
+    (setq pre-set-avs (list #f(-23.3076 50.4461 -21.9938 -121.268 -173.134 -64.7071 191.807)))
+    (setq cook-from-now-file-name "av-files/cook-from-now-stirfry-with-spatula-and-pan-rarm-20231212-data.l")
+    (setq model_file "2023-12-12_cook_sunny_datas_model_2023_1212_2131.pkl") ;; TODO
+    (setq target_state "soft-scrambled-egg")
+
+    ;; フライパンを抑える
+    (hold-pot-on-stove :arm :larm :object-name vessel :grasp-flag t)
+
+    ;; 物体把持初期姿勢
+    (send *pr2* :rarm :angle-vector (elt (reverse pre-set-avs) 0))
+    (send *ri* :angle-vector (send *pr2* :angle-vector))
+    (send *ri* :wait-interpolation)
+    (send *ri* :start-grasp :rarm :wait t :gain 1.0)
+
+    ;; 状態を認識しながら実行
+    (described_gazing_area_detector-command :query-list (list "the content of the pot" "the content of the frying pan"))
+    (lc_adjusted_clip_state_recognition-command :model_file model_file :target_state target_state)
+
+    (setq *yes-flag* nil)
+    (until *yes-flag*
+           (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
+           (cook-from-now-replay-once :larm nil :initial-av t)
+           ;; 認識
+           (setq now-msg (one-shot-subscribe "/adjusted_clip_state_recognizer/value" std_msgs::Float32))
+           (format t "now data is ~A ~%" (send now-msg :data))
+           (if (= (send now-msg :data) 1)
+               (setq *yes-flag* t)
+               )
+           ;; ;; tmp
+           ;; (format t "please type y if you want to finish !! ~%")
+           ;; (setq w (read-line))
+           ;; (if (equal w "y")
+           ;;     (setq *yes-flag* t)
+           ;;   )
+           )
+
+    ;; フライパンから手を離す
+    (release-pot-on-stove :arm :larm)
+    )
+  )
+
+
 (defun wait-cook-stove (&key (object-name "egg") (state "heat-through") (vessel "フライパン"))
   (cond
    ;; state が時間指定ならその時間待つ
@@ -23,7 +73,8 @@
          (string= state "heat-through")
          (string= object-name "egg")
          )
-        (setq model_file "cooked_sunny_content_model_2023_1010_1904.pkl") ;; TODO
+        ;; (setq model_file "cooked_sunny_content_model_2023_1010_1904.pkl") ;; TODO
+        (setq model_file "2023-12-12_cook_sunny_datas_model_2023_1212_2131.pkl")
         (setq target_state "egg is heat-through")
         )
        (t
@@ -247,7 +298,7 @@
       )
     ))
 
-(defun set-pot-on-stove (&key (arm :larm) (object-name "鍋"))
+(defun hold-pot-on-stove (&key (arm :larm) (object-name "鍋") (grasp-flag t))
   (if (equal arm :larm)
       (progn
         (reset-manip-pose :arm :larm :time 2000)
@@ -282,13 +333,16 @@
                 :debug-view nil)
           (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
           (send *ri* :wait-interpolation)
+
+          (if grasp-flag
+              (send *ri* :start-grasp :larm :wait t)
+            )
           )
         )
     )
+  )
 
-  (send *ri* :speak-jp (format nil "~AをセットしてOKと言ってください" object-name))
-  (ok-wait)
-
+(defun release-pot-on-stove (&key (arm :larm))
   (if (equal arm :larm)
       (progn
         (send *ri* :stop-grasp :larm :wait t)
@@ -300,6 +354,15 @@
         (reset-manip-pose :arm :larm :time 2000)
         )
     )
+  )
+
+(defun set-pot-on-stove (&key (arm :larm) (object-name "鍋"))
+  (hold-pot-on-stove :arm arm :object-name object-name)
+
+  (send *ri* :speak-jp (format nil "~AをセットしてOKと言ってください" object-name))
+  (ok-wait)
+
+  (release-pot-on-stove :arm arm)
   )
 
 (defun rotate-knob (&rest args &key (deg 30) (arm :larm) &allow-other-keys)

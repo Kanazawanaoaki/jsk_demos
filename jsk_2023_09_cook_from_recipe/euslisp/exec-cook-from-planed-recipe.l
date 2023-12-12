@@ -24,6 +24,12 @@
    ((string= object "bowl")
     (place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name spot :grasp-flag t)
     )
+   ((string= object "small-bowl")
+    (place-objects-on-table :object-name "ボウル0" :arm :rarm :spot-name spot :grasp-flag t)
+    )
+   ((string= object "spatula")
+    (place-objects-on-table :object-name "ヘラ" :arm :rarm :spot-name spot :grasp-flag t)
+    )
    (t
     (format t "object ~A, arm ~A, spot ~A is not defined !!!~%" object arm spot)
     (return-from hold nil)
@@ -43,6 +49,12 @@
     )
    ((string= object "bowl")
     (place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name spot)
+    )
+   ((string= object "small-bowl")
+    (place-objects-on-table :object-name "ボウル0" :arm :rarm :spot-name spot)
+    )
+   ((string= object "spatula")
+    (place-objects-on-table :object-name "ヘラ" :arm :rarm :spot-name spot)
     )
    (t
     (format t "object ~A, arm ~A, spot ~A is not defined !!!~%" object arm spot)
@@ -183,7 +195,8 @@
 
 (defun stir-fry (input vessel tool state spot arm1 arm2)
   (format t "(stir-fry ~A ~A ~A ~A ~A ~A ~A) ~%" input vessel tool state spot arm1 arm2)
-  ;; (stir-fry egg-mixture frying-pan spatula soft-scrambled-egg stove arm2 arm1) 
+  ;; (stir-fry egg-mixture frying-pan spatula soft-scrambled-egg stove arm2 arm1)
+  (stir-fry-cook-stove :object-name "egg-mixture" :vessel "フライパン" :tool "ヘラ" :state "soft-scrambled-egg" :spot "stove")
   )
 
 (defun fetch-water (arm)
