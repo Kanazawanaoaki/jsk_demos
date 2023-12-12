@@ -7,7 +7,53 @@
 (setq *yes-flag* nil)
 (setq *speak-jp* t)
 
-(defun wait-cook-stove
+(defun wait-cook-stove (&key (object-name "egg") (state "heat-through") (vessel "フライパン"))
+  (cond
+   ;; state が時間指定ならその時間待つ
+   ((string= state "thirty-seconds") ;; TODO ここは賢く処理をしたい
+    (unix:sleep 30)
+    (return-from wait-cook-stove t)
+    )
+   ;; それ以外なら状態変化をみる．
+   (t
+    (let (model_file
+          target_state)
+      (cond
+       ((and
+         (string= state "heat-through")
+         (string= object-name "egg")
+         )
+        (setq model_file "cooked_sunny_content_model_2023_1010_1904.pkl") ;; TODO
+        (setq target_state "egg is heat-through")
+        )
+       (t
+        (format t "object-name ~A, state ~A, vessel ~A is not defined !!!~%" object-name state vessel)
+        (return-from wait-cook-stove nil)
+        )
+
+       ;; 鍋やフライパンの領域を注視
+       (described_gazing_area_detector-command :query-list (list "the content of the pot" "the content of the frying pan"))
+       ;; 状態認識器をセット
+       (lc_adjusted_clip_state_recognition-command :model_file model_file :target_state target_state)
+
+       (setq *yes-query* "Yes")
+       ;; subscribeして状態が変化していたら終了
+       (ros::unsubscribe "/adjusted_clip_state_recognizer/state")
+       (ros::unsubscribe "/speech_to_text")
+       (ros::subscribe "/adjusted_clip_state_recognizer/state" std_msgs::String #'state-cb 1)
+       (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'ok-voice-cb)
+       ;; while 状態変化を認識するまで
+       (setq *yes-flag* nil)
+       (until *yes-flag*
+              (ros::spin-once)
+              (ros::sleep)
+              )
+       (ros::unsubscribe "/adjusted_clip_state_recognizer/state")
+       (ros::unsubscribe "/speech_to_text")
+       )
+      )
+    ))
+  )
 
 (defun pour-object-to-pan (&key (from-object "ボウル1") (to-object "フライパン") (arm :rarm) (spot-name "stove"))
   (let ((pre-set-avs (list))

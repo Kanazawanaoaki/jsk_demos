@@ -33,35 +33,6 @@
   (reset-manip-pose)
   )
 
-
-(defun state-cb (msg)
-  (print msg)
-  (setq *hoge* msg)
-  (setq data (send msg :data))
-  (if (equal data *yes-query*)
-      (progn
-        (setq *yes-flag* t)
-        (if *speak-jp* (send *ri* :speak-jp "状態変化を認識しました")
-          (send *ri* :speak-en "I recognized the state change."))
-        ))
-  )
-
-(defun ok-voice-cb (msg)
-  (when msg
-    (setq *msg* msg)
-    (setq *voice-data* (send *msg* :transcript))
-    (setq *voice-data-flag* t)
-    (format t "voice-data: ~A ~%" *voice-data*)
-    (if (equal *voice-data* '("OK"))
-        (progn
-          (if *speak-jp* (send *ri* :speak-jp "ありがとうございます")
-            (send *ri* :speak-en "Thank you!"))
-          (format t "了解しました！ ~%" *voice-data*)
-          (setq *yes-flag* t)
-          ))
-    )
-  )
-
 (defun gaze_area_set_pan ()
   (described_gazing_area_detector-command :query-list (list "the content of the pot" "the content of the frying pan"))
   )
