@@ -8,16 +8,6 @@
 (defvar *use-voicetext* t)
 (defvar *use-english* nil)
 
-(setq *stove-offset-x* 0.0)
-(setq *stove-offset-y* 0.0)
-(setq *stove-offset-theta* 0.0)
-(setq *kitchen-offset-x* 0.0)
-(setq *kitchen-offset-y* 0.0)
-(setq *kitchen-offset-theta* 0.0)
-(setq *sink-offset-x* 0.0)
-(setq *sink-offset-y* 0.0)
-(setq *sink-offset-theta* 0.0)
-
 ;; (if (and (boundp '*use-voicetext*) *use-voicetext*)
 ;;     (cond
 ;;      ((and (boundp '*use-english*) *use-english*)
@@ -25,27 +15,69 @@
 ;;      (t (setq *frige-speak-str* "冷蔵庫")))
 ;;   (setq *frige-speak-str* "れいぞうこ"))
 
+(unless (boundp '*stove-offset-cds*) (setq *stove-offset-cds* (make-coords)))
+(unless (boundp '*kitchen-offset-cds*) (setq *kitchen-offset-cds* (make-coords)))
+(unless (boundp '*sink-offset-cds*) (setq *sink-offset-cds* (make-coords)))
+
+(defun adjust-cds-with-spot (ik-target spot-name)
+  (let (ik-target-adj)
+    (cond
+     ((string= spot-name "stove")
+      (setq ik-target-adj (set-offset-cds ik-target *stove-offset-cds*))
+      )
+     ((string= spot-name "sink")
+      (setq ik-target-adj (set-offset-cds ik-target *sink-offset-cds*))
+      )
+     ((string= spot-name "kitchen")
+      (setq ik-target-adj (set-offset-cds ik-target *kitchen-offset-cds*))
+      )
+     (t
+      (format t "spot-name ~A is not defined !!!~%" spot-name)
+      (return-from adjust-cds-with-spot nil)
+      )
+     )
+    (print ik-target-adj)
+    ik-target-adj))
 
 (defun check-stove-spot ()
   (reset-manip-pose)
 
-  (let ((ik-target (make-coords :pos #f(450 -33.562 705) :rpy #f(0.0 0.0 -1.5708))
-                   ))
+  (let ((ik-target (make-coords :pos #f(450 -33.562 705) :rpy #f(0.0 0.0 -1.5708)))
+        ik-target-adj
+        )
+    (setq ik-target-adj (set-offset-cds ik-target *stove-offset-cds*))
+    (print ik-target-adj)
     (send *pr2* :rarm :inverse-kinematics
-          ik-target
+          ik-target-adj
           :rotation-axis t
           :revert-if-fail nil)
     (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
     (send *ri* :wait-interpolation)
 
     (setq ik-target (make-coords :pos #f(527.887 -33.562 705) :rpy #f(0.0 0.0 -1.5708)))
+    (setq ik-target-adj (set-offset-cds ik-target *stove-offset-cds*))
+    (print ik-target-adj)
     (send *pr2* :rarm :inverse-kinematics
-          ik-target
+          ik-target-adj
+          :rotation-axis t
+          :revert-if-fail nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (format t "wait ok !! ~%")
+    (ok-wait)
+
+    (setq ik-target (make-coords :pos #f(450 -33.562 705) :rpy #f(0.0 0.0 -1.5708)))
+    (setq ik-target-adj (set-offset-cds ik-target *stove-offset-cds*))
+    (print ik-target-adj)
+    (send *pr2* :rarm :inverse-kinematics
+          ik-target-adj
           :rotation-axis t
           :revert-if-fail nil)
     (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
     (send *ri* :wait-interpolation)
     )
+  (reset-manip-pose)
   )
 
 (defun check-kitchen-spot ()
@@ -227,19 +259,28 @@
         (setq ret t)
         (case move-spot
               (:stove
-               (setq *stove-offset-x* (elt (send diffcds :worldpos) 0))
-               (setq *stove-offset-y* (elt (send diffcds :worldpos) 1))
-               (setq *stove-offset-theta* (elt (car (rpy-angle (send diffcds :worldrot))) 0))
+               ;; (setq *stove-offset-x* (elt (send diffcds :worldpos) 0))
+               ;; (setq *stove-offset-y* (elt (send diffcds :worldpos) 1))
+               ;; (setq *stove-offset-theta* (elt (car (rpy-angle (send diffcds :worldrot))) 0))
+
+               (setq *stove-offset-cds* (make-coords :pos (float-vector (elt (send diffcds :worldpos) 0) (elt (send diffcds :worldpos) 1) 0)
+                                                     :rpy (float-vector (elt (car (rpy-angle (send diffcds :worldrot))) 0) 0 0)))
                )
               (:kitchen
-               (setq *kitchen-offset-x* (elt (send diffcds :worldpos) 0))
-               (setq *kitchen-offset-y* (elt (send diffcds :worldpos) 1))
-               (setq *kitchen-offset-theta* (elt (car (rpy-angle (send diffcds :worldrot))) 0))
+               ;; (setq *kitchen-offset-x* (elt (send diffcds :worldpos) 0))
+               ;; (setq *kitchen-offset-y* (elt (send diffcds :worldpos) 1))
+               ;; (setq *kitchen-offset-theta* (elt (car (rpy-angle (send diffcds :worldrot))) 0))
+
+               (setq *kitchen-offset-cds* (make-coords :pos (float-vector (elt (send diffcds :worldpos) 0) (elt (send diffcds :worldpos) 1) 0)
+                                                       :rpy (float-vector (elt (car (rpy-angle (send diffcds :worldrot))) 0) 0 0)))
                )
               (:sink
-               (setq *sink-offset-x* (elt (send diffcds :worldpos) 0))
-               (setq *sink-offset-y* (elt (send diffcds :worldpos) 1))
-               (setq *sink-offset-theta* (elt (car (rpy-angle (send diffcds :worldrot))) 0))
+               ;; (setq *sink-offset-x* (elt (send diffcds :worldpos) 0))
+               ;; (setq *sink-offset-y* (elt (send diffcds :worldpos) 1))
+               ;; (setq *sink-offset-theta* (elt (car (rpy-angle (send diffcds :worldrot))) 0))
+
+               (setq *sink-offset-cds* (make-coords :pos (float-vector (elt (send diffcds :worldpos) 0) (elt (send diffcds :worldpos) 1) 0)
+                                                    :rpy (float-vector (elt (car (rpy-angle (send diffcds :worldrot))) 0) 0 0)))
                )
               )
         (if (not (send *ri* :simulation-modep)) ;; real mode

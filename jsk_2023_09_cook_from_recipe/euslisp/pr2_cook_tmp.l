@@ -9,6 +9,19 @@
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2-utils.l")
 (setq *co* (make-coords))
 
+
+;; adj coords offset
+(defun set-offset-cds (target-cds offset-cds)
+  (let (ans-cds)
+    (setq ans-cds (send (send offset-cds :copy-worldcoords) :transform (send target-cds :copy-worldcoords)))
+    ans-cds))
+
+(defun inv-offset-cds (target-cds offset-cds)
+  (let (ans-cds)
+    ;; (setq ans-cds (send (send offset-cds :copy-worldcoords) :transform (send target-cds :copy-worldcoords)))
+    (setq ans-cds (send (send (send offset-cds :copy-worldcoords) :inverse-transformation) :transform (send target-cds :copy-worldcoords)))
+    ans-cds))
+
 ;; with teaching
 (defun ok-wait ()
   (setq *ok-flag* nil)

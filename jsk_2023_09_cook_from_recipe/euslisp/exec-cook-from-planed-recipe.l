@@ -3,6 +3,7 @@
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_tmp.l")
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/wrench.l")
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/move-to-adjust.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2-cooking-actions.l")
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/cooking-exec-pddl-utils.l")
 
 ;; global variables
@@ -262,6 +263,15 @@
   ;; (hold milk arm2 kitchen) (hold whisk arm1 kitchen) (hold bowl arm2 kitchen) (hold measuring-cup arm2 kitchen)
   ;; (hold small-bowl arm2 stove) (hold spatula arm2 stove) (hold salad-oil arm2 stove) (hold bowl arm2 stove) (hold spoon arm2 stove) (hold bowl arm2 stove)
 
+  ;; todo salad-oil bowl 
+  (cond
+   ((or (string= object "salad-oil") (string= object "oil"))
+    (place-objects-on-table :object-name "あぶら" :grasp-flag t)
+    )
+   ((string= object "bowl")
+    (place-objects-on-table :object-name "ボウル1" :grasp-flag t)
+    )
+   )
   )
 
 (defun place (object arm spot)

@@ -4,39 +4,59 @@
 (setq *initial-head-neck-y* 0.0)
 (setq *initial-head-neck-p* 50.0)
 
-(defun place-objects-on-table (&key (object-name "ボウル1") (arm :rarm) (set-flag nil) (grasp-flag nil))
-  (let (pre-set-avs
-        pre-set-val
-        set-coords
+(defun place-objects-on-table (&key (object-name "ボウル1") (arm :rarm) (set-flag nil) (grasp-flag nil) (spot-name "stove"))
+  (let ((pre-set-avs (list))
+        (pre-set-val (float-vector 0 0 0))
+        (set-target-coords (make-coords))
+        ik-target-adj
         )
     (cond
      ((string= object-name "ボウル1")
       (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041) #f(-45.3343 3.47451 -56.4107 -109.672 -99.5375 -114.592 104.776)))
       (setq pre-set-val #f(-50 0 50))
-      (setq set-coords (make-coords :pos #f(600.991 -365.044 878.981) :rpy #f(-0.496 1.352 -2.114)))
+      ;; (setq set-target-coords (make-coords :pos #f(600.991 -365.044 878.981) :rpy #f(-0.496 1.352 -2.114)))
+      (setq set-target-coords (make-coords :pos #f(584.41 -365.828 878.981) :rpy #f(-0.491 1.352 -2.114)))
       )
      ((string= object-name "ボウル0")
-      (setq pre-set-avs (list #f(-28.2146 0.07681 -56.1994 -95.3798 -127.421 -97.0024 137.794)))
+      (setq pre-set-avs (list #f(-28.2146 0.07681 -56.1994 -95.3798 -127.421 -97.0024 137.794)
+                              #f(-21.4171 10.8467 -51.9823 -76.3682 -134.766 -103.742 117.398)))
       (setq pre-set-val #f(0 0 100))
-      (setq set-coords (make-coords :pos #f(760.846 -230.582 846.976) :rpy #f(-0.353 1.158 -1.828)))
+      ;; (setq set-target-coords (make-coords :pos #f(760.846 -230.582 846.976) :rpy #f(-0.353 1.158 -1.828)))
+      (setq set-target-coords (make-coords :pos #f(743.532 -230.499 846.976) :rpy #f(-0.348 1.158 -1.828)))
       )
      ((string= object-name "あぶら") ;; larm
       (setq pre-set-avs (list #f(52.4453 35.9984 40.0064 -117.485 -211.029 -72.009 -15.0076)))
       (setq pre-set-val #f(0 0 100))
-      (setq set-coords (make-coords :pos #f(737.741 557.918 924.705) :rpy #f(0.093 0.064 -3.107)))
+      ;; (setq set-target-coords (make-coords :pos #f(737.741 557.918 924.705) :rpy #f(0.093 0.064 -3.107)))
+      (setq set-target-coords (make-coords :pos #f(716.145 557.863 924.705) :rpy #f(0.098 0.064 -3.107)))
       )
      ((string= object-name "ヘラ")
       (setq pre-set-avs (list #f(-23.3076 50.4461 -21.9938 -121.268 -173.134 -64.7071 191.807)))
       (setq pre-set-val #f(0 0 100))
-      (setq set-coords (make-coords :pos #f(617.101 -150.106 835.171) :rpy #f(0.013 0.078 0.012)))
+      ;; (setq set-target-coords (make-coords :pos #f(617.101 -150.106 835.171) :rpy #f(0.013 0.078 0.012)))
+      (setq set-target-coords (make-coords :pos #f(599.352 -150.805 835.171) :rpy #f(0.018 0.078 0.012)))
+      )
+     (t
+      (format t "object-name ~A is not defined !!!~%" object-name)
+      (return-from place-objects-on-table nil)
       )
      )
 
-    (dolist (pre-set-av pre-set-avs)
-      (send *pr2* arm :angle-vector pre-set-av)
-      (send *ri* :angle-vector (send *pr2* :angle-vector))
-      (send *ri* :wait-interpolation)
+    (if grasp-flag
+        (progn
+          (dolist (pre-set-av pre-set-avs)
+            (send *pr2* arm :angle-vector pre-set-av)
+            (send *ri* :angle-vector (send *pr2* :angle-vector))
+            (send *ri* :wait-interpolation)
+            ))
+      (progn
+        (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
+        (send *ri* :angle-vector (send *pr2* :angle-vector))
+        (send *ri* :wait-interpolation)
+        )
       )
+
+    (setq set-coords (send set-target-coords :copy-worldcoords))
 
     (if set-flag
         (progn
@@ -53,16 +73,18 @@
           ))
 
     (send set-coords :translate pre-set-val :world)
+    (setq ik-target-adj (adjust-cds-with-spot set-coords spot-name))
     (send *pr2* arm :inverse-kinematics
-          (send set-coords :copy-worldcoords)
+          (send ik-target-adj :copy-worldcoords)
           :rotation-axis t
           :debug-view nil)
     (send *ri* :angle-vector (send *pr2* :angle-vector))
     (send *ri* :wait-interpolation)
 
     (send set-coords :translate (scale -1 pre-set-val) :world)
+    (setq ik-target-adj (adjust-cds-with-spot set-coords spot-name))
     (send *pr2* arm :inverse-kinematics
-          (send set-coords :copy-worldcoords)
+          (send ik-target-adj :copy-worldcoords)
           :rotation-axis t
           :debug-view nil)
     (send *ri* :angle-vector (send *pr2* :angle-vector))
@@ -77,17 +99,27 @@
       )
 
     (send set-coords :translate pre-set-val :world)
+    (setq ik-target-adj (adjust-cds-with-spot set-coords spot-name))
     (send *pr2* arm :inverse-kinematics
-          (send set-coords :copy-worldcoords)
+          (send ik-target-adj :copy-worldcoords)
           :rotation-axis t
           :debug-view nil)
     (send *ri* :angle-vector (send *pr2* :angle-vector))
     (send *ri* :wait-interpolation)
 
-    (dolist (pre-set-av (reverse pre-set-avs))
-      (send *pr2* arm :angle-vector pre-set-av)
-      (send *ri* :angle-vector (send *pr2* :angle-vector))
-      (send *ri* :wait-interpolation)
+    (if grasp-flag
+        (progn
+          (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
+          (send *ri* :angle-vector (send *pr2* :angle-vector))
+          (send *ri* :wait-interpolation)
+          )
+      (progn
+        (dolist (pre-set-av (reverse pre-set-avs))
+          (send *pr2* arm :angle-vector pre-set-av)
+          (send *ri* :angle-vector (send *pr2* :angle-vector))
+          (send *ri* :wait-interpolation)
+          )
+        (reset-manip-pose :arm arm))
       )
     ))
 
@@ -102,16 +134,31 @@
 
         (send *ri* :stop-grasp :larm :wait t)
 
-        (cond
-         ((string= object-name "鍋")
-          (send *pr2* :larm :angle-vector #f(15.0755 56.5882 65.6859 -96.6074 -98.943 -62.4489 -88.545))
+        (let (ik-target
+              ik-target-adj)
+          (cond
+           ((string= object-name "鍋")
+            ;; (send *pr2* :larm :angle-vector #f(15.0755 56.5882 65.6859 -96.6074 -98.943 -62.4489 -88.545))
+            (setq ik-target (make-coords :pos #f(557.801 41.391 945.716) :rpy #f(0.185 -0.498 3.038)))
+            (setq ik-target-adj (adjust-cds-with-spot ik-target "stove"))
+            )
+           ((string= object-name "フライパン")
+            ;; (send *pr2* :larm :angle-vector #f(18.8234 64.1057 72.9717 -100.133 -92.8479 -64.159 -87.0742))
+            (setq ik-target (make-coords :pos #f(502.073 32.755 904.802) :rpy #f(0.159 -0.479 3.088)))
+            (setq ik-target-adj (adjust-cds-with-spot ik-target "stove"))
+            )
+           (t
+            (format t "object-name ~A is not defined !!!~%" object-name)
+            (return-from set-pot-on-stove nil)
+            )
+           )
+          (send *pr2* :larm :inverse-kinematics
+                (send ik-target-adj :copy-worldcoords)
+                :rotation-axis t
+                :debug-view nil)
+          (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+          (send *ri* :wait-interpolation)
           )
-         ((string= object-name "フライパン")
-          (send *pr2* :larm :angle-vector #f(18.8234 64.1057 72.9717 -100.133 -92.8479 -64.159 -87.0742))
-          )
-         )
-        (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-        (send *ri* :wait-interpolation)
         )
     )
 
@@ -173,12 +220,15 @@
   ;; grasp knob
   (send *ri* :move-gripper :rarm 0.08)
 
-  (let ((ik-target))
-    (setq ik-target (make-coords :pos #f(540 -33.562 705) :rpy #f(0.0 0.0 -1.5708))) ;; right ;; (float-vector 636 -183 698)
+  (let (ik-target
+        ik-target-adj)
+    ;; (setq ik-target (make-coords :pos #f(540 -33.562 705) :rpy #f(0.0 0.0 -1.5708))) ;; right ;; (float-vector 636 -183 698)
+    (setq ik-target (make-coords :pos #f(521.619 -34.682 705.0) :rpy #f(0.0 0.0 -1.5708)))
     (send ik-target :rotate (deg2rad 90) :x)
+    (setq ik-target-adj (adjust-cds-with-spot ik-target "stove"))
     ;; (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
     (send *pr2* :rarm :inverse-kinematics ;; left TODO
-          (send ik-target :copy-worldcoords)
+          (send ik-target-adj :copy-worldcoords)
           :rotation-axis t
           :debug-view nil)
     (send *ri* :angle-vector (send *pr2* :angle-vector))
@@ -225,9 +275,12 @@
       (progn
         ;; (send *pr2* :rarm :angle-vector #f(-32.9823 60.3212 -73.0221 -74.5233 120.244 -39.7369 -5.03581)) ;; #f(-31.9892 63.9795 -66.939 -75.7959 118.513 -36.3796 -8.94601))
         ;; (setq ik-target (make-coords :pos #f(527.887 -33.562 705) :rpy #f(0.0 0.0 -1.5708)))
-        (setq ik-target (make-coords :pos #f(537.887 -33.562 705) :rpy #f(0.0 0.0 -1.5708)))
+
+        ;; (setq ik-target (make-coords :pos #f(537.887 -33.562 705) :rpy #f(0.0 0.0 -1.5708)))
+        (setq ik-target (make-coords :pos #f(519.506 -34.693 705.0) :rpy #f(0.0 0.0 -1.5708)))
+        (setq ik-target-adj (adjust-cds-with-spot ik-target "stove"))
         (send *pr2* :rarm :inverse-kinematics
-              ik-target
+              ik-target-adj
               :rotation-axis t
               :revert-if-fail nil)
         ))

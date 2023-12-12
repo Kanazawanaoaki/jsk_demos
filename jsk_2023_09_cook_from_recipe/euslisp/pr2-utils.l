@@ -27,6 +27,10 @@
     (load-yaml-config file-path)
     ))
 
+(defun dump-eus-object (object)
+  (dump-loadable-structure *standard-output* object)
+  )
+
 ;; dialog
 (ros::load-ros-manifest "speech_recognition_msgs")
 (setq *voice-data-flag* nil)
