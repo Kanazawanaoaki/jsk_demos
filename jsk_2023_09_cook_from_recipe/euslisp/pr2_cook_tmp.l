@@ -245,6 +245,17 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun set-cook-from-now-initial-arm-av (&key (time 4000) (larm nil))
+  ;; (manequine-end)
+  (if larm
+      (send *robot* :larm :angle-vector *cook-from-now-initial-arm-av*)
+    (send *robot* :rarm :angle-vector *cook-from-now-initial-arm-av*)
+    )
+  (send *ri* :angle-vector (send *robot* :angle-vector) time)
+  (send *ri* :wait-interpolation)
+  )
+
+
 (defun set-look-pose ()
   (send *robot* :reset-manip-pose)
   ;; (send *robot* :head-neck-y :joint-angle 0.0)
@@ -1560,7 +1571,6 @@
    )
   )
 
-
 (defun cook-replay-wait (&key (save_img t) (save_bag nil) (rosbag_time 5))
   (if save_img
       (progn
@@ -1629,6 +1639,7 @@
       (set-initial-av))
   )
 
+
 (defun dump-cook-file (&key (file_name "tmp-cook-teaching-data.l") (larm nil))
   (if larm
       (dump-loadable-structure file_name *initial-av* *cook-short-lav-list*)
@@ -1656,6 +1667,128 @@
   (format t "data loaded from ~A ~%" file_name)
   ;; (format t "cook-short-rav-list size : ~A ~%" (length *cook-short-rav-list*))
   )
+
+
+
+(defun cook-from-now-teach (&key (larm nil))
+  (unix:sleep 3)
+  (send *ri* :speak-jp "現在の姿勢を記憶します" :wait t)
+  (if larm
+      (progn
+        (setq *cook-from-now-use-arm* :larm)
+        (setq *cook-from-now-initial-arm-av* (send *robot* :larm :angle-vector))
+        )
+    (progn
+      (setq *cook-from-now-use-arm* :rarm)
+      (setq *cook-from-now-initial-arm-av* (send *robot* :rarm :angle-vector))
+      )
+    )
+
+  ;; 調理動作を教わる
+  (send *ri* :speak-jp "記憶しました" :wait t)
+  (unix:sleep 2)
+  (send *ri* :speak-jp "調理動作の開始地点を教えて下さい" :wait t)
+  (unix:sleep 1)
+  (if larm
+      (wait-ok-manequine :arm (list "larm"))
+    (wait-ok-manequine :arm (list "rarm")))
+  (send *robot* :head-neck-y :joint-angle 0.0)
+  ;; (send *robot* :head-neck-p :joint-angle 60.0)
+  (send *robot* :head-neck-p :joint-angle 50.0)
+  (send *robot* :angle-vector (send *ri* :state :potentio-vector))
+  ;; (setq *cook-initial-av* (send *robot* :angle-vector))
+  (if larm
+      (progn
+        (setq *cook-initial-lec* (send *robot* :larm :end-coords))
+        (unix:sleep 2)
+        ;; (send *ri* :start-grasp :larm :wait t) ;; TODO 持つ強さ？
+        )
+    (progn
+      (setq *cook-initial-rec* (send *robot* :rarm :end-coords))
+      (unix:sleep 2)
+      ;; (send *ri* :start-grasp :rarm :wait t) ;; TODO 持つ強さ？
+      )
+    )
+
+  ;; 物体の置き方を教わる
+  (send *ri* :speak-jp "調理動作を教えて下さい" :wait t)
+  (unix:sleep 2)
+  (if larm
+      (progn
+          (setq place-ans (record-rav-voice :arm "larm"))
+          (setq *cook-short-lav-list* (elt place-ans 0))
+          (setq *cook-short-lec-list* (elt place-ans 1))
+          )
+    (progn
+      (setq place-ans (record-rav-voice))
+      (setq *cook-short-rav-list* (elt place-ans 0))
+      (setq *cook-short-rec-list* (elt place-ans 1))
+      ))
+  (set-cook-from-now-initial-arm-av :larm larm)
+  )
+
+(defun dump-cook-from-now-file (&key (file_name "tmp-cook-from-now-teaching-data.l") (larm nil))
+  (if larm
+      (dump-loadable-structure file_name *cook-from-now-initial-arm-av* *cook-short-lav-list*)
+    (dump-loadable-structure file_name *cook-from-now-initial-arm-av* *cook-short-rav-list*))
+  ;; (dump-loadable-structure file_name *initial-av* *cook-short-rav-list* *initial-head-neck-y* *initial-head-neck-p*)
+  (format t "data dumped in ~A ~%" file_name)
+  )
+
+(defun load-cook-from-now-file (&key (file_name "tmp-cook-from-now-teaching-data.l") (summarize t) (thre 0.5) (larm nil))
+  (load file_name)
+  ;; summarize rav-list data if summarize t
+  (if summarize
+      (summarize-cook-datas :thre thre :larm larm)
+    )
+  (setq *initial-head-neck-y* 0)
+  (setq *initial-head-neck-p* 50)
+  (format t "data loaded from ~A ~%" file_name)
+  ;; (format t "cook-short-rav-list size : ~A ~%" (length *cook-short-rav-list*))
+  )
+
+(defun cook-from-now-replay-once (&key (larm nil) (initial-av t) (reverse nil))
+  (if initial-av
+      (set-cook-from-now-initial-arm-av :larm larm)
+    )
+
+  (unix:sleep 2)
+  (if larm
+      (progn
+        (if reverse
+            (replay-short-rav-list (reverse *cook-short-lav-list*) :larm t)
+          (replay-short-rav-list *cook-short-lav-list* :larm t))
+        )
+    (progn
+      (if reverse
+          (replay-short-rav-list (reverse *cook-short-rav-list*))
+        (replay-short-rav-list *cook-short-rav-list*)
+      )))
+
+  (if initial-av
+      (set-cook-from-now-initial-arm-av :larm larm)
+    )
+  )
+
+(defun cook-from-now-replay-rec-once (&key (larm nil) (initial-av t) (trans-vec #f(0 0 0)))
+  (if initial-av
+      (set-cook-from-now-initial-arm-av :larm larm))
+
+  (unix:sleep 2)
+  (if larm
+      (progn
+        (setq *cook-short-lec-list* (rav2rec *cook-short-lav-list* :arm :larm))
+        (replay-short-rec-list *cook-short-lec-list* :larm t :trans-vec trans-vec)
+        )
+    (progn
+      (setq *cook-short-rec-list* (rav2rec *cook-short-rav-list*))
+      (replay-short-rec-list *cook-short-rec-list* :trans-vec trans-vec)
+      ))
+
+  (if initial-av
+      (set-cook-from-now-initial-arm-av :larm larm))
+  )
+
 
 
 (defun cook-pick-and-pour-teaching-detail (&key (initial-teach nil))

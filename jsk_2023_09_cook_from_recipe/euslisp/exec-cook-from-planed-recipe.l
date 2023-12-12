@@ -9,9 +9,8 @@
 ;; global variables
 
 
-(setq *yes-flag* nil)
-(setq *speak-jp* t)
-
+;; (setq *yes-flag* nil)
+;; (setq *speak-jp* t)
 
 ;;
 (defun check-pot-place-before ()
@@ -263,13 +262,17 @@
   ;; (hold milk arm2 kitchen) (hold whisk arm1 kitchen) (hold bowl arm2 kitchen) (hold measuring-cup arm2 kitchen)
   ;; (hold small-bowl arm2 stove) (hold spatula arm2 stove) (hold salad-oil arm2 stove) (hold bowl arm2 stove) (hold spoon arm2 stove) (hold bowl arm2 stove)
 
-  ;; todo salad-oil bowl 
+  ;; todo
   (cond
    ((or (string= object "salad-oil") (string= object "oil"))
-    (place-objects-on-table :object-name "あぶら" :grasp-flag t)
+    (place-objects-on-table :object-name "あぶら" :arm :larm :spot-name spot :grasp-flag t)
     )
    ((string= object "bowl")
-    (place-objects-on-table :object-name "ボウル1" :grasp-flag t)
+    (place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name spot :grasp-flag t)
+    )
+   (t
+    (format t "object ~A, arm ~A, spot ~A is not defined !!!~%" object arm spot)
+    (return-from hold nil)
     )
    )
   )
@@ -279,6 +282,19 @@
   ;; (place milk arm2 kitchen) (place whisk arm1 kitchen)
   ;; (place small-bowl arm2 stove) (place bowl arm2 stove) (place spatula arm2 stove) (place salad-oil arm2 stove) (place measuring-cup arm2 stove) (place spoon arm2 stove)
 
+  ;; todo
+  (cond
+   ((or (string= object "salad-oil") (string= object "oil"))
+    (place-objects-on-table :object-name "あぶら" :arm :larm :spot-name spot)
+    )
+   ((string= object "bowl")
+    (place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name spot)
+    )
+   (t
+    (format t "object ~A, arm ~A, spot ~A is not defined !!!~%" object arm spot)
+    (return-from hold nil)
+    )
+   )
   )
 
 (defun move-to (from to)
@@ -303,6 +319,7 @@
 (defun turn-on-stove (arm)
   (format t "(turn-on-stove ~A) ~%" arm)
   ;; (turn-on-stove arm1)
+  (start-ih)
   )
 
 (defun set-stove (before after arm)
@@ -315,6 +332,7 @@
   ;; (turn-off-stove middle arm1) (turn-off-stove low-heat arm1)
 
   ;; stop-ih rarm
+  (stop-ih)
   )
 
 (defun wash (object arm)
@@ -324,6 +342,19 @@
 (defun pour (object vessel arm spot)
   (format t "(pour ~A ~A ~A ~A) ~%" object vessel arm spot)
   ;; (pour milk bowl arm2 kitchen) (pour salad-oil frying-pan arm2 stove) 
+
+  ;; todo pour todo
+  (cond
+   ((and
+     (or (string= object "salad-oil") (string= object "oil"))
+     (string= vessel "frying-pan"))
+    (pour-object-to-pan :from-object "あぶら" :to-object "フライパン" :arm :larm :spot-name spot)
+    )
+   (t
+    (format t "object ~A, arm ~A, spot ~A is not defined !!!~%" object arm spot)
+    (return-from pour nil)
+    )
+   )
   )
 
 (defun transfer (content from to arm spot)
@@ -333,6 +364,23 @@
   ;; (transfer egg bowl pot arm2 stove)
   ;; (transfer water measuring-cup pot arm2 stove)
 
+  ;; todo transfer todo
+  (cond
+   ((and
+     (string= from "bowl")
+     (string= to "frying-pan"))
+    (pour-object-to-pan :from-object "ボウル1" :to-object "フライパン" :arm :rarm :spot-name spot)
+    )
+   ((and
+     (string= from "small-bowl")
+     (string= to "frying-pan"))
+    (pour-object-to-pan :from-object "ボウル0" :to-object "フライパン" :arm :rarm :spot-name spot)
+    )
+   (t
+    (format t "object ~A, arm ~A, spot ~A is not defined !!!~%" object arm spot)
+    (return-from pour nil)
+    )
+   )
   )
 
 (defun heat (object vessel state)
@@ -340,8 +388,9 @@
   ;; (heat butter frying-pan melted-butter) (heat salad-oil frying-pan thirty-seconds) (heat water pot boiling)
 
   ;; look frying-pan or pot
-
+  
   ;; watch cook state recognition
+  
   )
 
 (defun cook (object state)
