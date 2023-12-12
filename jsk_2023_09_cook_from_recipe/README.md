@@ -70,3 +70,31 @@ Before exec you should check `rostopic hz /k4a/rgb/image_rect_color/compressed` 
 roseus sauteed-broccoli-with-butter-demo.l
 (exec-demo)
 ```
+
+
+## exec cook-from-planed-recipe demo
+### prepare
+in server pc
+```
+roscd vision_and_language_ros/docker/
+./run_jsk_vil_api dino
+```
+and
+```
+roslaunch vision_and_language_ros detection.launch 
+```
+and
+```
+roslaunch lc_state_recognition adjusted_clip_state_rec.launch 
+```
+
+in exec pc
+```
+roslaunch lc_state_recognition rviz_adjust_clip.launch
+```
+
+### exec
+```
+roseus exec-cook-from-planed-recipe.l
+(exec-cook-from-recipe "generated-sunny-side-up-func-conv-planed.l")
+```
