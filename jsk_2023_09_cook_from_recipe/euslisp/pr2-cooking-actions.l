@@ -30,30 +30,31 @@
         (format t "object-name ~A, state ~A, vessel ~A is not defined !!!~%" object-name state vessel)
         (return-from wait-cook-stove nil)
         )
-
-       ;; 鍋やフライパンの領域を注視
-       (described_gazing_area_detector-command :query-list (list "the content of the pot" "the content of the frying pan"))
-       ;; 状態認識器をセット
-       (lc_adjusted_clip_state_recognition-command :model_file model_file :target_state target_state)
-
-       (setq *yes-query* "Yes")
-       ;; subscribeして状態が変化していたら終了
-       (ros::unsubscribe "/adjusted_clip_state_recognizer/state")
-       (ros::unsubscribe "/speech_to_text")
-       (ros::subscribe "/adjusted_clip_state_recognizer/state" std_msgs::String #'state-cb 1)
-       (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'ok-voice-cb)
-       ;; while 状態変化を認識するまで
-       (setq *yes-flag* nil)
-       (until *yes-flag*
-              (ros::spin-once)
-              (ros::sleep)
-              )
-       (ros::unsubscribe "/adjusted_clip_state_recognizer/state")
-       (ros::unsubscribe "/speech_to_text")
        )
+
+      ;; 鍋やフライパンの領域を注視
+      (described_gazing_area_detector-command :query-list (list "the content of the pot" "the content of the frying pan"))
+      ;; 状態認識器をセット
+      (lc_adjusted_clip_state_recognition-command :model_file model_file :target_state target_state)
+
+      (setq *yes-query* "Yes")
+      ;; subscribeして状態が変化していたら終了
+      (ros::unsubscribe "/adjusted_clip_state_recognizer/state")
+      (ros::unsubscribe "/speech_to_text")
+      (ros::subscribe "/adjusted_clip_state_recognizer/state" std_msgs::String #'state-cb 1)
+      (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'ok-voice-cb)
+      ;; while 状態変化を認識するまで
+      (setq *yes-flag* nil)
+      (until *yes-flag*
+             (ros::spin-once)
+             (ros::sleep)
+             )
+      (ros::unsubscribe "/adjusted_clip_state_recognizer/state")
+      (ros::unsubscribe "/speech_to_text")
       )
-    ))
-  )
+    )
+   ))
+
 
 (defun pour-object-to-pan (&key (from-object "ボウル1") (to-object "フライパン") (arm :rarm) (spot-name "stove"))
   (let ((pre-set-avs (list))
