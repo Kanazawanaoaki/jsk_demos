@@ -313,12 +313,23 @@
       )
     ))
 
-(defun hold-pot-on-stove (&key (arm :larm) (object-name "鍋") (grasp-flag t))
+(defun hold-pot-on-stove (&key (arm :larm) (object-name "鍋") (grasp-flag t) (spot-name "stove"))
   (if (equal arm :larm)
       (progn
         (reset-manip-pose :arm :larm :time 2000)
 
-        (send *pr2* :larm :angle-vector #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102))
+        (cond
+         ((and (or (string= object-name "鍋") (string= object-name "フライパン")) (string= spot-name "stove"))
+          (send *pr2* :larm :angle-vector #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102))
+          )
+         ((and (string= object-name "ボウル1") (string= spot-name "kitchen"))
+          (send *pr2* :larm :angle-vector #f(21.2745 28.3257 29.2936 -100.141 82.9343 -86.2251 -68.1853))
+          )
+         (t
+          (format t "object-name ~A, spot-name ~A is not defined !!!~%" object-name spot-name)
+          (return-from hold-pot-on-stove nil)
+          )
+         )
         (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
         (send *ri* :wait-interpolation)
 
@@ -327,19 +338,23 @@
         (let (ik-target
               ik-target-adj)
           (cond
-           ((string= object-name "鍋")
+           ((and (string= object-name "鍋") (string= spot-name "stove"))
             ;; (send *pr2* :larm :angle-vector #f(15.0755 56.5882 65.6859 -96.6074 -98.943 -62.4489 -88.545))
             (setq ik-target (make-coords :pos #f(557.801 41.391 945.716) :rpy #f(0.185 -0.498 3.038)))
             (setq ik-target-adj (adjust-cds-with-spot ik-target "stove"))
             )
-           ((string= object-name "フライパン")
+           ((and (string= object-name "フライパン") (string= spot-name "stove"))
             ;; (send *pr2* :larm :angle-vector #f(18.8234 64.1057 72.9717 -100.133 -92.8479 -64.159 -87.0742))
             (setq ik-target (make-coords :pos #f(502.073 32.755 904.802) :rpy #f(0.159 -0.479 3.088)))
             (setq ik-target-adj (adjust-cds-with-spot ik-target "stove"))
             )
+           ((and (string= object-name "ボウル1") (string= spot-name "kitchen"))
+            (setq ik-target (make-coords :pos #f(709.04 108.836 886.591) :rpy #f(-1.331 1.235 1.725)))
+            (setq ik-target-adj (adjust-cds-with-spot ik-target "kitchen"))
+            )
            (t
-            (format t "object-name ~A is not defined !!!~%" object-name)
-            (return-from set-pot-on-stove nil)
+            (format t "object-name ~A, spot-name ~A is not defined !!!~%" object-name spot-name)
+            (return-from hold-pot-on-stove nil)
             )
            )
           (send *pr2* :larm :inverse-kinematics
