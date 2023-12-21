@@ -303,6 +303,8 @@ class RegisterObject(object):
                 self.update_model()
                 break
             elif answer == BaseState.SHOW_INFERENCE.value:
+                if self.no_robot_mode:
+                    continue
                 self.show_inference()
             elif answer == BaseState.ASK_WHAT.value:
                 self.speak("私は物体の画像を手についたカメラで撮影してデータベースに蓄えて学習することができます。「物体を登録して」や「学習して」、「認識結果を見せて」など言ってみてください。")
