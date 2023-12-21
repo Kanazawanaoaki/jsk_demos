@@ -1,6 +1,7 @@
 <launch>
 
   <arg name="device" default="plughw:2,0" />
+  <arg name="output_audio_device" default="plughw:2,0" />
   <arg name="volume" default="0.1" />
   <arg name="raw_audio_topic" default="/audio" doc="Name of audio topic captured from microphone" />
   <arg name="dummy_audio_topic" default="/dummy_audio" doc="Dummy audio" />
@@ -39,7 +40,7 @@
     <env name="PYTHONIOENCODING" value="utf-8" />
     <env name="GOOGLE_APPLICATION_CREDENTIALS" value="$(arg credential)" />
     <env name="GOOGLE_CLOUD_TEXTTOSPEECH_CACHE_ENABLED" value="true" />
-    <param name="device" value="plughw:2,0" />
+    <param name="device" value="$(arg output_audio_device)" />
   </node>
 
   <group ns="sound_play_jp" >
