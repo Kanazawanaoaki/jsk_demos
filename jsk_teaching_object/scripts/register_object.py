@@ -7,10 +7,13 @@ import os.path as osp
 from pathlib import Path
 import threading
 
+import cv_bridge
+from pybsc.vision.blur_detection import estimate_blur
 from pybsc.ssh import SSHExecutor
 from pybsc import current_time_str
 from pybsc import makedirs
 import openai
+from pybsc.image_utils import imwrite
 from openai.openai_object import OpenAIObject
 from ros_speak import speak_jp
 import rospy
@@ -57,7 +60,7 @@ def train_in_remote(
                          key_filepath=identity_file,
                          bastion_host=bastion_ip,
                          bastion_user=bastion_username)
-    remote_image_path = '/home/iory/irex'
+    remote_image_path = '/home/iory/yamagata'
     session_name = 'project-t'
     client.rsync(image_directory,
                  remote_image_path)
@@ -102,12 +105,43 @@ state_words = {
 }
 
 
+class DataCollector(object):
+
+    def __init__(self, input_topic, save_dir):
+        import sensor_msgs.msg
+        self._bridge = cv_bridge.CvBridge()
+        self.save_dir = save_dir
+        self.last_saved_time = rospy.Time.now()
+        makedirs(self.save_dir)
+        self.sub = rospy.Subscriber(input_topic,
+                                    sensor_msgs.msg.Image, queue_size=1,
+                                    callback=self.img_callback)
+
+    def img_callback(self, msg):
+        if (rospy.Time.now() - self.last_saved_time).to_sec() < 3.0:
+            return
+        img = self._bridge.imgmsg_to_cv2(
+            msg,
+            desired_encoding='bgr8')
+        _, score = estimate_blur(img)
+        if score < 100:
+            rospy.logwarn('blur image')
+            return
+        imwrite(
+            Path(self.save_dir) / '{}.jpg'.format(current_time_str()),
+            img)
+        speak_jp('package://rostwitter/resource/camera.wav', wait=False,
+                 volume=1.0)
+        self.last_saved_time = rospy.Time.now()
+
+
 
 class RegisterObject(object):
 
     def __init__(self):
         self.volume = rospy.get_param('~volume', 0.1)
         self.root_image_path = Path(rospy.get_param('~root_image_path'))
+        self.no_robot_mode = rospy.get_param('~no_robot_mode', False)
         makedirs(self.root_image_path)
         self.current_label_name = None
 
@@ -164,12 +198,42 @@ class RegisterObject(object):
         take_action('/r8_5_look_server/take_action', wait=True)
 
     def save_photo(self):
-        self.speak('物体の画像を撮ります。しょうしょうお待ちください。')
-        take_image_photo(
-            '/r8_5_look_server/take_image_photo',
-            '/usb_cam/image_raw',
-            str(self.root_image_path / self.current_label_name),
-            wait=True)
+        if self.no_robot_mode:
+            self.speak('物体の画像を撮ってください。')
+            self.speech_msg = None
+            rate = rospy.Rate(10)
+            data_collector = DataCollector(
+                '/usb_cam/image_raw',
+                str(self.root_image_path / self.current_label_name))
+            while not rospy.is_shutdown():
+                rate.sleep()
+                if self.speech_msg is None:
+                    continue
+                input_text = self.speech_msg.transcript[0]
+                self.speech_msg = None
+                prompt = base_prompt + 'User: "{}" Answer: '.format(input_text)
+                rospy.loginfo(prompt)
+                answer = None
+                for _ in range(5):
+                    res = request(prompt)
+                    answer = res.get('choices')[0].get('text').lstrip()
+                    try:
+                        answer = int(answer)
+                    except Exception as e:
+                        rospy.logwarn("{}".format(e))
+                    break
+
+                if answer == BaseState.REGISTER_OBJECT_END.value:
+                    break
+            data_collector.sub.unregister()
+            del data_collector
+        else:
+            self.speak('物体の画像を撮ります。しょうしょうお待ちください。')
+            take_image_photo(
+                '/r8_5_look_server/take_image_photo',
+                '/usb_cam/image_raw',
+                str(self.root_image_path / self.current_label_name),
+                wait=True)
 
     def current_state(self):
         if self.state == BaseState.REGISTER_OBJECT.value:
@@ -199,6 +263,8 @@ class RegisterObject(object):
         while not rospy.is_shutdown():
             rate.sleep()
             if self.speech_msg is None:
+                if self.no_robot_mode:
+                    continue
                 if self.state == BaseState.AUTO_DEMO.value:
                     take_image_photo(
                         '/r8_5_look_server/take_image_photo',
@@ -241,6 +307,8 @@ class RegisterObject(object):
             elif answer == BaseState.ASK_WHAT.value:
                 self.speak("私は物体の画像を手についたカメラで撮影してデータベースに蓄えて学習することができます。「物体を登録して」や「学習して」、「認識結果を見せて」など言ってみてください。")
             elif answer == BaseState.AUTO_DEMO.value:
+                if self.no_robot_mode:
+                    continue
                 self.prev_state = self.state
                 self.state = BaseState.AUTO_DEMO.value
                 take_image_photo(

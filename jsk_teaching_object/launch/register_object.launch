@@ -2,7 +2,8 @@
 
   <arg name="input_image" default="/usb_cam/image_raw" />
   <arg name="root_image_path" default="/etc/opt/teaching-object/2023-09-21" />
-  <arg name="volume" default="0.1" />
+  <arg name="volume" default="1.0" />
+  <arg name="no_robot_mode" default="true" />
 
   <node name="register_object"
         pkg="jsk_teaching_object" type="register_object.py"
@@ -11,6 +12,7 @@
     <rosparam subst_value="true">
       root_image_path: $(arg root_image_path)
       volume: $(arg volume)
+      no_robot_mode: $(arg no_robot_mode)
     </rosparam>
   </node>
 

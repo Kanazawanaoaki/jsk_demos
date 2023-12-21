@@ -36,6 +36,7 @@ def get_latest_pt_file(path):
     timestamps.sort(reverse=True)  # Sort in descending order
     return timestamps[0][1] if timestamps else None
 
+
 class ObjectDetectionNode(ConnectionBasedTransport):
 
     def __init__(self):

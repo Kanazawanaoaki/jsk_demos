@@ -27,7 +27,7 @@
       depth: $(arg depth)
       sample_rate: $(arg sample_rate)
     </rosparam>
-    <param name="device" value="$(arg device)" />
+    <param name="device" value="" />
   </node>
 
   <node name="sound_play_jp"
@@ -40,7 +40,8 @@
     <env name="PYTHONIOENCODING" value="utf-8" />
     <env name="GOOGLE_APPLICATION_CREDENTIALS" value="$(arg credential)" />
     <env name="GOOGLE_CLOUD_TEXTTOSPEECH_CACHE_ENABLED" value="true" />
-    <param name="device" value="$(arg output_audio_device)" />
+    <!-- <param name="device" value="$(arg output_audio_device)" /> -->
+    <param name="device" value="plughw:0,0" />
   </node>
 
   <group ns="sound_play_jp" >

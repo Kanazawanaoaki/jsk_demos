@@ -2,12 +2,14 @@
 
   <arg name="gui" default="true" />
   <arg name="device" default="0" />
-  <arg name="volume" default="0.1" />
-  <arg name="video_device" default="/dev/hbvcam_5m_af_right" />
+  <arg name="volume" default="1.0" />
+  <!-- <arg name="video_device" default="/dev/hbvcam_5m_af_right" /> -->
+  <arg name="video_device" default="/dev/video0" />
   <arg name="input_audio_device" default="plughw:0,0" />
   <arg name="output_audio_device" default="plughw:0,0" />
   <arg name="input_image" default="/usb_cam/image_raw" />
   <arg name="root_image_path" default="/etc/opt/teaching-object/2023-09-21" />
+  <arg name="no_robot_mode" default="true" />
 
   <arg name="larm_hand_camera_index" default="0" />
   <arg name="rarm_hand_camera_index" default="0" />
@@ -32,36 +34,44 @@
         output="screen" clear_params="true" >
   </node>
 
-  <group ns="usb_cam" >
-    <node name="camera_driver"
-          pkg="nodelet" type="nodelet"
-          args="standalone libuvc_camera/driver"
-          respawn="true"
-          clear_params="true">
-      <param name="index" value="$(arg rarm_hand_camera_index)" />
-      <param name="frame_id" value="r_finger_camera_link" />
-      <param name="vendor" value="$(arg vendor)" />
-      <param name="product" value="$(arg product)" />
-      <param name="height" value="$(arg height)" />
-      <param name="width" value="$(arg width)" />
-      <param name="video_mode" value="$(arg video_mode)" />
-      <param name="frame_rate" value="$(arg frame_rate)" />
-      <param name="brightness" value="$(arg brightness)" />
-      <param name="time_method" value="start" />
-      <param name="auto_exposure" value="1" />
-      <param name="auto_white_balance" value="true" />
-      <param name="camera_info_url" value="file://$(find jsk_teaching_object)/config/r8/camera/right_hand_$(arg width)x$(arg height).yaml"/>
-    </node>
-  </group>
-
-  <node name="remove_bg_node"
-        pkg="jsk_teaching_object" type="remove_bg_node.py"
-        output="screen"
-        respawn="true" >
-    <remap from="~input" to="$(arg input_image)" />
-    <rosparam subst_value="true">
+  <node name="usb_cam"
+        pkg="usb_cam" type="usb_cam_node"
+        output="screen" clear_params="true" >
+    <rosparam subst_value="true" >
+      video_device: $(arg video_device)
     </rosparam>
   </node>
+
+  <!-- <group ns="usb_cam" > -->
+  <!--   <node name="camera_driver" -->
+  <!--         pkg="nodelet" type="nodelet" -->
+  <!--         args="standalone libuvc_camera/driver" -->
+  <!--         respawn="true" -->
+  <!--         clear_params="true"> -->
+  <!--     <param name="index" value="$(arg rarm_hand_camera_index)" /> -->
+  <!--     <param name="frame_id" value="r_finger_camera_link" /> -->
+  <!--     <param name="vendor" value="$(arg vendor)" /> -->
+  <!--     <param name="product" value="$(arg product)" /> -->
+  <!--     <param name="height" value="$(arg height)" /> -->
+  <!--     <param name="width" value="$(arg width)" /> -->
+  <!--     <param name="video_mode" value="$(arg video_mode)" /> -->
+  <!--     <param name="frame_rate" value="$(arg frame_rate)" /> -->
+  <!--     <param name="brightness" value="$(arg brightness)" /> -->
+  <!--     <param name="time_method" value="start" /> -->
+  <!--     <param name="auto_exposure" value="1" /> -->
+  <!--     <param name="auto_white_balance" value="true" /> -->
+  <!--     <param name="camera_info_url" value="file://$(find jsk_teaching_object)/config/r8/camera/right_hand_$(arg width)x$(arg height).yaml"/> -->
+  <!--   </node> -->
+  <!-- </group> -->
+
+  <!-- <node name="remove_bg_node" -->
+  <!--       pkg="jsk_teaching_object" type="remove_bg_node.py" -->
+  <!--       output="screen" -->
+  <!--       respawn="true" > -->
+  <!--   <remap from="~input" to="$(arg input_image)" /> -->
+  <!--   <rosparam subst_value="true"> -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
 
   <node name="publish_text"
         pkg="jsk_teaching_object" type="publish_text.py"
@@ -152,10 +162,12 @@
     </rosparam>
   </node>
 
-  <node name="r8_5_look_server"
-        pkg="jsk_teaching_object" type="r8_5_look.py"
-        output="screen">
-  </node>
+  <group unless="$(arg no_robot_mode)" >
+    <node name="r8_5_look_server"
+          pkg="jsk_teaching_object" type="r8_5_look.py"
+          output="screen">
+    </node>
+  </group>
 
   <group if="$(arg gui)" >
     <node name="$(anon rviz)"
