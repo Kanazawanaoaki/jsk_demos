@@ -48,9 +48,10 @@ class ObjectDetectionNode(ConnectionBasedTransport):
             '~ignore_class_names', ['others'])
 
         weights = rospy.get_param(
-            '~model_path',
-            get_latest_pt_file(
-                osp.expanduser(rospy.get_param('~root_image_path'))))
+            '~model_path', None)
+        if weights is None:
+            weights = get_latest_pt_file(
+                osp.expanduser(rospy.get_param('~root_image_path')))
         device = rospy.get_param('~device', 0)
         if device < 0:
             device = 'cpu'

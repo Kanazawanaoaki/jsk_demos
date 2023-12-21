@@ -41,7 +41,7 @@
       approximate_sync: false
       use_label_array: false
       only_label: false
-      queue_size: 30
+      queue_size: 100
       alpha: 0.5
     </rosparam>
   </node>

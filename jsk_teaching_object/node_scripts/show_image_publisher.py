@@ -91,8 +91,10 @@ class ShowImagePublisher(object):
                     self.cnt)
                 self.imgmsg, self.compmsg = \
                     self.cv2_to_imgmsg(canvas, self.encoding)
-        self.update_timer = rospy.Timer(rospy.Duration(self.update_interval), self.update_image)
-        self.publish_timer = rospy.Timer(rospy.Duration(1. / rate), self.publish)
+        self.update_timer = rospy.Timer(rospy.Duration(self.update_interval), self.update_image,
+                                        reset=True)
+        self.publish_timer = rospy.Timer(rospy.Duration(1. / rate), self.publish,
+                                         reset=True)
 
     def update_image(self, event):
         if self.root_image_path is None:

@@ -196,7 +196,8 @@ class TileImages(ConnectionBasedTransport):
         if self.no_sync:
             self.input_imgs = {}
             self.sub_img_list = [rospy.Subscriber(topic, Image, self.simple_callback(topic), queue_size=1) for topic in self.input_topics]
-            rospy.Timer(rospy.Duration(0.1), self.timer_callback)
+            rospy.Timer(rospy.Duration(0.1), self.timer_callback,
+                        reset=True)
         else:
             queue_size = rospy.get_param('~queue_size', 10)
             slop = rospy.get_param('~slop', 1)
