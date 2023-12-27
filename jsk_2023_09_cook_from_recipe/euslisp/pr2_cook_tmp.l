@@ -1571,6 +1571,50 @@
    )
   )
 
+(defun test-pan-today ()
+  (cook-teach)
+
+  (send *ri* :speak-jp "教わった動作を実行します")
+
+  (cook-replay-today)
+  )
+
+(defun cook-replay-today (&key (save_img nil) (save_bag nil) (rosbag_time 5))
+  (if save_img
+      (progn
+        ;; データの保存
+        (set-initial-av)
+        (trigger-request "/cook_data_collection/save_request")
+        ))
+
+  ;; (do-until-key
+   (set-initial-av :time 2000)
+
+   (unix:sleep 1)
+   (replay-short-rav-list *cook-short-rav-list* :time 150)
+
+   (set-initial-av :time 2000)
+
+   ;; (do-until-key
+   ;;  (print "wait key")
+   ;;  )
+   (if save_img
+       (progn
+         ;; データの保存
+         (trigger-request "/cook_data_collection/save_request")
+         ))
+
+   (if save_bag
+       (progn
+         ;; データの保存
+         (start-data-collection :service "cook_data_collection_rosbag/start_request");; rosbag収集開始
+         (unix:sleep rosbag_time)
+         (end-data-collection :service "cook_data_collection_rosbag/end_request");; rosbag収集終了
+         ))
+   ;; )
+  )
+
+
 (defun cook-replay-wait (&key (save_img t) (save_bag nil) (rosbag_time 5))
   (if save_img
       (progn
