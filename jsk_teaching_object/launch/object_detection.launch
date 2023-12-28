@@ -5,6 +5,7 @@
   <arg name="video_device" default="/dev/video0" />
   <arg name="input_image" default="/usb_cam/image_raw" />
   <arg name="launch_usb_cam" default="true" />
+  <arg name="model_file" default="2023-11-13-drink-objects.pt" />
 
   <group if="$(arg launch_usb_cam)" >
     <node name="usb_cam"
@@ -24,7 +25,7 @@
         required="false">
     <remap from="~input" to="$(arg input_image)" />
     <rosparam subst_value="true">
-      model_path: $(find jsk_teaching_object)/trained_data/yolo8/2023-11-13-drink-objects.pt
+      model_path: $(find jsk_teaching_object)/trained_data/yolo8/$(arg model_file)
       score_thresh: 0.4
       nms_thresh: 0.45
       device: $(arg device)
