@@ -34,7 +34,7 @@
           /k4a/rgb/camera_info
           /k4a/rgb/image_rect_color/compressed
           /k4a/depth_to_rgb/camera_info
-          /k4a/depth_to_rgb/image_raw/compressed
+          /k4a/depth_to_rgb/image_raw/compressedDepth
           /k4a/depth/camera_info
           /k4a/depth/image_rect_raw/compressedDepth
           /described_gazing_area_detector/crop_image
