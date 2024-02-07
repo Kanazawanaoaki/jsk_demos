@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 import rospy
-from sensor_msgs.msg import Image
-from std_msgs.msg import String
+from sensor_msgs.msg import Image, CompressedImage
+from sound_play.msg import SoundRequest, SoundRequestAction, SoundRequestGoal
+import actionlib
 import time
 
 class ImageSubscriber:
@@ -9,31 +10,46 @@ class ImageSubscriber:
         rospy.init_node('image_subscriber_node', anonymous=True)
 
         # イメージメッセージをサブスクライブ
-        self.image_sub = rospy.Subscriber('/k4a/rgb/image_rect_color', Image, self.image_callback)
+        self.image_sub = rospy.Subscriber('/k4a/rgb/image_rect_color/compressed', CompressedImage, self.image_callback)
 
-        # ロボットに話させるためのトピック
-        self.robot_talk_topic = '/robot/talk'
-        self.robot_talk_pub = rospy.Publisher(self.robot_talk_topic, String, queue_size=10)
+        # Create an Action client for the sound_play node
+        self.sound_client = actionlib.SimpleActionClient('/robotsound', SoundRequestAction)
+        self.sound_client.wait_for_server()
 
         # トピックが一定時間更新されなかった場合の閾値（秒）
-        self.timeout_threshold = 1.0
+        self.timeout_threshold = 5.0
 
         # 最後にトピックが更新された時間
         self.last_image_time = time.time()
 
+        self.say_something("test start")
+
     def image_callback(self, msg):
         # トピックが更新されたら呼び出されるコールバック
         self.last_image_time = time.time()
+        # rospy.loginfo("Recieve image topic !!")
 
     def check_timeout(self):
         # 一定時間以上トピックが更新されていないかチェック
         if time.time() - self.last_image_time > self.timeout_threshold:
-            self.say_something("I haven't seen any images for a while.")
+            self.say_something("I haven't seen the image topic for a while.")
 
     def say_something(self, text):
         # ロボットに喋らせる
         rospy.loginfo(text)
-        self.robot_talk_pub.publish(String(text))
+
+        # Create a SoundRequestGoal message
+        sound_goal = SoundRequestGoal()
+        sound_goal.sound_request.sound = SoundRequest.SAY
+        sound_goal.sound_request.command = SoundRequest.PLAY_ONCE
+        sound_goal.sound_request.volume = 1.0
+        sound_goal.sound_request.arg = text
+
+        # Send the SoundRequestGoal to the sound_play node
+        self.sound_client.send_goal(sound_goal)
+
+        # Wait for the result (you can add timeout if needed)
+        self.sound_client.wait_for_result()
 
     def run(self):
         rate = rospy.Rate(1)  # ループレート：1 Hz
