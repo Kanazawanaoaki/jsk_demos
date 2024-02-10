@@ -311,17 +311,24 @@ class LabelImageDecomposer(ConnectionBasedTransport):
             img = bridge.imgmsg_to_cv2(img_msg)
             # publish only valid label region
             applied = img.copy()
-            applied[label_img == self._bg_label] = 0
-            applied_msg = bridge.cv2_to_imgmsg(applied, encoding=img_msg.encoding)
-            applied_msg.header = img_msg.header
-            self.pub_img.publish(applied_msg)
-            # publish visualized label
-            if img_msg.encoding in {'16UC1', '32SC1'}:
-                # do dynamic scaling to make it look nicely
-                min_value, max_value = img.min(), img.max()
-                img = (img - min_value) / (max_value - min_value) * 255
-                img = img.astype(np.uint8)
-                img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+            # print("test")
+            # print(applied.shape[0:2])
+            # print(label_img.shape)
+            if applied.shape[0:2] == label_img.shape:
+                print(applied[label_img == self._bg_label].shape)
+                applied[label_img == self._bg_label] = 0
+                applied_msg = bridge.cv2_to_imgmsg(applied, encoding=img_msg.encoding)
+                applied_msg.header = img_msg.header
+                self.pub_img.publish(applied_msg)
+                # publish visualized label
+                if img_msg.encoding in {'16UC1', '32SC1'}:
+                    # do dynamic scaling to make it look nicely
+                    min_value, max_value = img.min(), img.max()
+                    img = (img - min_value) / (max_value - min_value) * 255
+                    img = img.astype(np.uint8)
+                    img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
+            else:
+                img = None
         else:
             img = None
 
