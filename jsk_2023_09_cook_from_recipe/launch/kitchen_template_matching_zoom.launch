@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+  <arg name="gui" default="true" />
+
+  <!-- <arg name="input_image" default="/k4a/rgb/image_rect_color"/> -->
+  <!-- <arg name="input_cam_info" default="/k4a/rgb/camera_info"/> -->
+
+  <arg name="input_image" default="/kinect_head/rgb/image_rect_color"/>
+  <arg name="input_camera_info" default="/kinect_head/rgb/camera_info"/>
+  <arg name="manager" default="kitchen_template_manager"/>
+
+  <node name="$(arg manager)"
+        pkg="nodelet" type="nodelet"
+        args="manager" output="screen"/>
+
+  <group ns="point_pose_stove">
+    <node name="stove_sift" pkg="imagesift" type="imagesift"
+          launch-prefix="nice -n +10" output="screen">
+      <remap from="image" to="$(arg input_image)" />
+      <remap from="camera_info" to="$(arg input_camera_info)"/>
+      <!-- <remap from="mask" to="attention_clipper/output/mask"/> -->
+      <!-- <param name="use_mask" value="$(arg use_mask)"/> -->
+    </node>
+    <node name="stove_detector" pkg="jsk_perception" type="point_pose_extractor" clear_params="true">
+      <rosparam subst_value="true">
+        <!-- template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-stove-kinect.jpg -->
+        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-stove-kinect-cropped_zoom.jpg
+        window_name: stove_detector
+        object_width: 0.297
+        object_height: 0.210
+        <!-- relative_pos: '0.0 0.0 0.0  0.707107 0 -0.707107 0' -->
+        <!-- relative_pose: '0.0 0.0 0.0  0.707107 0 -0.707107 0' -->
+      </rosparam>
+    </node>
+  </group>
+
+  <group ns="point_pose_kitchen">
+    <node name="kitchen_sift" pkg="imagesift" type="imagesift"
+          launch-prefix="nice -n +10" output="screen">
+      <remap from="image" to="$(arg input_image)" />
+      <remap from="camera_info" to="$(arg input_camera_info)"/>
+    </node>
+    <node name="kitchen_detector" pkg="jsk_perception" type="point_pose_extractor" clear_params="true">
+      <rosparam subst_value="true">
+        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-kitchen-kinect_zoom.jpg
+        window_name: kitchen_detector
+        object_width: 0.297
+        object_height: 0.210
+      </rosparam>
+    </node>
+  </group>
+
+  <group ns="point_pose_sink">
+    <node name="sink_sift" pkg="imagesift" type="imagesift"
+          launch-prefix="nice -n +10" output="screen">
+      <remap from="image" to="$(arg input_image)" />
+      <remap from="camera_info" to="$(arg input_camera_info)"/>
+    </node>
+    <node name="sink_detector" pkg="jsk_perception" type="point_pose_extractor">
+      <rosparam subst_value="true">
+        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-sink-kinect_zoom.jpg
+        window_name: sink_detector
+        object_width: 0.297
+        object_height: 0.210
+      </rosparam>
+    </node>
+  </group>
+
+  <!-- <node name="imagesift" -->
+  <!--       pkg="nodelet" type="nodelet" -->
+  <!--       args="load imagesift/ImageSift $(arg manager)"> -->
+  <!--   <remap from="image" to="$(arg input_image)"/> -->
+  <!--   <remap from="camera_info" to="$(arg input_camera_info)" /> -->
+  <!-- </node> -->
+
+  <!-- <node name="pass_through_feature_to_stove" -->
+  <!--       pkg="nodelet" type="nodelet" -->
+  <!--       args="load jsk_topic_tools/Passthrough $(arg manager)"> -->
+  <!--   <remap from="~input" to="ImageFeature0D"/> -->
+  <!--   <rosparam> -->
+  <!--     default_duration: 0.0  # infinite -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+
+  <!-- <node name="point_pose_extractor_stove" -->
+  <!--       pkg="nodelet" type="nodelet" -->
+  <!--       args="load jsk_perception/PointPoseExtractor $(arg manager)" -->
+  <!--       respawn="false" output="screen" required="true" > -->
+  <!--   <remap from="ImageFeature0D" to="pass_through_feature_to_stove/output"/> -->
+  <!--   <remap from="~debug_image" to="point_pose_extractor_stove/debug_image"/> -->
+  <!--   <rosparam subst_value="true"> -->
+  <!--     template_filename: $(find jsk_perception)/sample/image/pai_no_mi.jpg -->
+  <!--     template_id: 0 -->
+  <!--     object_width: 0.145 -->
+  <!--     object_height: 0.128 -->
+  <!--     viewer_window: $(arg gui) -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+
+  <!-- <node name="pass_through_feature_to_sink" -->
+  <!--       pkg="nodelet" type="nodelet" -->
+  <!--       args="load jsk_topic_tools/Passthrough $(arg manager)"> -->
+  <!--   <remap from="~input" to="ImageFeature0D"/> -->
+  <!--   <rosparam> -->
+  <!--     default_duration: 0.0  # infinite -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+
+  <!-- <node name="point_pose_extractor_sink" -->
+  <!--       pkg="nodelet" type="nodelet" -->
+  <!--       args="load jsk_perception/PointPoseExtractor $(arg manager)" -->
+  <!--       respawn="false" output="screen" required="true" > -->
+  <!--   <remap from="ImageFeature0D" to="pass_through_feature_to_sink/output"/> -->
+  <!--   <remap from="~debug_image" to="point_pose_extractor_sink/debug_image"/> -->
+  <!--   <rosparam subst_value="true"> -->
+  <!--     template_filename: $(find jsk_perception)/sample/image/pai_no_mi.jpg -->
+  <!--     template_id: 0 -->
+  <!--     object_width: 0.145 -->
+  <!--     object_height: 0.128 -->
+  <!--     viewer_window: $(arg gui) -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+
+</launch>
