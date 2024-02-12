@@ -24,10 +24,10 @@
     <node name="stove_detector" pkg="jsk_perception" type="point_pose_extractor" clear_params="true">
       <rosparam subst_value="true">
         <!-- template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-stove-kinect.jpg -->
-        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-stove-kinect-cropped_zoom.jpg
+        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-stove-kinect-cropped-zoom.jpg
         window_name: stove_detector
-        object_width: 0.297
-        object_height: 0.210
+        object_width: 0.063
+        object_height: 0.062
         <!-- relative_pos: '0.0 0.0 0.0  0.707107 0 -0.707107 0' -->
         <!-- relative_pose: '0.0 0.0 0.0  0.707107 0 -0.707107 0' -->
       </rosparam>
@@ -42,7 +42,7 @@
     </node>
     <node name="kitchen_detector" pkg="jsk_perception" type="point_pose_extractor" clear_params="true">
       <rosparam subst_value="true">
-        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-kitchen-kinect_zoom.jpg
+        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-kitchen-kinect-zoom.jpg
         window_name: kitchen_detector
         object_width: 0.297
         object_height: 0.210
@@ -58,7 +58,7 @@
     </node>
     <node name="sink_detector" pkg="jsk_perception" type="point_pose_extractor">
       <rosparam subst_value="true">
-        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-sink-kinect_zoom.jpg
+        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-sink-kinect-zoom.jpg
         window_name: sink_detector
         object_width: 0.297
         object_height: 0.210
