@@ -12,7 +12,22 @@ def load_annotation(annotation_path):
         annotation_data = json.load(f)
     return annotation_data
 
-def draw_result(image, results):
+def draw_annotation(image, annotation):
+    draw = ImageDraw.Draw(image)
+    shapes = annotation.get('shapes', [])
+
+    for shape in shapes:
+        label = shape.get('label', '')
+        points = shape.get('points', [])
+        shape_type = shape.get('shape_type', 'rectangle')
+
+        if shape_type == 'rectangle' and len(points) == 2:
+            x1, y1 = points[0]
+            x2, y2 = points[1]
+            draw.rectangle([x1, y1, x2, y2], outline='red', width=2)
+            draw.text((x1+5, y1+1), label, fill='red')
+
+def draw_result(image, results, target_names, score_thresh=0.4):
     draw = ImageDraw.Draw(image)
     shapes = []
 
@@ -23,42 +38,26 @@ def draw_result(image, results):
         rospy.logerr("Error: The 'results' list is empty.")
         return
 
-    # import ipdb
-    # ipdb.set_trace()
     valid_indices = []
     labels = []
     scores = []
+    shapes = []
     for j, ((x1, y1, x2, y2), conf, cls) in enumerate(
             zip(result.boxes.xyxy, result.boxes.conf,
                 result.boxes.cls)):
-        if self.target_names[int(cls)] in self.ignore_class_names:
+        if target_names[int(cls)] in ['others']:
             continue
-        if conf < self.score_thresh:
+        if conf < score_thresh:
             continue
         valid_indices.append(j)
-        print(x1, y1, x2, y2)
-        # rects_msg.rects.append(
-        #     Rect(x=int(x1), y=int(y1),
-        #          width=int(x2 - x1), height=int(y2 - y1)))
         labels.append(int(cls))
         scores.append(float(conf))
-        label = f'Class {int(cls)} - Confidence: {conf:.2f}'
-        annotation['shapes'].append({
+        label = f'{target_names[int(cls)]} : {conf:.2f}'
+        shapes.append({
             'label': label,
             'points': [(x1, y1), (x2, y2)],
             'shape_type': 'rectangle'
         })
-
-
-    # for boxes in results[0].boxes:
-    #     box = boxes.xyxy[0].numpy()
-    #     x1, y1, x2, y2, confidence, class_index = box
-    #     label = f'Class {int(class_index)} - Confidence: {confidence:.2f}'
-    #     annotation['shapes'].append({
-    #         'label': label,
-    #         'points': [(x1, y1), (x2, y2)],
-    #         'shape_type': 'rectangle'
-    #     })
 
     for shape in shapes:
         label = shape.get('label', '')
@@ -69,23 +68,28 @@ def draw_result(image, results):
             x1, y1 = points[0]
             x2, y2 = points[1]
             draw.rectangle([x1, y1, x2, y2], outline='green', width=2)
-            draw.text((x1, y1), label, fill='green')
+            # draw.text((x1+5, y1+1), label, fill='green')
+            draw.text((x1+5, y1-11), label, fill='green')
 
 def process_image(input_folder, output_folder, yolo_model_path):
     yolo_model = YOLO(yolo_model_path)
+    target_names = [name for _, name in yolo_model.names.items()]
 
     for filename in os.listdir(input_folder):
         if filename.endswith(".png"):
             image_path = os.path.join(input_folder, filename)
+            annotation_path = os.path.join(input_folder, filename.replace(".png", ".json"))
 
             if os.path.exists(output_folder):
                 image = Image.open(image_path)
+                annotation = load_annotation(annotation_path)
 
                 # Perform inference using YOLO model
                 results = yolo_model(image_path)
 
-                # Draw annotation on the image
-                draw_result(image, results)
+                # Draw result and annotation on the image
+                draw_annotation(image, annotation)
+                draw_result(image, results, target_names)
 
                 # Save the annotated image to the output folder
                 output_path = os.path.join(output_folder, filename.replace(".png", "_result.png"))
