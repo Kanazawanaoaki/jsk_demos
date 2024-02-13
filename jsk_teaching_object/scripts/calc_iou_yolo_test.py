@@ -25,15 +25,40 @@ def draw_result(image, results):
 
     # import ipdb
     # ipdb.set_trace()
-    for boxes in results[0].boxes:
-        box = boxes.xyxy[0].numpy()
-        x1, y1, x2, y2, confidence, class_index = box
-        label = f'Class {int(class_index)} - Confidence: {confidence:.2f}'
+    valid_indices = []
+    labels = []
+    scores = []
+    for j, ((x1, y1, x2, y2), conf, cls) in enumerate(
+            zip(result.boxes.xyxy, result.boxes.conf,
+                result.boxes.cls)):
+        if self.target_names[int(cls)] in self.ignore_class_names:
+            continue
+        if conf < self.score_thresh:
+            continue
+        valid_indices.append(j)
+        print(x1, y1, x2, y2)
+        # rects_msg.rects.append(
+        #     Rect(x=int(x1), y=int(y1),
+        #          width=int(x2 - x1), height=int(y2 - y1)))
+        labels.append(int(cls))
+        scores.append(float(conf))
+        label = f'Class {int(cls)} - Confidence: {conf:.2f}'
         annotation['shapes'].append({
             'label': label,
             'points': [(x1, y1), (x2, y2)],
             'shape_type': 'rectangle'
         })
+
+
+    # for boxes in results[0].boxes:
+    #     box = boxes.xyxy[0].numpy()
+    #     x1, y1, x2, y2, confidence, class_index = box
+    #     label = f'Class {int(class_index)} - Confidence: {confidence:.2f}'
+    #     annotation['shapes'].append({
+    #         'label': label,
+    #         'points': [(x1, y1), (x2, y2)],
+    #         'shape_type': 'rectangle'
+    #     })
 
     for shape in shapes:
         label = shape.get('label', '')
@@ -43,8 +68,8 @@ def draw_result(image, results):
         if shape_type == 'rectangle' and len(points) == 2:
             x1, y1 = points[0]
             x2, y2 = points[1]
-            draw.rectangle([x1, y1, x2, y2], outline='red', width=2)
-            draw.text((x1, y1), label, fill='red')
+            draw.rectangle([x1, y1, x2, y2], outline='green', width=2)
+            draw.text((x1, y1), label, fill='green')
 
 def process_image(input_folder, output_folder, yolo_model_path):
     yolo_model = YOLO(yolo_model_path)
