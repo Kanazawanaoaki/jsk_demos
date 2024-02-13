@@ -18,51 +18,46 @@
           launch-prefix="nice -n +10" output="screen">
       <remap from="image" to="$(arg input_image)" />
       <remap from="camera_info" to="$(arg input_camera_info)"/>
-      <!-- <remap from="mask" to="attention_clipper/output/mask"/> -->
-      <!-- <param name="use_mask" value="$(arg use_mask)"/> -->
     </node>
     <node name="stove_detector" pkg="jsk_perception" type="point_pose_extractor" clear_params="true">
       <rosparam subst_value="true">
-        <!-- template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-stove-kinect.jpg -->
         template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-stove-k4a.jpg
         window_name: stove_detector
         object_width: 0.297
         object_height: 0.210
-        <!-- relative_pos: '0.0 0.0 0.0  0.707107 0 -0.707107 0' -->
-        <!-- relative_pose: '0.0 0.0 0.0  0.707107 0 -0.707107 0' -->
       </rosparam>
     </node>
   </group>
 
-  <!-- <group ns="point_pose_kitchen"> -->
-  <!--   <node name="kitchen_sift" pkg="imagesift" type="imagesift" -->
-  <!--         launch-prefix="nice -n +10" output="screen"> -->
-  <!--     <remap from="image" to="$(arg input_image)" /> -->
-  <!--     <remap from="camera_info" to="$(arg input_camera_info)"/> -->
-  <!--   </node> -->
-  <!--   <node name="kitchen_detector" pkg="jsk_perception" type="point_pose_extractor" clear_params="true"> -->
-  <!--     <rosparam subst_value="true"> -->
-  <!--       template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-kitchen-kinect-zoom.jpg -->
-  <!--       window_name: kitchen_detector -->
-  <!--       object_width: 0.297 -->
-  <!--       object_height: 0.210 -->
-  <!--     </rosparam> -->
-  <!--   </node> -->
-  <!-- </group> -->
+  <group ns="point_pose_kitchen">
+    <node name="kitchen_sift" pkg="imagesift" type="imagesift"
+          launch-prefix="nice -n +10" output="screen">
+      <remap from="image" to="$(arg input_image)" />
+      <remap from="camera_info" to="$(arg input_camera_info)"/>
+    </node>
+    <node name="kitchen_detector" pkg="jsk_perception" type="point_pose_extractor" clear_params="true">
+      <rosparam subst_value="true">
+        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-kitchen-k4a.jpg
+        window_name: kitchen_detector
+        object_width: 0.297
+        object_height: 0.210
+      </rosparam>
+    </node>
+  </group>
 
-  <!-- <group ns="point_pose_sink"> -->
-  <!--   <node name="sink_sift" pkg="imagesift" type="imagesift" -->
-  <!--         launch-prefix="nice -n +10" output="screen"> -->
-  <!--     <remap from="image" to="$(arg input_image)" /> -->
-  <!--     <remap from="camera_info" to="$(arg input_camera_info)"/> -->
-  <!--   </node> -->
-  <!--   <node name="sink_detector" pkg="jsk_perception" type="point_pose_extractor"> -->
-  <!--     <rosparam subst_value="true"> -->
-  <!--       template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-sink-kinect-zoom.jpg -->
-  <!--       window_name: sink_detector -->
-  <!--       object_width: 0.297 -->
-  <!--       object_height: 0.210 -->
-  <!--     </rosparam> -->
-  <!--   </node> -->
-  <!-- </group> -->
+  <group ns="point_pose_sink">
+    <node name="sink_sift" pkg="imagesift" type="imagesift"
+          launch-prefix="nice -n +10" output="screen">
+      <remap from="image" to="$(arg input_image)" />
+      <remap from="camera_info" to="$(arg input_camera_info)"/>
+    </node>
+    <node name="sink_detector" pkg="jsk_perception" type="point_pose_extractor">
+      <rosparam subst_value="true">
+        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-sink-k4a.jpg
+        window_name: sink_detector
+        object_width: 0.297
+        object_height: 0.210
+      </rosparam>
+    </node>
+  </group>
 </launch>
