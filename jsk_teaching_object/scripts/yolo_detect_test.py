@@ -36,29 +36,6 @@ def draw_result(image, results):
     image = result_image
     return image
 
-    # # import ipdb
-    # # ipdb.set_trace()
-    # for boxes in results[0].boxes:
-    #     box = boxes.xyxy[0].numpy()
-    #     x1, y1, x2, y2, confidence, class_index = box
-    #     label = f'Class {int(class_index)} - Confidence: {confidence:.2f}'
-    #     annotation['shapes'].append({
-    #         'label': label,
-    #         'points': [(x1, y1), (x2, y2)],
-    #     'shape_type': 'rectangle'
-    #     })
-
-    # for shape in shapes:
-    #     label = shape.get('label', '')
-    #     points = shape.get('points', [])
-    #     shape_type = shape.get('shape_type', 'rectangle')
-
-    #     if shape_type == 'rectangle' and len(points) == 2:
-    #         x1, y1 = points[0]
-    #         x2, y2 = points[1]
-    #         draw.rectangle([x1, y1, x2, y2], outline='red', width=2)
-    #         draw.text((x1, y1), label, fill='red')
-
 def process_image(input_folder, output_folder, yolo_model_path):
     yolo_model = YOLO(yolo_model_path)
 
@@ -72,7 +49,7 @@ def process_image(input_folder, output_folder, yolo_model_path):
                 # Perform inference using YOLO model
                 results = yolo_model(image_path)
 
-                # Draw annotation on the image
+                # Draw result on the image
                 image = draw_result(image, results)
 
                 # Save the annotated image to the output folder
@@ -92,6 +69,7 @@ def main():
 
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
+        print("made new dir in {}".format(output_folder))
 
     process_image(input_folder, output_folder, yolo_model_path)
 

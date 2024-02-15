@@ -11,5 +11,5 @@ file_list=(
 for model_name in "${file_list[@]}"
 do
   # スクリプトの実行
-  rosrun jsk_teaching_object yolo_detect_test.py /home/kanazawa/Downloads/o-nedo-test/selected_eval "/home/kanazawa/Downloads/o-nedo-test/${model_name}_detect_test" "../trained_data/yolo8/${model_name}.pt"
+  rosrun jsk_teaching_object calc_iou_yolo_test.py /home/kanazawa/Downloads/o-nedo-test/selected_eval "/home/kanazawa/Downloads/o-nedo-test/calc_test/${model_name}_calc_test" "../trained_data/yolo8/${model_name}.pt"
 done
