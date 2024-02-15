@@ -22,7 +22,7 @@ class ImageSubscriber:
         # 最後にトピックが更新された時間
         self.last_image_time = time.time()
 
-        self.say_something("test start")
+        self.say_something("image check start")
 
     def image_callback(self, msg):
         # トピックが更新されたら呼び出されるコールバック
