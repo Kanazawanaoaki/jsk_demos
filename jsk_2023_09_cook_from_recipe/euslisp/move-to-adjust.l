@@ -125,7 +125,8 @@
      ((string= to "stove")
       (print "move-to stove")
       ;; (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8100 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
-      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8070 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+      ;; (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8070 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1300 7970 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
       (format t "move-to result ~A ~%" move-suc-flag)
       (when move-suc-flag
         (setq adjust-suc-flag nil)
@@ -168,7 +169,7 @@
 
 ;; c.f. https://github.com/jsk-ros-pkg/jsk_demos/blob/088b186ea8d02ebda8fee2dc411135f8fd813be1/jsk_demo_common/euslisp/pr2-action.l#L708-L856
 (defparameter *adjust-spot-object-cds* nil)
-(defun move-with-adjust (&key (move-spot :stove) (ratio 1) (look-around nil) (head-pitch 14) (torso-lift 130) (move t) (wait t) (use-base nil))
+(defun move-with-adjust (&key (move-spot :stove) (ratio 1) (look-around nil) (head-pitch 14) (torso-lift 130) (move t) (wait t) (use-base nil) (use-k4a t))
   (let ((ret nil)
         ;; (diffcds (make-coords :pos (float-vector 10000 10000 10000)))
         (distance-threshold 20.0) ;;25.0
@@ -186,38 +187,62 @@
            (setq spot-name "stove")
            (setq speak-name "IHコンロ")
            (setq detecion-topic "/point_pose_stove/ObjectDetection")
-           ;; (setq idealcds
-           ;;       (make-coords :pos (float-vector 1148 313 1423.349)
-           ;;                    :rpy (float-vector 0.754 1.547 -2.402)))
-           (setq idealcds
-                 (make-coords :pos (float-vector 1145.287 325.273 1420.734)
-                              :rpy (float-vector 0.248 1.435 -2.965)))
+           (if use-k4a
+               (setq idealcds ;; for k4a
+                     (make-coords :pos (float-vector 1288.043 106.543 1481.986)
+                                  :rpy (float-vector 2.873 1.538 -0.192)))
+             (setq idealcds ;; for kinect
+                   (make-coords :pos (float-vector 1145.287 325.273 1420.734)
+                                :rpy (float-vector 0.248 1.435 -2.965)))
+             )
            )
           (:kitchen
            (setq spot-name "kitchen")
            (setq speak-name "キッチン")
            (setq detecion-topic "/point_pose_kitchen/ObjectDetection")
-           ;; (setq idealcds
-           ;;       (make-coords :pos (float-vector 1149.697 263.465 1292.455)
-           ;;                    :rpy (float-vector 0.235 1.503 -2.926)))
-           (setq idealcds
-                 (make-coords :pos (float-vector 1163.785 266.85 1284.483)
-                              :rpy (float-vector 0.167 1.403 -3.019)))
+           (if use-k4a
+               (setq idealcds ;; for k4a
+                     (make-coords :pos (float-vector 1145.287 325.273 1420.734)
+                                  :rpy (float-vector 0.248 1.435 -2.965)))
+             (setq idealcds ;; for kinect
+                   (make-coords :pos (float-vector 1163.785 266.85 1284.483)
+                                :rpy (float-vector 0.167 1.403 -3.019)))
+             )
            )
           (:sink
            (setq spot-name "sink")
            (setq speak-name "水道")
            (setq detecion-topic "/point_pose_sink/ObjectDetection")
-           (setq idealcds
-                 (make-coords :pos (float-vector 1031.396 137.734 1282.394)
-                              :rpy (float-vector 0.258 1.499 -2.909)))
+           (if use-k4a
+               (setq idealcds ;; for k4a
+                     (make-coords :pos (float-vector 1145.287 325.273 1420.734)
+                                  :rpy (float-vector 0.248 1.435 -2.965)))
+             (setq idealcds ;; for kinect
+                   (make-coords :pos (float-vector 1031.396 137.734 1282.394)
+                                :rpy (float-vector 0.258 1.499 -2.909)))
+             )
            )
           )
     (cond
      ((not (send *ri* :simulation-modep)) ;; real mode
-      (setq cds (check-detection :type spot-name :speak-name speak-name
-                                 :detection-topic detecion-topic
-                                 )))
+      (if use-k4a
+          (progn
+            (unless (boundp '*tfl*)
+              (setq *tfl* (instance ros::transform-listener :init)))
+            ;; (setq trans (send *tfl* :lookup-transform *base-frame-id* "head_mount_kinect_rgb_optical_frame" (send pp_msg :header :stamp)))
+            (setq trans nil)
+            (until trans
+                   (setq pp_msg (one-shot-subscribe detecion-topic posedetection_msgs::ObjectDetection))
+                   (setq trans (send *tfl* :lookup-transform *base-frame-id* (send pp_msg :header :frame_id) (send pp_msg :header :stamp)))
+                   )
+            (setq cds (make-coords))
+            (send cds :move-to trans :local)
+            (send cds :move-to (ros::tf-pose->coords (send (car (send pp_msg :objects)) :pose)) :local)
+            )
+        (setq cds (check-detection :type spot-name :speak-name speak-name
+                                   :detection-topic detecion-topic
+                                   )))
+      )
      (t ;; simulation mode
       (setq cds (send (make-cube 60 60 60) :translate (float-vector 777 98 1112))) ;; TODO
       ))
@@ -230,19 +255,6 @@
       (dump-structure *standard-output*
                       (list (send *pr2* :copy-worldcoords)
                             (send cds :copy-worldcoords)))
-      ;; (setq cds
-      ;;       (make-coords :pos
-      ;;                    (float-vector (elt (send cds :worldpos) 0)
-      ;;                                  (elt (send cds :worldpos) 1) 0)
-      ;;                    :rpy (list (elt (car (rpy-angle (send cds :worldrot))) 0)
-      ;;                               0 0)))
-
-      ;; (setq cds
-      ;;       (make-coords :pos
-      ;;                    (float-vector (elt (send cds :worldpos) 0)
-      ;;                                  (elt (send cds :worldpos) 1)
-      ;;                                  0)
-      ;;                    :rot (send cds :copy-rot)))
 
       (setq diffcds (send (send idealcds :inverse-transformation)
                           :transform (send cds :worldcoords) :world))
@@ -259,26 +271,14 @@
         (setq ret t)
         (case move-spot
               (:stove
-               ;; (setq *stove-offset-x* (elt (send diffcds :worldpos) 0))
-               ;; (setq *stove-offset-y* (elt (send diffcds :worldpos) 1))
-               ;; (setq *stove-offset-theta* (elt (car (rpy-angle (send diffcds :worldrot))) 0))
-
                (setq *stove-offset-cds* (make-coords :pos (float-vector (elt (send diffcds :worldpos) 0) (elt (send diffcds :worldpos) 1) 0)
                                                      :rpy (float-vector (elt (car (rpy-angle (send diffcds :worldrot))) 0) 0 0)))
                )
               (:kitchen
-               ;; (setq *kitchen-offset-x* (elt (send diffcds :worldpos) 0))
-               ;; (setq *kitchen-offset-y* (elt (send diffcds :worldpos) 1))
-               ;; (setq *kitchen-offset-theta* (elt (car (rpy-angle (send diffcds :worldrot))) 0))
-
                (setq *kitchen-offset-cds* (make-coords :pos (float-vector (elt (send diffcds :worldpos) 0) (elt (send diffcds :worldpos) 1) 0)
                                                        :rpy (float-vector (elt (car (rpy-angle (send diffcds :worldrot))) 0) 0 0)))
                )
               (:sink
-               ;; (setq *sink-offset-x* (elt (send diffcds :worldpos) 0))
-               ;; (setq *sink-offset-y* (elt (send diffcds :worldpos) 1))
-               ;; (setq *sink-offset-theta* (elt (car (rpy-angle (send diffcds :worldrot))) 0))
-
                (setq *sink-offset-cds* (make-coords :pos (float-vector (elt (send diffcds :worldpos) 0) (elt (send diffcds :worldpos) 1) 0)
                                                     :rpy (float-vector (elt (car (rpy-angle (send diffcds :worldrot))) 0) 0 0)))
                )

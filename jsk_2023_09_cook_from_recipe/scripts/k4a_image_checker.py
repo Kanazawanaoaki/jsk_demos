@@ -23,6 +23,7 @@ class ImageSubscriber:
         self.last_image_time = time.time()
 
         self.say_something("image check start")
+        self.no_topic_flag = False
 
     def image_callback(self, msg):
         # トピックが更新されたら呼び出されるコールバック
@@ -32,7 +33,15 @@ class ImageSubscriber:
     def check_timeout(self):
         # 一定時間以上トピックが更新されていないかチェック
         if time.time() - self.last_image_time > self.timeout_threshold:
-            self.say_something("I haven't seen the image topic for a while.")
+            if self.no_topic_flag:
+                return
+            else:
+                self.no_topic_flag = True
+                self.say_something("I haven't seen the image topic for {} seconds.".format(self.timeout_threshold))
+        else:
+            if self.no_topic_flag:
+                self.no_topic_flag = False
+                self.say_something("Image topic is arrive.")
 
     def say_something(self, text):
         # ロボットに喋らせる

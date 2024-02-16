@@ -436,7 +436,8 @@
       (progn
         (reset-manip-pose :arm :rarm :time 2000)
 
-        (send *pr2* :rarm :angle-vector #f(-37.49 74.2613 -98.4166 -92.2371 105.499 -61.216 -179.863))
+        ;; (send *pr2* :rarm :angle-vector #f(-37.49 74.2613 -98.4166 -92.2371 105.499 -61.216 -179.863)) ;; for old stove
+        (send *pr2* :rarm :angle-vector #f(-37.9792 67.891 -75.6121 -80.9552 114.675 -44.3419 -2.95313))
         (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
         (send *ri* :wait-interpolation)
         )
@@ -449,8 +450,8 @@
 
   (let (ik-target
         ik-target-adj)
-    ;; (setq ik-target (make-coords :pos #f(540 -33.562 705) :rpy #f(0.0 0.0 -1.5708))) ;; right ;; (float-vector 636 -183 698)
-    (setq ik-target (make-coords :pos #f(521.619 -34.682 705.0) :rpy #f(0.0 0.0 -1.5708)))
+    ;; (setq ik-target (make-coords :pos #f(521.619 -34.682 705.0) :rpy #f(0.0 0.0 -1.5708)));; for old stove spot
+    (setq ik-target (make-coords :pos (float-vector 646 -183 698) :rpy (float-vector -0.008 -0.028 3.108)))
     (send ik-target :rotate (deg2rad 90) :x)
     (setq ik-target-adj (adjust-cds-with-spot ik-target "stove"))
     ;; (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
@@ -474,7 +475,7 @@
   (send *ri* :stop-grasp :rarm :wait t)
   (if left
       (send *pr2* :rarm :angle-vector #f(-14.727 68.7101 -60.2136 -76.3185 109.312 -48.51 -7.17108)) ;; left TODO
-    (send *pr2* :rarm :angle-vector #f(-37.49 74.2613 -98.4166 -92.2371 105.499 -61.216 -179.863)))
+    (send *pr2* :rarm :angle-vector #f(-37.9792 67.891 -75.6121 -80.9552 114.675 -44.3419 -2.95313)))
   (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
   (send *ri* :wait-interpolation)
 
@@ -489,7 +490,7 @@
 
   (if left
       (send *pr2* :rarm :angle-vector #f(-14.727 68.7101 -60.2136 -76.3185 109.312 -48.51 -7.17108)) ;; left TODO
-    (send *pr2* :rarm :angle-vector #f(-37.49 74.2613 -98.4166 -92.2371 105.499 -61.216 -179.863)))
+    (send *pr2* :rarm :angle-vector #f(-37.9792 67.891 -75.6121 -80.9552 114.675 -44.3419 -2.95313))) ;; #f(-37.49 74.2613 -98.4166 -92.2371 105.499 -61.216 -179.863) for old
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
   (send *ri* :start-grasp :rarm :wait t)
@@ -501,10 +502,8 @@
           )
       (progn
         ;; (send *pr2* :rarm :angle-vector #f(-32.9823 60.3212 -73.0221 -74.5233 120.244 -39.7369 -5.03581)) ;; #f(-31.9892 63.9795 -66.939 -75.7959 118.513 -36.3796 -8.94601))
-        ;; (setq ik-target (make-coords :pos #f(527.887 -33.562 705) :rpy #f(0.0 0.0 -1.5708)))
-
-        ;; (setq ik-target (make-coords :pos #f(537.887 -33.562 705) :rpy #f(0.0 0.0 -1.5708)))
-        (setq ik-target (make-coords :pos #f(519.506 -34.693 705.0) :rpy #f(0.0 0.0 -1.5708)))
+        ;; (setq ik-target (make-coords :pos #f(519.506 -34.693 705.0) :rpy #f(0.0 0.0 -1.5708))) ;; for old stove spot
+        (setq ik-target (make-coords :pos #f(641.029 -183.873 696.789) :rpy #f(-0.089 0.092 1.448)))
         (setq ik-target-adj (adjust-cds-with-spot ik-target "stove"))
         (send *pr2* :rarm :inverse-kinematics
               ik-target-adj
@@ -522,7 +521,7 @@
 
   (if left
       (send *pr2* :rarm :angle-vector #f(-14.727 68.7101 -60.2136 -76.3185 109.312 -48.51 -7.17108)) ;; left TODO
-    (send *pr2* :rarm :angle-vector #f(-37.49 74.2613 -98.4166 -92.2371 105.499 -61.216 -179.863)))
+    (send *pr2* :rarm :angle-vector #f(-37.9792 67.891 -75.6121 -80.9552 114.675 -44.3419 -2.95313))) ;; #f(-37.49 74.2613 -98.4166 -92.2371 105.499 -61.216 -179.863) for old
   (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
   (send *ri* :wait-interpolation)
 

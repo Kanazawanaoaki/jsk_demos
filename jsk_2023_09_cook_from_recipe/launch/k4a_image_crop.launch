@@ -1,15 +1,16 @@
 <launch>
 
   <arg name="INPUT_IMAGE" default="/k4a/rgb/image_rect_color" />
+  <arg name="INPUT_CAM_INFO" default="/k4a/rgb/camera_info" />
   <arg name="MASK_IMAGE" default="/mask_image_generator/output" />
 
   <arg name="gui" default="true" />
   <arg name="launch_manager" default="true" />
 
-  <arg name="offset_x" default="640" />
-  <arg name="offset_y" default="360" />
-  <arg name="width" default="720" />
-  <arg name="height" default="1280" />
+  <arg name="offset_x" default="360" />
+  <arg name="offset_y" default="640" />
+  <arg name="width" default="1280" />
+  <arg name="height" default="720" />
 
   <arg name="MANAGER" default="sample_manager" />
 
@@ -35,6 +36,7 @@
         respawn="true" >
     <remap from="~input" to="$(arg INPUT_IMAGE)" />
     <remap from="~input/mask" to="$(arg MASK_IMAGE)" />
+    <remap from="~input/camera_info" to="$(arg INPUT_CAM_INFO)" />
     <rosparam>
       approximate_sync: true
     </rosparam>

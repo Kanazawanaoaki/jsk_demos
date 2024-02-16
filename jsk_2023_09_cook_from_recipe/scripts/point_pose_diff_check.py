@@ -32,7 +32,8 @@ class PoseVarianceCalculator:
         # サブスクライバの設定
         # rospy.Subscriber('/point_pose_kitchen/ObjectDetection', ObjectDetection, self.callback)
         # rospy.Subscriber('/point_pose_sink/ObjectDetection', ObjectDetection, self.callback)
-        rospy.Subscriber('/point_pose_stove/ObjectDetection', ObjectDetection, self.callback)
+        # rospy.Subscriber('/point_pose_stove/ObjectDetection', ObjectDetection, self.callback)
+        rospy.Subscriber('/point_pose_ih/ObjectDetection', ObjectDetection, self.callback)
 
     def callback(self, msg):
         # メッセージから座標を取得
