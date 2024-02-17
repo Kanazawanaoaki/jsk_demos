@@ -1,0 +1,13 @@
+<launch>
+  <arg name="use_cloud" default="true" />
+
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/k4a_pr2_decompress.launch">
+    <arg name="use_cloud" value="$(arg use_cloud)"/>
+  </include>
+
+  <!-- mask -->
+
+  <!-- nodes -->
+  <node name="jsk_2023_09_cook_from_recipe" pkg="image_view" type="image_view" if="$(arg view)"/>
+
+</launch>
