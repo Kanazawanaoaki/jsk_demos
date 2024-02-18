@@ -1,13 +1,19 @@
 <launch>
-  <arg name="use_cloud" default="true" />
+  <arg name="use_cloud" default="false" />
 
   <include file="$(find jsk_2023_09_cook_from_recipe)/launch/k4a_pr2_decompress.launch">
     <arg name="use_cloud" value="$(arg use_cloud)"/>
   </include>
 
   <!-- mask -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/k4a_image_crop.launch">
+    <arg name="INPUT_IMAGE" value="/k4a_remote/rgb/image_rect_color"/>
+    <arg name="gui" value="false"/>
+  </include>
 
   <!-- nodes -->
-  <node name="jsk_2023_09_cook_from_recipe" pkg="image_view" type="image_view" if="$(arg view)"/>
+  <node name="k4a_image_checker" pkg="jsk_2023_09_cook_from_recipe" type="k4a_image_checker.py" output="screen"/>
+
+  <node name="k4a_tf_publisher" pkg="jsk_2023_09_cook_from_recipe" type="k4a_tf_publisher.py" output="screen"/>
 
 </launch>

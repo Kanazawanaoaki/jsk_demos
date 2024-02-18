@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import rospy
 from sensor_msgs.msg import Image, CompressedImage
 from sound_play.msg import SoundRequest, SoundRequestAction, SoundRequestGoal

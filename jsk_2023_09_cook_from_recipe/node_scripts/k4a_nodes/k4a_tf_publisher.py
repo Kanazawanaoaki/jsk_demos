@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import rospy
 import tf
 from geometry_msgs.msg import TransformStamped
