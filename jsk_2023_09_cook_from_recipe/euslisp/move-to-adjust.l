@@ -1,5 +1,4 @@
 (setq *obj* (make-sphere 100)) ;; dummy object
-(require :detection-interface "package://jsk_perception/euslisp/detection_interface.l")
 (require :pr2-pose "package://jsk_demo_common/euslisp/pr2-pose.l")
 (require :pr2-speack "package://pr2eus/speak.l")
 (require :pr2-interface "package://pr2eus/pr2-interface.l")
@@ -227,17 +226,17 @@
      ((not (send *ri* :simulation-modep)) ;; real mode
       (if use-k4a
           (progn
-            (unless (boundp '*tfl*)
-              (setq *tfl* (instance ros::transform-listener :init)))
-            ;; (setq trans (send *tfl* :lookup-transform *base-frame-id* "head_mount_kinect_rgb_optical_frame" (send pp_msg :header :stamp)))
-            (setq trans nil)
-            (until trans
-                   (setq pp_msg (one-shot-subscribe detecion-topic posedetection_msgs::ObjectDetection))
-                   (setq trans (send *tfl* :lookup-transform *base-frame-id* (send pp_msg :header :frame_id) (send pp_msg :header :stamp)))
-                   )
-            (setq cds (make-coords))
-            (send cds :move-to trans :local)
-            (send cds :move-to (ros::tf-pose->coords (send (car (send pp_msg :objects)) :pose)) :local)
+            ;; (unless (boundp '*tfl*)
+            ;;   (setq *tfl* (instance ros::transform-listener :init)))
+            ;; (setq trans nil)
+            ;; (until trans
+            ;;        (setq pp_msg (one-shot-subscribe detecion-topic posedetection_msgs::ObjectDetection))
+            ;;        (setq trans (send *tfl* :lookup-transform *base-frame-id* (send pp_msg :header :frame_id) (send pp_msg :header :stamp)))
+            ;;        )
+            ;; (setq cds (make-coords))
+            ;; (send cds :move-to trans :local)
+            ;; (send cds :move-to (ros::tf-pose->coords (send (car (send pp_msg :objects)) :pose)) :local)
+            (setq cds (k4a-check-detection detecion-topic))
             )
         (setq cds (check-detection :type spot-name :speak-name speak-name
                                    :detection-topic detecion-topic

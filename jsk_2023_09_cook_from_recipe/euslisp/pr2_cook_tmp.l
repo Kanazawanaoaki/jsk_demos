@@ -7,6 +7,8 @@
 
 (format t "init ~%")
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2-utils.l")
+(require :detection-interface "package://jsk_perception/euslisp/detection_interface.l")
+
 (setq *co* (make-coords))
 
 
@@ -21,6 +23,20 @@
     ;; (setq ans-cds (send (send offset-cds :copy-worldcoords) :transform (send target-cds :copy-worldcoords)))
     (setq ans-cds (send (send (send offset-cds :copy-worldcoords) :inverse-transformation) :transform (send target-cds :copy-worldcoords)))
     ans-cds))
+
+;; object detection with k4a
+(defun k4a-check-detection (detecion-topic)
+  (unless (boundp '*tfl*)
+    (setq *tfl* (instance ros::transform-listener :init)))
+  (setq trans nil)
+  (until trans
+         (setq pp_msg (one-shot-subscribe detecion-topic posedetection_msgs::ObjectDetection))
+         (setq trans (send *tfl* :lookup-transform *base-frame-id* (send pp_msg :header :frame_id) (send pp_msg :header :stamp)))
+         )
+  (setq cds (make-coords))
+  (send cds :move-to trans :local)
+  (send cds :move-to (ros::tf-pose->coords (send (car (send pp_msg :objects)) :pose)) :local)
+  cds)
 
 ;; with teaching
 (defun ok-wait ()
@@ -45,6 +61,7 @@
   (ok-wait)
   (manequine-end)
   )
+
 
 (defun initial-pose-teaching () ;; 道具を握らせて貰って初期姿勢を教わる
   (manequine-end)

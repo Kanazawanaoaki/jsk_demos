@@ -1,11 +1,15 @@
 <launch>
   <arg name="gui" default="true" />
 
-  <arg name="input_image" default="/k4a/rgb/image_rect_color"/>
-  <arg name="input_camera_info" default="/k4a/rgb/camera_info"/>
+  <!-- <arg name="input_image" default="/k4a/rgb/image_rect_color"/> -->
+  <!-- <arg name="input_camera_info" default="/k4a/rgb/camera_info"/> -->
+
+  <arg name="input_image" default="/k4a_apply_mask_image/output"/>
+  <arg name="input_camera_info" default="/k4a_apply_mask_image/output/camera_info"/>
 
   <!-- <arg name="input_image" default="/kinect_head/rgb/image_rect_color"/> -->
   <!-- <arg name="input_camera_info" default="/kinect_head/rgb/camera_info"/> -->
+
   <arg name="manager" default="kitchen_template_manager"/>
 
   <node name="$(arg manager)"
