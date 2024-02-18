@@ -7,6 +7,11 @@
 (setq *yes-flag* nil)
 (setq *speak-jp* t)
 
+(setq *ih-left-target* (make-coords :pos #f(645 -55 696.789) :rpy #f(-0.089 0.092 1.448)))
+(setq *diff-left-ih* (make-coords :pos #f(-2.744 25.87 168.634) :rpy #f(2.227 1.403 0.485)))
+(setq *ih-right-target* (make-coords :pos #f(645.029 -183.873 696.789) :rpy #f(-0.089 0.092 1.448)))
+(setq *diff-right-ih* (make-coords :pos #f(-10.312 154.361 175.035) :rpy #f(2.227 1.403 0.485)))
+(setq *ih-rec-norm-thre* 100)
 
 (defun stir-fry-cook-stove (&key (object-name "egg-mixture") (vessel "フライパン") (tool "ヘラ") (state "soft-scrambled-egg") (spot "stove"))
   (let ((pre-set-avs (list))
@@ -186,6 +191,11 @@
         ik-target-adj
         )
     (cond
+     ((and (string= object-name "水カップ") (string= spot-name "stove") (equal arm :larm))
+      (setq pre-set-avs (list #f(70.9521 29.615 43.5896 -114.914 61.752 -62.5943 -235.149) #f(32.6227 35.6785 32.7297 -121.542 78.2412 -69.168 -246.245)))
+      (setq pre-set-val #f(-100 100 100))
+      (setq set-target-coords (make-coords :pos #f(657.002 322.99 908.764) :rpy #f(-0.909 0.158 -1.428)))
+      )
      ((and (string= object-name "ボウル1") (string= spot-name "stove") (equal arm :rarm))
       (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041) #f(-45.3343 3.47451 -56.4107 -109.672 -99.5375 -114.592 104.776)))
       (setq pre-set-val #f(-50 0 50))
@@ -431,7 +441,7 @@
   )
 
 
-(defun start-ih (&key (left nil) (max-power nil) (only-rotate nil))
+(defun start-ih (&key (left nil) (max-power nil) (only-rotate nil) (with-rec t))
   (if only-rotate
       (progn
         (reset-manip-pose :arm :rarm :time 2000)
@@ -442,26 +452,59 @@
         (send *ri* :wait-interpolation)
         )
 
-    (stop-ih :left left :only-stop nil)
+    (stop-ih :left left :only-stop nil :with-rec with-rec)
     )
 
   ;; grasp knob
   (send *ri* :move-gripper :rarm 0.08)
 
   (let (ik-target
-        ik-target-adj)
-    ;; (setq ik-target (make-coords :pos #f(521.619 -34.682 705.0) :rpy #f(0.0 0.0 -1.5708)));; for old stove spot
-    (setq ik-target (make-coords :pos (float-vector 646 -183 698) :rpy (float-vector -0.008 -0.028 3.108)))
-    (send ik-target :rotate (deg2rad 90) :x)
-    (setq ik-target-adj (adjust-cds-with-spot ik-target "stove"))
-    ;; (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-    (send *pr2* :rarm :inverse-kinematics ;; left TODO
-          (send ik-target-adj :copy-worldcoords)
+        ik-target-adj
+        ih-target
+        diff-ih
+        diffcds)
+    (if left
+        (progn
+          (setq ih-target (send *ih-left-target* :copy-worldcoords))
+          (setq diff-ih (send *diff-left-ih* :copy-worldcoords))
+          )
+      (progn
+        (setq ih-target (send *ih-right-target* :copy-worldcoords))
+        (setq diff-ih (send *diff-right-ih* :copy-worldcoords))
+        )
+      )
+
+    (if with-rec
+        (progn
+          (setq ih-rec-flag nil)
+          (until ih-rec-flag
+                 (if only-rotate
+                     (setq *ih-cds* (k4a-check-detection "/point_pose_ih/ObjectDetection"))
+                   )
+                 (setq ik-target (send (send *ih-cds* :copy-worldcoords) :transform diff-ih))
+                 (setq diffcds (send (send ih-target :inverse-transformation)
+                                     :transform (send ik-target :worldcoords) :world))
+                 (format t "diffcds ~A ~%" diffcds)
+                 (format t "norm diffcds pos ~A ~%" (norm (send diffcds :pos)))
+                 (if (< (norm (send diffcds :pos)) *ih-rec-norm-thre*)
+                     (setq ih-rec-flag t)
+                   )
+                 )
+          (format t "ik-target is ~A ~%" ik-target)
+          (setq ik-target-adj (send ik-target :copy-worldcoords))
+          )
+      (progn
+        (setq ik-target (send ih-target :copy-worldcoords))
+        (setq ik-target-adj (adjust-cds-with-spot ik-target "stove"))
+        ))
+    (send *pr2* :rarm :inverse-kinematics
+          ik-target-adj
           :rotation-axis t
-          :debug-view nil)
-    (send *ri* :angle-vector (send *pr2* :angle-vector))
-    (send *ri* :wait-interpolation)
+          :revert-if-fail nil)
     )
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
 
   (send *ri* :start-grasp :rarm :wait t :gain 100)
   ;; rotate
@@ -482,7 +525,7 @@
   (reset-manip-pose :arm :rarm :time 2000)
   )
 
-(defun stop-ih (&key (left nil) (only-stop t))
+(defun stop-ih (&key (left nil) (only-stop t) (with-rec t))
   (send *pr2* :head-neck-y :joint-angle *initial-head-neck-y*)
   (send *pr2* :head-neck-p :joint-angle *initial-head-neck-p*)
 
@@ -495,21 +538,47 @@
   (send *ri* :wait-interpolation)
   (send *ri* :start-grasp :rarm :wait t)
 
-  (let (ik-target)
+  (let (ik-target
+        ik-target-adj
+        ih-target
+        diff-ih
+        diffcds)
     (if left
         (progn
-          (send *pr2* :rarm :angle-vector #f(-10.3805 65.2155 -51.4302 -73.631 122.477 -46.0296 -19.6429)) ;; left TODO
+          (setq ih-target (send *ih-left-target* :copy-worldcoords))
+          (setq diff-ih (send *diff-left-ih* :copy-worldcoords))
           )
       (progn
-        ;; (send *pr2* :rarm :angle-vector #f(-32.9823 60.3212 -73.0221 -74.5233 120.244 -39.7369 -5.03581)) ;; #f(-31.9892 63.9795 -66.939 -75.7959 118.513 -36.3796 -8.94601))
-        ;; (setq ik-target (make-coords :pos #f(519.506 -34.693 705.0) :rpy #f(0.0 0.0 -1.5708))) ;; for old stove spot
-        (setq ik-target (make-coords :pos #f(641.029 -183.873 696.789) :rpy #f(-0.089 0.092 1.448)))
+        (setq ih-target (send *ih-right-target* :copy-worldcoords))
+        (setq diff-ih (send *diff-right-ih* :copy-worldcoords))
+        )
+      )
+
+    (if with-rec
+        (progn
+          (setq ih-rec-flag nil)
+          (until ih-rec-flag
+                 (setq *ih-cds* (k4a-check-detection "/point_pose_ih/ObjectDetection"))
+                 (setq ik-target (send (send *ih-cds* :copy-worldcoords) :transform diff-ih))
+                 (setq diffcds (send (send ih-target :inverse-transformation)
+                                     :transform (send ik-target :worldcoords) :world))
+                 (format t "diffcds ~A ~%" diffcds)
+                 (format t "norm diffcds pos ~A ~%" (norm (send diffcds :pos)))
+                 (if (< (norm (send diffcds :pos)) *ih-rec-norm-thre*)
+                     (setq ih-rec-flag t)
+                     )
+                 )
+          (format t "ik-target is ~A ~%" ik-target)
+          ;; (setq ik-target-adj (send ik-target :copy-worldcoords))
+          )
+      (progn
+        (setq ik-target (send ih-target :copy-worldcoords))
         (setq ik-target-adj (adjust-cds-with-spot ik-target "stove"))
-        (send *pr2* :rarm :inverse-kinematics
-              ik-target-adj
-              :rotation-axis t
-              :revert-if-fail nil)
-        ))
+      ))
+    (send *pr2* :rarm :inverse-kinematics
+          ik-target-adj
+          :rotation-axis t
+          :revert-if-fail nil)
     )
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)

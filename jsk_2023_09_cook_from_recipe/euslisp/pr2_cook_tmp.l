@@ -25,18 +25,25 @@
     ans-cds))
 
 ;; object detection with k4a
-(defun k4a-check-detection (detecion-topic)
-  (unless (boundp '*tfl*)
-    (setq *tfl* (instance ros::transform-listener :init)))
-  (setq trans nil)
-  (until trans
-         (setq pp_msg (one-shot-subscribe detecion-topic posedetection_msgs::ObjectDetection))
-         (setq trans (send *tfl* :lookup-transform *base-frame-id* (send pp_msg :header :frame_id) (send pp_msg :header :stamp)))
-         )
-  (setq cds (make-coords))
-  (send cds :move-to trans :local)
-  (send cds :move-to (ros::tf-pose->coords (send (car (send pp_msg :objects)) :pose)) :local)
-  cds)
+(defun k4a-check-detection (detecion-topic) ;; TODO 10回くらいsubscribeしてその平均か，外れ値ではないものを使いたいなど
+  (let (cds
+        trans
+        pp_msg
+        (start_time (ros::time-now))
+        )
+    (unless (boundp '*tfl*)
+      (setq *tfl* (instance ros::transform-listener :init)))
+    (setq trans nil)
+    (until trans
+           (setq pp_msg (one-shot-subscribe detecion-topic posedetection_msgs::ObjectDetection))
+           (if (ros::time>= (send pp_msg :header :stamp) start_time)
+               (setq trans (send *tfl* :lookup-transform *base-frame-id* (send pp_msg :header :frame_id) (send pp_msg :header :stamp)))
+             )
+           )
+    (setq cds (make-coords))
+    (send cds :move-to trans :local)
+    (send cds :move-to (ros::tf-pose->coords (send (car (send pp_msg :objects)) :pose)) :local)
+    cds))
 
 ;; with teaching
 (defun ok-wait ()

@@ -3,6 +3,7 @@ from posedetection_msgs.msg import ObjectDetection
 import numpy as np
 import tf
 import quaternion
+import argparse
 
 def convert_to_signed_difference(value):
     if value < 0:
@@ -20,7 +21,7 @@ def calculate_difference(arr):
     return difference
 
 class PoseVarianceCalculator:
-    def __init__(self, num_subscriptions=10):
+    def __init__(self, num_subscriptions=10, target="ih"):
         self.num_subscriptions = num_subscriptions
         self.current_subscription_count = 0
         self.all_messages = []
@@ -30,10 +31,15 @@ class PoseVarianceCalculator:
         rospy.init_node('pose_variance_calculator', anonymous=True)
 
         # サブスクライバの設定
-        # rospy.Subscriber('/point_pose_kitchen/ObjectDetection', ObjectDetection, self.callback)
-        # rospy.Subscriber('/point_pose_sink/ObjectDetection', ObjectDetection, self.callback)
-        # rospy.Subscriber('/point_pose_stove/ObjectDetection', ObjectDetection, self.callback)
-        rospy.Subscriber('/point_pose_ih/ObjectDetection', ObjectDetection, self.callback)
+        if target == "ih":
+            rospy.Subscriber('/point_pose_ih/ObjectDetection', ObjectDetection, self.callback)
+            print("target is ih")
+        elif target == "kitchen":
+            rospy.Subscriber('/point_pose_kitchen/ObjectDetection', ObjectDetection, self.callback)
+        elif target == "sink":
+            rospy.Subscriber('/point_pose_sink/ObjectDetection', ObjectDetection, self.callback)
+        elif target == "stove":
+            rospy.Subscriber('/point_pose_stove/ObjectDetection', ObjectDetection, self.callback)
 
     def callback(self, msg):
         # メッセージから座標を取得
@@ -117,5 +123,10 @@ class PoseVarianceCalculator:
         rospy.spin()
 
 if __name__ == '__main__':
-    pose_calculator = PoseVarianceCalculator()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-t','--target', default='ih')
+
+    args = parser.parse_args()
+
+    pose_calculator = PoseVarianceCalculator(target=args.target)
     pose_calculator.run()

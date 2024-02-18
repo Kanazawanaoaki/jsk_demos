@@ -1,4 +1,4 @@
-(setq *obj* (make-sphere 100)) ;; dummy object
+(unless (boundp '*obj*) (setq *obj* (make-sphere 100))) ;; dummy object
 (require :pr2-pose "package://jsk_demo_common/euslisp/pr2-pose.l")
 (require :pr2-speack "package://pr2eus/speak.l")
 (require :pr2-interface "package://pr2eus/pr2-interface.l")
@@ -114,7 +114,7 @@
   (reset-pose)
   )
 
-(defun move-to-spot (to)
+(defun move-to-spot (to &key (use-k4a t))
   (let ((move-suc-flag nil)
         (adjust-suc-flag nil))
     ;; move-to
@@ -134,7 +134,7 @@
                ;; (reset-pose)
                (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
                (format t "pr2 reset-pose ~%")
-               (setq adjust-suc-flag (move-with-adjust :move-spot :stove))
+               (setq adjust-suc-flag (move-with-adjust :move-spot :stove :use-k4a use-k4a))
                )
         ))
      ((string= to "kitchen")
@@ -146,7 +146,7 @@
         (until adjust-suc-flag
                (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
                (format t "pr2 reset-pose ~%")
-               (setq adjust-suc-flag (move-with-adjust :move-spot :kitchen))
+               (setq adjust-suc-flag (move-with-adjust :move-spot :kitchen :use-k4a use-k4a))
                )
         ))
      ((string= to "sink")
@@ -158,7 +158,7 @@
         (until adjust-suc-flag
                (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
                (format t "pr2 reset-pose ~%")
-               (setq adjust-suc-flag (move-with-adjust :move-spot :sink))
+               (setq adjust-suc-flag (move-with-adjust :move-spot :sink :use-k4a use-k4a))
                )
         ))
      )
@@ -201,8 +201,8 @@
            (setq detecion-topic "/point_pose_kitchen/ObjectDetection")
            (if use-k4a
                (setq idealcds ;; for k4a
-                     (make-coords :pos (float-vector 1145.287 325.273 1420.734)
-                                  :rpy (float-vector 0.248 1.435 -2.965)))
+                     (make-coords :pos (float-vector 1146.088 237.191 1356.95)
+                                  :rpy (float-vector 3.098 1.549 0.026)))
              (setq idealcds ;; for kinect
                    (make-coords :pos (float-vector 1163.785 266.85 1284.483)
                                 :rpy (float-vector 0.167 1.403 -3.019)))
@@ -214,8 +214,8 @@
            (setq detecion-topic "/point_pose_sink/ObjectDetection")
            (if use-k4a
                (setq idealcds ;; for k4a
-                     (make-coords :pos (float-vector 1145.287 325.273 1420.734)
-                                  :rpy (float-vector 0.248 1.435 -2.965)))
+                     (make-coords :pos (float-vector 1099.015 102.449 1329.082)
+                                  :rpy (float-vector 0.075 1.508 -3.061)))
              (setq idealcds ;; for kinect
                    (make-coords :pos (float-vector 1031.396 137.734 1282.394)
                                 :rpy (float-vector 0.258 1.499 -2.909)))
