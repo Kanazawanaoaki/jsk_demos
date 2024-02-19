@@ -184,7 +184,7 @@
     )
   )
 
-(defun place-objects-on-table (&key (object-name "ボウル1") (arm :rarm) (set-flag nil) (grasp-flag nil) (spot-name "stove"))
+(defun place-objects-on-table (&key (object-name "ボウル1") (arm :rarm) (set-flag nil) (grasp-flag nil) (only-grasp nil) (spot-name "stove"))
   (let ((pre-set-avs (list))
         (pre-set-val (float-vector 0 0 0))
         (set-target-coords (make-coords))
@@ -235,6 +235,12 @@
       (setq pre-set-avs (list #f(-34.9504 28.0727 -59.2681 -115.345 -185.596 -76.2334 232.008) #f(-13.7455 24.0885 -33.0006 -88.4288 -183.832 -57.8883 212.053)))
       (setq pre-set-val #f(-50 0 50))
       (setq set-target-coords (make-coords :pos #f(917.983 -199.795 1106.18) :rpy #f(-0.097 0.043 -0.007)))
+      )
+     ((and (string= object-name "水道") (string= spot-name "sink") (equal arm :rarm))
+      (setq pre-set-avs (list #f(-69.5413 40.539 -71.9287 -121.542 -117.442 -38.3354 119.76)
+                              #f(-23.4739 26.3763 -32.7985 -108.469 -160.605 -82.8258 124.035)))
+      (setq pre-set-val #f(-100 -100 100))
+      (setq set-target-coords (make-coords :pos #f(850 -28.163 1030) :rpy #f(0.608 0.062 -1.398))) ;; 909.733 -28.163 997.723
       )
      (t
       (format t "object-name ~A, spot-name ~A, arm ~A is not defined !!!~%" object-name spot-name arm)
@@ -298,28 +304,31 @@
       (send *ri* :stop-grasp arm :wait t) ;; 物体を置く
       )
 
-    (send set-coords :translate pre-set-val :world)
-    (setq ik-target-adj (adjust-cds-with-spot set-coords spot-name))
-    (send *pr2* arm :inverse-kinematics
-          (send ik-target-adj :copy-worldcoords)
-          :rotation-axis t
-          :debug-view nil)
-    (send *ri* :angle-vector (send *pr2* :angle-vector))
-    (send *ri* :wait-interpolation)
+    (when (not only-grasp)
 
-    (if grasp-flag
+      (send set-coords :translate pre-set-val :world)
+      (setq ik-target-adj (adjust-cds-with-spot set-coords spot-name))
+      (send *pr2* arm :inverse-kinematics
+            (send ik-target-adj :copy-worldcoords)
+            :rotation-axis t
+            :debug-view nil)
+      (send *ri* :angle-vector (send *pr2* :angle-vector))
+      (send *ri* :wait-interpolation)
+
+      (if grasp-flag
+          (progn
+            (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
+            (send *ri* :angle-vector (send *pr2* :angle-vector))
+            (send *ri* :wait-interpolation)
+            )
         (progn
-          (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
-          (send *ri* :angle-vector (send *pr2* :angle-vector))
-          (send *ri* :wait-interpolation)
-          )
-      (progn
-        (dolist (pre-set-av (reverse pre-set-avs))
-          (send *pr2* arm :angle-vector pre-set-av)
-          (send *ri* :angle-vector (send *pr2* :angle-vector))
-          (send *ri* :wait-interpolation)
-          )
-        (reset-manip-pose :arm arm))
+          (dolist (pre-set-av (reverse pre-set-avs))
+            (send *pr2* arm :angle-vector pre-set-av)
+            (send *ri* :angle-vector (send *pr2* :angle-vector))
+            (send *ri* :wait-interpolation)
+            )
+          (reset-manip-pose :arm arm))
+        )
       )
     ))
 

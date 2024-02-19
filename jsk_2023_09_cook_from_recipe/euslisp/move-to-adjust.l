@@ -127,6 +127,12 @@
       ;; (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8070 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
       (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1300 7970 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
       (format t "move-to result ~A ~%" move-suc-flag)
+      (if (equal move-suc-flag nil)
+          (progn
+            (format t "move-to fail ~%")
+            (send *ri* :speak "move fail. Please help or retry")
+            (return-from move-to-spot nil)
+            ))
       (when move-suc-flag
         (setq adjust-suc-flag nil)
         (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
