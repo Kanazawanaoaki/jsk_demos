@@ -6,8 +6,8 @@
 (load "package://pddl_planner/src/eus-pddl-client.l")
 
 ;; load domain
-(load "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/cooking-pddl-domain.l")
-(load "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/cooking-pddl-utils.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/cooking-pddl-domain.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/cooking-pddl-utils.l")
 
 ;;
 ;; problem and solve
@@ -19,11 +19,12 @@
 (defun convert-basic-list-to-target-list (basic-list)
   (let ((target-list (list))
         (step-cond '((NOT (HOLD-OBJECT ARM1))
-                          (NOT (HOLD-OBJECT ARM2))))
-        (end-cond '((NOT (STOVE-ON))
-                         (NOT (WATERFLOW))
-                         (NOT (HOLD-OBJECT ARM1))
-                         (NOT (HOLD-OBJECT ARM2))))
+                     (NOT (HOLD-OBJECT ARM2))))
+        (end-cond '((NOT (STOVE-ON POT))
+                    (NOT (STOVE-ON FRYING-PAN))
+                    (NOT (WATERFLOW))
+                    (NOT (HOLD-OBJECT ARM1))
+                    (NOT (HOLD-OBJECT ARM2))))
         )
     (dolist (l basic-list)
       (setq target-list (append target-list (list (append l step-cond))))
@@ -41,39 +42,47 @@
   )
 
 (defun read-file (file-name)
-  (format t "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/recipes/~A ~%" file-name)
-  (load (format nil "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/recipes/~A" file-name))
-  (cook-condition-conversion)
-  )
+  (let ((file-path))
+    ;; load conditions file
+    (setq file-path (format nil "package://jsk_2023_09_cook_from_recipe/recipes/output_conditions/~A" file-name))
+    (format t "Input file path is : ~A ~%" file-path)
+    (load file-path)
+    ;; load setting file
+    (setq file-path (format nil "package://jsk_2023_09_cook_from_recipe/recipes/settings/~A" file-name))
+    (load file-path)
+    (cook-condition-conversion)
+    ))
 
 (defun dump-plan-file (file-name)
   (if (null *plan-list*)
       (format t "now plan-list is nill please exec (read-file)!! ~%")
     (progn
       (format t "now plan is ~% ~A ~%" *plan-list*)
-      (dump-loadable-structure (format nil "recipes/planed/~A" file-name) *plan-list*)
-      (format t "data dumped in recipes/planed/~A ~%" file-name)
+      (dump-loadable-structure (format nil "planed/~A" file-name) *plan-list*)
+      (format t "data dumped in planed/~A ~%" file-name)
       ))
   )
 
-;; sunny-side-up.l
-;;set cooking-variables
-(setq *cooking-variables* '((OIL . ingredient)
-                            (SALAD-OIL . ingredient)
-                            (EGG . ingredient)
-                            (THIRTY-SECONDS . state)
-                            (COOKED-EGG . state)
-                            ))
+(format t "~% Please run (read-file [file-name]) ~%")
 
-;; 調理の初期条件
-(setq *cooking-initial-condition* '((ROBOT-AT STOVE)
-                                    (ON OIL STOVE)
-                                    (ON SALAD-OIL STOVE)
-                                    (IN EGG BOWL)
-                                    (ON BOWL STOVE)
-                                    (ON FRYING-PAN STOVE)
-                                    (NOT (STOVE-ON))
-                                    ))
+;; ;; sunny-side-up.l
+;; ;;set cooking-variables
+;; (setq *cooking-variables* '((OIL . ingredient)
+;;                             (SALAD-OIL . ingredient)
+;;                             (EGG . ingredient)
+;;                             (THIRTY-SECONDS . state)
+;;                             (COOKED-EGG . state)
+;;                             ))
+
+;; ;; 調理の初期条件
+;; (setq *cooking-initial-condition* '((ROBOT-AT STOVE)
+;;                                     (ON OIL STOVE)
+;;                                     (ON SALAD-OIL STOVE)
+;;                                     (IN EGG BOWL)
+;;                                     (ON BOWL STOVE)
+;;                                     (ON FRYING-PAN STOVE)
+;;                                     (NOT (STOVE-ON))
+;;                                     ))
 
 ;; ;; poached-egg.l
 ;; ;;set cooking-variables

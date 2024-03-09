@@ -1,0 +1,21 @@
+;; set cooking-variables
+(setq *cooking-variables* '((EGG . ingredient)
+                            (BUTTER . ingredient)
+                            (SMALL-BOWL . vessel)
+                            (THIRTY-SECONDS . state)
+                            (COOKED-EGG . state)
+                            (MELT . state)
+                            (MELTED . state)
+                            ))
+
+;; set cooking-initial-condition
+(setq *cooking-initial-condition* '((ROBOT-AT STOVE)
+                                    (IN BUTTER SMALL-BOWL)
+                                    (ON SMALL-BOWL STOVE)
+                                    (IN EGG BOWL)
+                                    (ON BOWL STOVE)
+                                    (ON FRYING-PAN STOVE)
+                                    (NOT (STOVE-ON POT))
+                                    (NOT (STOVE-ON FRYING-PAN))
+                                    (NOT (WATERFLOW))
+                                    ))
