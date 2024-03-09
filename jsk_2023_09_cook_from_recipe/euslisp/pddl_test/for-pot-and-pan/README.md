@@ -31,3 +31,14 @@ roseus test-plan-list.l
 
 ### 実世界での実行
 必要なlaunchを立ち上げる
+```
+TODO
+```
+
+プログラムを実行する
+```
+roscd jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/
+roseus exec-cook-from-planed-recipe.l
+(exec-cook-from-recipe "egg-recipes-prompt_sauteed-broccoli_converted_conv_planned.l")
+```
+
