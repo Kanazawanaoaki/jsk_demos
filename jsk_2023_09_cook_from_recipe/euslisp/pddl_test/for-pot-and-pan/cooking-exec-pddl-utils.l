@@ -4,14 +4,15 @@
 
 (setq *plan-list* nil)
 
-(defun load-planed-file (file-name)
-  (format t "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/recipes/planed/~A ~%" file-name)
-  (load (format nil "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/recipes/planed/~A" file-name))
+(defun load-planned-file (file-name)
+  (setq file-path (format nil "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/planned/~A" file-name))
+  (format t "Input planned-file path is : ~A ~%" file-path)
+  (load file-path)
   )
 
 (defun view-plan-list ()
   (if (null *plan-list*)
-      (format t "now plan-list is nill please exec (load-planed-file)!! ~%")
+      (format t "now plan-list is nill please exec (load-planned-file)!! ~%")
     (progn
       (dolist (plan *plan-list*)
         (print plan)
@@ -21,13 +22,15 @@
 
 (defun exec-plan-list ()
   (if (null *plan-list*)
-      (format t "now plan-list is nill please exec (load-planed-file)!! ~%")
+      (format t "now plan-list is nill please exec (load-planned-file)!! ~%")
     (progn
       (dolist (plan *plan-list*)
         (eval plan)
         )
       ))
   )
+
+(format t "~% Please run (read-file [file-name]) ~%")
 
 ;; def variables
 (setq water "water")

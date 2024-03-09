@@ -58,8 +58,8 @@
       (format t "now plan-list is nill please exec (read-file)!! ~%")
     (progn
       (format t "now plan is ~% ~A ~%" *plan-list*)
-      (dump-loadable-structure (format nil "planed/~A" file-name) *plan-list*)
-      (format t "data dumped in planed/~A ~%" file-name)
+      (dump-loadable-structure (format nil "planned/~A" file-name) *plan-list*)
+      (format t "data dumped in planned/~A ~%" file-name)
       ))
   )
 
