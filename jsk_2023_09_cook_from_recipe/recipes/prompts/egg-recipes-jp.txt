@@ -1,0 +1,45 @@
+料理レシピを変数obj, vessel, ing, tool, stateを使って
+pour(obj, vessel)
+mix(ing, ing, mixture, vessel, tool)
+set-stove(state)
+stir(ing, state, tool)
+heat(ing, state)
+cook(ing, state)
+boil(ing, state)
+sitr-fry(ing, state, tool)
+のように定義できる関数のシーケンスで表現して下さい．
+例えば，
+
+[レシピ]
+卵と牛乳をよく混ぜ合わせて卵液を作る．
+フライパンにバターを入れて溶かす．
+卵液をフライパンに注いで，まわりが固まってくるまでそのまま触らないでそのまま置く．まわりが固まってきたら木べらで手早くやわらかくなるまで炒める．
+[関数シーケンス]
+mix(egg, milk, egg-mixture, bowl, whisk)
+pour(butter, frying-pan)
+heat(butter, melt)
+pour(egg-mixture, frying-pan)
+heat(egg-mixture, surroundings-hardened)
+stir-fry(egg-mixture, whole-mixture-tender, wooden-spatula)
+
+[レシピ]
+サラダ油をフライパンに入れて30秒加熱する．
+30秒たったら卵を入れて，卵に火が通るまで焼く．
+[関数シーケンス]
+pour(salad-oil, frying-pan)
+heat(salad-oil, thirty-seconds)
+pour(egg, frying-pan)
+cook(egg, cooked-egg)
+
+[レシピ]
+鍋にお湯を沸かし，弱火にする．
+スプーンで渦を作るようにかき混ぜる．
+卵をそっと鍋に落として3分間ゆでる．
+[関数シーケンス]
+boil(water, boiled-water)
+set-stove(low)
+stir(water, vortexed-water, spoon)
+pour(egg, pot)
+boil(egg, three-minutes)
+
+では次のレシピを変換して下さい．
