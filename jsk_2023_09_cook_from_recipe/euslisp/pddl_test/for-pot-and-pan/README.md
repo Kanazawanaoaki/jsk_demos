@@ -1,4 +1,4 @@
-# jsk_2023_09_cook_from_recipe/scripts
+# jsk_2023_09_cook_from_recipe/ cook from recipe PDDL test /for-pot-and-pan
 
 レシピからの調理デモ，鍋とフライパン両方使うバージョン．
 
