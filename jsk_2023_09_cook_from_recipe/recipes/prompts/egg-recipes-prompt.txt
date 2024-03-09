@@ -1,13 +1,15 @@
-Express a cooking recipe as a sequence of functions that can be defined as below using the variables obj, vessel, ing, tool, and state.
+Express a cooking recipe as a sequence of functions that can be defined as below using the variables ingredient, vessel, tool, and state.
 For example
-pour(obj, vessel)
-mix(ing, ing, mixture, vessel, tool)
-set-stove(state)
-stir(ing, state, tool)
-heat(ing, state)
-cook(ing, state)
-boil(ing, state)
-sitr-fry(ing, state, tool)
+pour(ingredient, vessel)
+mix(ingredient, ingredient, mixture, vessel, tool)
+turn-on-stove(vessel)
+set-stove(state, vessel)
+turn-off-stove(vessel)
+stir(ingredient, state, tool)
+heat(ingredient, state)
+cook(ingredient, state)
+boil(ingredient, state)
+sitr-fry(ingredient, state, tool)
 
 For example,
 
@@ -38,7 +40,7 @@ Stir with a spoon to form a whirlpool.
 Gently drop the eggs into the pot and boil for 3 minutes.
 [Function Sequence]
 boil(water, boiled-water)
-set-stove(low)
+set-stove(low, pot)
 stir(water, vortexed-water, spoon)
 pour(egg, pot)
 boil(egg, three-minutes)

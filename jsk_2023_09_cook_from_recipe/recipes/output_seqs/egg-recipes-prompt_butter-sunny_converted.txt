@@ -1,0 +1,4 @@
+pour(butter, frying-pan)
+heat(butter, melted)
+pour(egg, frying-pan)
+cook(egg, cooked-egg)

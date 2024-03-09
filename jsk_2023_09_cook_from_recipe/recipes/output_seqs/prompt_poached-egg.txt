@@ -1,0 +1,5 @@
+boil(water, boiled-water)
+set-stove(low, pot)
+stir(water, vortexed-water, spoon)
+pour(egg, pot)
+boil(egg, three-minutes)
