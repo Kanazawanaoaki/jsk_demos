@@ -30,8 +30,6 @@
       ))
   )
 
-(format t "~% Please run (read-file [file-name]) ~%")
-
 ;; def variables
 (setq water "water")
 (setq mixture "mixture")
@@ -74,6 +72,11 @@
 (setq melted "melted")
 (setq half-cooked-egg "half-cooked-egg")
 (setq whole-mixture-tender "whole-mixture-tender")
+
+(setq surroundings-hardened "surroundings-hardened")
+
+(setq broccoli "broccoli")
+(setq twenty-seconds "twenty-seconds")
 
 (setq salad-oil "salad-oil")
 (setq thirty-seconds "thirty-seconds")

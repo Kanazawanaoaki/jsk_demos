@@ -19,3 +19,15 @@ roscd jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/
 roseus solve-read-file-dish.l
 (read-file "prompt_poached-egg_conv.l")
 ```
+
+補完されたプランをみてみる
+```
+roscd jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/
+roseus test-plan-list.l
+(load-planned-file "egg-recipes-prompt_sauteed-broccoli_converted_conv_planned.l")
+(view-plan-list)
+(exec-plan-list)
+```
+
+### 実世界での実行
+必要なlaunchを立ち上げる
