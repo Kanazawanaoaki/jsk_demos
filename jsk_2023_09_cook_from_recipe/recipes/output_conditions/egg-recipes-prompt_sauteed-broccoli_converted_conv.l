@@ -1,0 +1,10 @@
+(setq *basic-cooking-target-conditions* (list
+                                         '((BOILED WATER BOILED-WATER))
+                                         '((IN BROCCOLI POT))
+                                         '((BOILED BROCCOLI THREE-MINUTES))
+                                         '((NOT (STOVE-ON POT)))
+                                         '((IN BUTTER FRYING-PAN))
+                                         '((HEATED BUTTER MELT))
+                                         '((IN BROCCOLI FRYING-PAN))
+                                         '((STIR-FRIED BROCCOLI TWENTY-SECONDS SPATULA))
+                                         ))

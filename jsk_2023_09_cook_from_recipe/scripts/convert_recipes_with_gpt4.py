@@ -82,7 +82,7 @@ if __name__ == "__main__":
     output_file_path = os.path.join(output_dir_path, f"{prompt_name}_{recipe_name}_converted.txt")
     with open(output_file_path, 'w', encoding='utf-8') as file:
         file.write(generated_text)
-    print("Out file saved in {}".format(output_file_path))
+    print("\nOutput is saved in {}".format(output_file_path))
 
     # while True:
     #     # ユーザーに質問を入力させる
