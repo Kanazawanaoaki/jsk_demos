@@ -90,41 +90,41 @@
 
 
 (defun gaze-left-pot ()
-  ;; (ros::set-dynamic-reconfigure-param
-  ;;  "/rect_added_image_publisher" "offset_x" :int 905) ;; 855
-  ;; (ros::set-dynamic-reconfigure-param
-  ;;  "/rect_added_image_publisher" "offset_y" :int 320) ;; 330
-  ;; (ros::set-dynamic-reconfigure-param
-  ;;  "/rect_added_image_publisher" "width" :int 270)
-  ;; (ros::set-dynamic-reconfigure-param
-  ;;  "/rect_added_image_publisher" "height" :int 180)
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "offset_x" :int 900) ;; 855
+   "/rect_added_image_publisher" "offset_x" :int 895) ;; 905
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "offset_y" :int 280) ;; 330
+   "/rect_added_image_publisher" "offset_y" :int 325) ;; 320
   (ros::set-dynamic-reconfigure-param
    "/rect_added_image_publisher" "width" :int 270)
   (ros::set-dynamic-reconfigure-param
    "/rect_added_image_publisher" "height" :int 180)
-  )
-
-(defun gaze-right-pan ()
   ;; (ros::set-dynamic-reconfigure-param
-  ;;  "/rect_added_image_publisher" "offset_x" :int 1285) ;; 1280
+  ;;  "/rect_added_image_publisher" "offset_x" :int 900) ;; 855
   ;; (ros::set-dynamic-reconfigure-param
-  ;;  "/rect_added_image_publisher" "offset_y" :int 385) ;; 390
+  ;;  "/rect_added_image_publisher" "offset_y" :int 280) ;; 330
   ;; (ros::set-dynamic-reconfigure-param
   ;;  "/rect_added_image_publisher" "width" :int 270)
   ;; (ros::set-dynamic-reconfigure-param
-  ;;  "/rect_added_image_publisher" "height" :int 190)
+  ;;  "/rect_added_image_publisher" "height" :int 180)
+  )
+
+(defun gaze-right-pan ()
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "offset_x" :int 1287) ;; 1240
+   "/rect_added_image_publisher" "offset_x" :int 1285) ;; 1280
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "offset_y" :int 325) ;; 390
+   "/rect_added_image_publisher" "offset_y" :int 375) ;; 390
   (ros::set-dynamic-reconfigure-param
    "/rect_added_image_publisher" "width" :int 270)
   (ros::set-dynamic-reconfigure-param
    "/rect_added_image_publisher" "height" :int 190)
+  ;; (ros::set-dynamic-reconfigure-param
+  ;;  "/rect_added_image_publisher" "offset_x" :int 1287) ;; 1240
+  ;; (ros::set-dynamic-reconfigure-param
+  ;;  "/rect_added_image_publisher" "offset_y" :int 325) ;; 390
+  ;; (ros::set-dynamic-reconfigure-param
+  ;;  "/rect_added_image_publisher" "width" :int 270)
+  ;; (ros::set-dynamic-reconfigure-param
+  ;;  "/rect_added_image_publisher" "height" :int 190)
   )
 
 (defun wait-cook-stove (&key (object-name "egg") (state "heat-through") (vessel "フライパン"))
