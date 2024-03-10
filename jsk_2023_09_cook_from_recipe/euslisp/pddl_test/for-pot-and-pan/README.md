@@ -66,14 +66,14 @@ roslaunch jsk_2023_09_cook_from_recipe kitchen_template_matching_k4a.launch
 roslaunch jsk_2023_09_cook_from_recipe use_k4a_remote.launch
 roslaunch jsk_2023_09_cook_from_recipe pot-and-pan_rviz.launch
 ```
-
+実行する
 ```
 roscd jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/
 roseus exec-cook-from-planed-recipe.l
 (exec-cook-from-recipe "egg-recipes-prompt_butter-sunny_converted_conv_planned.l")
 ```
 
-### バターありの目玉焼き
+### ブロッコリーゆでいため
 位置に移動する．kitchen_template_matching_k4a.launch を立ち上げている状態で，
 ```
 roscd jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/
@@ -97,10 +97,10 @@ roslaunch jsk_2023_09_cook_from_recipe kitchen_template_matching_k4a.launch
 roslaunch jsk_2023_09_cook_from_recipe use_k4a_remote.launch
 roslaunch jsk_2023_09_cook_from_recipe pot-and-pan_rviz.launch
 ```
-
+実行する
 ```
 roscd jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/
 roseus exec-cook-from-planed-recipe.l
-(exec-cook-from-recipe "egg-recipes-prompt_butter-sunny_converted_conv_planned.l")
+(exec-cook-from-recipe "egg-recipes-prompt_sauteed-broccoli_converted_conv_planned.l")
 ```
 
