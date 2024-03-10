@@ -100,7 +100,7 @@
     (start-ih :with-rec nil :left nil)
     )
    ((string= vessel "pot")
-    (start-ih :with-rec nil :left t)
+    (start-ih :with-rec nil :left t :max-power t)
     )
    (t
     (format t "vessel ~A and arm ~A is not defined !!!~%" vessel arm)
@@ -277,7 +277,7 @@
 
 ;; exec
 (defun exec-cook-from-recipe (file-name)
-  (load-planed-file file-name)
+  (load-planned-file file-name)
   (exec-plan-list)
   )
 

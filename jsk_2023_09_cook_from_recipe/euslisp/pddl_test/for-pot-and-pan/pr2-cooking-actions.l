@@ -90,10 +90,18 @@
 
 
 (defun gaze-left-pot ()
+  ;; (ros::set-dynamic-reconfigure-param
+  ;;  "/rect_added_image_publisher" "offset_x" :int 905) ;; 855
+  ;; (ros::set-dynamic-reconfigure-param
+  ;;  "/rect_added_image_publisher" "offset_y" :int 320) ;; 330
+  ;; (ros::set-dynamic-reconfigure-param
+  ;;  "/rect_added_image_publisher" "width" :int 270)
+  ;; (ros::set-dynamic-reconfigure-param
+  ;;  "/rect_added_image_publisher" "height" :int 180)
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "offset_x" :int 850) ;; 855
+   "/rect_added_image_publisher" "offset_x" :int 900) ;; 855
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "offset_y" :int 300) ;; 330
+   "/rect_added_image_publisher" "offset_y" :int 280) ;; 330
   (ros::set-dynamic-reconfigure-param
    "/rect_added_image_publisher" "width" :int 270)
   (ros::set-dynamic-reconfigure-param
@@ -101,10 +109,18 @@
   )
 
 (defun gaze-right-pan ()
+  ;; (ros::set-dynamic-reconfigure-param
+  ;;  "/rect_added_image_publisher" "offset_x" :int 1285) ;; 1280
+  ;; (ros::set-dynamic-reconfigure-param
+  ;;  "/rect_added_image_publisher" "offset_y" :int 385) ;; 390
+  ;; (ros::set-dynamic-reconfigure-param
+  ;;  "/rect_added_image_publisher" "width" :int 270)
+  ;; (ros::set-dynamic-reconfigure-param
+  ;;  "/rect_added_image_publisher" "height" :int 190)
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "offset_x" :int 1240) ;; 1240
+   "/rect_added_image_publisher" "offset_x" :int 1287) ;; 1240
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "offset_y" :int 350) ;; 390
+   "/rect_added_image_publisher" "offset_y" :int 325) ;; 390
   (ros::set-dynamic-reconfigure-param
    "/rect_added_image_publisher" "width" :int 270)
   (ros::set-dynamic-reconfigure-param
@@ -132,8 +148,9 @@
          (string= object-name "egg")
          (string= vessel "フライパン")
          )
-        ;; (setq model_file "cooked_sunny_content_model_2023_1010_1904.pkl") ;; TODO
-        (setq model_file "2023-12-12_cook_sunny_datas_model_2023_1212_2131.pkl")
+        ;; (setq model_file "cooked_sunny_content_model_2023_1010_1904.pkl")
+        ;; (setq model_file "2023-12-12_cook_sunny_datas_model_2023_1212_2131.pkl")
+        (setq model_file "multi_data_20240310_kitchen_egg_train_model_2024_0311_0310.pkl")
         (setq target_state "egg is cooked")
         (gaze-right-pan)
         )
@@ -142,7 +159,7 @@
          (string= object-name "butter")
          (string= vessel "フライパン")
          )
-        (setq model_file "2023-12-12_cook_sunny_datas_model_2023_1212_2131.pkl") ;; TODO
+        (setq model_file "multi_data_20240310_kitchen_butter_train_model_2024_0311_0307.pkl")
         (setq target_state "butter is melt")
         (gaze-right-pan)
         )
@@ -151,7 +168,7 @@
          (string= object-name "water")
          (string= vessel "鍋")
          )
-        (setq model_file "2023-12-12_cook_sunny_datas_model_2023_1212_2131.pkl") ;; TODO
+        (setq model_file "multi_data_20240310_kitchen_boil_train_model_2024_0311_0305.pkl")
         (setq target_state "water is boiled")
         (gaze-left-pot)
         )
@@ -191,15 +208,21 @@
         cook-from-now-file-name
         )
     (cond
-     ((and (string= from-object "ボウル1") (string= to-object "フライパン") (string= spot-name "stove") (equal arm :rarm))
-      (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041) #f(-45.3343 3.47451 -56.4107 -109.672 -99.5375 -114.592 104.776)))
+     ((and (string= from-object "ボウル1") (string= to-object "フライパン") (string= spot-name "stove") (equal arm :rarm)) ;; egg
+      ;; (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041) #f(-45.3343 3.47451 -56.4107 -109.672 -99.5375 -114.592 104.776)))
       ;; (setq cook-from-now-file-name "av-files/cook-from-now-pour-bowl1-to-pan-20231212-data.l")
-      (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl1-to-pan-20240221-data.l")
+
+      (setq pre-set-avs (list #f(-17.2701 6.61532 -15.8472 -46.5569 -153.821 -114.592 99.202)))
+      ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl1-to-pan-20240221-data.l")
+      (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl1-to-pan-20240310-data.l")
+      (send *ri* :start-grasp :rarm :gain 100 :wait t)
       )
-     ((and (string= from-object "ボウル0") (string= to-object "フライパン") (string= spot-name "stove") (equal arm :rarm))
-      (setq pre-set-avs (list #f(-28.2146 0.07681 -56.1994 -95.3798 -127.421 -97.0024 137.794)
-                              #f(-21.4171 10.8467 -51.9823 -76.3682 -134.766 -103.742 117.398)))
+     ((and (string= from-object "ボウル0") (string= to-object "フライパン") (string= spot-name "stove") (equal arm :rarm)) ;; butter
+      ;; (setq pre-set-avs (list #f(-28.2146 0.07681 -56.1994 -95.3798 -127.421 -97.0024 137.794)
+      ;;                         #f(-21.4171 10.8467 -51.9823 -76.3682 -134.766 -103.742 117.398)))
       ;; (setq cook-from-now-file-name "av-files/cook-from-now-pour-bowl0-to-pan-20231212-data.l")
+      (setq pre-set-avs (list #f(-27.4926 -3.15125 -53.829 -47.5523 -117.203 -99.9358 106.977)
+                              ))
       (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl0-to-pan-20240221-data.l")
       )
      ((and (string= from-object "あぶら") (string= to-object "フライパン") (string= spot-name "stove")) ;; larmだったが結局両腕使うので
