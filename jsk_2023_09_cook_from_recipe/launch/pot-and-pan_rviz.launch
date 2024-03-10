@@ -1,0 +1,5 @@
+<launch>
+  <arg name="config_name" default="cook_for-pot-and-pan.rviz" />
+  <node pkg="rviz" type="rviz" name="$(anon clip_ros_client_rviz)"
+        args="-d $(find jsk_2023_09_cook_from_recipe)/config/$(arg config_name)" />
+</launch>

@@ -100,7 +100,7 @@
     (start-ih :with-rec nil :left nil)
     )
    ((string= vessel "pot")
-    (start-ih :with-rec nil :left nil)
+    (start-ih :with-rec nil :left t)
     )
    (t
     (format t "vessel ~A and arm ~A is not defined !!!~%" vessel arm)
@@ -135,7 +135,7 @@
     (stop-ih :with-rec nil :left nil)
     )
    ((string= vessel "pot")
-    (stop-ih :with-rec nil :left nil)
+    (stop-ih :with-rec nil :left t)
     )
    (t
     (format t "vessel ~A and arm ~A is not defined !!!~%" vessel arm)

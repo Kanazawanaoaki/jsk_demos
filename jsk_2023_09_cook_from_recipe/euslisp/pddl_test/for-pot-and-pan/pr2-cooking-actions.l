@@ -10,8 +10,9 @@
 (setq *ih-left-target* (make-coords :pos #f(645 -55 696.789) :rpy #f(-0.089 0.092 1.448)))
 ;; (setq *ih-left-target* (make-coords :pos #f(640 -45 696.789) :rpy #f(-0.089 0.092 1.448)))
 (setq *diff-left-ih* (make-coords :pos #f(-2.744 25.87 168.634) :rpy #f(2.227 1.403 0.485)))
-(setq *ih-right-target* (make-coords :pos #f(645.029 -183.873 696.789) :rpy #f(-0.089 0.092 1.448)))
+;; (setq *ih-right-target* (make-coords :pos #f(645.029 -183.873 696.789) :rpy #f(-0.089 0.092 1.448)))
 ;; (setq *ih-right-target* (make-coords :pos #f(635 -173 696.789) :rpy #f(-0.089 0.092 1.448)))
+(setq *ih-right-target* (make-coords :pos #f(645.029 -178.873 696.789) :rpy #f(-0.089 0.092 1.448)))
 (setq *diff-right-ih* (make-coords :pos #f(-10.312 154.361 175.035) :rpy #f(2.227 1.403 0.485)))
 (setq *ih-rec-norm-thre* 100)
 
@@ -22,17 +23,9 @@
         model_file
         target_state
         )
-    (setq pre-set-avs (list #f(-23.3076 50.4461 -21.9938 -121.268 -173.134 -64.7071 191.807)))
-    ;; (setq cook-from-now-file-name "av-files/cook-from-now-stirfry-with-spatula-and-pan-rarm-20231212-data.l")
 
     ;; フライパンを抑える
     (hold-pot-on-stove :arm :larm :object-name vessel :grasp-flag t)
-
-    ;; 物体把持初期姿勢
-    (send *pr2* :rarm :angle-vector (elt (reverse pre-set-avs) 0))
-    (send *ri* :angle-vector (send *pr2* :angle-vector))
-    (send *ri* :wait-interpolation)
-    (send *ri* :start-grasp :rarm :wait t :gain 1.0)
 
     (cond
      ((and
@@ -42,7 +35,8 @@
        (string= state "twenty-seconds")
        (string= spot "stove")
        )
-      (setq cook-from-now-file-name "../../av-files/cook-from-now-stir-fry-in-pan-20240221-data.l")
+      ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-stir-fry-in-pan-20240221-data.l")
+      (setq cook-from-now-file-name "../../av-files/cook-from-now-stir-fry-in-pan-20240310-data.l")
       (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
       (cook-from-now-replay-once :larm nil :initial-av t)
       )
@@ -53,6 +47,15 @@
        (string= state "soft-scrambled-egg")
        (string= spot "stove")
        )
+      (setq pre-set-avs (list #f(-23.3076 50.4461 -21.9938 -121.268 -173.134 -64.7071 191.807)))
+      ;; (setq cook-from-now-file-name "av-files/cook-from-now-stirfry-with-spatula-and-pan-rarm-20231212-data.l")
+
+      ;; 物体把持初期姿勢
+      (send *pr2* :rarm :angle-vector (elt (reverse pre-set-avs) 0))
+      (send *ri* :angle-vector (send *pr2* :angle-vector))
+      (send *ri* :wait-interpolation)
+      (send *ri* :start-grasp :rarm :wait t :gain 100)
+
       (setq cook-from-now-file-name "../../av-files/cook-from-now-stir-fry-in-pan-20240221-data.l")
       (setq model_file "2023-12-12_cook_sunny_datas_model_2023_1212_2131.pkl") ;; TODO
       (setq target_state "soft-scrambled-egg")
@@ -86,6 +89,28 @@
   )
 
 
+(defun gaze-left-pot ()
+  (ros::set-dynamic-reconfigure-param
+   "/rect_added_image_publisher" "offset_x" :int 850) ;; 855
+  (ros::set-dynamic-reconfigure-param
+   "/rect_added_image_publisher" "offset_y" :int 300) ;; 330
+  (ros::set-dynamic-reconfigure-param
+   "/rect_added_image_publisher" "width" :int 270)
+  (ros::set-dynamic-reconfigure-param
+   "/rect_added_image_publisher" "height" :int 180)
+  )
+
+(defun gaze-right-pan ()
+  (ros::set-dynamic-reconfigure-param
+   "/rect_added_image_publisher" "offset_x" :int 1240) ;; 1240
+  (ros::set-dynamic-reconfigure-param
+   "/rect_added_image_publisher" "offset_y" :int 350) ;; 390
+  (ros::set-dynamic-reconfigure-param
+   "/rect_added_image_publisher" "width" :int 270)
+  (ros::set-dynamic-reconfigure-param
+   "/rect_added_image_publisher" "height" :int 190)
+  )
+
 (defun wait-cook-stove (&key (object-name "egg") (state "heat-through") (vessel "フライパン"))
   (cond
    ;; state が時間指定ならその時間待つ
@@ -105,24 +130,30 @@
        ((and ;; 目玉焼き
          (or (string= state "heat-through") (string= state "cooked-egg"))
          (string= object-name "egg")
+         (string= vessel "フライパン")
          )
         ;; (setq model_file "cooked_sunny_content_model_2023_1010_1904.pkl") ;; TODO
         (setq model_file "2023-12-12_cook_sunny_datas_model_2023_1212_2131.pkl")
         (setq target_state "egg is cooked")
+        (gaze-right-pan)
         )
-       ((and ;; butter melt TODO
+       ((and ;; butter melt
          (or (string= state "melt") (string= state "melted"))
          (string= object-name "butter")
+         (string= vessel "フライパン")
          )
         (setq model_file "2023-12-12_cook_sunny_datas_model_2023_1212_2131.pkl") ;; TODO
         (setq target_state "butter is melt")
+        (gaze-right-pan)
         )
-       ((and ;; boil TODO
+       ((and ;; boil
          (or (string= state "boiled-water") (string= state "boiled"))
          (string= object-name "water")
+         (string= vessel "鍋")
          )
         (setq model_file "2023-12-12_cook_sunny_datas_model_2023_1212_2131.pkl") ;; TODO
         (setq target_state "water is boiled")
+        (gaze-left-pot)
         )
        (t
         (format t "object-name ~A, state ~A, vessel ~A is not defined !!!~%" object-name state vessel)
@@ -130,8 +161,9 @@
         )
        )
 
-      ;; 鍋やフライパンの領域を注視
-      (described_gazing_area_detector-command :query-list (list "the content of the pot" "the content of the frying pan"))
+      ;; ;; 鍋やフライパンの領域を注視
+      ;; (described_gazing_area_detector-command :query-list (list "the content of the pot" "the content of the frying pan"))
+
       ;; 状態認識器をセット
       (lc_adjusted_clip_state_recognition-command :model_file model_file :target_state target_state)
 
@@ -213,12 +245,16 @@
       (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
       (send *ri* :wait-interpolation)
 
+      (send *ri* :stop-grasp :larm :wait t)
+
       (return-from pour-object-to-pan nil)
       )
      ((and (string= from-object "pot") (string= to-object "frying-pan") (string= spot-name "stove") (equal arm :larm)) ;; for broccoli
       ;; (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041) #f(-45.3343 3.47451 -56.4107 -109.672 -99.5375 -114.592 104.776)))
       ;; (setq cook-from-now-file-name "av-files/cook-from-now-pour-bowl1-to-pan-20240221-data.l")
       ;; (load-cook-file :file_name "av-files/cook_larm-data_transfer-broccoli_20231119_01.l" :larm t)
+      (send *ri* :start-grasp :larm :wait t :gain 100)
+
       (load-cook-file :file_name "../../av-files/cook_larm-data_transfer-broccoli_20231119_01.l" :larm t)
       ;; (cook-replay-once :larm t)
       (cook-from-now-replay-once :larm t :initial-av nil)
@@ -347,7 +383,9 @@
                               #f(45.532 15.6265 43.8688 -52.2305 36.9455 -101.153 -32.4685)
                               ))
       (setq pre-set-val #f(-50 50 50))
-      (setq set-target-coords (make-coords :pos #f(615.967 367.301 914.519) :rpy #f(-1.371 0.162 1.508)))
+      ;; (setq set-target-coords (make-coords :pos #f(615.967 367.301 914.519) :rpy #f(-1.371 0.162 1.508)))
+      ;; (setq set-target-coords (make-coords :pos #f(660 367.301 914.519) :rpy #f(-1.371 0.162 1.508)))
+      (setq set-target-coords (make-coords :pos #f(700 367.301 914.519) :rpy #f(-1.371 0.162 1.508)))
       )
      (t
       (format t "object-name ~A, spot-name ~A, arm ~A is not defined !!!~%" object-name spot-name arm)
@@ -525,6 +563,12 @@
   (ok-wait)
 
   (release-pot-on-stove :arm arm)
+  )
+
+(defun set-pot-for-broccoli (&key (arm :larm) (object-name "鍋"))
+  (hold broccoli arm2 stove)
+  (pour broccoli pot arm2 stove)
+  (place broccoli arm2 stove)
   )
 
 (defun rotate-knob (&rest args &key (deg 30) (arm :larm) &allow-other-keys)
