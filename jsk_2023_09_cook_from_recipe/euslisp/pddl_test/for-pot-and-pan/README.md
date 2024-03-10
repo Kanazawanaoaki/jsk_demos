@@ -50,5 +50,57 @@ roscd jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/
 roseus exec-cook-from-planed-recipe.l
 (move-to-spot "stove")
 (start-ih :with-rec nil :left nil) ;; これを実行して位置を確認
+
+(place-objects-on-table :object-name "ボウル0" :arm :rarm :spot-name "stove" :set-flag t) ;; small-bowl
+(place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name "stove" :set-flag t) ;; bowl
+(set-pot-on-stove :object-name "フライパン") ;; frying-pan
+```
+
+サーバーPCで立ち上げる
+```
+roslaunch jsk_2023_09_cook_from_recipe cook_rec_for_pot-and-pan.launch
+```
+実行PCで立ち上げる
+```
+roslaunch jsk_2023_09_cook_from_recipe kitchen_template_matching_k4a.launch
+roslaunch jsk_2023_09_cook_from_recipe use_k4a_remote.launch
+roslaunch jsk_2023_09_cook_from_recipe pot-and-pan_rviz.launch
+```
+
+```
+roscd jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/
+roseus exec-cook-from-planed-recipe.l
+(exec-cook-from-recipe "egg-recipes-prompt_butter-sunny_converted_conv_planned.l")
+```
+
+### バターありの目玉焼き
+位置に移動する．kitchen_template_matching_k4a.launch を立ち上げている状態で，
+```
+roscd jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/
+roseus exec-cook-from-planed-recipe.l
+(move-to-spot "stove")
+(start-ih :with-rec nil :left nil) ;; これを実行して位置を確認
+
+(place-objects-on-table :object-name "ボウル0" :arm :rarm :spot-name "stove" :set-flag t)
+(set-pot-on-stove :object-name "フライパン")
+(set-pot-for-broccoli) ;; 鍋の位置．
+(place-objects-on-table :object-name "ブロッコリー" :arm :larm :spot-name "stove" :set-flag t)
+```
+
+サーバーPCで立ち上げる
+```
+roslaunch jsk_2023_09_cook_from_recipe cook_rec_for_pot-and-pan.launch
+```
+実行PCで立ち上げる
+```
+roslaunch jsk_2023_09_cook_from_recipe kitchen_template_matching_k4a.launch
+roslaunch jsk_2023_09_cook_from_recipe use_k4a_remote.launch
+roslaunch jsk_2023_09_cook_from_recipe pot-and-pan_rviz.launch
+```
+
+```
+roscd jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/
+roseus exec-cook-from-planed-recipe.l
+(exec-cook-from-recipe "egg-recipes-prompt_butter-sunny_converted_conv_planned.l")
 ```
 
