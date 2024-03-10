@@ -32,13 +32,23 @@ roseus test-plan-list.l
 ### 実世界での実行
 必要なlaunchを立ち上げる
 ```
-TODO
+roslaunch jsk_2023_09_cook_from_recipe kitchen_template_matching_k4a.launch
+roslaunch jsk_2023_09_cook_from_recipe use_k4a_remote.launch
 ```
 
-プログラムを実行する
+プログラムを実行する（基本的には）
 ```
 roscd jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/
 roseus exec-cook-from-planed-recipe.l
 (exec-cook-from-recipe "egg-recipes-prompt_sauteed-broccoli_converted_conv_planned.l")
+```
+
+### バターありの目玉焼き
+位置に移動する．kitchen_template_matching_k4a.launch を立ち上げている状態で，
+```
+roscd jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/
+roseus exec-cook-from-planed-recipe.l
+(move-to-spot "stove")
+(start-ih :with-rec nil :left nil) ;; これを実行して位置を確認
 ```
 

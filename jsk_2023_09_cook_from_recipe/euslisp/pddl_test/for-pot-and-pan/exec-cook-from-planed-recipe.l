@@ -28,6 +28,12 @@
    ((string= object "spatula")
     (place-objects-on-table :object-name "ヘラ" :arm :rarm :spot-name spot :grasp-flag t)
     )
+   ((string= object "broccoli")
+    (place-objects-on-table :object-name "ブロッコリー" :arm :larm :spot-name spot :grasp-flag t)
+    )
+   ((string= object "pot")
+    (place-objects-on-table :object-name "pot" :arm :larm :spot-name spot :grasp-flag t)
+    )
    (t
     (format t "object ~A, arm ~A, spot ~A is not defined !!!~%" object arm spot)
     (return-from hold nil)
@@ -53,6 +59,12 @@
     )
    ((string= object "spatula")
     (place-objects-on-table :object-name "ヘラ" :arm :rarm :spot-name spot)
+    )
+   ((string= object "broccoli")
+    (place-objects-on-table :object-name "ブロッコリー" :arm :larm :spot-name spot)
+    )
+   ((string= object "pot")
+    (place-objects-on-table :object-name "pot" :arm :larm :spot-name spot)
     )
    (t
     (format t "object ~A, arm ~A, spot ~A is not defined !!!~%" object arm spot)
@@ -82,19 +94,54 @@
 
 (defun turn-on-stove (vessel arm)
   (format t "(turn-on-stove ~A ~A) ~%" vessel arm)
-  (start-ih) ;; TODO swith left and right
+
+  (cond
+   ((or (string= vessel "frying-pan") (string= vessel "pan"))
+    (start-ih :with-rec nil :left nil)
+    )
+   ((string= vessel "pot")
+    (start-ih :with-rec nil :left nil)
+    )
+   (t
+    (format t "vessel ~A and arm ~A is not defined !!!~%" vessel arm)
+    (return-from turn-on-stove nil)
+    )
+   )
   )
 
 (defun set-stove (before after vessel arm)
   (format t "(set-stove ~A ~A ~A ~A) ~%" before after vessel arm)
   ;; TODO only rotate
+
+  (cond ;; TODO Add for before and after state
+   ((or (string= vessel "frying-pan") (string= vessel "pan"))
+    (start-ih :with-rec nil :left nil :only-rotate t)
+    )
+   ((string= vessel "pot")
+    (start-ih :with-rec nil :left t :only-rotate t)
+    )
+   (t
+    (format t "vessel ~A and arm ~A is not defined !!!~%" vessel arm)
+    (return-from turn-on-stove nil)
+    )
+   )
   )
 
 (defun turn-off-stove (before vessel arm)
   (format t "(turn-off-stove ~A ~A ~A) ~%" before vessel arm)
 
-  ;; stop-ih rarm
-  (stop-ih) ;; TODO swith left and right
+  (cond
+   ((or (string= vessel "frying-pan") (string= vessel "pan"))
+    (stop-ih :with-rec nil :left nil)
+    )
+   ((string= vessel "pot")
+    (stop-ih :with-rec nil :left nil)
+    )
+   (t
+    (format t "vessel ~A and arm ~A is not defined !!!~%" vessel arm)
+    (return-from turn-off-stove nil)
+    )
+   )
   )
 
 (defun wash (object arm)
@@ -103,7 +150,7 @@
 
 (defun pour (object vessel arm spot)
   (format t "(pour ~A ~A ~A ~A) ~%" object vessel arm spot)
-  ;; (pour milk bowl arm2 kitchen) (pour salad-oil frying-pan arm2 stove) 
+  ;; (pour milk bowl arm2 kitchen) (pour salad-oil frying-pan arm2 stove)
 
   ;; todo pour todo
   (cond
@@ -111,6 +158,11 @@
      (or (string= object "salad-oil") (string= object "oil"))
      (string= vessel "frying-pan"))
     (pour-object-to-pan :from-object "あぶら" :to-object "フライパン" :arm :larm :spot-name spot)
+    )
+   ((and
+     (string= object "broccoli")
+     (string= vessel "pot"))
+    (pour-object-to-pan :from-object "ブロッコリー" :to-object "鍋" :spot-name spot :arm :larm)
     )
    (t
     (format t "object ~A, arm ~A, spot ~A is not defined !!!~%" object arm spot)
@@ -121,10 +173,6 @@
 
 (defun transfer (content from to arm spot)
   (format t "(transfer ~A ~A ~A ~A ~A) ~%" content from to arm spot)
-  ;; (transfer butter small-bowl frying-pan arm2 stove)
-  ;; (transfer egg-mixture bowl frying-pan arm2 stove) (transfer egg bowl frying-pan arm2 stove)
-  ;; (transfer egg bowl pot arm2 stove)
-  ;; (transfer water measuring-cup pot arm2 stove)
 
   ;; todo transfer todo
   (cond
@@ -138,9 +186,15 @@
      (string= to "frying-pan"))
     (pour-object-to-pan :from-object "ボウル0" :to-object "フライパン" :arm :rarm :spot-name spot)
     )
+   ((and
+     (string= content "broccoli")
+     (string= from "pot")
+     (string= to "frying-pan"))
+    (pour-object-to-pan :from-object "pot" :to-object "frying-pan" :spot-name spot :arm :larm)
+    )
    (t
-    (format t "object ~A, arm ~A, spot ~A is not defined !!!~%" object arm spot)
-    (return-from pour nil)
+    (format t "from ~A, to ~A, arm ~A, spot ~A is not defined !!!~%" from to arm spot)
+    (return-from transfer nil)
     )
    )
   )
@@ -192,7 +246,25 @@
 (defun stir-fry (input vessel tool state spot arm1 arm2)
   (format t "(stir-fry ~A ~A ~A ~A ~A ~A ~A) ~%" input vessel tool state spot arm1 arm2)
   ;; (stir-fry egg-mixture frying-pan spatula soft-scrambled-egg stove arm2 arm1)
-  (stir-fry-cook-stove :object-name "egg-mixture" :vessel "フライパン" :tool "ヘラ" :state "soft-scrambled-egg" :spot "stove")
+
+  (cond
+   ((and ;; TODO
+     (string= input "egg-mixture")
+     (string= vessel "frying-pan")
+     )
+    (stir-fry-cook-stove :object-name "egg-mixture" :vessel "フライパン" :tool "ヘラ" :state "soft-scrambled-egg" :spot "stove")
+    )
+   ((and ;; TODO
+     (string= input "broccoli")
+     (string= vessel "frying-pan")
+     (string= tool "spatula")
+     )
+    (stir-fry-cook-stove :object-name input :vessel "フライパン" :tool "ヘラ" :state state :spot spot)
+    )
+   (t
+    (format t "It is not defined now!! ~%")
+    )
+   )
   )
 
 (defun fetch-water (arm)
