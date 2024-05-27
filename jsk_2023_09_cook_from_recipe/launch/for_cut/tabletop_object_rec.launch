@@ -8,7 +8,7 @@
   <arg name="machine" default="localhost" />
   <arg name="load_machine" default="true" />
 
-<arg name="input" default="/kinect_head_remote/depth_registered/points" />
+  <arg name="input" default="/kinect_head_remote/depth_registered/points" />
   <arg name="sensor_frame" default="head_mount_kinect_rgb_optical_frame" />
 
   <arg name="launch_manager" default="true" />

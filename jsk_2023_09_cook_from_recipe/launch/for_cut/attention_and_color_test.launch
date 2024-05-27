@@ -1,0 +1,120 @@
+<launch>
+
+  <arg name="gui" default="true" />
+
+  <arg name="INPUT_CLOUD" value="/kinect_head_remote/depth_registered/points" />
+
+  <!-- attention_clipper -->
+  <node name="attention_clipper"
+        pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl/AttentionClipper">
+    <remap from="~input/points" to="$(arg INPUT_CLOUD)" />
+    <rosparam>
+      initial_pos: [0.75, -0.05, 0.8]
+      initial_rot: [0, 0, 0]
+      <!-- dimension_x: 0.5 -->
+      dimension_x: 0.55
+      dimension_y: 0.6
+      dimension_z: 0.3
+      frame_id: base_link
+      use_multiple_attention: false
+    </rosparam>
+  </node>
+
+  <node name="extract_indices"
+        pkg="jsk_pcl_ros" type="extract_indices">
+    <remap from="~input" to="$(arg INPUT_CLOUD)" />
+    <remap from="~indices" to="attention_clipper/output/point_indices" />
+    <rosparam>
+      keep_organized: true
+    </rosparam>
+  </node>
+
+
+  <!-- hsi color filter -->
+  <node name="hsi_input_relay" pkg="nodelet" type="nodelet"
+        args="standalone jsk_topic_tools/Relay">
+    <remap from="~input" to="/extract_indices/output" />
+  </node>
+  <node name="hsi_multi_plane_estimate" pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl/OrganizedMultiPlaneSegmentation"
+        output="screen">
+    <remap from="~input" to="hsi_input_relay/output" />
+    <rosparam>
+      ransac_refine_outlier_distance_threshold: 1
+      max_curvature: 0.01
+      estimate_normal: true
+    </rosparam>
+  </node>
+  <node name="hsi_polygon_magnifier" pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl_utils/PolygonMagnifier"
+        output="screen">
+    <remap from="~input" to="hsi_multi_plane_estimate/output_refined_polygon" />
+  </node>
+
+  <arg name="CENTROID_FRAME" value="target"/>
+  <arg name="DEFAULT_NAMESPACE" value="pcl_nodelet"/>
+
+  <arg name="h_max" value="-93" /><!-- 127 -->
+  <arg name="h_min" value="-128" /><!-- -128 -->
+  <arg name="s_max" value="28" /><!-- 255 -->
+  <arg name="s_min" value="0" /><!-- 0 -->
+  <arg name="i_max" value="255" /><!-- 255 -->
+  <arg name="i_min" value="209" /><!-- 0 -->
+
+
+  <node pkg="nodelet" type="nodelet" name="hsi_filter"
+        args="standalone jsk_pcl/HSIColorFilter" output="screen">
+    <!-- <remap from="~input" to="/extract_indices/output" /> -->
+    <remap from="~input" to="hsi_input_relay/output" />
+    <remap from="~output" to="hsi_output" />
+    <rosparam>
+      use_indices: false
+      keep_organized: true
+    </rosparam>
+    <param name="h_limit_max" value="$(arg h_max)" />
+    <param name="h_limit_min" value="$(arg h_min)" />
+    <param name="s_limit_max" value="$(arg s_max)" />
+    <param name="s_limit_min" value="$(arg s_min)" />
+    <param name="i_limit_max" value="$(arg i_max)" />
+    <param name="i_limit_min" value="$(arg i_min)" />
+  </node>
+
+  <node pkg="nodelet" type="nodelet" name="hsi_euclidean_clustering"
+        args="standalone jsk_pcl/EuclideanClustering" output="screen">
+    <remap from="~input" to="hsi_output" />
+    <rosparam>
+      tolerance: 0.02
+      min_size: 100
+    </rosparam>
+  </node>
+  <node name="hsi_throttle_segmentation" pkg="nodelet" type="nodelet"
+        args="standalone jsk_topic_tools/LightweightThrottle"
+        output="screen">
+    <remap from="~input" to="hsi_euclidean_clustering/output" />
+    <remap from="~output" to="hsi_euclidean_clustering/output_throttle" />
+  </node>
+  <node name="hsi_segmentation_decomposer" pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl/ClusterPointIndicesDecomposer"
+        output="screen"
+	    clear_params="true">
+    <remap from="~input" to="hsi_output" />
+    <remap from="~target" to="hsi_euclidean_clustering/output" />
+    <remap from="~align_planes" to="hsi_multi_plane_estimate/output_refined_polygon" />
+    <remap from="~align_planes_coefficients"
+           to="hsi_multi_plane_estimate/output_refined_coefficients" />
+    <rosparam subst_value="true">
+      align_boxes: true
+      use_pca: true
+      publish_clouds: false
+      publish_tf: true
+      sort_by: -cloud_size
+    </rosparam>
+  </node>
+
+  <group if="$(arg gui)">
+    <node pkg="rviz" name="attention_rviz" type="rviz"
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/attention_cliper_test_pr2.rviz" />
+  </group>
+
+</launch>
