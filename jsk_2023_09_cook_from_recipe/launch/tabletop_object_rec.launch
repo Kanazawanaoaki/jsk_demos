@@ -1,0 +1,117 @@
+<launch>
+  <machine name="localhost" address="localhost" />
+
+  <arg name="manager" default="tabletop_rec_nodelet_manager" />
+
+  <arg name="run_rviz" default="true" />
+  <arg name="publish_objects_tf" default="true" />
+  <arg name="machine" default="localhost" />
+  <arg name="load_machine" default="true" />
+
+<arg name="input" default="/kinect_head_remote/depth_registered/points" />
+  <arg name="sensor_frame" default="head_mount_kinect_rgb_optical_frame" />
+
+  <arg name="launch_manager" default="true" />
+  <arg name="publish_tf" value="$(arg publish_objects_tf)" />
+
+  <node name="$(arg manager)" pkg="nodelet" type="nodelet" args="manager"
+        machine="$(arg machine)" if="$(arg launch_manager)"
+        output="screen" />
+
+  <!-- tabletop object detection -->
+  <node name="input_relay" pkg="nodelet" type="nodelet"
+        args="load jsk_topic_tools/Relay $(arg manager)"
+        machine="$(arg machine)">
+    <remap from="~input" to="$(arg input)" />
+  </node>
+  <node name="multi_plane_estimate" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/OrganizedMultiPlaneSegmentation $(arg manager)"
+        output="screen"
+        if="$(arg launch_manager)"
+        machine="$(arg machine)">
+    <remap from="~input" to="input_relay/output" />
+    <rosparam>
+      ransac_refine_outlier_distance_threshold: 1
+      max_curvature: 0.01
+      estimate_normal: true
+    </rosparam>
+  </node>
+  <node name="polygon_magnifier" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl_utils/PolygonMagnifier $(arg manager)"
+        output="screen"
+        machine="$(arg machine)">
+    <remap from="~input" to="multi_plane_estimate/output_refined_polygon" />
+  </node>
+  <node name="plane_extraction" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/MultiPlaneExtraction $(arg manager)"
+        output="screen"
+        machine="$(arg machine)">
+    <remap from="~input" to="input_relay/output" />
+    <remap from="~indices" to="multi_plane_estimate/output_refined" />
+    <remap from="~input_polygons" to="multi_plane_estimate/output_refined_polygon" />
+    <remap from="~input_coefficients" to="multi_plane_estimate/output_refined_coefficients" />
+    <rosparam subst_value="true">
+      use_sensor_frame: true
+      sensor_frame: $(arg sensor_frame)
+      min_height: 0.03
+      <!-- min_height: 0.02 -->
+    </rosparam>
+  </node>
+  <node name="euclidean_clustering" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/EuclideanClustering $(arg manager)"
+        output="screen"
+        machine="$(arg machine)">
+    <remap from="~input" to="plane_extraction/output" />
+    <rosparam>
+      tolerance: 0.02
+      min_size: 100
+    </rosparam>
+  </node>
+  <node name="throttle_segmentation" pkg="nodelet" type="nodelet"
+        args="load jsk_topic_tools/LightweightThrottle $(arg manager)"
+        output="screen"
+        machine="$(arg machine)">
+    <remap from="~input" to="euclidean_clustering/output" />
+    <remap from="~output" to="euclidean_clustering/output_throttle" />
+  </node>
+  <node name="segmentation_decomposer" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/ClusterPointIndicesDecomposer $(arg manager)"
+        output="screen"
+        machine="$(arg machine)"
+	clear_params="true">
+    <remap from="~input" to="plane_extraction/output" />
+    <remap from="~target" to="euclidean_clustering/output_throttle" />
+    <remap from="~align_planes" to="multi_plane_estimate/output_refined_polygon" />
+    <remap from="~align_planes_coefficients"
+           to="multi_plane_estimate/output_refined_coefficients" />
+    <rosparam subst_value="true">
+      align_boxes: true
+      use_pca: true
+      publish_clouds: false
+      publish_tf: $(arg publish_tf)
+      sort_by: -cloud_size
+    </rosparam>
+  </node>
+
+  <!-- interactive -->
+  <node name="bounding_box_marker" pkg="jsk_interactive_marker" type="bounding_box_marker"
+        output="screen"
+        machine="$(arg machine)">
+    <remap from="~bounding_box_array" to="segmentation_decomposer/boxes" />
+  </node>
+  <node name="selected_cloud" pkg="nodelet" type="nodelet"
+        args="load jsk_pcl/SelectedClusterPublisher $(arg manager)"
+        output="screen"
+        machine="$(arg machine)">
+    <remap from="~input" to="plane_extraction/output" />
+    <remap from="~indices" to="euclidean_clustering/output" />
+    <remap from="~selected_index" to="bounding_box_marker/selected_index" />
+    <remap from="~output" to="selected_pointcloud" />
+  </node>
+
+  <group if="$(arg run_rviz)">
+    <node pkg="rviz" name="tabletop_rviz" type="rviz"
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/tabletop_object_rec_pr2.rviz" />
+  </group>
+
+</launch>

@@ -1,0 +1,17 @@
+<launch>
+  <arg name="INPUT" default="/kinect_head_remote/depth_registered/points" />
+  <arg name="use_frame" default="false"/>
+  <arg name="frame_name" default="objectoutput00"/>
+
+  <node name="save_pointcloud_to_pcd" type="nodelet" pkg="nodelet"
+        args="standalone jsk_pcl_utils/PointCloudToPCD" output="screen"
+        clear_params="true">
+    <remap from="~input" to="$(arg INPUT)" />
+    <rosparam subst_value="true">
+      prefix: $(find jsk_2023_09_cook_from_recipe)/datas/saved_pcds/sample_pcd_
+      duration: 0.5
+      binary: true
+      compressed: true
+    </rosparam>
+  </node>
+</launch>
