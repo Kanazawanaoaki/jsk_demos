@@ -18,15 +18,15 @@
     </rosparam>
   </node>
 
-  <!-- <node name="config_tf_broadcaster" pkg="known_object_ros" -->
-  <!--       type="config_tf_publisher.py" output="screen" -->
-  <!--       clear_params="true"> -->
-  <!--   <rosparam subst_value="true"> -->
-  <!--     config_file: $(arg config_file) -->
-  <!--     parent_frame: map -->
-  <!--     child_frame: target_object -->
-  <!--   </rosparam> -->
-  <!-- </node> -->
+  <node name="config_tf_broadcaster" pkg="jsk_2023_09_cook_from_recipe"
+        type="config_tf_publisher.py" output="screen"
+        clear_params="true">
+    <rosparam subst_value="true">
+      config_file: $(arg config_file)
+      parent_frame: map
+      child_frame: target_object
+    </rosparam>
+  </node>
 
   <!-- <node name="itf" pkg="rviz_interactive_tf" type="interactive_tf" ns="itf1"> -->
   <!--   <param name="parent_frame" value="map"/> -->
