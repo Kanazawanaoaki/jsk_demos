@@ -3,6 +3,7 @@
   <arg name="gui" default="true" />
 
   <arg name="INPUT_CLOUD" value="/kinect_head_remote/depth_registered/points" />
+  <arg name="sensor_frame" default="head_mount_kinect_rgb_optical_frame" />
 
   <!-- attention_clipper -->
   <node name="attention_clipper"
@@ -51,6 +52,21 @@
         output="screen">
     <remap from="~input" to="hsi_multi_plane_estimate/output_refined_polygon" />
   </node>
+  <node name="hsi_plane_extraction" pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl/MultiPlaneExtraction"
+        output="screen">
+    <remap from="~input" to="hsi_input_relay/output" />
+    <remap from="~indices" to="hsi_multi_plane_estimate/output_refined" />
+    <remap from="~input_polygons" to="hsi_multi_plane_estimate/output_refined_polygon" />
+    <remap from="~input_coefficients" to="hsi_multi_plane_estimate/output_refined_coefficients" />
+    <rosparam subst_value="true">
+      use_sensor_frame: true
+      sensor_frame: $(arg sensor_frame)
+      keep_organized: true
+      min_height: 0.00
+      <!-- min_height: 0.02 -->
+    </rosparam>
+  </node>
 
   <arg name="CENTROID_FRAME" value="target"/>
   <arg name="DEFAULT_NAMESPACE" value="pcl_nodelet"/>
@@ -67,6 +83,7 @@
         args="standalone jsk_pcl/HSIColorFilter" output="screen">
     <!-- <remap from="~input" to="/extract_indices/output" /> -->
     <remap from="~input" to="hsi_input_relay/output" />
+    <!-- <remap from="~input" to="hsi_plane_extraction/output" /> -->
     <remap from="~output" to="hsi_output" />
     <rosparam>
       use_indices: false
@@ -83,9 +100,11 @@
   <node pkg="nodelet" type="nodelet" name="hsi_euclidean_clustering"
         args="standalone jsk_pcl/EuclideanClustering" output="screen">
     <remap from="~input" to="hsi_output" />
+    <!-- <remap from="~input" to="hsi_plane_extraction/output" /> -->
     <rosparam>
-      tolerance: 0.02
+      tolerance: 0.03
       min_size: 100
+      cluster_filter: 1
     </rosparam>
   </node>
   <node name="hsi_throttle_segmentation" pkg="nodelet" type="nodelet"
@@ -99,12 +118,16 @@
         output="screen"
 	    clear_params="true">
     <remap from="~input" to="hsi_output" />
-    <remap from="~target" to="hsi_euclidean_clustering/output" />
+    <!-- <remap from="~input" to="hsi_plane_extraction/output" /> -->
+    <!-- <remap from="~target" to="hsi_euclidean_clustering/output" /> -->
+    <remap from="~target" to="hsi_euclidean_clustering/output_throttle" />
     <remap from="~align_planes" to="hsi_multi_plane_estimate/output_refined_polygon" />
     <remap from="~align_planes_coefficients"
            to="hsi_multi_plane_estimate/output_refined_coefficients" />
     <rosparam subst_value="true">
       align_boxes: true
+      align_boxes_with_plane: false
+      target_frame_id: base_link
       use_pca: true
       publish_clouds: false
       publish_tf: true

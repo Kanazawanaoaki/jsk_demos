@@ -10,7 +10,7 @@
 
 
 ;; defun action codes
-(defun change-dynm-params (&key (object-name "knife"))
+(defun change-hsi-param (&key (object-name "knife"))
   (cond
    ((string= object-name "knife")
     (ros::set-dynamic-reconfigure-param "/hsi_filter" "h_limit_max" :int 127)
@@ -22,11 +22,12 @@
     )
    ((string= object-name "board")
     (ros::set-dynamic-reconfigure-param "/hsi_filter" "h_limit_max" :int -93)
-    (ros::set-dynamic-reconfigure-param "/hsi_filter" "h_limit_min" :int 58)
-    (ros::set-dynamic-reconfigure-param "/hsi_filter" "s_limit_max" :int 15)
+    (ros::set-dynamic-reconfigure-param "/hsi_filter" "h_limit_min" :int -128)
+    (ros::set-dynamic-reconfigure-param "/hsi_filter" "s_limit_max" :int 28)
     (ros::set-dynamic-reconfigure-param "/hsi_filter" "s_limit_min" :int 0)
-    (ros::set-dynamic-reconfigure-param "/hsi_filter" "i_limit_max" :int 52)
-    (ros::set-dynamic-reconfigure-param "/hsi_filter" "i_limit_min" :int 16)
+    (ros::set-dynamic-reconfigure-param "/hsi_filter" "i_limit_max" :int 255)
+    (ros::set-dynamic-reconfigure-param "/hsi_filter" "i_limit_min" :int 209)
     )
    )
+  (format t "change hsi param to ~A detection ~%" object-name)
   t)
