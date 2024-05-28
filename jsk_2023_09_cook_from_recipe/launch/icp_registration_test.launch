@@ -97,6 +97,27 @@
     </rosparam>
   </node>
 
+
+  <!-- <!-\- localization -\-> -->
+  <!-- <node name="pointcloud_localization" -->
+  <!--       pkg="nodelet" type="nodelet" -->
+  <!--       args="load jsk_pcl/PointCloudLocalization /$(arg manager)"> -->
+  <!--   <remap from="~input" to="subsample_input/output"/> -->
+  <!--   <remap from="~icp_align" to="icp_registration/icp_align"/> -->
+  <!--   <rosparam> -->
+  <!--     global_frame: map -->
+  <!--     initialize_from_tf: false -->
+  <!--     clip_unseen_pointcloud: false -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+  <!-- <node name="sample_pointcloud_localization_client" -->
+  <!--       pkg="jsk_pcl_ros" type="sample_pointcloud_localization_client.py"> -->
+  <!--   <remap from="~localize" to="pointcloud_localization/localize"/> -->
+  <!--   <rosparam> -->
+  <!--     request_rate: 1.0 -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+
   <group if="$(arg gui)">
     <node name="rviz"
           pkg="rviz" type="rviz"
