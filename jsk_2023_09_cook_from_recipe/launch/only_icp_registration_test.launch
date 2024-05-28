@@ -1,0 +1,105 @@
+<launch>
+  <arg name="gui" default="true"/>
+
+  <arg name="USE_PPF" default="false" />
+
+  <arg name="input" default="/kinect_head_remote/depth_registered/points" />
+  <arg name="pcd_name" default="knife" />
+  <arg name="sensor_frame" default="head_mount_kinect_rgb_optical_frame" />
+  <arg name="config_file" default="$(arg pcd_name)_tf.yaml" />
+
+  <node name="reference_cloud_tf_publisher"
+        pkg="tf" type="static_transform_publisher"
+        args="0 0 0 0 0 0 $(arg sensor_frame) $(arg pcd_name) 10" />
+
+  <arg name="manager" value="icp_manager" />
+  <node name="$(arg manager)" pkg="nodelet" type="nodelet" args="manager" />
+
+  <!-- input cloud -->
+  <node name ="subsample_input" pkg="nodelet" type="nodelet"
+      args="load pcl/VoxelGrid $(arg manager)" output="screen">
+      <remap from="~input" to="$(arg input)" />
+    <rosparam>
+      leaf_size: 0.008
+    </rosparam>
+  </node>
+
+  <!-- reference cloud -->
+  <node name="pointcloud_database_server" pkg="nodelet" type="nodelet"
+    args="load jsk_pcl/PointcloudDatabaseServer $(arg manager)" output="screen">
+    <rosparam subst_value="true">
+      models: ["$(find jsk_2023_09_cook_from_recipe)/datas/pcds/$(arg pcd_name).pcd",
+      ]
+      duration: 0.05
+      use_array: false
+    </rosparam>
+  </node>
+
+  <node name ="subsample_reference" pkg="nodelet" type="nodelet"
+      args="load pcl/VoxelGrid $(arg manager)" output="screen">
+    <remap from="~input" to="pointcloud_database_server/cloud" />
+    <!-- <rosparam> -->
+    <!--   leaf_size: 0.005 -->
+    <!-- </rosparam> -->
+    <rosparam>
+      leaf_size: 0.01
+    </rosparam>
+  </node>
+
+  <!-- only icp -->
+  <node name="icp_registration"
+        pkg="nodelet" type="nodelet" unless="$(arg USE_PPF)"
+        args="load jsk_pcl/ICPRegistration /$(arg manager)"
+        output="screen">
+    <!-- <remap from="~input" to="subsample_input/output" /> -->
+    <remap from="~input" to="$(arg input)" />
+    <!-- <remap from="~input_reference" to="subsample_reference/output" /> -->
+    <remap from="~input_reference" to="pointcloud_database_server/cloud" />
+  </node>
+
+  <!-- ppf and icp -->
+  <node name="ppf_registration" pkg="nodelet" type="nodelet" if="$(arg USE_PPF)"
+        args="load jsk_pcl/PPFRegistration $(arg manager)" output="screen">
+  <!-- <node name="ppf_registration" pkg="nodelet" type="nodelet" if="$(arg USE_PPF)" -->
+  <!--       args="standalone jsk_pcl/PPFRegistration" output="screen"> -->
+    <remap from="~input/cloud" to="subsample_input/output" />
+    <!-- <remap from="~input/cloud" to="$(arg input)" /> -->
+    <remap from="~input/reference_cloud" to="subsample_reference/output" />
+    <!-- <remap from="~input/reference_cloud" to="pointcloud_database_server/cloud" /> -->
+    <rosparam>
+      approximate_sync: true
+      queue_size: 1000
+      sampling_rate: 10
+      search_radius: 0.05
+      position_clustering_threshold: 0.2
+      rotation_clustering_threshold: 30
+      use_array: false
+    </rosparam>
+  </node>
+  <node name="icp_registration"
+        pkg="nodelet" type="nodelet" if="$(arg USE_PPF)"
+        args="load jsk_pcl/ICPRegistration /$(arg manager)"
+        output="screen">
+    <remap from="~input" to="subsample_input/output" />
+    <remap from="~input_reference" to="ppf_registration/output/cloud" />
+  </node>
+
+  <node name="icp_result_tf_publisher" pkg="jsk_2023_09_cook_from_recipe"
+        type="icp_result_tf_publisher.py" output="screen">
+  </node>
+  <node name="config_tf_broadcaster" pkg="jsk_2023_09_cook_from_recipe"
+        type="config_tf_publisher.py" output="screen" respawn="true"
+        clear_params="true">
+    <rosparam subst_value="true">
+      config_file: $(arg config_file)
+      parent_frame: icp_result_frame
+      child_frame: target_object
+    </rosparam>
+  </node>
+
+  <group if="$(arg gui)">
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/icp_registaration_test_pr2.rviz"/>
+  </group>
+</launch>
