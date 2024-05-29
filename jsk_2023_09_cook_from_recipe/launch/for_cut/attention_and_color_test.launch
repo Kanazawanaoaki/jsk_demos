@@ -2,7 +2,7 @@
 
   <arg name="gui" default="true" />
 
-  <arg name="INPUT_CLOUD" value="/kinect_head_remote/depth_registered/points" />
+  <arg name="INPUT_CLOUD" default="/kinect_head_remote/depth_registered/points" />
   <arg name="sensor_frame" default="head_mount_kinect_rgb_optical_frame" />
 
   <!-- attention_clipper -->

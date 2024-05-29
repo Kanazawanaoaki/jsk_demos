@@ -172,7 +172,7 @@ Visualization Manager:
       coloring: Auto
       line width: 0.004999999888241291
       only edge: false
-      show coords: false
+      show coords: true
     - Alpha: 1
       Class: jsk_rviz_plugin/PolygonArray
       Color: 25; 255; 0
@@ -231,9 +231,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.2747966051101685
+      Pitch: 1.1697967052459717
       Target Frame: <Fixed Frame>
-      Yaw: 3.1904141902923584
+      Yaw: 3.225414752960205
     Saved: ~
 Window Geometry:
   Displays:
