@@ -274,6 +274,8 @@
      (dotimes (i (round (/ (- (elt (send arrow :worldpos) 2) height) interval)))
        (send arrow :translate (float-vector (* interval 2) 0 (/ interval -2)))
        (send *pr2* :rarm :inverse-kinematics arrow
+             :link-list (list
+                         (send *pr2* :link-list (send *pr2* :rarm :end-coords :parent)))
              :move-target (car (send *knife* :attention)))
 
        (setq av (send *pr2* :angle-vector))
@@ -282,6 +284,8 @@
 
        (send arrow :translate (float-vector (* interval -2) 0 (/ interval -2)))
        (send *pr2* :rarm :inverse-kinematics arrow
+             :link-list (list
+                         (send *pr2* :link-list (send *pr2* :rarm :end-coords :parent)))
              :move-target (car (send *knife* :attention)))
 
        (setq av (send *pr2* :angle-vector))
@@ -382,6 +386,8 @@
       ;;(send *pr2* :rarm :inverse-kinematics ref-hand-cds)
       ;;(send *pr2* :rarm :inverse-kinematics arrow :move-target (car (send *knife* :attention)))
       (send *pr2* :rarm :inverse-kinematics ref-hand-cds
+            :link-list (list
+                        (send *pr2* :link-list (send *pr2* :rarm :end-coords :parent)))
             :move-target (car (send *knife* :attention)))
 
       ;;(if both-arm (send *pr2* :larm :inverse-kinematics (send self :ref-other-hand ref-hand-cds) :rotation-axis :y))
@@ -461,6 +467,8 @@
        (warn "height ~A~%" height)
 
        (send *pr2* :rarm :inverse-kinematics ref-hand-cds
+             :link-list (list
+                         (send *pr2* :link-list (send *pr2* :rarm :end-coords :parent)))
              :move-target (car (send *knife* :attention)))
 
        (send *pr2* :head :neck-p :joint-angle 50) ;; for fix head
