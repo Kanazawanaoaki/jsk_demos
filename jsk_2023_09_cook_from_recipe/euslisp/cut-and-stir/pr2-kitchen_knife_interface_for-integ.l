@@ -1,5 +1,6 @@
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/knife-new-attention.l")
 (load "package://pr2eus/pr2-interface.l")
+(load "models/arrow-object.l")
 ;; (load "package://informatized_body_core/euslisp/informatized-body-core.l")
 ;; (initialize-ibm-core "pr2_knife")
 
@@ -62,8 +63,14 @@
      (send *pr2* :rarm :end-coords :assoc *knife*)
      )
 
+   ;; init arrow
+   (when (not (boundp '*arrow*))
+     (setq *arrow* (arrow))
+     (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+     )
+
    (when (not (boundp '*irtviewer*))
-     (objects (list *pr2* *knife*))
+     (objects (list *pr2* *knife* *arrow*))
      )
    )
 
@@ -182,7 +189,11 @@
    (send *pr2* :head :neck-p :joint-angle 50)
    (send *pr2* :torso_lift_joint :joint-angle 325)
    (send *pr2* :rarm :inverse-kinematics init-cut-pose
-         :move-target (car (send *knife* :attention)))
+         :link-list (list
+                     (send *pr2* :link-list (send *pr2* :rarm :end-coords :parent)))
+         :move-target (car (send *knife* :attention))
+         :debug-view t
+         )
    (if both-arm (send *pr2* :larm :inverse-kinematics (send self :ref-other-hand init-cut-pose) :rotation-axis :y))
    (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
    (send *ri* :wait-interpolation)
