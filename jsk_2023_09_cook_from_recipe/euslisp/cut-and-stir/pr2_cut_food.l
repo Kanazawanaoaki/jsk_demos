@@ -31,3 +31,15 @@
    )
   (format t "change hsi param to ~A detection ~%" object-name)
   t)
+
+(defun change-deva-param (&key (object-name "knife"))
+  (cond
+   ((string= object-name "knife")
+    (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "knife;")
+    )
+   ((string= object-name "board")
+    (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "white board;")
+    )
+   )
+  (format t "change hsi param to ~A detection ~%" object-name)
+  t)

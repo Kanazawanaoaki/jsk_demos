@@ -1,0 +1,32 @@
+<launch>
+  <arg name="input_image" default="/kinect_head_remote/rgb/image_rect_color" />
+  <arg name="input_cloud" default="/kinect_head_remote/depth_registered/points" />
+  <arg name="target_frame_id" default="base_footprint" />
+  <arg name="mask_image" default="/cutie_node/output/segmentation" />
+
+  <arg name="run_rviz" default="true"/>
+  <arg name="run_collection" default="false"/>
+  <arg name="run_decomp" default="true" />
+
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/pr2_decompress.launch" if="$(arg run_decomp)" />
+
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/apply_track_object_mask.launch" >
+    <arg name="INPUT_IMAGE" value="$(arg input_image)" />
+    <arg name="INPUT_CLOUD" value="$(arg input_cloud)" />
+    <arg name="MASK_IMAGE" value="$(arg mask_image)" />
+    <arg name="run_rviz" value="false" />
+    <arg name="run_collection" value="false" />
+    <arg name="target_frame_id" value="$(arg target_frame_id)" />
+  </include>
+
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/pr2_tracking_data_collection.launch" if="$(arg run_collection)" />
+
+  <!-- rviz -->
+  <group if="$(arg run_rviz)">
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/apply_track_object_mask.rviz">
+    </node>
+  </group>
+
+</launch>

@@ -1,0 +1,27 @@
+<launch>
+  <!-- c.f. https://jsk-common.readthedocs.io/en/latest/jsk_data/node_scripts/data_collection_server.html -->
+
+  <node name="tracking_data_collection"
+        pkg="jsk_data" type="data_collection_server.py"
+        output="screen">
+    <rosparam subst_value="true">
+      message_filters: true
+      approximate_sync: true
+      method: timer
+      save_dir: $(find jsk_2023_09_cook_from_recipe)/datas/object_datas/
+      topics:
+          - name: /kinect_head_remote/rgb/image_rect_color
+            msg_class: sensor_msgs/Image
+            fname: tracking_image_rect_color.png
+            savetype: ColorImage
+          - name: /kinect_head_remote/depth_registered/image_rect
+            msg_class: sensor_msgs/Image
+            fname: tracking_depth_raw.pkl
+            savetype: DepthImage
+          - name: /cutie_node/output/segmentation_bgr
+            msg_class: sensor_msgs/Image
+            fname: tracking_mask_image.png
+            savetype: ColorImage
+    </rosparam>
+    </node>
+</launch>
