@@ -20,7 +20,11 @@
   (:init
    ()
    (ros::roseus "pr2_knife_cut_interface")
-   (setq cut-pose (make-cascoords :pos #f(640.39 26.636 927.821) :rpy #f(-0.058 -0.122 -0.067)))
+   ;; (setq default-cut-pose (make-cascoords :pos #f(640.39 26.636 927.821) :rpy #f(-0.058 -0.122 -0.067)))
+   ;; (setq default-cut-pose (make-cascoords :pos #f(640.39 26.636 927.821) :rpy #f(0 0 0)))
+   (setq default-cut-pose (make-cascoords :pos #f(690.39 26.636 927.821) :rpy #f(0 0 0)))
+   (setq cut-pose (make-cascoords))
+   (send cut-pose :newcoords (send default-cut-pose :copy-worldcoords))
 
    ;; init pr2
    (when (not (boundp '*pr2*))
@@ -159,6 +163,16 @@
    (send (send cds :copy-worldcoords) :move-to (make-coords :pos #f(150 75 80) :rpy (float-vector 0 -pi/2 0)))
    )
 
+  (:show-default-cut-pose
+   ()
+   (send *arrow* :newcoords (send default-cut-pose :copy-worldcoords))
+   default-cut-pose)
+
+  (:show-cut-pose
+   ()
+   (send *arrow* :newcoords (send cut-pose :copy-worldcoords))
+   cut-pose)
+
   (:cut-pose
    (&optional (cut-pose- nil))
    (if cut-pose-
@@ -167,12 +181,27 @@
 
   (:reset-cut-pose
    ()
-   (send cut-pose :new-coords (make-cascoords :pos #f(640.39 26.636 927.821) :rpy #f(-0.058 -0.122 -0.067)))
+   (send cut-pose :newcoords (send default-cut-pose :copy-worldcorods))
    cut-pose)
 
   (:translate-cut-pose
-   (&optional (num 0))
-   (send cut-pose :translate (float-vector 0 0 num) :world)
+   (&optional (num 0) (axis :z))
+   (cond
+    ((equal axis :x)
+     (send cut-pose :translate (float-vector num 0 0) :world)
+     )
+    ((equal axis :y)
+     (send cut-pose :translate (float-vector 0 num 0) :world)
+     )
+    ((equal axis :z)
+     (send cut-pose :translate (float-vector 0 0 num) :world)
+     )
+    )
+   cut-pose)
+
+  (:rotate-cut-pose
+   (&optional (deg 0) (axis :z))
+   (send cut-pose :rotate (deg2rad deg) axis :world)
    cut-pose)
 
   (:manip-pose
@@ -254,7 +283,6 @@
 
   ;; height is not knife attention but rarm endcoords
   (:cut-once
-   ;;(arrow &optional (height 892) &key (controller :rule-base))
    (arrow &optional (height 892) &key (controller :rule-base))
    (cond
     ((eq controller :rule-base)
@@ -388,12 +416,15 @@
       (send *pr2* :rarm :inverse-kinematics ref-hand-cds
             :link-list (list
                         (send *pr2* :link-list (send *pr2* :rarm :end-coords :parent)))
-            :move-target (car (send *knife* :attention)))
+            :move-target (car (send *knife* :attention))
+            :debug-view t)
 
       ;;(if both-arm (send *pr2* :larm :inverse-kinematics (send self :ref-other-hand ref-hand-cds) :rotation-axis :y))
       (send *pr2* :head :neck-p :joint-angle 50) ;; for fix head
       (send *ri* :angle-vector (send *pr2* :angle-vector) 500)
-      ;;(send *ri* :wait-interpolation) ;; TODO
+
+      ;; (unix::usleep (floor (* 1000000 0.1)))
+      (send *ri* :wait-interpolation) ;; TODO
 
       ;; calculate reference and result hand z
       (setq ref-hand-z (elt (send *pr2* :rarm :end-coords :worldpos) 2))
@@ -469,11 +500,13 @@
        (send *pr2* :rarm :inverse-kinematics ref-hand-cds
              :link-list (list
                          (send *pr2* :link-list (send *pr2* :rarm :end-coords :parent)))
-             :move-target (car (send *knife* :attention)))
+             :move-target (car (send *knife* :attention))
+             :debug-view t)
 
        (send *pr2* :head :neck-p :joint-angle 50) ;; for fix head
        (send *ri* :angle-vector (send *pr2* :angle-vector) 500)
-       (unix::usleep (floor (* 1000000 0.1)))
+       ;; (unix::usleep (floor (* 1000000 0.1)))
+       (send *ri* :wait-interpolation)
        )
 
      (send *pr2* :head :neck-p :joint-angle 50) ;; for fix head
