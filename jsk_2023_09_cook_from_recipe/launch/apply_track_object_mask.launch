@@ -86,7 +86,7 @@
       align_boxes: true
       align_boxes_with_plane: false
       force_to_flip_z_axis: false
-      use_pca: false
+      use_pca: true
       target_frame_id: $(arg target_frame_id)
       approximate_sync: true
       queue_size: 100
