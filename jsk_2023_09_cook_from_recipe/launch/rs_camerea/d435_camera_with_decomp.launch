@@ -1,0 +1,13 @@
+<launch>
+  <arg name="gui" default="true"/>
+
+  <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    <arg name="align_depth" value="true"/>
+  </include>
+
+  <!-- decompress -->
+  <include file="$(find known_object_ros)/launch/rs_decompress.launch">
+    <arg name="gui" default="$(arg gui)"/>
+  </include>
+
+</launch>

@@ -1,0 +1,34 @@
+<launch>
+  <arg name="rosbag" />
+  <arg name="manager" default="rosbag_play_nodelet_manager" />
+  <arg name="launch_nodelet_manager" default="true" />
+  <arg name="loop" default="true" />
+  <arg name="gui" default="false" />
+  <arg name="loop_flag" value="--loop" if="$(arg loop)" />
+  <arg name="loop_flag" value="" unless="$(arg loop)" />
+
+  <param name="use_sim_time" value="true" />
+
+  <!-- decompress -->
+  <include file="$(find known_object_ros)/launch/rs_decompress.launch">
+    <arg name="gui" value="false" />
+  </include>
+
+  <!-- rosbag player -->
+  <node pkg="rosbag" type="play" name="rosbag_play"
+        args="$(arg rosbag) $(arg loop_flag) --clock" output="screen" />
+  <!-- <node pkg="rosbag" type="play" name="rosbag_play" -->
+  <!--       args="$(arg rosbag) $(arg loop_flag) -r 5 -\-clock" output="screen" /> -->
+
+  <!-- <!-\- rviz -\-> -->
+  <!-- <node pkg="rviz" type="rviz" name="$(anon rviz)" if="$(arg gui)" -->
+  <!--       args="-d $(find known_object_ros)/config/rs_pointcloud_decomp.rviz" /> -->
+  <!-- rviz -->
+  <group if="$(arg gui)">
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find known_object_ros)/rviz/rs_pointcloud_decomp.rviz">
+    </node>
+  </group>
+
+</launch>

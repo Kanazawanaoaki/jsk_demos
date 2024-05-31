@@ -1,0 +1,43 @@
+<launch>
+  <machine name="localhost" address="localhost" />
+  <arg name="gui" default="true"/>
+
+  <arg name="manager" default="rs_decompress_nodelet_manager" />
+  <arg name="launch_manager" default="true" />
+  <arg name="machine" default="localhost" />
+
+  <arg name="RGB_CAMERA_INFO" default="/camera/color/camera_info" />
+  <arg name="RGB_IMAGE" default="/camera/color/image_raw" />
+  <arg name="RGB_REMOTE_IMAGE" default="/camera_remote/rgb/image_raw" />
+  <arg name="DEPTH_CAMERA_INFO" default="/camera/aligned_depth_to_color/camera_info" />
+  <arg name="DEPTH_IMAGE" default="/camera/aligned_depth_to_color/image_raw"  />
+  <arg name="DEPTH_REMOTE_IMAGE" default="/camera_remote/aligned_depth_to_color/image_raw" />
+  <arg name="CLOUD" default="/camera_remote/aligned_depth_to_color/points" />
+
+  <node name="$(arg manager)" pkg="nodelet" type="nodelet" args="manager"
+        machine="$(arg machine)" if="$(arg launch_manager)"
+        output="screen" />
+
+  <node name="rgb_decompress" pkg="image_transport" type="republish"
+        args="compressed in:=$(arg RGB_IMAGE) out:=$(arg RGB_REMOTE_IMAGE)" />
+  <node name="depth_decompress" pkg="image_transport" type="republish"
+        args="compressedDepth in:=$(arg DEPTH_IMAGE) out:=$(arg DEPTH_REMOTE_IMAGE)" />
+  <node pkg="nodelet" type="nodelet" name="point_cloud_xyzrgb"
+        args="load depth_image_proc/point_cloud_xyzrgb $(arg manager)" output="screen" >
+    <remap from="rgb/camera_info" to="$(arg RGB_CAMERA_INFO)" />
+    <remap from="rgb/image_rect_color" to="$(arg RGB_REMOTE_IMAGE)" />
+    <remap from="depth_registered/image_rect" to="$(arg DEPTH_REMOTE_IMAGE)" />
+    <remap from="depth_registered/points" to="$(arg CLOUD)" />
+    <rosparam>
+      queue_size: 100
+    </rosparam>
+  </node>
+
+  <!-- rviz -->
+  <group if="$(arg gui)">
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find known_object_ros)/rviz/rs_pointcloud_decomp.rviz">
+    </node>
+  </group>
+</launch>
