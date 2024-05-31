@@ -27,6 +27,10 @@ roslaunch icp_registration_test.launch pcd_name:=kitchen_look
 ### テスト
 テストを実行する
 
+#### rosbagをとるなど
+```bash
+roslaunch jsk_2023_09_cook_from_recipe pr2_rosbag_record.launch rosbag:=/home/kanazawa/Desktop/data/rosbags/20240531_kitchen_bags/20240531_kitchen_bag_00
+```
 
 #### 物体認識
 サーバPCで
@@ -43,4 +47,31 @@ roslaunch jsk_2023_09_cook_from_recipe deva_apply_track_object_mask.launch
 これでdevaの物体認識ができる
 ```bash
 rosrun dynamic_reconfigure dynparam set /deva_node classes "light;"
+```
+その結果から物体を掴むなど
+```
+roscd jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir
+rlwrap roseus pr2_cut_food.l
+;; (reset-move-pose)
+(grasp-rec-object :object-name "knife")
+```
+
+#### Viveから操縦
+Viveをセットアップする  
+
+Vive用PCで
+steamVRの起動
+https://github.com/HiroIshida/vive_ros?tab=readme-ov-file#usage
+
+```bash
+rossetmaster pr1040
+rossetip
+roslaunch vive_ros vive_ctrl.launch
+rqt_image_view
+```
+
+手元のPCで
+https://github.com/HiroIshida/mohou_ros/tree/master?tab=readme-ov-file#3-save-rosbag
+```bash
+rosrun mohou_ros vive_controller_pr2.py -pn test
 ```
