@@ -6,7 +6,7 @@
   </include>
 
   <!-- decompress -->
-  <include file="$(find known_object_ros)/launch/rs_decompress.launch">
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/rs_camerea/rs_decompress.launch">
     <arg name="gui" default="$(arg gui)"/>
   </include>
 

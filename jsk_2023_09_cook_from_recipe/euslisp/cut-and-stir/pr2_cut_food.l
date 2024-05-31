@@ -170,3 +170,15 @@
 
   ;; rec fail
   )
+
+(defun cut-wait-pose ()
+  (setq cut-wait-rav #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
+  (setq cut-wait-lav #f(41.0448 2.03593 63.3981 -67.6587 27.9651 -69.6477 -117.945))
+  (send *pr2* :head :neck-y :joint-angle 0.0)
+  (send *pr2* :head :neck-p :joint-angle 50.0)
+  (send *pr2* :torso_lift_joint :joint-angle 300)
+  (send *pr2* :rarm :angle-vector cut-wait-rav)
+  (send *pr2* :larm :angle-vector cut-wait-lav)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  )

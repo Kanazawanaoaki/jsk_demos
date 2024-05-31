@@ -27,7 +27,7 @@ def callback(rgb_msg, depth_msg):
     current_time = str(int(time.time() * 1000))  # Convert to milliseconds and convert to string
 
     # Get the specified folder from ROS parameters
-    specified_folder = rospy.get_param('~specified_folder', '../data/object_datas/images')
+    specified_folder = rospy.get_param('~specified_folder', '../../datas/object_datas/images')
 
     # Create directories if they don't exist
     rgb_folder = os.path.join(specified_folder, 'rgb')

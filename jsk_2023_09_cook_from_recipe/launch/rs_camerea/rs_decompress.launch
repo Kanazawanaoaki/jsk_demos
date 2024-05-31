@@ -37,7 +37,7 @@
   <group if="$(arg gui)">
     <node name="rviz"
           pkg="rviz" type="rviz"
-          args="-d $(find known_object_ros)/rviz/rs_pointcloud_decomp.rviz">
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/rs_pointcloud_decomp.rviz">
     </node>
   </group>
 </launch>
