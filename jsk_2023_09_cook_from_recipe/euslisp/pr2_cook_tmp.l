@@ -45,7 +45,7 @@
     (send cds :move-to (ros::tf-pose->coords (send (car (send pp_msg :objects)) :pose)) :local)
     cds))
 
-;; with teaching
+;; daialogue
 (defun ok-wait ()
   (setq *ok-flag* nil)
   (until *ok-flag*
@@ -70,6 +70,22 @@
   )
 
 
+(defun dialogue-manip (&optional (init-pose (send *pr2* :reset-manip-pose)))
+  (setq *finish-flag* nil)
+  (until *finish-flag*
+         (dialogue-func)
+         (if (equal *voice-data* '("OK"))
+             (progn
+               (format t "了解しました！ ~%" *voice-data*)
+               (setq *ok-flag* t)
+               )
+           (format t "data: ~A ~%" *voice-data*)
+           ))
+
+  (send *ri* :speak-jp "ありがとうございます")
+  )
+
+;; pose teaching
 (defun initial-pose-teaching () ;; 道具を握らせて貰って初期姿勢を教わる
   (manequine-end)
   (send *robot* :reset-manip-pose)
