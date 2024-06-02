@@ -48,12 +48,18 @@
   (ros::unsubscribe "/speech_to_text")
   (setq *voice-data-flag* nil)
   (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+  (format t "wait for speak ~%")
   (until *voice-data-flag*
          (ros::spin-once)
          (ros::sleep)
          )
   ;; (send *ri* :speak-jp "ありがとうございます")
   ;; (unix:sleep 1)
+  )
+
+(defun speak-with-log (speak-word &key (lang "jp") (wait t))
+  (send *ri* :speak-jp speak-word :wait wait)
+  (format t "[PR2 speak] ~A ~%" speak-word)
   )
 
 ;; manequine
