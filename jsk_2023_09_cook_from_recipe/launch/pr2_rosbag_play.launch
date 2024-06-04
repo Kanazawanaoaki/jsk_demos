@@ -7,6 +7,9 @@
   <arg name="loop_flag" value="--loop" if="$(arg loop)" />
   <arg name="loop_flag" value="" unless="$(arg loop)" />
 
+  <arg name="RGB_COLOR_IMAGE" default="/kinect_head/rgb/image_color" />
+  <arg name="DEPTH_RAW_IMAGE" default="/kinect_head/depth_registered/image_raw"  />
+
   <param name="use_sim_time" value="true" />
 
   <!-- decompress -->
@@ -19,6 +22,12 @@
         args="$(arg rosbag) $(arg loop_flag) --clock" output="screen" />
   <!-- <node pkg="rosbag" type="play" name="rosbag_play" -->
   <!--       args="$(arg rosbag) $(arg loop_flag) -r 5 -\-clock" output="screen" /> -->
+
+  <!-- addtional decomp -->
+  <node name="rgb_color_decompress" pkg="image_transport" type="republish"
+        args="compressed in:=$(arg RGB_COLOR_IMAGE) out:=$(arg RGB_COLOR_IMAGE)" />
+  <node name="depth_raw_decompress" pkg="image_transport" type="republish"
+        args="compressedDepth in:=$(arg DEPTH_RAW_IMAGE) out:=$(arg DEPTH_RAW_IMAGE)" />
 
   <!-- rviz -->
   <group if="$(arg gui)">

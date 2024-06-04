@@ -12,49 +12,56 @@ import sensor_msgs.point_cloud2 as pc2
 
 class Open3DSlamNode:
     def __init__(self):
-        # ROS 노드와 CvBridge 초기화
+        # Initialization of ROS node and CvBridge
         self.bridge = CvBridge()
 
-        # 카메라 내부 파라미터 설정 (사용하는 카메라에 맞게 수정)
+        # Camera internal parameter settings (modified to match the camera being used)
         self.intrinsic = o3d.camera.PinholeCameraIntrinsic()
         self.intrinsic_set = False
 
-        # 깊이와 컬러 이미지를 위한 ROS 구독자 설정
+        # ROS subscriber settings for depth and color images
         self.depth_sub = message_filters.Subscriber('/kinect_head/depth_registered/image_raw', Image)
         self.color_sub = message_filters.Subscriber('/kinect_head/rgb/image_color', Image)
 
-        ## TODO
+        # self.depth_sub = message_filters.Subscriber('/kinect_head/depth_registered/image_rect', Image)
+        # self.color_sub = message_filters.Subscriber('/kinect_head/rgb/image_rect_color', Image)
+        # self.depth_sub = message_filters.Subscriber('/kinect_head/depth_registered/image', Image)
+        # self.color_sub = message_filters.Subscriber('/kinect_head/rgb/image_rect_color', Image)
+        # self.depth_sub = message_filters.Subscriber('/kinect_head_remote/depth_registered/image_rect', Image)
+        # self.color_sub = message_filters.Subscriber('/kinect_head_remote/rgb/image_rect_color', Image)
+
+        ## Setting up the ROS service
         self.service = rospy.Service('/start_o3d_dense_slam', Trigger, self.start_service_callback)
         self.service = rospy.Service('/stop_o3d_dense_slam', Trigger, self.stop_service_callback)
         self.collecting = False
         self.publishing = False
 
-        # self.depth_sub = message_filters.Subscriber('/masked_human_depth_image/camera', Image)
-        # self.color_sub = message_filters.Subscriber('/segmented_human_image/camera', Image)
-
         self.camera_info_sub = rospy.Subscriber('/kinect_head/depth_registered/camera_info', CameraInfo, self.camera_info_callback)
         self.pc_pub = rospy.Publisher("/open3d_dense_slam_cloud", PointCloud2, queue_size=10)
 
-        # 동기화된 메시지 필터를 사용하여 깊이 및 컬러 이미지 동기화
+        # Synchronizing depth and color images with synchronized message filters
         self.ts = message_filters.ApproximateTimeSynchronizer(
             [self.depth_sub, self.color_sub], 10, 1)
         self.ts.registerCallback(self.callback)
 
-        # SLAM 관련 설정
-        self.device = o3c.Device("CUDA:0")  # 또는 "CPU:0"
-        self.voxel_size = 0.005  # voxel 크기
-        self.depth_scale = 1000.0  # 깊이 스케일
-        self.depth_max = 1.5  # 최대 깊이
+        # SLAM-specific settings
+        self.device = o3c.Device("CUDA:0")  # or “CPU:0
+        self.voxel_size = 0.005  # voxel size
+        self.depth_scale = 1000.0  # Depth Scale
+        self.depth_max = 1.5  # Maximum depth
         self.depth_min = 0.01
         self.odometry_distance_thr = 0.07
         self.trunc_voxel_multiplier = 4.0
 
         self.input_frame = None
         self.raycast_frame = None
-
         self.frame_num = 0
 
-        # SLAM 모델 초기화
+        self.creat_points = None
+
+        self.frame_id = None
+
+        # Initialize the SLAM model
         self.T_frame_to_model = o3c.Tensor(np.identity(4))
         self.model = o3d.t.pipelines.slam.Model(self.voxel_size,
                                                 4,
@@ -63,7 +70,7 @@ class Open3DSlamNode:
                                                 self.device)
 
     def camera_info_callback(self, camera_info_msg):
-        # ROS 카메라 정보 메시지에서 내부 파라미터 추출 및 설정
+        # Extracting and setting internal parameters from ROS camera info messages
         if not self.intrinsic_set:
             self.intrinsic.set_intrinsics(
                 camera_info_msg.width, camera_info_msg.height,
@@ -75,7 +82,13 @@ class Open3DSlamNode:
     def start_service_callback(self, request):
         rospy.loginfo("Service call received, starting data collection...")
         self.collecting = True
+
+        ## Initialize
         self.input_frame = None
+        self.raycast_frame = None
+        self.frame_num = 0
+
+        self.creat_points = None
 
         return TriggerResponse(success=True, message="Start to collect data and do dense slam.")
 
@@ -94,39 +107,48 @@ class Open3DSlamNode:
             rospy.logwarn("Waiting for start service call...")
             return
         elif not self.collecting and self.publishing:
-            rospy.logwarn("Publish pointcloud...")
-            self.publish_pointcloud()
+            if self.creat_points is None:
+                rospy.logwarn("Point is not created...")
+            else:
+                rospy.logwarn("Publish pointcloud...")
+                self.publish_pointcloud()
             return
 
         try:
-            # ROS 이미지를 OpenCV 형식으로 변환
+            self.frame_id = depth_msg.header.frame_id
+            # Convert ROS images to OpenCV format
             depth_image = self.bridge.imgmsg_to_cv2(
                 depth_msg, desired_encoding='16UC1')
-            color_image = self.bridge.imgmsg_to_cv2(color_msg, "rgb8")
+            # depth_image = self.bridge.imgmsg_to_cv2(
+            #     depth_msg, desired_encoding='32FC1')
 
+            color_image = self.bridge.imgmsg_to_cv2(color_msg, "rgb8")
+            # color_image = self.bridge.imgmsg_to_cv2(color_msg, "bgr8")
+
+            # depth_image = depth_image.astype(np.float32)
+            # color_image = color_image.astype(np.float32)
 
             if depth_image is None or color_image is None:
                 rospy.logerr("Received an empty image.")
                 return
 
-            # OpenCV 이미지를 Open3D 포맷으로 변환
+            # Convert OpenCV images to Open3D format
             depth_o3d = o3d.t.geometry.Image(depth_image)
             color_o3d = o3d.t.geometry.Image(color_image)
 
             rgbd_image = o3d.t.geometry.RGBDImage(
                     color_o3d, depth_o3d).cuda()
-            # SLAM 처리
+            # SLAM processing
             self.perform_slam(rgbd_image)
 
             # rospy.logwarn("Publish pointcloud...")
             # self.publish_pointcloud()
         except Exception as e:
-            rospy.logerr("Open3D SLAM 처리 중 오류: %s", e)
+            rospy.logerr("Error processing Open3D SLAM: %s", e)
             pass
 
     def perform_slam(self, rgbd_image):
-        # 여기에 SLAM 처리 로직 구현
-        # Open3D 이미지를 텐서로 변환
+        # Convert an Open3D image to a tensor
         # depth_image = np.asarray(rgbd_image.depth)
         # color_image = np.asarray(rgbd_image.color)
 
@@ -135,7 +157,8 @@ class Open3DSlamNode:
 
         # print(np.asarray(rgbd_image.depth.to_legacy()))
         # print(rgbd_image.color)
-        # 입력 프레임 초기화
+
+        # Initializing Input Frames
         if self.input_frame is None:
             self.input_frame = o3d.t.pipelines.slam.Frame(rgbd_image.depth.rows, rgbd_image.depth.columns,
                                                           o3c.Tensor(self.intrinsic.intrinsic_matrix), self.device)
@@ -147,15 +170,16 @@ class Open3DSlamNode:
         self.input_frame.set_data_from_image('depth', rgbd_image.depth)
         self.input_frame.set_data_from_image('color', rgbd_image.color)
 
-        # 모델 추적 및 업데이트
+        # Tracking and updating models
         if self.frame_num > 0:
-            result = self.model.track_frame_to_model(self.input_frame, self.raycast_frame,
+            result = self.model.track_frame_to_model(self.input_frame,
+                                                     self.raycast_frame,
                                                      self.depth_scale,
                                                      self.depth_max,
                                                      self.odometry_distance_thr)
             self.T_frame_to_model = self.T_frame_to_model @ result.transformation
 
-        # 모델 업데이트
+        # Updating models
         self.model.update_frame_pose(self.frame_num, self.T_frame_to_model)
         self.model.integrate(self.input_frame, self.depth_scale,
                              self.depth_max, self.trunc_voxel_multiplier)
@@ -164,11 +188,10 @@ class Open3DSlamNode:
                                           self.trunc_voxel_multiplier, False)
         self.frame_num += 1
 
-    def publish_pointcloud(self):
-        # 모델에서 포인트 클라우드 추출
+        # Extracting a point cloud from a model
         pcd = self.model.extract_pointcloud().to_legacy()
 
-        # Open3D 포인트 클라우드를 ROS 메시지로 변환
+        # Convert Open3D point clouds to ROS messages
         points = np.asarray(pcd.points)
         colors = np.asarray(pcd.colors)
         if len(points) == 0:
@@ -180,9 +203,10 @@ class Open3DSlamNode:
             np.left_shift(g.astype(np.uint32), 8) | \
             b.astype(np.uint32)
 
-        points = np.concatenate((points, rgba[:, np.newaxis].astype(np.uint32)), axis=1, dtype=object)
+        self.creat_points = np.concatenate((points, rgba[:, np.newaxis].astype(np.uint32)), axis=1, dtype=object)
 
-                # PointField 구조 정의
+    def publish_pointcloud(self):
+        # Defining the PointField Structure
         fields = [pc2.PointField('x', 0, pc2.PointField.FLOAT32, 1),
                   pc2.PointField('y', 4, pc2.PointField.FLOAT32, 1),
                   pc2.PointField('z', 8, pc2.PointField.FLOAT32, 1),
@@ -190,13 +214,13 @@ class Open3DSlamNode:
 
         header = rospy.Header()
         header.stamp = rospy.Time.now()
-        # header.frame_id = "base_link"  # 적절한 프레임 ID로 설정
-        header.frame_id = "head_mount_kinect_rgb_optical_frame"  # 적절한 프레임 ID로 설정
+        # header.frame_id = "base_link" # Set to the appropriate frame ID
+        header.frame_id = self.frame_id # Set to the appropriate frame ID
 
-        # PointCloud2 생성
-        cloud_data = pc2.create_cloud(header, fields, points)
+        # Create a PointCloud2
+        cloud_data = pc2.create_cloud(header, fields, self.creat_points)
 
-        # 포인트 클라우드 발행
+        # Publish a point cloud
         self.pc_pub.publish(cloud_data)
 
 
