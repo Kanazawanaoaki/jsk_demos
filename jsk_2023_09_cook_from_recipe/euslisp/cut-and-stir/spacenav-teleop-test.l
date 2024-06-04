@@ -12,19 +12,13 @@
 (setq *arrow* (arrow))
 (objects (list *arrow* *pr2*))
 
-;; set default
-(setq *spacenav-arm* :rarm)
-(setq *r-gripper-state* nil)
-(setq *l-gripper-state* nil)
-(setq *r-gripper-thre* 0.5)
-(setq *l-gripper-state* 0.4)
 
 ;; define cb
 (defun spacenav-joy-cb (msg)
   (print (send msg :axes))
   (print (send msg :buttons))
   (setq spacenav-trans-thre 0.4)
-  (setq spacenav-trans-step 20)
+  (setq spacenav-trans-step 20) ;; TODO use scale instead?
   (setq spacenav-rot-thre 0.4)
   (setq spacenav-rot-step 10)
 
@@ -124,25 +118,27 @@
   (if (= (elt (send msg :buttons) 1) 1)
       (if (and (equal *spacenav-arm* :rarm) (equal *r-gripper-state* nil))
           (progn
-            (send *ri* :start-grasp :rarm :wait t)
+            (send *ri* :start-grasp :rarm :gain *spacenav-r-grasp-gain* :wait t)
             (setq *r-gripper-state* t)
             )
         )
       (if (and (equal *spacenav-arm* :rarm) (equal *r-gripper-state* t))
           (progn
-            (send *ri* :stop-grasp :rarm :wait t)
+            ;; (send *ri* :stop-grasp :rarm :wait t)
+            (send *ri* :move-gripper :rarm *spacenav-r-gripper-dis* :effort (* 2000 0.03) :wait t)
             (setq *r-gripper-state* nil)
             )
         )
       (if (and (equal *spacenav-arm* :larm) (equal *l-gripper-state* nil))
           (progn
-            (send *ri* :start-grasp :larm :wait t)
+            (send *ri* :start-grasp :larm :gain *spacenav-r-grasp-gain* :wait t)
             (setq *l-gripper-state* t)
             )
         )
       (if (and (equal *spacenav-arm* :larm) (equal *l-gripper-state* t))
           (progn
-            (send *ri* :stop-grasp :larm :wait t)
+            ;; (send *ri* :stop-grasp :larm :wait t)
+            (send *ri* :move-gripper :larm *spacenav-l-gripper-dis* :effort (* 2000 0.03) :wait t)
             (setq *l-gripper-state* nil)
             )
         )
@@ -150,6 +146,8 @@
 
   (if change-flag
       (progn
+        (send *pr2* :head-neck-y :joint-angle *spacenav-init-head-y*)
+        (send *pr2* :head-neck-p :joint-angle *spacenav-init-head-p*)
         (send *pr2* *spacenav-arm* :inverse-kinematics (send now-coords :copy-worldcoords))
         (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
         (send *ri* :wait-interpolation)
@@ -161,16 +159,41 @@
   )
 
 
-(defun spacenav-teleop ()
+(defun spacenav-teleop (&key (init-pose (send *pr2* :reset-manip-pose)) (r-grasp-gain 0.01) (l-grasp-gain 0.01) (r-gripper-dis 0.09) (l-gripper-dis 0.09) (pose-initialize t))
+  (manequine-end)
+  (speak-with-log "3Dマウスの操縦を開始します")
+  (if pose-initialize
+      (progn
+        (send *pr2* :angle-vector init-pose)
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+        (send *ri* :wait-interpolation)
+        )
+    )
+  ;; set default
+  (setq *spacenav-arm* :rarm)
+  (setq *spacenav-r-grasp-gain* r-grasp-gain)
+  (setq *spacenav-l-grasp-gain* l-grasp-gain)
+  (setq *spacenav-r-gripper-dis* r-gripper-dis)
+  (setq *spacenav-l-gripper-dis* l-gripper-dis)
+
+  ;; todo use (send *ri* :state :gripper :larm :position) and set the  gripper-state
+  ;; (if (>= (send *ri* :state :))
+  ;; (setq **)
+  (setq *spacenav-r-gripper-state* nil)
+  (setq *spacenav-l-gripper-state* nil)
+  (setq *spacenav-init-head-y* (send *pr2* :head-neck-y :joint-angle))
+  (setq *spacenav-init-head-p* (send *pr2* :head-neck-p :joint-angle))
+
+  (ros::unsubscribe "/spacenav/joy")
   (ros::subscribe "/spacenav/joy"
-                  sensor_msgs::Joy #'spacenav-joy-cb 1
-                  )
+                  sensor_msgs::Joy #'spacenav-joy-cb 1)
 
   (ros::rate 10)
   (do-until-key
    ;; (x::window-main-one) ;; IRT viewerの視点を変えられる。見にくければ変えよう
    (ros::spin-once)
    (ros::sleep))
+  (speak-with-log "3Dマウスの操縦を終了します")
   )
 
 (format t "Please run (spacenav-teleop) ~%")

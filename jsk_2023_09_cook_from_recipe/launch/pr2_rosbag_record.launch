@@ -31,6 +31,8 @@
           /kinect_head/rgb/image_rect_color/compressed
           /kinect_head/depth_registered/camera_info
           /kinect_head/depth_registered/image_rect/compressedDepth
+          /kinect_head/rgb/image_color/compressed
+          /kinect_head/depth_registered/image_raw/compressedDepth
           /k4a/rgb/camera_info
           /k4a/rgb/image_rect_color/compressed
           /audio
