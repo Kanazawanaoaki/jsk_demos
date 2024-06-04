@@ -7,6 +7,7 @@ Panels:
         - /Global Options1
         - /Status1
         - /Segmentation Image1
+        - /BoundingBoxArray1
       Splitter Ratio: 0.5
     Tree Height: 343
   - Class: rviz/Selection
@@ -370,8 +371,12 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        objectoutput00:
-          {}
+        camera_base:
+          depth_camera_link:
+            imu_link:
+              {}
+            rgb_camera_link:
+              {}
         world:
           eng2:
             eng2/1f:
@@ -418,12 +423,6 @@ Visualization Manager:
                               {}
                             head_plate_frame:
                               head_mount_link:
-                                camera_base:
-                                  depth_camera_link:
-                                    imu_link:
-                                      {}
-                                    rgb_camera_link:
-                                      {}
                                 head_mount_kinect_ir_link:
                                   head_mount_kinect_ir_optical_frame:
                                     {}
@@ -530,6 +529,8 @@ Visualization Manager:
                           {}
                       torso_lift_motor_screw_link:
                         {}
+                    objectoutput00:
+                      {}
             eng2/8f:
               {}
       Update Interval: 0
@@ -538,7 +539,7 @@ Visualization Manager:
       Enabled: true
       Name: BoundingBoxArray
       Queue Size: 10
-      Topic: /detic_segmentor/output/boxes
+      Topic: /deva_segmentor/output/boxes
       Unreliable: false
       Value: true
       alpha: 0.800000011920929
@@ -575,7 +576,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 7.8754096031188965
+      Distance: 2.1955313682556152
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -583,17 +584,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 2.153163194656372
-        Y: 0.45538777112960815
-        Z: 1.0377070903778076
+        X: 1.1243165731430054
+        Y: -0.019729159772396088
+        Z: 1.3271626234054565
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.1403980255126953
+      Pitch: 1.4603979587554932
       Target Frame: <Fixed Frame>
-      Yaw: 0.02403177320957184
+      Yaw: 6.24221658706665
     Saved: ~
 Window Geometry:
   Displays:

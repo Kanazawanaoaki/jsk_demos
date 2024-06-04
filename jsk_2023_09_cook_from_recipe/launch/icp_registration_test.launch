@@ -4,7 +4,7 @@
   <arg name="USE_PPF" default="false" />
 
   <arg name="input" default="/kinect_head_remote/depth_registered/points" />
-  <arg name="pcd_name" default="knife" />
+  <arg name="pcd_name" default="kitchen_look" />
   <arg name="sensor_frame" default="head_mount_kinect_rgb_optical_frame" />
   <arg name="config_file" default="$(arg pcd_name)_tf.yaml" />
 

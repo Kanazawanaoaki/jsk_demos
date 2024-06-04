@@ -6,7 +6,7 @@
   <arg name="MASK_IMAGE" default="/cutie_node/output/segmentation" />
 
   <arg name="standalone" default="true"/> <!-- debug nodes by setting then standalone -->
-  <arg name="MANAGER" value="detic_detection_manager" unless="$(arg standalone)"/>
+  <arg name="MANAGER" value="deva_detection_manager" unless="$(arg standalone)"/>
   <arg name="MANAGER" value="" if="$(arg standalone)"/>
   <arg name="LOAD_STATEMENT" value="load" unless="$(arg standalone)"/>
   <arg name="LOAD_STATEMENT" value="standalone" if="$(arg standalone)"/>
@@ -32,20 +32,22 @@
     <!-- </rosparam> -->
   </node>
 
-  <node name="detic_label_image_to_indices"
+  <node name="deva_label_image_to_indices"
         pkg="nodelet" type="nodelet"
         args="$(arg LOAD_STATEMENT) jsk_pcl_utils/LabelToClusterPointIndices $(arg MANAGER)">
     <remap from="~input" to="$(arg MASK_IMAGE)"/>
-    <remap from="~output" to="detic_segmentor/indices"/>
+    <remap from="~output" to="deva_segmentor/indices"/>
   </node>
 
   <!-- cluster_filter: 1 is desirable, but only stable with jsk_recognition/#2739 -->
-  <node name="detic_euclidean_clustering"
+  <node name="deva_euclidean_clustering"
         pkg="nodelet" type="nodelet"
         args="$(arg LOAD_STATEMENT) jsk_pcl/EuclideanClustering $(arg MANAGER)"
+        respawn="true"
+        output="screen"
         clear_params="true">
     <remap from="~input" to="$(arg INPUT_CLOUD)"/>
-    <remap from="~input/cluster_indices" to="detic_segmentor/indices"/>
+    <remap from="~input/cluster_indices" to="deva_segmentor/indices"/>
     <!-- <rosparam> -->
     <!--   multi: true -->
     <!--   tolerance: 0.03 -->
@@ -65,14 +67,14 @@
     </rosparam>
   </node>
 
-  <node name="detic_cluster_point_indices_decomposer"
+  <node name="deva_cluster_point_indices_decomposer"
         pkg="nodelet" type="nodelet"
         args="$(arg LOAD_STATEMENT) jsk_pcl/ClusterPointIndicesDecomposer $(arg MANAGER)"
         clear_params="true">
     <remap from="~input" to="$(arg INPUT_CLOUD)"/>
-    <remap from="~target" to="detic_euclidean_clustering/output"/>
-    <remap from="~boxes" to="detic_segmentor/output/boxes"/>
-    <remap from="~centroid_pose_array" to="detic_segmentor/output/centroid"/>
+    <remap from="~target" to="deva_euclidean_clustering/output"/>
+    <remap from="~boxes" to="deva_segmentor/output/boxes"/>
+    <remap from="~centroid_pose_array" to="deva_segmentor/output/centroid"/>
     <!-- <rosparam subst_value="true"> -->
     <!--   align_boxes: true -->
     <!--   align_boxes_with_plane: false -->
@@ -99,7 +101,7 @@
         pkg="nodelet" type="nodelet"
         args="$(arg LOAD_STATEMENT) jsk_pcl_utils/ClusterPointIndicesToPointIndices $(arg MANAGER)"
         clear_params="true">
-    <remap from="~input" to="detic_segmentor/indices"/>
+    <remap from="~input" to="deva_segmentor/indices"/>
     <rosparam>
       index: 0
     </rosparam>

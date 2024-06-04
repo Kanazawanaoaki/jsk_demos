@@ -39,13 +39,13 @@
           (setq obj-pos (scale 0.001 (send obj-coord :worldpos)))
           (if (> width 0)
               (progn
-                (setq found-obj t)
+                (setq *found-obj* t)
                 (setq *width* width)
                 (setq *length* length)
                 (setq *height* height)
                 (setq *obj-coord* obj-coord)
                 ))
-          (print (list 'found? found-obj obj-pos)))
+          (print (list 'found? *found-obj* obj-pos)))
         obj-pos))))
 
 ;; global variables
@@ -103,7 +103,7 @@
     )
    ((string= object-name "peeler")
     ;; (setq object-offset (make-coords :pos #f(-53.198 -7.425 -12.732) :rpy #f(-0.109 0.026 -0.005)))
-    (setq object-offset (make-coords :pos #f(-53.198 -4.425 -15.732) :rpy #f(-0.109 0.026 -0.005)))
+    (setq object-offset (make-coords :pos #f(-53.198 -7.425 -10.732) :rpy #f(-0.109 0.026 -0.005)))
     (setq wait-rav #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
     (setq pre-set-val #f(-100 0 100))
     )
@@ -115,58 +115,62 @@
 
   ;; object rec
   (setq msg nil)
-  (setq msg (one-shot-subscribe "/detic_segmentor/output/boxes" jsk_recognition_msgs::BoundingBoxArray :timeout 5000))
+  (setq *found-obj* nil)
+  (setq rec-cnt 0)
+  (ros::unsubscribe "/deva_segmentor/output/boxes")
+  (until *found-obj*
+         (setq msg (one-shot-subscribe "/deva_segmentor/output/boxes" jsk_recognition_msgs::BoundingBoxArray :timeout 5000))
 
-  ;; grasp
-  (when msg
-    (object-pose-cb msg)
-    (send *obj-coord* :draw-on :flush t)
-    (setq *grasp-coords* (send (send *obj-coord* :copy-worldcoords) :transform object-offset))
-    (format t "grasp object in ~A ~%" *grasp-coords*)
+         ;; grasp
+         (when msg
+           (object-pose-cb msg)
+           (send *obj-coord* :draw-on :flush t)
+           (setq *grasp-coords* (send (send *obj-coord* :copy-worldcoords) :transform object-offset))
+           (format t "grasp object in ~A ~%" *grasp-coords*)
+           ))
 
-    (send *pr2* :rarm :angle-vector wait-rav)
-    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-    (send *ri* :wait-interpolation)
+  (send *pr2* :rarm :angle-vector wait-rav)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
 
-    (send *ri* :stop-grasp :rarm :wait t)
+  (send *ri* :stop-grasp :rarm :wait t)
 
-    (setq set-coords (send *grasp-coords* :copy-worldcoords))
-    ;; (send set-coords :translate pre-set-val :world)
-    (send set-coords :translate pre-set-val :local)
-    (send *pr2* :rarm :inverse-kinematics
-          (send set-coords :copy-worldcoords)
-          :rotation-axis t
-          :debug-view nil)
-    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-    (send *ri* :wait-interpolation)
+  (setq set-coords (send *grasp-coords* :copy-worldcoords))
+  ;; (send set-coords :translate pre-set-val :world)
+  (send set-coords :translate pre-set-val :local)
+  (send *pr2* :rarm :inverse-kinematics
+        (send set-coords :copy-worldcoords)
+        :rotation-axis t
+        :debug-view nil)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
 
-    ;; (send set-coords :translate (scale -1 pre-set-val) :world)
-    (send set-coords :translate (scale -1 pre-set-val) :local)
-    (send *pr2* :rarm :inverse-kinematics
-          (send set-coords :copy-worldcoords)
-          :rotation-axis t
-          :debug-view nil)
-    (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-    (send *ri* :wait-interpolation)
+  ;; (send set-coords :translate (scale -1 pre-set-val) :world)
+  (send set-coords :translate (scale -1 pre-set-val) :local)
+  (send *pr2* :rarm :inverse-kinematics
+        (send set-coords :copy-worldcoords)
+        :rotation-axis t
+        :debug-view nil)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
 
-    ;; (do-until-key
-    ;;  (print "wait for key pressed")
-    ;;  (unix:usleep 100000)
-    ;;  )
-    (send *ri* :start-grasp :rarm :wait t)
+  ;; (do-until-key
+  ;;  (print "wait for key pressed")
+  ;;  (unix:usleep 100000)
+  ;;  )
+  (send *ri* :start-grasp :rarm :wait t)
 
-    (send set-coords :translate pre-set-val :local)
-    (send *pr2* :rarm :inverse-kinematics
-          (send set-coords :copy-worldcoords)
-          :rotation-axis t
-          :debug-view nil)
-    (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
-    (send *ri* :wait-interpolation)
+  (send set-coords :translate pre-set-val :local)
+  (send *pr2* :rarm :inverse-kinematics
+        (send set-coords :copy-worldcoords)
+        :rotation-axis t
+        :debug-view nil)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
 
-    (send *pr2* :rarm :angle-vector wait-rav)
-    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-    (send *ri* :wait-interpolation)
-    )
+  (send *pr2* :rarm :angle-vector wait-rav)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
 
   ;; rec fail
   )

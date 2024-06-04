@@ -49,7 +49,7 @@ roslaunch jsk_2023_09_cook_from_recipe deva_apply_track_object_mask.launch
 rosrun dynamic_reconfigure dynparam set /deva_node classes "light;"
 ```
 その結果から物体を掴むなど
-```
+```bash
 roscd jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir
 rlwrap roseus pr2_cut_food.l
 ;; (reset-move-pose)
@@ -75,3 +75,23 @@ https://github.com/HiroIshida/mohou_ros/tree/master?tab=readme-ov-file#3-save-ro
 ```bash
 rosrun mohou_ros vive_controller_pr2.py -pn test
 ```
+
+#### 音声対話で操縦
+```bash
+roscd jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir
+rlwrap roseus pr2_cut_food.l
+(dialogue-manip)
+```
+
+#### 3Dマウスで操縦
+launch
+```bash
+roslaunch spacenav_node classic.launch 
+```
+eus
+```bash
+roscd jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir
+rlwrap spacenav-teleop-test.l
+(spacenav-teleop)
+```
+
