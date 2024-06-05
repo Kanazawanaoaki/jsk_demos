@@ -58,7 +58,7 @@
 	   (format t "data: ~A ~%" *voice-data*)
 	   ))
 
-  (send *ri* :speak-jp "ありがとうございます")
+  (speak-with-log "ありがとうございます")
   )
 
 (defun wait-ok-manequine (&key (arm (list "rarm")) (time 0))
@@ -72,7 +72,7 @@
 
 (defun dialogue-manip (&key (init-pose (send *pr2* :reset-manip-pose)) (r-grasp-gain 0.01) (l-grasp-gain 0.01) (r-gripper-dis 0.09) (l-gripper-dis 0.09) (pose-initialize t))
   (manequine-end)
-  (speak-with-log "音声対話操作モードを開始します")
+  (speak-with-log "音声対話操作を開始します")
   (if pose-initialize
       (progn
         (send *pr2* :angle-vector init-pose)
@@ -129,7 +129,7 @@
            )
           ((or (equal *voice-data* '("操作 終了")) (equal *voice-data* '("終了")))
            (manequine-end)
-           (speak-with-log "音声対話操作モードを終了します")
+           (speak-with-log "音声対話操作を終了します")
            (setq *finish-flag* t)
            )
           (t
@@ -137,7 +137,7 @@
            )
           )
          )
-  (send *ri* :speak-jp "ありがとうございました")
+  ;; (send *ri* :speak-jp "ありがとうございました" :wait t)
   )
 
 ;; pose teaching

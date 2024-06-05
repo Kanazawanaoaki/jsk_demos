@@ -1,0 +1,25 @@
+<launch>
+  <arg name="gui" default="false" />
+  <arg name="input" default="/kinect_head_remote/depth_registered/points" />
+
+  <node name="inverse_tf_publisher"
+        pkg="jsk_2023_09_cook_from_recipe" type="inverse_tf_publisher.py" />
+
+  <node name="tf_transform_cloud"
+        pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl_utils/TfTransformCloud">
+    <remap from="~input" to="$(arg input)"/>
+    <!-- <rosparam> -->
+    <!--   target_frame_id: inverse_target_frame -->
+    <!-- </rosparam> -->
+    <rosparam>
+      target_frame_id: r_gripper_tool_frame
+    </rosparam>
+  </node>
+
+  <group if="$(arg gui)">
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/tf_transform_test.rviz" />
+  </group>
+</launch>

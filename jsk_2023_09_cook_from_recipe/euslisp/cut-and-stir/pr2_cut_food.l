@@ -85,6 +85,9 @@
    ((string= object-name "peeler")
     (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "orange peeler;")
     )
+   ((string= object-name "white cup")
+    (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "white cup;")
+    )
    )
   (format t "change deva class to ~A detection ~%" object-name)
   t)
@@ -94,29 +97,50 @@
   (setq offset-coords (send (send rec-coords :copy-worldcoords) :transformation (send grasp-coords :copy-worldcoords)))
   offset-coords)
 
-(defun grasp-rec-object (&key (object-name "knife"))
+(defun calc-average-two-coords (first-coords second-coords)
+  (let (ans-coords)
+    (setq ans-coords :newcoords (make-coords :pos (scale 0.5 (v+ (send first-coords :worldpos) (send second-coords :worldpos)))
+                                             :rot (send first-coords :worldrot)))
+    ans-coords))
+
+(defun grasp-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm))
   (cond
-   ((string= object-name "knife")
+   ((and (string= object-name "knife") (equal arm :rarm))
     (setq object-offset (make-coords :pos #f(-105.089 -11.948 -2.399) :rpy #f(-0.09 0.071 0.061)))
-    (setq wait-rav #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
+    (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
     (setq pre-set-val #f(-100 0 100))
     )
-   ((string= object-name "peeler")
+   ((and (string= object-name "peeler") (equal arm :rarm))
     ;; (setq object-offset (make-coords :pos #f(-53.198 -7.425 -12.732) :rpy #f(-0.109 0.026 -0.005)))
     (setq object-offset (make-coords :pos #f(-53.198 -7.425 -10.732) :rpy #f(-0.109 0.026 -0.005)))
-    (setq wait-rav #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
+    (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
+    (setq pre-set-val #f(-100 0 100))
+    )
+   ((and (string= object-name "white cup") (equal arm :rarm))
+    (setq object-offset (make-coords :pos #f(-98.527 0.551 -14.482) :rpy #f(-0.033 0.036 -0.057)))
+    (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
+    (setq pre-set-val #f(-100 0 100))
+    )
+   ((and (string= object-name "white cup") (equal arm :larm))
+    ;; (setq object-offset (make-coords :pos #f(-98.527 0.551 -14.482) :rpy #f(-0.033 0.036 -0.057)))
+    (setq object-offset (make-coords :pos #f(-98.527 0.551 30) :rpy #f(-0.033 0.036 -0.057)))
+    (setq wait-av #f(18.6793 40.7013 -15.7633 -105.901 -210.673 -70.7818 203.18))
     (setq pre-set-val #f(-100 0 100))
     )
    )
 
   ;; set object rec
-  (change-deva-param :object-name object-name) ;; このへんTODO flagとか カレーの時のを参考に考える
-  (unix:sleep 3)
+  (if change-deva
+      (progn
+        (change-deva-param :object-name object-name)
+        (unix:sleep 3)
+        ))
 
   ;; object rec
   (setq msg nil)
   (setq *found-obj* nil)
   (setq rec-cnt 0)
+  (setq rec-av-coords nil)
   (ros::unsubscribe "/deva_segmentor/output/boxes")
   (until *found-obj*
          (setq msg (one-shot-subscribe "/deva_segmentor/output/boxes" jsk_recognition_msgs::BoundingBoxArray :timeout 5000))
@@ -127,18 +151,30 @@
            (send *obj-coord* :draw-on :flush t)
            (setq *grasp-coords* (send (send *obj-coord* :copy-worldcoords) :transform object-offset))
            (format t "grasp object in ~A ~%" *grasp-coords*)
+           (when multi-rec
+             (setq rec-cnt (+ rec-cnt 1))
+             (setq *found-obj* nil)
+             (if (null fuga)
+                 (setq rec-av-coords (send *grasp-coords* :copy-worldcoords))
+               (setq rec-av-coords (calc-average-two-coords rec-av-coords (send *grasp-coords* :copy-worldcoords)))
+               )
+             (when (>= rec-cnt 5)
+               (setq *found-obj* t)
+               (setq *grasp-coords* rec-av-coords)
+               )
+             )
            ))
 
-  (send *pr2* :rarm :angle-vector wait-rav)
+  (send *pr2* arm :angle-vector wait-av)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
 
-  (send *ri* :stop-grasp :rarm :wait t)
+  (send *ri* :stop-grasp arm :wait t)
 
   (setq set-coords (send *grasp-coords* :copy-worldcoords))
   ;; (send set-coords :translate pre-set-val :world)
   (send set-coords :translate pre-set-val :local)
-  (send *pr2* :rarm :inverse-kinematics
+  (send *pr2* arm :inverse-kinematics
         (send set-coords :copy-worldcoords)
         :rotation-axis t
         :debug-view nil)
@@ -147,7 +183,7 @@
 
   ;; (send set-coords :translate (scale -1 pre-set-val) :world)
   (send set-coords :translate (scale -1 pre-set-val) :local)
-  (send *pr2* :rarm :inverse-kinematics
+  (send *pr2* arm :inverse-kinematics
         (send set-coords :copy-worldcoords)
         :rotation-axis t
         :debug-view nil)
@@ -158,31 +194,86 @@
   ;;  (print "wait for key pressed")
   ;;  (unix:usleep 100000)
   ;;  )
-  (send *ri* :start-grasp :rarm :wait t)
+  (send *ri* :start-grasp arm :gain grasp-gain :wait t)
 
   (send set-coords :translate pre-set-val :local)
-  (send *pr2* :rarm :inverse-kinematics
+  (send *pr2* arm :inverse-kinematics
         (send set-coords :copy-worldcoords)
         :rotation-axis t
         :debug-view nil)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
   (send *ri* :wait-interpolation)
 
-  (send *pr2* :rarm :angle-vector wait-rav)
+  (send *pr2* arm :angle-vector wait-av)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
 
   ;; rec fail
   )
 
-(defun cut-wait-pose ()
+(defun cut-wait-pose (&key (rarm t) (larm t))
   (setq cut-wait-rav #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
   (setq cut-wait-lav #f(41.0448 2.03593 63.3981 -67.6587 27.9651 -69.6477 -117.945))
   (send *pr2* :head :neck-y :joint-angle 0.0)
   (send *pr2* :head :neck-p :joint-angle 50.0)
   (send *pr2* :torso_lift_joint :joint-angle 300)
-  (send *pr2* :rarm :angle-vector cut-wait-rav)
-  (send *pr2* :larm :angle-vector cut-wait-lav)
+  (if rarm
+      (send *pr2* :rarm :angle-vector cut-wait-rav))
+  (if larm
+      (send *pr2* :larm :angle-vector cut-wait-lav))
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
+  )
+
+(defun test-make-model (&key (grasp-gain 0.01) (open-gripper t))
+  (cut-wait-pose :larm nil)
+
+  (if open-gripper
+      (send *ri* :stop-grasp :rarm :wait t))
+  (speak-with-log "物体を持たせて，OKといってください")
+  (ok-wait)
+  (send *ri* :start-grasp :rarm :gain grasp-gain :wait t)
+
+  ;; do look around
+  (send *pr2* :rarm :angle-vector #f(-26.5948 24.2969 -39.6524 -63.3455 -55.3765 -69.4311 114.491))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  ;; TODO
+  (do-until-key
+   (print "wait for key")
+   (unix:usleep 100000)
+   )
+
+  (send *pr2* :rarm :angle-vector #f(-25.5497 23.4245 -40.4242 -60.3925 -62.4925 -74.5565 201.178))
+  (send *ri* :angle-vector (send *pr2* :angle-vector))
+  (send *ri* :wait-interpolation)
+
+  ;; TODO
+  (do-until-key
+   (print "wait for key")
+   (unix:usleep 100000)
+   )
+
+  (send *pr2* :rarm :angle-vector #f(-31.3545 25.7365 -47.3793 -66.6136 -46.5834 -83.6106 271.348))
+  (send *ri* :angle-vector (send *pr2* :angle-vector))
+  (send *ri* :wait-interpolation)
+
+  ;; TODO
+  (do-until-key
+   (print "wait for key")
+   (unix:usleep 100000)
+   )
+
+  (send *pr2* :rarm :angle-vector #f(-32.9315 28.4556 -49.0974 -73.9793 -42.9177 -77.8097 6.70128))
+  (send *ri* :angle-vector (send *pr2* :angle-vector))
+  (send *ri* :wait-interpolation)
+
+  ;; TODO
+  (do-until-key
+   (print "wait for key")
+   (unix:usleep 100000)
+   )
+
+  (cut-wait-pose :larm nil)
   )
