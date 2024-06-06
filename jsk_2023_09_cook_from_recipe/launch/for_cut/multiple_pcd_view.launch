@@ -1,0 +1,84 @@
+<launch>
+  <arg name="pcd_name1" default="sample_pcd_1717584598329397" />
+  <arg name="pcd_name2" default="sample_pcd_1717584607441570" />
+  <arg name="pcd_name3" default="sample_pcd_1717584616081420" />
+  <arg name="pcd_name4" default="sample_pcd_1717584625861348" />
+  <arg name="dir_name" default="white_cup_auto_move_test" />
+  <arg name="config_file" default="$(arg pcd_name1)_tf.yaml" />
+  <arg name="gui" default="true"/>
+
+  <node name="static_tf_publisher_map_to_pcd1"
+        pkg="tf" type="static_transform_publisher"
+        args="0 0 0 0 0 0 map $(arg pcd_name1) 10"/>
+  <node name="static_tf_publisher_map_to_pcd2"
+        pkg="tf" type="static_transform_publisher"
+        args="0 0 0 0 0 0 map $(arg pcd_name2) 10"/>
+  <node name="static_tf_publisher_map_to_pcd3"
+        pkg="tf" type="static_transform_publisher"
+        args="0 0 0 0 0 0 map $(arg pcd_name3) 10"/>
+  <node name="static_tf_publisher_map_to_pcd4"
+        pkg="tf" type="static_transform_publisher"
+        args="0 0 0 0 0 0 map $(arg pcd_name4) 10"/>
+
+  <node name="pointcloud_database_server_1" pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl/PointcloudDatabaseServer" output="screen"
+        clear_params="true">
+    <rosparam subst_value="true">
+      models: ["$(find jsk_2023_09_cook_from_recipe)/datas/saved_pcds/20240605_saved_pcds/$(arg dir_name)/$(arg pcd_name1).pcd",
+      ]
+      duration: 0.05
+      use_array: false
+    </rosparam>
+  </node>
+  <node name="pointcloud_database_server_2" pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl/PointcloudDatabaseServer" output="screen"
+        clear_params="true">
+    <rosparam subst_value="true">
+      models: ["$(find jsk_2023_09_cook_from_recipe)/datas/saved_pcds/20240605_saved_pcds/$(arg dir_name)/$(arg pcd_name2).pcd",
+      ]
+      duration: 0.05
+      use_array: false
+    </rosparam>
+  </node>
+  <node name="pointcloud_database_server_3" pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl/PointcloudDatabaseServer" output="screen"
+        clear_params="true">
+    <rosparam subst_value="true">
+      models: ["$(find jsk_2023_09_cook_from_recipe)/datas/saved_pcds/20240605_saved_pcds/$(arg dir_name)/$(arg pcd_name3).pcd",
+      ]
+      duration: 0.05
+      use_array: false
+    </rosparam>
+  </node>
+  <node name="pointcloud_database_server_4" pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl/PointcloudDatabaseServer" output="screen"
+        clear_params="true">
+    <rosparam subst_value="true">
+      models: ["$(find jsk_2023_09_cook_from_recipe)/datas/saved_pcds/20240605_saved_pcds/$(arg dir_name)/$(arg pcd_name4).pcd",
+      ]
+      duration: 0.05
+      use_array: false
+    </rosparam>
+  </node>
+
+  <node name="config_tf_broadcaster" pkg="jsk_2023_09_cook_from_recipe"
+        type="config_tf_publisher.py" output="screen"
+        clear_params="true">
+    <rosparam subst_value="true">
+      config_file: $(arg config_file)
+      parent_frame: map
+      child_frame: target_object
+    </rosparam>
+  </node>
+
+  <!-- <node name="itf" pkg="rviz_interactive_tf" type="interactive_tf" ns="itf1"> -->
+  <!--   <param name="parent_frame" value="map"/> -->
+  <!--   <param name="frame" value="tf1"/> -->
+  <!-- </node> -->
+
+  <group if="$(arg gui)">
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/multiple_pcd_view.rviz"/>
+  </group>
+</launch>
