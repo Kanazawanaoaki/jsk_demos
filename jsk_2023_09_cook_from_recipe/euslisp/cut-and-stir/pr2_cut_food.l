@@ -225,7 +225,65 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun test-make-model (&key (grasp-gain 0.01) (open-gripper t))
+
+(defun test-make-model (&key (grasp-gain 0.01) (open-gripper t) (service-call t) (step-deg 10))
+  (cut-wait-pose :larm nil)
+
+  (when open-gripper
+    (send *ri* :stop-grasp :rarm :wait t)
+    (speak-with-log "物体を持たせて，OKといってください")
+    (ok-wait)
+    )
+  (send *ri* :start-grasp :rarm :gain grasp-gain :wait t)
+
+  ;; do look around
+  (send *pr2* :rarm :angle-vector #f(-26.5948 24.2969 -39.6524 -63.3455 -55.3765 -69.4311 114.491))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (if service-call
+      (progn
+        (unix:sleep 1)
+        (setq req (instance std_srvs::EmptyRequest :init))
+        (setq res (ros::service-call "/service_save_pointcloud_to_pcd/save_pcd" req))
+        )
+    (progn
+      (do-until-key
+       (print "wait for key")
+       (unix:usleep 100000)
+       )
+      ))
+
+  (setq n-times (/ 360 step-deg))
+  (setq target-coords (make-coords))
+  (format t "step-deg: ~A, n-times: ~A ~%" step-deg n-times)
+  (dotimes (i n-times)
+    (format t "now ~A / ~A step ~%" (+ i 1) n-times)
+    (send target-coords :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+    (send target-coords :rotate (deg2rad step-deg) :x)
+
+    (send *pr2* :rarm :inverse-kinematics target-coords)
+    (send *ri* :angle-vector (send *pr2* :angle-vector))
+    (send *ri* :wait-interpolation)
+
+    (if service-call
+        (progn
+          (unix:sleep 1)
+          (setq req (instance std_srvs::EmptyRequest :init))
+          (setq res (ros::service-call "/service_save_pointcloud_to_pcd/save_pcd" req))
+          )
+      (progn
+        (do-until-key
+         (print "wait for key")
+         (unix:usleep 100000)
+         )
+        ))
+    )
+
+  (cut-wait-pose :larm nil)
+  )
+
+(defun test-make-model-old (&key (grasp-gain 0.01) (open-gripper t));; this is old version
   (cut-wait-pose :larm nil)
 
   (if open-gripper

@@ -51,7 +51,7 @@
         pkg="nodelet" type="nodelet" unless="$(arg USE_PPF)"
         args="load jsk_pcl/ICPRegistration /$(arg manager)"
         output="screen">
-    <remap from="~input" to="subsample_input/output" />
+    <!-- <remap from="~input" to="subsample_input/output" /> -->
     <remap from="~input" to="$(arg input)" />
     <remap from="~input_reference" to="subsample_reference/output" />
     <!-- <remap from="~input_reference" to="pointcloud_database_server/cloud" /> -->
