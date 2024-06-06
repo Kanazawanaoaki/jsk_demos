@@ -3,7 +3,7 @@
   <arg name="pcd_name2" default="sample_pcd_1717584607441570" />
   <arg name="pcd_name3" default="sample_pcd_1717584616081420" />
   <arg name="pcd_name4" default="sample_pcd_1717584625861348" />
-  <arg name="dir_name" default="white_cup_auto_move_test" />
+  <arg name="dir_name" default="20240605_saved_pcds/white_cup_auto_move_test" />
   <arg name="config_file" default="$(arg pcd_name1)_tf.yaml" />
   <arg name="gui" default="true"/>
 
@@ -24,7 +24,7 @@
         args="standalone jsk_pcl/PointcloudDatabaseServer" output="screen"
         clear_params="true">
     <rosparam subst_value="true">
-      models: ["$(find jsk_2023_09_cook_from_recipe)/datas/saved_pcds/20240605_saved_pcds/$(arg dir_name)/$(arg pcd_name1).pcd",
+      models: ["$(find jsk_2023_09_cook_from_recipe)/datas/saved_pcds/$(arg dir_name)/$(arg pcd_name1).pcd",
       ]
       duration: 0.05
       use_array: false
@@ -34,7 +34,7 @@
         args="standalone jsk_pcl/PointcloudDatabaseServer" output="screen"
         clear_params="true">
     <rosparam subst_value="true">
-      models: ["$(find jsk_2023_09_cook_from_recipe)/datas/saved_pcds/20240605_saved_pcds/$(arg dir_name)/$(arg pcd_name2).pcd",
+      models: ["$(find jsk_2023_09_cook_from_recipe)/datas/saved_pcds/$(arg dir_name)/$(arg pcd_name2).pcd",
       ]
       duration: 0.05
       use_array: false
@@ -44,7 +44,7 @@
         args="standalone jsk_pcl/PointcloudDatabaseServer" output="screen"
         clear_params="true">
     <rosparam subst_value="true">
-      models: ["$(find jsk_2023_09_cook_from_recipe)/datas/saved_pcds/20240605_saved_pcds/$(arg dir_name)/$(arg pcd_name3).pcd",
+      models: ["$(find jsk_2023_09_cook_from_recipe)/datas/saved_pcds/$(arg dir_name)/$(arg pcd_name3).pcd",
       ]
       duration: 0.05
       use_array: false
@@ -54,7 +54,7 @@
         args="standalone jsk_pcl/PointcloudDatabaseServer" output="screen"
         clear_params="true">
     <rosparam subst_value="true">
-      models: ["$(find jsk_2023_09_cook_from_recipe)/datas/saved_pcds/20240605_saved_pcds/$(arg dir_name)/$(arg pcd_name4).pcd",
+      models: ["$(find jsk_2023_09_cook_from_recipe)/datas/saved_pcds/$(arg dir_name)/$(arg pcd_name4).pcd",
       ]
       duration: 0.05
       use_array: false
