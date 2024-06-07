@@ -45,7 +45,9 @@
                 (setq *height* height)
                 (setq *obj-coord* obj-coord)
                 ))
-          (print (list 'found? *found-obj* obj-pos)))
+          (print (list 'found? *found-obj* obj-pos))
+          (print (list 'obj-dims *width* *length* *height*))
+          )
         obj-pos))))
 
 ;; global variables
@@ -88,6 +90,9 @@
    ((string= object-name "white cup")
     (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "white cup;")
     )
+   ((string= object-name "onion")
+    (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "brown onion;")
+    )
    )
   (format t "change deva class to ~A detection ~%" object-name)
   t)
@@ -99,8 +104,8 @@
 
 (defun calc-average-two-coords (first-coords second-coords)
   (let (ans-coords)
-    (setq ans-coords :newcoords (make-coords :pos (scale 0.5 (v+ (send first-coords :worldpos) (send second-coords :worldpos)))
-                                             :rot (send first-coords :worldrot)))
+    (setq ans-coords (make-coords :pos (scale 0.5 (v+ (send first-coords :worldpos) (send second-coords :worldpos)))
+                                  :rot (send first-coords :worldrot)))
     ans-coords))
 
 (defun grasp-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm))
@@ -109,23 +114,40 @@
     (setq object-offset (make-coords :pos #f(-105.089 -11.948 -2.399) :rpy #f(-0.09 0.071 0.061)))
     (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
     (setq pre-set-val #f(-100 0 100))
+    (setq fix-rot nil)
     )
    ((and (string= object-name "peeler") (equal arm :rarm))
     ;; (setq object-offset (make-coords :pos #f(-53.198 -7.425 -12.732) :rpy #f(-0.109 0.026 -0.005)))
-    (setq object-offset (make-coords :pos #f(-53.198 -7.425 -10.732) :rpy #f(-0.109 0.026 -0.005)))
+    ;; (setq object-offset (make-coords :pos #f(-53.198 -7.425 -10.732) :rpy #f(-0.109 0.026 -0.005)))
+    (setq object-offset (make-coords :pos #f(-43.198 -7.425 -10.732) :rpy #f(-0.109 0.026 -0.005)))
     (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
     (setq pre-set-val #f(-100 0 100))
+    (setq fix-rot nil)
     )
    ((and (string= object-name "white cup") (equal arm :rarm))
     (setq object-offset (make-coords :pos #f(-98.527 0.551 -14.482) :rpy #f(-0.033 0.036 -0.057)))
     (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
     (setq pre-set-val #f(-100 0 100))
+    (setq fix-rot nil)
     )
    ((and (string= object-name "white cup") (equal arm :larm))
     ;; (setq object-offset (make-coords :pos #f(-98.527 0.551 -14.482) :rpy #f(-0.033 0.036 -0.057)))
     (setq object-offset (make-coords :pos #f(-98.527 0.551 30) :rpy #f(-0.033 0.036 -0.057)))
     (setq wait-av #f(18.6793 40.7013 -15.7633 -105.901 -210.673 -70.7818 203.18))
     (setq pre-set-val #f(-100 0 100))
+    (setq fix-rot nil)
+    )
+   ((and (string= object-name "onion") (equal arm :larm))
+    ;; (setq object-offset (make-coords :pos #f(-29.83 -6.456 -5.102) :rpy #f(-1.593 0.604 0.126)))
+    ;; (setq object-offset (make-coords :pos #f(-15.83 -6.456 -15.102) :rpy #f(-1.593 0.604 0.126)))
+    (setq object-offset (make-coords :pos #f(-15.83 -6.456 -20.102) :rpy #f(-1.593 0.604 0.126)))
+    (setq wait-av #f(41.0448 2.03593 63.3981 -67.6587 27.9651 -69.6477 -117.945))
+    (setq pre-set-val #f(-100 0 100))
+    (setq fix-rot t)
+    )
+   (t
+    (format t "this setting is not implemented yet! ~%")
+    (return-from grasp-rec-object)
     )
    )
 
@@ -148,13 +170,16 @@
          ;; grasp
          (when msg
            (object-pose-cb msg)
+           (when fix-rot
+             (send *obj-coord* :newcoords (make-coords :pos (send (send *obj-coord* :copy-worldcoords) :worldpos)))
+             )
            (send *obj-coord* :draw-on :flush t)
            (setq *grasp-coords* (send (send *obj-coord* :copy-worldcoords) :transform object-offset))
            (format t "grasp object in ~A ~%" *grasp-coords*)
            (when multi-rec
              (setq rec-cnt (+ rec-cnt 1))
              (setq *found-obj* nil)
-             (if (null fuga)
+             (if (null rec-av-coords)
                  (setq rec-av-coords (send *grasp-coords* :copy-worldcoords))
                (setq rec-av-coords (calc-average-two-coords rec-av-coords (send *grasp-coords* :copy-worldcoords)))
                )
@@ -226,24 +251,37 @@
   )
 
 
-(defun test-make-model (&key (grasp-gain 0.01) (open-gripper t) (service-call t) (step-deg 10))
-  (cut-wait-pose :larm nil)
+(defun test-make-model (&key (grasp-gain 0.01) (open-gripper t) (pose-init t) (service-call t) (step-deg 10) (arm :rarm))
+  (when pose-init
+    (if (equal arm :rarm)
+        (cut-wait-pose :larm nil)
+      (cut-wait-pose :rarm nil)
+      )
+    )
 
   (when open-gripper
-    (send *ri* :stop-grasp :rarm :wait t)
+    (send *ri* :stop-grasp arm :wait t)
     (speak-with-log "物体を持たせて，OKといってください")
     (ok-wait)
     )
-  (send *ri* :start-grasp :rarm :gain grasp-gain :wait t)
+  (send *ri* :start-grasp arm :gain grasp-gain :wait t)
 
   ;; do look around
-  (send *pr2* :rarm :angle-vector #f(-26.5948 24.2969 -39.6524 -63.3455 -55.3765 -69.4311 114.491))
+  (if (equal arm :rarm)
+      (progn
+        (send *pr2* :rarm :angle-vector #f(-26.5948 24.2969 -39.6524 -63.3455 -55.3765 -69.4311 114.491))
+        )
+    (progn
+      (send *pr2* :larm :angle-vector #f(32.0955 9.78618 68.5708 -93.7623 35.3695 -41.8402 -120.709))
+      )
+    )
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
   (if service-call
       (progn
-        (unix:sleep 1)
+        (unix:sleep 2)
+          (print "save point cloud")
         (setq req (instance std_srvs::EmptyRequest :init))
         (setq res (ros::service-call "/service_save_pointcloud_to_pcd/save_pcd" req))
         )
@@ -259,16 +297,17 @@
   (format t "step-deg: ~A, n-times: ~A ~%" step-deg n-times)
   (dotimes (i n-times)
     (format t "now ~A / ~A step ~%" (+ i 1) n-times)
-    (send target-coords :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+    (send target-coords :newcoords (send (send *pr2* arm :end-coords) :copy-worldcoords))
     (send target-coords :rotate (deg2rad step-deg) :x)
 
-    (send *pr2* :rarm :inverse-kinematics target-coords)
+    (send *pr2* arm :inverse-kinematics target-coords)
     (send *ri* :angle-vector (send *pr2* :angle-vector))
     (send *ri* :wait-interpolation)
 
     (if service-call
         (progn
-          (unix:sleep 1)
+          (unix:sleep 2)
+          (print "save point cloud")
           (setq req (instance std_srvs::EmptyRequest :init))
           (setq res (ros::service-call "/service_save_pointcloud_to_pcd/save_pcd" req))
           )
@@ -280,7 +319,10 @@
         ))
     )
 
-  (cut-wait-pose :larm nil)
+  (if (equal arm :rarm)
+      (cut-wait-pose :larm nil)
+    (cut-wait-pose :rarm nil)
+    )
   )
 
 (defun test-make-model-old (&key (grasp-gain 0.01) (open-gripper t));; this is old version

@@ -95,3 +95,18 @@ rlwrap spacenav-teleop-test.l
 (spacenav-teleop)
 ```
 
+
+#### モデルを作る
+devaを立ち上げている状態で
+```bash
+roslaunch tf_trans_with_hand_tf.launch gui:=true input:=/extract_indices/output target_frame:=r_gripper_tool_frame
+```
+```bash
+roslaunch service_save_ptcloud_in_pcd.launch object_name:=white_cup INPUT:=/tf_transform_cloud/output
+```
+```bash
+roscd jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir
+rlwrap roseus pr2_cut_food.l
+(reset-move-pose)
+(test-make-model :grasp-gain 1.0 :step-deg 20 :open-gripper t)
+```
