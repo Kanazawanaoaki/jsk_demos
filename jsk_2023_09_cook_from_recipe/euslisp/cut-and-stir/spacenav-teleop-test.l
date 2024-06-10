@@ -111,7 +111,7 @@
           )
         (if (and (equal *spacenav-arm* :larm) (equal *spacenav-l-gripper-state* nil))
             (progn
-              (send *ri* :start-grasp :larm :gain *spacenav-r-grasp-gain* :wait t)
+              (send *ri* :start-grasp :larm :gain *spacenav-l-grasp-gain* :wait t)
               (setq *spacenav-l-gripper-state* t)
               )
           (progn
