@@ -1,0 +1,38 @@
+<launch>
+
+  <arg name="gui" default="true" />
+
+  <arg name="INPUT_CLOUD" default="/kinect_head_remote/depth_registered/points" />
+  <arg name="extract_frame" default="r_gripper_tool_frame" />
+
+  <!-- attention_clipper -->
+  <node name="gripper_attention_clipper"
+        pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl/AttentionClipper">
+    <remap from="~input/points" to="$(arg INPUT_CLOUD)" />
+    <rosparam subst_value="true">
+      initial_pos: [0.05, 0.0, 0.0]
+      initial_rot: [0, 0, 0]
+      dimension_x: 0.3
+      dimension_y: 0.25
+      dimension_z: 0.25
+      frame_id: $(arg extract_frame)
+      use_multiple_attention: false
+    </rosparam>
+  </node>
+
+  <node name="gripper_extract_indices"
+        pkg="jsk_pcl_ros" type="extract_indices">
+    <remap from="~input" to="$(arg INPUT_CLOUD)" />
+    <remap from="~indices" to="gripper_attention_clipper/output/point_indices" />
+    <rosparam>
+      keep_organized: true
+    </rosparam>
+  </node>
+
+  <group if="$(arg gui)">
+    <node pkg="rviz" name="gripper_attention_rviz" type="rviz"
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/gripper_attention_test_pr2.rviz" />
+  </group>
+
+</launch>
