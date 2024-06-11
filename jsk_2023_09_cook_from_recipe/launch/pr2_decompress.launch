@@ -36,7 +36,7 @@
 
   <!-- rviz -->
   <group if="$(arg gui)">
-    <node name="rviz"
+    <node name="pr2_decomp_rviz"
           pkg="rviz" type="rviz"
           args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/pr2_pointcloud_decomp.rviz">
     </node>

@@ -266,6 +266,11 @@
 
       (warn "~%~A -> ~A / ~A~%" diffcds cds idealcds)
       (ros::ros-info "DIFF: ~A" diffcds)
+      (ros::ros-info "DIFF distrance: ~A, distance-threshold: ~A" (norm (float-vector (elt (send diffcds :worldpos) 0)
+                                                                                      (elt (send diffcds :worldpos) 1)))
+                     distance-threshold)
+      (ros::ros-info "DIFF rotation: ~A, rotation-threshold: ~A" (abs (elt (car (rpy-angle (send diffcds :worldrot))) 0))
+                     rotation-threshold)
       (cond
        ((or (send *ri* :simulation-modep) ;;if in simulation mode, execute
             (and (< (norm (float-vector (elt (send diffcds :worldpos) 0)

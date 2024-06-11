@@ -173,6 +173,13 @@
    (send *arrow* :newcoords (send cut-pose :copy-worldcoords))
    cut-pose)
 
+  (:set-now-cut-pose
+   ()
+   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+   (setq cut-pose (send (car (send *knife* :attention)) :copy-worldcoords))
+   (send *arrow* :newcoords (send cut-pose :copy-worldcoords))
+   cut-pose)
+
   (:cut-pose
    (&optional (cut-pose- nil))
    (if cut-pose-
