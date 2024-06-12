@@ -214,7 +214,7 @@
   (:manip-pose
    ()
    (send *pr2* :reset-manip-pose)
-   (send *pr2* :torso_lift_joint :joint-angle 325)
+   (send *pr2* :torso_lift_joint :joint-angle 300) ;;325
    (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
    (send *ri* :wait-interpolation)
    )
@@ -223,7 +223,7 @@
    (&optional (init-cut-pose (send cut-pose :copy-worldcoords)) (both-arm nil))
    (format t "init-cut-pose is ~A ~%" init-cut-pose)
    (send *pr2* :head :neck-p :joint-angle 50)
-   (send *pr2* :torso_lift_joint :joint-angle 325)
+   (send *pr2* :torso_lift_joint :joint-angle 300) ;;325
    (send *pr2* :rarm :inverse-kinematics init-cut-pose
          :link-list (list
                      (send *pr2* :link-list (send *pr2* :rarm :end-coords :parent)))

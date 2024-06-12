@@ -111,7 +111,9 @@
 (defun grasp-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm))
   (cond
    ((and (string= object-name "knife") (equal arm :rarm))
-    (setq object-offset (make-coords :pos #f(-105.089 -11.948 -2.399) :rpy #f(-0.09 0.071 0.061)))
+    (setq object-offset (make-coords :pos #f(-105.089 -11.948 -2.399) :rpy #f(-0.09 0.071 0.061))) ;; for only deva
+    ;; (setq object-offset (make-coords :pos #f(-3.846 -15.18 -28.556) :rpy #f(-0.171 0.071 0.061))) ;; for with tabletop
+
     (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
     (setq pre-set-val #f(-100 0 100))
     (setq fix-rot nil)
@@ -140,7 +142,9 @@
    ((and (string= object-name "onion") (equal arm :larm))
     ;; (setq object-offset (make-coords :pos #f(-29.83 -6.456 -5.102) :rpy #f(-1.593 0.604 0.126)))
     ;; (setq object-offset (make-coords :pos #f(-15.83 -6.456 -15.102) :rpy #f(-1.593 0.604 0.126)))
-    (setq object-offset (make-coords :pos #f(-15.83 -6.456 -20.102) :rpy #f(-1.593 0.604 0.126)))
+    ;; (setq object-offset (make-coords :pos #f(-15.83 -6.456 -20.102) :rpy #f(-1.593 0.604 0.126))) ;; for only deva
+    ;; (setq object-offset (make-coords :pos #f(-36.997 16.939 -13.16) :rpy #f(-0.061 0.617 -0.012))) ;; for with tabletop
+    (setq object-offset (make-coords :pos #f(15.007 37.822 -13.16) :rpy #f(-1.58 0.617 -0.012))) ;; for with tabletop
     (setq wait-av #f(41.0448 2.03593 63.3981 -67.6587 27.9651 -69.6477 -117.945))
     (setq pre-set-val #f(-100 0 100))
     (setq fix-rot t)

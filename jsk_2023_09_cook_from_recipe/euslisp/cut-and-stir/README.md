@@ -97,6 +97,8 @@ rlwrap spacenav-teleop-test.l
 
 
 #### モデルを作る
+
+##### devaバージョン
 devaを立ち上げている状態で
 ```bash
 roslaunch tf_trans_with_hand_tf.launch gui:=true input:=/extract_indices/output target_frame:=r_gripper_tool_frame
@@ -104,6 +106,25 @@ roslaunch tf_trans_with_hand_tf.launch gui:=true input:=/extract_indices/output 
 ```bash
 roslaunch service_save_ptcloud_in_pcd.launch object_name:=white_cup INPUT:=/tf_transform_cloud/output
 ```
+```bash
+roscd jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir
+rlwrap roseus pr2_cut_food.l
+(reset-move-pose)
+(test-make-model :grasp-gain 1.0 :step-deg 20 :open-gripper t)
+```
+
+##### gripper相対バージョン
+gripperの相対プログラム
+```bash
+roslaunch gripper_attention_test.launch
+```
+```bash
+roslaunch tf_trans_with_hand_tf.launch gui:=true input:=/gripper_extract_indices/output target_frame:=r_gripper_tool_frame
+```
+```bash
+roslaunch service_save_ptcloud_in_pcd.launch object_name:=green_bowl INPUT:=/tf_transform_cloud/output
+```
+
 ```bash
 roscd jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir
 rlwrap roseus pr2_cut_food.l

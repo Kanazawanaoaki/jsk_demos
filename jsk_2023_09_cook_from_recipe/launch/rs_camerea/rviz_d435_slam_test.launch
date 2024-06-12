@@ -1,0 +1,12 @@
+<launch>
+  <arg name="gui" default="true"/>
+
+  <!-- rviz -->
+  <group if="$(arg gui)">
+    <node name="d435_slam_rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/rs_d435_open3d_slam_test.rviz">
+    </node>
+  </group>
+
+</launch>
