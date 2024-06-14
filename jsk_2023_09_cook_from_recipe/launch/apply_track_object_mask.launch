@@ -132,7 +132,7 @@
     </rosparam>
   </node>
 
-  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/tracking_data_collection.launch" if="$(arg run_collection)" />
+  <!-- <include file="$(find jsk_2023_09_cook_from_recipe)/launch/tracking_data_collection.launch" if="$(arg run_collection)" /> -->
 
   <!-- rviz -->
   <group if="$(arg run_rviz)">

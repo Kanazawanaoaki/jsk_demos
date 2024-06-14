@@ -19,8 +19,8 @@ class Open3DSlamNode:
         self.intrinsic_set = False
 
         # 깊이와 컬러 이미지를 위한 ROS 구독자 설정
-        self.depth_sub = message_filters.Subscriber('/camera_remote/rgb/image_raw', Image)
-        self.color_sub = message_filters.Subscriber('/camera_remote/aligned_depth_to_color/image_raw', Image)
+        self.depth_sub = message_filters.Subscriber('/camera_remote/aligned_depth_to_color/image_raw', Image)
+        self.color_sub = message_filters.Subscriber('/camera_remote/rgb/image_raw', Image)
 
         # self.depth_sub = message_filters.Subscriber('/masked_human_depth_image/camera', Image)
         # self.color_sub = message_filters.Subscriber('/segmented_human_image/camera', Image)
@@ -35,8 +35,8 @@ class Open3DSlamNode:
 
         # SLAM 관련 설정
         self.device = o3c.Device("CUDA:0")  # 또는 "CPU:0"
-        self.voxel_size = 0.01  # voxel 크기
-        self.depth_scale = 100.0  # 깊이 스케일
+        self.voxel_size = 0.001  # voxel 크기
+        self.depth_scale = 1000.0  # 깊이 스케일
         self.depth_max = 1.5  # 최대 깊이
         self.depth_min = 0.01
         self.odometry_distance_thr = 0.07
@@ -161,7 +161,7 @@ class Open3DSlamNode:
 
         header = rospy.Header()
         header.stamp = rospy.Time.now()
-        header.frame_id = "base_link"  # 적절한 프레임 ID로 설정
+        header.frame_id = "camera_color_optical_frame"  # 적절한 프레임 ID로 설정
 
         # PointCloud2 생성
         cloud_data = pc2.create_cloud(header, fields, points)

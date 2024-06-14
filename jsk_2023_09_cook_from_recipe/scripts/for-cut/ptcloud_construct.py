@@ -26,6 +26,9 @@ def create_colored_point_cloud(rgb_image, depth_image, mask_image, cam_file, use
     depth = cv2.imread(depth_image, cv2.IMREAD_UNCHANGED).astype(np.float32) / 1000.0  # mmをmに変換
     # Mask画像の読み込み
     mask = cv2.imread(mask_image, cv2.IMREAD_UNCHANGED)
+    if len(mask.shape) == 3 and mask.shape[2] == 3:
+        mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
+        print("Converted 3-channel mask to grayscale.")
 
     # カメラ行列の取得
     cam_K = read_cam_matrix(cam_file)
@@ -86,7 +89,7 @@ def plot_point_cloud(point_cloud):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process files in specified directories.')
-    parser.add_argument('--rgb_file_path', '-r', type=str, help='Input directory containing subdirectories with files', default='../data/object_datas/data_20240514_test_03_for_train/rgb/1716536261013376474.png')
+    parser.add_argument('--rgb_file_path', '-r', type=str, help='Input directory containing subdirectories with files', default='/home/kanazawa/ros/known_object_ws/src/known_object_ros/data/object_datas/data_20240514_test_03_for_train/rgb/1716536261013376474.png')
 
     args = parser.parse_args()
     rgb_file_path = args.rgb_file_path
