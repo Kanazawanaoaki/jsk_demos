@@ -10,6 +10,7 @@
 (ros::roseus "pr2_cut_food" :anonymous t)
 (ros::load-ros-manifest "jsk_recognition_msgs")
 (setq *tfl* (instance ros::transform-listener :init))
+(setq *tfb* (instance ros::transform-broadcaster :init)))
 
 ;; define cb
 (defun object-pose-cb (msg)
@@ -88,7 +89,8 @@
     (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "orange peeler;")
     )
    ((string= object-name "white cup")
-    (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "white cup;")
+    ;; (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "white cup;")
+    (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "white and black cup;")
     )
    ((string= object-name "onion")
     (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "brown onion;")
@@ -97,6 +99,10 @@
   (format t "change deva class to ~A detection ~%" object-name)
   t)
 
+(defun publish-cds-tf (cds)
+  (send *tfb* :send-transform
+        cds "/base_footprint" "/target_cds_frame")
+  )
 
 (defun calc-offset (rec-coords grasp-coords)
   (setq offset-coords (send (send rec-coords :copy-worldcoords) :transformation (send grasp-coords :copy-worldcoords)))
@@ -108,7 +114,7 @@
                                   :rot (send first-coords :worldrot)))
     ans-coords))
 
-(defun grasp-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm))
+(defun grasp-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm) (is-grasp t))
   (cond
    ((and (string= object-name "knife") (equal arm :rarm))
     (setq object-offset (make-coords :pos #f(-105.089 -11.948 -2.399) :rpy #f(-0.09 0.071 0.061))) ;; for only deva
@@ -133,8 +139,9 @@
     (setq fix-rot nil)
     )
    ((and (string= object-name "white cup") (equal arm :larm))
-    ;; (setq object-offset (make-coords :pos #f(-98.527 0.551 -14.482) :rpy #f(-0.033 0.036 -0.057)))
-    (setq object-offset (make-coords :pos #f(-98.527 0.551 30) :rpy #f(-0.033 0.036 -0.057)))
+    (setq object-offset (make-coords :pos #f(-98.527 0.551 -14.482) :rpy #f(-0.033 0.036 -0.057))) ;; save as rarm
+    ;; (setq object-offset (make-coords :pos #f(-98.527 0.551 30) :rpy #f(-0.033 0.036 -0.057))) ;; fix for henna calib
+    (setq object-offset (make-coords :pos #f(-79.009 2.446 -34.482) :rpy #f(-0.033 0.036 -0.057))) ;; fix for matomo calib
     (setq wait-av #f(18.6793 40.7013 -15.7633 -105.901 -210.673 -70.7818 203.18))
     (setq pre-set-val #f(-100 0 100))
     (setq fix-rot nil)
@@ -193,6 +200,13 @@
                )
              )
            ))
+
+  (publish-cds-tf *grasp-coords*)
+
+  (when (null is-grasp)
+    (format t "now is-grasp is nil, so return ~%")
+    (return-from grasp-rec-object)
+    )
 
   (send *pr2* arm :angle-vector wait-av)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
@@ -380,4 +394,63 @@
    )
 
   (cut-wait-pose :larm nil)
+  )
+
+
+(defun sink-lever-test ()
+  (send *pr2* :rarm :angle-vector #f(-41.4059 32.4107 -50.5582 -112.849 -176.587 -63.8396 38.962))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :rarm :angle-vector #f(-24.8704 3.91558 -78.0752 -40.0538 -31.1184 -40.1947 20.8712))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *ri* :move-gripper :rarm 0.03 :effort (* 2000 0.03) :wait t)
+
+  ;; set
+  ;; off
+  (setq now-coords (make-coords :pos #f(877.466 -25.883 1012.658) :rpy #f(0.794 0.215 -1.428)))
+  (setq target-coords (set-offset-cds now-coords *sink-offset-cds*))
+  (send *pr2* :rarm :inverse-kinematics
+        (send target-coords :copy-worldcoords)
+        :rotation-axis t
+        :debug-view nil)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (send *ri* :start-grasp :rarm :wait t)
+
+  ;; on
+  ;; (setq now-coords (make-coords :pos #f(893.597 -17.28 1043.267) :rpy #f(0.539 0.466 -1.373)))
+  (setq now-coords (make-coords :pos #f(895.364 -32.896 1044.233) :rpy #f(0.556 0.444 -1.265)))
+  (setq target-coords (set-offset-cds now-coords *sink-offset-cds*))
+  (send *pr2* :rarm :inverse-kinematics
+        (send target-coords :copy-worldcoords)
+        :rotation-axis t
+        :debug-view nil)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (unix:sleep 1)
+
+  ;; off
+  (setq now-coords (make-coords :pos #f(884.415 -30.443 1012.658) :rpy #f(0.81 0.215 -1.428)))
+  (setq target-coords (set-offset-cds now-coords *sink-offset-cds*))
+  (send *pr2* :rarm :inverse-kinematics
+        (send target-coords :copy-worldcoords)
+        :rotation-axis t
+        :debug-view nil)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (send *ri* :move-gripper :rarm 0.03 :effort (* 2000 0.03) :wait t)
+
+  (send *pr2* :rarm :angle-vector #f(-24.8704 3.91558 -78.0752 -40.0538 -31.1184 -40.1947 20.8712))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :rarm :angle-vector #f(-41.4059 32.4107 -50.5582 -112.849 -176.587 -63.8396 38.962))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
   )

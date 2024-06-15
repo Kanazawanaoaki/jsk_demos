@@ -70,7 +70,7 @@
   )
 
 
-(defun dialogue-manip (&key (init-pose (send *pr2* :reset-manip-pose)) (r-grasp-gain 0.01) (l-grasp-gain 0.01) (r-gripper-dis 0.09) (l-gripper-dis 0.09) (pose-initialize t))
+(defun dialogue-manip (&key (init-pose (send *pr2* :reset-manip-pose)) (r-grasp-gain 0.01) (l-grasp-gain 0.01) (r-gripper-dis 0.09) (l-gripper-dis 0.09) (pose-initialize nil))
   (manequine-end)
   (speak-with-log "音声対話操作を開始します")
   (if pose-initialize
