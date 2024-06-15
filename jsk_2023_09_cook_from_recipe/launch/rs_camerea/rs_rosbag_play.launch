@@ -10,7 +10,7 @@
   <param name="use_sim_time" value="true" />
 
   <!-- decompress -->
-  <include file="$(find known_object_ros)/launch/rs_decompress.launch">
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/rs_camerea/rs_decompress.launch">
     <arg name="gui" value="false" />
   </include>
 
@@ -27,7 +27,7 @@
   <group if="$(arg gui)">
     <node name="rviz"
           pkg="rviz" type="rviz"
-          args="-d $(find known_object_ros)/rviz/rs_pointcloud_decomp.rviz">
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/rs_pointcloud_decomp.rviz">
     </node>
   </group>
 
