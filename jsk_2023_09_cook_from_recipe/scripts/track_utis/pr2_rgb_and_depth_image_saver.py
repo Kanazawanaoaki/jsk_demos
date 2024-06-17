@@ -67,18 +67,21 @@ def main():
 
     parser.add_argument('--data_save_path', '-d', default='../../datas/object_datas/images',type=str, help='Path to save image dir.')
     parser.add_argument('--approximate', '-a', action='store_true', help='use approixmate.')
+    parser.add_argument('--pr2', action='store_true', help='use with pr2.')
 
     args = parser.parse_args()
 
-    rospy.init_node('pr2_image_synchronizer', anonymous=True)
+    rospy.init_node('image_synchronizer', anonymous=True)
 
     # Define the topics to subscribe to
-    # rgb_topic = '/camera_remote/rgb/image_raw'
-    # depth_topic = '/camera_remote/aligned_depth_to_color/image_raw'
-    rgb_topic = '/kinect_head_remote/rgb/image_rect_color'
-    depth_topic = '/kinect_head_remote/depth_registered/image_rect'
-    # rgb_topic = '/kinect_head/rgb/image_rect_color'
-    # depth_topic = '/kinect_head/depth_registered/image_rect'
+    if args.pr2:
+        rgb_topic = '/camera_remote/rgb/image_raw'
+        depth_topic = '/camera_remote/aligned_depth_to_color/image_raw'
+    else:
+        rgb_topic = '/kinect_head_remote/rgb/image_rect_color'
+        depth_topic = '/kinect_head_remote/depth_registered/image_rect'
+        # rgb_topic = '/kinect_head/rgb/image_rect_color'
+        # depth_topic = '/kinect_head/depth_registered/image_rect'
 
     # Create subscribers
     rgb_sub = message_filters.Subscriber(rgb_topic, Image)
