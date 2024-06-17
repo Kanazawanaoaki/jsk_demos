@@ -114,7 +114,7 @@ if __name__ == "__main__":
     parser.add_argument('--rgb_topic', '-r', default='/kinect_head/rgb/image_color/compressed', type=str, help='RGB image topic name.')
     parser.add_argument('--depth_topic', '-d', default='/kinect_head/depth_registered/image_raw/compressedDepth', type=str, help='Depth image topic name.')
     parser.add_argument('--output_dir', '-o', default='/home/kanazawa/Downloads/20240614_tracking_test/20240607_kitchen_bag_10_onion', type=str, help='Directory to save the extracted images.')
-    parser.add_argument('--time_thre', '-t', default=0.002, type=float, help='Time threshold for sync.') # 0.05, 50ms tolerance
+    parser.add_argument('--time_thre', '-t', default=0.1, type=float, help='Time threshold for sync.') # 0.05, 50ms tolerance
 
     args = parser.parse_args()
     extract_images(args.bag_path, args.rgb_topic, args.depth_topic, args.output_dir, args.time_thre)

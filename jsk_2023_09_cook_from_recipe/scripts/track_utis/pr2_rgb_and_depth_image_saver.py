@@ -77,6 +77,8 @@ def main():
     # depth_topic = '/camera_remote/aligned_depth_to_color/image_raw'
     rgb_topic = '/kinect_head_remote/rgb/image_rect_color'
     depth_topic = '/kinect_head_remote/depth_registered/image_rect'
+    # rgb_topic = '/kinect_head/rgb/image_rect_color'
+    # depth_topic = '/kinect_head/depth_registered/image_rect'
 
     # Create subscribers
     rgb_sub = message_filters.Subscriber(rgb_topic, Image)
