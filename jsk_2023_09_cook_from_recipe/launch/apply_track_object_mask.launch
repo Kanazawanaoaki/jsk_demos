@@ -136,7 +136,7 @@
 
   <!-- rviz -->
   <group if="$(arg run_rviz)">
-    <node name="rviz"
+    <node name="deva_rviz"
           pkg="rviz" type="rviz"
           args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/rs_apply_track_object_mask.rviz">
     </node>
