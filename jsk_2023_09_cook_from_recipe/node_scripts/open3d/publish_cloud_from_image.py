@@ -11,72 +11,34 @@ import struct
 class RGBDPointCloudPublisher:
     def __init__(self):
         self.bridge = CvBridge()
-        self.point_cloud_publisher = rospy.Publisher('/colored_point_cloud', PointCloud2, queue_size=10)
-        self.service = rospy.Service('/collect_rgbd_data', Trigger, self.service_callback)
+        self.point_cloud_publisher = rospy.Publisher('/point_cloud_from_images', PointCloud2, queue_size=10)
 
         self.rgb_sub = message_filters.Subscriber('/kinect_head_remote/rgb/image_rect_color', Image)
         self.depth_sub = message_filters.Subscriber('/kinect_head_remote/depth_registered/image_rect', Image)
         self.ts = message_filters.ApproximateTimeSynchronizer([self.rgb_sub, self.depth_sub], 10, 0.1)
         self.ts.registerCallback(self.rgbd_callback)
 
-        self.collecting = False
-        self.rgbd_images = []
-
     def rgbd_callback(self, rgb_msg, depth_msg):
-        if self.collecting:
-            self.latest_header = rgb_msg.header  # Save the latest header from the RGB image
-            rgb_image = self.bridge.imgmsg_to_cv2(rgb_msg, "bgr8")
-            depth_image = self.bridge.imgmsg_to_cv2(depth_msg, "32FC1")
-            self.rgbd_images.append((rgb_image, depth_image))
+        self.latest_header = rgb_msg.header  # Save the latest header from the RGB image
+        rgb_image = self.bridge.imgmsg_to_cv2(rgb_msg, "bgr8")
+        depth_image = self.bridge.imgmsg_to_cv2(depth_msg, "32FC1")
+        self.create_colored_point_cloud(rgb_image, depth_image)
 
-    def service_callback(self, request):
-        rospy.loginfo("Service call received, starting data collection...")
-        self.rgbd_images = []
-        self.collecting = True
-        # rospy.sleep(1)  # Collect data for 1 second (or adjust as needed)
-        rospy.sleep(0.5)  # Collect data for 1 second (or adjust as needed)
-        self.collecting = False
-        rospy.loginfo("Finish collecting data")
+    def create_colored_point_cloud(self, rgb_image, depth_image):
+        rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(
+            o3d.geometry.Image(rgb_image),
+            o3d.geometry.Image(depth_image),
+            convert_rgb_to_intensity=False
+        )
+        pinhole_camera_intrinsic = o3d.camera.PinholeCameraIntrinsic(
+            o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault
+        )
+        point_cloud = o3d.geometry.PointCloud.create_from_rgbd_image(
+            rgbd_image,
+            pinhole_camera_intrinsic
+        )
 
-        # Merge RGBD images and create a point cloud
-        if self.rgbd_images:
-            point_cloud = self.create_colored_point_cloud(self.rgbd_images)
-            self.publish_point_cloud(point_cloud)
-
-        return TriggerResponse(success=True, message="Point cloud created and published.")
-
-    def create_colored_point_cloud(self, rgbd_images):
-        all_points = []
-        all_colors = []
-
-        for rgb_image, depth_image in rgbd_images:
-            rgbd_image = o3d.geometry.RGBDImage.create_from_color_and_depth(
-                o3d.geometry.Image(rgb_image),
-                o3d.geometry.Image(depth_image),
-                convert_rgb_to_intensity=False
-            )
-            pinhole_camera_intrinsic = o3d.camera.PinholeCameraIntrinsic(
-                o3d.camera.PinholeCameraIntrinsicParameters.PrimeSenseDefault
-            )
-            point_cloud = o3d.geometry.PointCloud.create_from_rgbd_image(
-                rgbd_image,
-                pinhole_camera_intrinsic
-            )
-
-            points = np.asarray(point_cloud.points)
-            colors = np.asarray(point_cloud.colors)
-
-            all_points.append(points)
-            all_colors.append(colors)
-
-        all_points = np.concatenate(all_points, axis=0)
-        all_colors = np.concatenate(all_colors, axis=0)
-
-        merged_point_cloud = o3d.geometry.PointCloud()
-        merged_point_cloud.points = o3d.utility.Vector3dVector(all_points)
-        merged_point_cloud.colors = o3d.utility.Vector3dVector(all_colors)
-
-        return merged_point_cloud
+        self.publish_point_cloud(point_cloud)
 
     def publish_point_cloud(self, point_cloud):
         ros_point_cloud = self.convert_to_ros_point_cloud(point_cloud)
@@ -91,6 +53,11 @@ class RGBDPointCloudPublisher:
     #     # Placeholder:
     #     return PointCloud2()
     def convert_to_ros_point_cloud(self, point_cloud):
+        point_cloud.transform([[1, 0, 0, 0],
+                               [0, -1, 0, 0],
+                               [0, 0, -1, 0],
+                               [0, 0, 0, 1]])
+
         points = np.asarray(point_cloud.points)
         colors = np.asarray(point_cloud.colors)
 
@@ -101,6 +68,8 @@ class RGBDPointCloudPublisher:
             ros_msg.header.stamp = rospy.Time.now()
             ros_msg.header.frame_id = "camera_link"
 
+        # import ipdb
+        # ipdb.set_trace()
         ros_msg.height = 1
         ros_msg.width = points.shape[0]
 
