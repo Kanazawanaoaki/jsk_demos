@@ -1,4 +1,4 @@
-(load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/knife-new-attention.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/knife-new-attention.l")
 (load "package://pr2eus/pr2-interface.l")
 (load "models/arrow-object.l")
 ;; (load "package://informatized_body_core/euslisp/informatized-body-core.l")
@@ -210,6 +210,11 @@
    (&optional (deg 0) (axis :z))
    (send cut-pose :rotate (deg2rad deg) axis :world)
    cut-pose)
+
+  (:set-now-pr2-pose
+   ()
+   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+   )
 
   (:manip-pose
    ()
