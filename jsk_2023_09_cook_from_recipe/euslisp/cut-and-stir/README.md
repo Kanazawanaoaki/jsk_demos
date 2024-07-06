@@ -131,3 +131,33 @@ rlwrap roseus pr2_cut_food.l
 (reset-move-pose)
 (test-make-model :grasp-gain 1.0 :step-deg 20 :open-gripper t)
 ```
+
+### 物体点群をrosbagから取り出す
+rosbagを再生
+```
+roslaunch jsk_2023_09_cook_from_recipe pr2_rosbag_play.launch rosbag:=/media/almagest/73B2/kanazawa/videos/PR2-experiment/20240706/20240706_kitchen_bags/20240706_kitchen_bag_01.bag
+```
+サーバPCで
+```bash
+source ~/ros/known_object_ws/devel/setup.bash 
+roscd tracking_ros_utils/../tracking_ros
+./run_docker -host localhost -launch deva.launch input_image:=/kinect_head_remote/rgb/image_rect_color model_type:=vit_t device:=cuda:0
+```
+
+手元で
+```bash
+roslaunch jsk_2023_09_cook_from_recipe deva_apply_track_object_mask.launch
+```
+これでdevaの物体認識ができる
+```bash
+rosrun dynamic_reconfigure dynparam set /deva_node classes "light;"
+```
+その点群を保存する話
+```bash
+roslaunch jsk_2023_09_cook_from_recipe tf_trans_with_hand_tf.launch gui:=true input:=/extract_indices/output target_frame:=objectoutput00
+```
+```bash
+roslaunch jsk_2023_09_cook_from_recipe service_save_ptcloud_in_pcd.launch object_name:=white_cup INPUT:=/tf_transform_cloud/output
+## or
+roslaunch jsk_2023_09_cook_from_recipe save_ptcloud_in_pcd.launch INPUT:=/tf_transform_cloud/output
+```
