@@ -98,7 +98,7 @@
   </node>
 
   <group if="$(arg gui)">
-    <node name="rviz"
+    <node name="only_icp_rviz"
           pkg="rviz" type="rviz"
           args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/icp_registaration_test_pr2.rviz"/>
   </group>
