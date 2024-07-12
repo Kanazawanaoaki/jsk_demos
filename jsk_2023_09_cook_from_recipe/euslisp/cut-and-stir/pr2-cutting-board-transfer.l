@@ -1,35 +1,88 @@
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_tmp.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/wrench.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/move-to-adjust.l")
+
+(setq *debug-flag* nil)
+
+(defun calc-object-rel-coords (base-coords target-coords)
+  (setq res-coords (send (send (send base-coords :copy-worldcoords) :inverse-transformation) :transform (send target-coords :copy-worldcoords)))
+  res-coords)
+
 (defun cutting-board-init ()
   ;; init
   ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
+
+  ;; set objects coords, copy from https://github.com/Kanazawanaoaki/jsk_demos/blob/kanazawa-ow/jsk_2020_04_pr2_curry/euslisp/model/my-eng2-coords.l
+  ;; (setq *kitchen-spot* (make-coords :pos (float-vector 1110 8500 30000) :rpy (float-vector pi 0 0))) ;; original
+
+  ;; (setq *cutting-board-coords* (make-coords :pos (float-vector 560 8420 30840) :rpy (float-vector 0 0 0))) ;; original
+  (setq *cutting-board-coords* (make-coords :pos (float-vector 550.0 80.0 840.0) :rpy (float-vector -3.142 0.0 0.0))) ;; fix
+  ;; (setq *bowl-1-kitchen-coords* (make-coords :pos (float-vector 279 8747 30823) :rpy (float-vector 0 0 0))) ;; original
+  (setq *bowl-1-kitchen-coords* (make-coords :pos (float-vector 831.0 -247.0 823.0) :rpy (float-vector -3.142 0.0 0.0))) ;; fix
+  ;; (setq *knife-coords* (make-coords :pos (float-vector 600 8715 30857) :rpy (float-vector 3.14 0.073 1.498))) ;; original
+  (setq *knife-coords* (make-coords :pos (float-vector 510.0 -215.0 857.0) :rpy (float-vector -0.002 0.073 1.498))) ;; fix
+  ;; (setq *pot-coords* (make-coords :pos (float-vector 450 8080 30850) :rpy (float-vector 3.142 0 0))) ;; original
+  (setq *pot-coords* (make-coords :pos (float-vector 660.0 420.0 850.0) :rpy (float-vector 0 0 0))) ;; fix
 
   ;; set objects
   (unless (boundp '*cutting-board*)
     (progn
       (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cutting-board.l")
       (setq *cutting-board* (cutting-board))
-      (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
       ))
   (if (not (eql (send *cutting-board* :parent) nil))
       (send (send *cutting-board* :parent) :dissoc *cutting-board*))
-  (send *cutting-board* :newcoords (send *bowl-1-kitchen-coords* :copy-worldcoords))
+  (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
 
   (unless (boundp '*bowl-1*)
     (progn
-      (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-1.l")
+      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/bowl-1.l")
       (setq *bowl-1* (bowl-1))
       ))
   (if (not (eql (send *bowl-1* :parent) nil))
       (send (send *bowl-1* :parent) :dissoc *bowl-1*))
   (send *bowl-1* :newcoords (send *bowl-1-kitchen-coords* :copy-worldcoords))
 
-  ;; def global-coords
-  (setq *slide-rarm-coords* (make-coords :pos (float-vector 430.297 8421.198 30852.165) :rpy (float-vector -3.086 1.155 3.132)))
-  (setq *slide-larm-coords* (make-coords :pos (float-vector 735.864 8441.372 30866.716) :rpy (float-vector 2.244 -1.518 0.872)))
-  (setq *grasp-larm-coords* (make-coords :pos (float-vector 679.695 8281.493 30832.711) :rpy (float-vector 1.882 0.065 1.548)))
+  (unless (boundp '*knife*)
+    (progn
+      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/knife-new-attention.l")
+      (setq *knife* (knife))
+      ))
+  (if (not (eql (send *knife* :parent) nil))
+      (send (send *knife* :parent) :dissoc *knife*))
+  (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
 
-  (move-to-kitchen-irt)
-  (objects (list *pr2* *scene* *cutting-board* *knife* *pot* *bowl-1*))
-  (update-view)
+  (unless (boundp '*pot*)
+    (progn
+      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cooking-pot-73b2.l")
+      (setq *pot* (cooking-pot))
+      ))
+  (if (not (eql (send *pot* :parent) nil))
+      (send (send *pot* :parent) :dissoc *pot*))
+  (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+
+  (unless (boundp '*arrow*)
+    (progn
+      (load "models/arrow-object.l")
+      (setq *arrow* (arrow))
+      ))
+
+  ;; def global-coords
+  ;; (setq *slide-rarm-coords* (make-coords :pos (float-vector 430.297 8421.198 30852.165) :rpy (float-vector -3.086 1.155 3.132))) ;; original
+  (setq *slide-rarm-coords* (make-coords :pos (float-vector 679.703 78.802 852.165) :rpy (float-vector 0.056 1.155 3.132))) ;; fix
+  ;; (setq *slide-larm-coords* (make-coords :pos (float-vector 735.864 8441.372 30866.716) :rpy (float-vector 2.244 -1.518 0.872))) ;; original
+  (setq *slide-larm-coords* (make-coords :pos (float-vector 374.136 58.628 866.716) :rpy (float-vector -0.898 -1.518 0.872))) ;; fix
+  ;; (setq *grasp-larm-coords* (make-coords :pos (float-vector 679.695 8281.493 30832.711) :rpy (float-vector 1.882 0.065 1.548))) ;; original
+  (setq *grasp-larm-coords* (make-coords :pos (float-vector 430.305 218.507 832.711) :rpy (float-vector -1.26 0.065 1.548))) ;; fix
+
+  ;; (move-to-kitchen-irt)
+  ;; (objects (list *pr2* *scene* *cutting-board* *knife* *pot* *bowl-1*))
+  ;; (update-view)
+  ;; ;; for original coords
+  ;; (send *pr2* :move-to (send *kitchen-spot* :copy-worldcoords) :world)
+
+  (objects (list *pr2* *cutting-board* *knife* *pot* *bowl-1*))
+
   )
 
 (cutting-board-init)
@@ -816,7 +869,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
-  
+
   (send *pr2* :larm :move-end-pos #f(0 0 100) :world)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
