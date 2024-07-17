@@ -1,6 +1,9 @@
-(load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_tmp.l")
-(load "package://jsk_2023_09_cook_from_recipe/euslisp/wrench.l")
-(load "package://jsk_2023_09_cook_from_recipe/euslisp/move-to-adjust.l")
+#!/usr/bin/env roseus
+
+;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_tmp.l")
+;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/wrench.l")
+;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/move-to-adjust.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/pr2_cut_food.l")
 
 (setq *debug-flag* t)
 (setq *s-time* 3)
@@ -1124,7 +1127,7 @@
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)  
+  (send *ri* :wait-interpolation)
   )
 
 (defun after-transfer-board-pot ()
@@ -1137,7 +1140,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
-  
+
   (after-transfer-board)
   )
 
@@ -1150,8 +1153,8 @@
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)  
-  
+  (send *ri* :wait-interpolation)
+
   (send *arrow* :newcoords (make-coords :pos (float-vector 635.773 8244.413 31202.306) :rpy (float-vector -2.079 -0.062 -1.446)))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -1198,10 +1201,10 @@
     (setq avs (append avs (list av)))
     (setq tms (append tms (list 600)))
     )
-  
+
   (send *ri* :angle-vector-sequence avs tms)
   (send *ri* :wait-interpolation)
-  
+
   (warn "please run (avoid-rarm-knife) ~%")
   )
 
@@ -1215,7 +1218,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (send *arrow* :newcoords (make-coords :pos (float-vector 593.408 8513.682 31202.493) :rpy (float-vector -2.624 -0.054 -0.026)))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -1224,11 +1227,11 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (setq *rav0* #f(-20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
   (send *pr2* :rarm :angle-vector *rav0*)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)  
+  (send *ri* :wait-interpolation)
   )
 
 (defun set-knife-model ()
@@ -1351,7 +1354,7 @@
   (knife-slide-transfer-set-bowl-1)
   (knife-slide-transfer)
 
-  (rarm-up-60)
+  (pr2-rarm-up 60)
   (knife-slide-transfer-set-bowl-1)
   (wait-for-bowl-1-rarm)
   (after-transfer-board)
@@ -1380,11 +1383,11 @@
 
   (now-cutting-board-transfer-bowl-1-fix)
 
-  (rarm-up-60)
+  (pr2-rarm-up 60)
   (knife-slide-transfer-set-bowl-1)
   (wait-for-bowl-1-rarm)
   (after-transfer-board)
-  (put-knife)
+  (put-knife) ;; TODO fix
   (reset-rarm)
 
   (only-set-board)
@@ -1399,15 +1402,6 @@
   (put-knife)
   (reset-rarm)
   (now-cutting-board-transfer-after)
-  )
-
-
-
-(defun rarm-up-60 ()
-  (send *pr2* :rarm :move-end-pos #f(0 0 60) :world)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)
   )
 
 (defun wait-for-bowl-1-rarm ()

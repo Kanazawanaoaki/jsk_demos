@@ -394,6 +394,20 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun pr2-rarm-up (&key (num 60) (time 3000))
+  (send *pr2* :rarm :move-end-pos #f(0 0 num) :world)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) time)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun pr2-larm-up (&key (num 60) (time 3000))
+  (send *pr2* :larm :move-end-pos #f(0 0 num) :world)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) time)
+  (send *ri* :wait-interpolation)
+  )
+
 (defun replay-rav-list (rav-list &key (time 200) (reverse nil) (larm nil))
   (if reverse
       (setq rav-list (reverse rav-list))
