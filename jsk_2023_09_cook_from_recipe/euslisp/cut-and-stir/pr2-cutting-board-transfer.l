@@ -113,7 +113,7 @@
     (let ((z nil))
       (setq z (send msg :wrench :force :z))
       (if (> z *z-thre*)
-          (progn 
+          (progn
             (setq *cb-flag* t)
             (format t "OK!! z: ~A ~%" z)
             )
@@ -449,11 +449,13 @@
 
   (reset-rarm)
 
-  (send *pr2* :larm :move-end-pos #f(50 0 0) :world)
+  ;; (send *pr2* :larm :move-end-pos #f(50 0 0) :world) ;; original
+  (send *pr2* :larm :move-end-pos #f(-50 0 0) :world) ;; fix
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
-  (send *pr2* :larm :move-end-pos #f(0 -200 0) :world)
+  ;; (send *pr2* :larm :move-end-pos #f(0 -200 0) :world) ;; original
+  (send *pr2* :larm :move-end-pos #f(0 200 0) :world) ;; fix
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
@@ -1003,7 +1005,6 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
 
-  
   (warn "please run (transfer-to-pot) ~%")
   )
 
@@ -1019,14 +1020,14 @@
   ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   ;; (send *ri* :wait-interpolation)
 
-  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))  
+  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 150))
   (send *arrow* :rotate (deg2rad -30) :z)
   ;; (send *arrow* :rotate (deg2rad 30) :y)
   (send *arrow* :rotate (deg2rad 20) :y)
-  
-  (send *arrow* :translate #f(-10 0 0)) 
-  
+
+  (send *arrow* :translate #f(-10 0 0))
+
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :move-target (send *cutting-board* :attention-attention2)
@@ -1085,7 +1086,8 @@
 
   (set-board-model)
 
-  (send *arrow* :rotate (deg2rad 10) :x :world)
+  ;; (send *arrow* :rotate (deg2rad 10) :x :world) ;; original
+  (send *arrow* :rotate (deg2rad -10) :x :world) ;; fix
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -1165,26 +1167,30 @@
 (defun knife-slide-transfer ()
   (setq slide-length 220)
   (setq adj -10)
-  
+
   (send *arrow* :newcoords (send (send *cutting-board* :attention-attention2) :copy-worldcoords))
   (send *arrow* :rotate (deg2rad 90) :z)
   (send *arrow* :translate (float-vector 0 slide-length adj))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
+        :link-list (list
+                    (send *pr2* :rarm))
         :move-target (car (send *knife* :attention))
         :rotation-axis t
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (setq avs (list))
   (setq tms (list))
-  
+
   (dotimes (i (+ (/ slide-length 10) 1))
     (send *arrow* :translate #f(0 -10 -3))
     (send *pr2* :rarm :inverse-kinematics
           (send *arrow* :copy-worldcoords)
+          :link-list (list
+                      (send *pr2* :rarm))
           :move-target (car (send *knife* :attention))
           :rotation-axis t
           :debug-view *debug-flag*)
@@ -1363,22 +1369,14 @@
 
   (knife-slide-transfer-set-bowl-1)
   (knife-slide-transfer)
-
-  (rarm-up-60)
-  (knife-slide-transfer-set-bowl-1)
-  (wait-for-bowl-1-rarm)
-  (after-transfer-board)
-  (put-knife)
-  (reset-rarm)
-
-  (only-set-board)
   )
 
 (defun now-cutting-board-transfer-bowl-1-all-fix ()
   (now-board)
 
-  (grasp-knife-with-fail-detection) ;; TODO fix
-  (send *ri* :start-grasp :rarm :wait t :gain 1.00);;強く握る
+  ;; (grasp-knife-with-fail-detection) ;; TODO fix
+  (grasp-rec-object :object-name "knife" :arm :rarm) ;; TODO
+  (send *ri* :start-grasp :rarm :wait t :gain 1.00) ;;強く握る
 
   (now-cutting-board-transfer-bowl-1-fix)
 
@@ -1461,6 +1459,10 @@
 
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
+        ;; :link-list (list
+        ;;             (send *pr2* :link-list (send *pr2* :larm :end-coords :parent)))
+        :link-list (list
+                    (send *pr2* :larm))
         :move-target (send *cutting-board* :attention-attention2)
         :rotation-axis t
         :debug-view *debug-flag*)
