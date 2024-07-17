@@ -1355,6 +1355,44 @@
   (only-set-board)
   )
 
+(defun now-cutting-board-transfer-bowl-1-fix ()
+  (wait-for-bowl-1-rarm)
+
+  (transfer-to-bowl-1-set)
+  (transfer-to-bowl-1)
+
+  (knife-slide-transfer-set-bowl-1)
+  (knife-slide-transfer)
+
+  (rarm-up-60)
+  (knife-slide-transfer-set-bowl-1)
+  (wait-for-bowl-1-rarm)
+  (after-transfer-board)
+  (put-knife)
+  (reset-rarm)
+
+  (only-set-board)
+  )
+
+(defun now-cutting-board-transfer-bowl-1-all-fix ()
+  (now-board)
+
+  (grasp-knife-with-fail-detection) ;; TODO fix
+  (send *ri* :start-grasp :rarm :wait t :gain 1.00);;強く握る
+
+  (now-cutting-board-transfer-bowl-1-fix)
+
+  (rarm-up-60)
+  (knife-slide-transfer-set-bowl-1)
+  (wait-for-bowl-1-rarm)
+  (after-transfer-board)
+  (put-knife)
+  (reset-rarm)
+
+  (only-set-board)
+  )
+
+
 (defun now-cutting-board-transfer-pot-all-with-fail-detection ()
   (now-cutting-board-transfer-set)
   (grasp-knife-with-fail-detection)
@@ -1371,11 +1409,12 @@
   (send *pr2* :rarm :move-end-pos #f(0 0 60) :world)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)  
+  (send *ri* :wait-interpolation)
   )
 
 (defun wait-for-bowl-1-rarm ()
-  (send *arrow* :newcoords (make-coords :pos (float-vector 618.498 9129.367 31114.439) :rpy (float-vector 3.063 0.052 -0.106)))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 618.498 9129.367 31114.439) :rpy (float-vector 3.063 0.052 -0.106))) ;; original
+  (send *arrow* :newcoords (make-coords :pos (float-vector 491.502 -629.367 1114.439) :rpy (float-vector -0.079 0.052 -0.106))) ;; fix
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -1387,7 +1426,9 @@
 
 (defun knife-slide-transfer-set-bowl-1 ()
   ;; 必要なら座標を作って書く必要がある!
-  (send *arrow* :newcoords (make-coords :pos (float-vector 509.792 8837.244 31240.433) :rpy (float-vector -2.534 -0.077 -1.369)))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 509.792 8837.244 31240.433) :rpy (float-vector -2.534 -0.077 -1.369))) ;; original
+  (send *arrow* :newcoords (make-coords :pos (float-vector 600.208 -337.244 1240.433) :rpy (float-vector 0.608 -0.077 -1.369))) ;; fix
+
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -1400,7 +1441,8 @@
   )
 
 (defun transfer-to-bowl-1-set ()
-  (send *arrow* :newcoords (make-coords :pos (float-vector 482.438 8422.731 31090) :rpy (float-vector 2.39 -0.155 1.501)))
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 482.438 8422.731 31090) :rpy (float-vector 2.39 -0.155 1.501))) ;; original
+  (send *arrow* :newcoords (make-coords :pos (float-vector 627.562 77.269 1090.0) :rpy (float-vector -0.752 -0.155 1.501))) ;; fix
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -1410,15 +1452,13 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun transfer-to-bowl-1 ()
-  (send *arrow* :newcoords (send (send *bowl-1* :attention-attention1) :copy-worldcoords))  
+(defun transfer-to-bowl-1 () ;; TODO fix
+  (send *arrow* :newcoords (send (send *bowl-1* :attention-attention1) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 100) :world)
   (send *arrow* :rotate (deg2rad 135) :z)
-  
   (send *arrow* :rotate (deg2rad -10) :y)
-  
-  (send *arrow* :translate #f(-20 0 0)) 
-  
+  (send *arrow* :translate #f(-20 0 0))
+
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :move-target (send *cutting-board* :attention-attention2)
