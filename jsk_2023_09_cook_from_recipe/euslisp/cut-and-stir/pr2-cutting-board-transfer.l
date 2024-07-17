@@ -8,13 +8,37 @@
 (setq *debug-flag* t)
 (setq *s-time* 3)
 
-(defun calc-object-rel-coords (base-coords target-coords)
-  (setq rel-coords (send (send (send base-coords :copy-worldcoords) :inverse-transformation) :transform (send target-coords :copy-worldcoords)))
-  rel-coords)
 
-(defun calc-coords-from-rel (base-coords rel-coords)
-  (setq target-coords (send (send base-coords :copy-worldcoords) :transform (send rel-coords :copy-worldcoords)))
-  target-coords)
+;; load objects
+(unless (boundp '*cutting-board*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cutting-board.l")
+    (setq *cutting-board* (cutting-board))
+    ))
+
+(unless (boundp '*bowl-1*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/bowl-1.l")
+    (setq *bowl-1* (bowl-1))
+    ))
+
+(unless (boundp '*knife*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/knife-new-attention.l")
+    (setq *knife* (knife))
+    ))
+
+(unless (boundp '*pot*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cooking-pot-73b2.l")
+    (setq *pot* (cooking-pot))
+    ))
+
+(unless (boundp '*arrow*)
+  (progn
+    (load "models/arrow-object.l")
+    (setq *arrow* (arrow))
+    ))
 
 (defun cutting-board-init ()
   ;; init
@@ -33,47 +57,21 @@
   (setq *pot-coords* (make-coords :pos (float-vector 660.0 420.0 850.0) :rpy (float-vector 0 0 0))) ;; fix
 
   ;; set objects
-  (unless (boundp '*cutting-board*)
-    (progn
-      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cutting-board.l")
-      (setq *cutting-board* (cutting-board))
-      ))
   (if (not (eql (send *cutting-board* :parent) nil))
       (send (send *cutting-board* :parent) :dissoc *cutting-board*))
   (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
 
-  (unless (boundp '*bowl-1*)
-    (progn
-      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/bowl-1.l")
-      (setq *bowl-1* (bowl-1))
-      ))
   (if (not (eql (send *bowl-1* :parent) nil))
       (send (send *bowl-1* :parent) :dissoc *bowl-1*))
   (send *bowl-1* :newcoords (send *bowl-1-kitchen-coords* :copy-worldcoords))
 
-  (unless (boundp '*knife*)
-    (progn
-      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/knife-new-attention.l")
-      (setq *knife* (knife))
-      ))
   (if (not (eql (send *knife* :parent) nil))
       (send (send *knife* :parent) :dissoc *knife*))
   (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
 
-  (unless (boundp '*pot*)
-    (progn
-      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cooking-pot-73b2.l")
-      (setq *pot* (cooking-pot))
-      ))
   (if (not (eql (send *pot* :parent) nil))
       (send (send *pot* :parent) :dissoc *pot*))
   (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
-
-  (unless (boundp '*arrow*)
-    (progn
-      (load "models/arrow-object.l")
-      (setq *arrow* (arrow))
-      ))
 
   ;; def global-coords
   ;; (setq *slide-rarm-coords* (make-coords :pos (float-vector 430.297 8421.198 30852.165) :rpy (float-vector -3.086 1.155 3.132))) ;; original
@@ -102,7 +100,6 @@
 
 (warn "If you use real robot, run (update-pos) ~%")
 (warn "please run (slide-board-set) ~%")
-
 
 ;; add for sense
 (setq *z-thre* 15)

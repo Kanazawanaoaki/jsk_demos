@@ -53,6 +53,15 @@
 
 ;; global variables
 
+;; defun util fuction
+(defun calc-object-rel-coords (base-coords target-coords)
+  (setq rel-coords (send (send (send base-coords :copy-worldcoords) :inverse-transformation) :transform (send target-coords :copy-worldcoords)))
+  rel-coords)
+
+(defun calc-coords-from-rel (base-coords rel-coords)
+  (setq target-coords (send (send base-coords :copy-worldcoords) :transform (send rel-coords :copy-worldcoords)))
+  target-coords)
+
 
 ;; defun action codes
 (defun change-hsi-param (&key (object-name "knife"))
