@@ -62,6 +62,11 @@
   (setq target-coords (send (send base-coords :copy-worldcoords) :transform (send rel-coords :copy-worldcoords)))
   target-coords)
 
+(defun dissoc-object (object-instance)
+  (if (not (eql (send object-instance :parent) nil))
+      (send (send object-instance :parent) :dissoc object-instance))
+  )
+
 
 ;; defun action codes
 (defun change-hsi-param (&key (object-name "knife"))

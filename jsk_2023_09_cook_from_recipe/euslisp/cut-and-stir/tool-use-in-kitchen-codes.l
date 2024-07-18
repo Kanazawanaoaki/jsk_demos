@@ -14,14 +14,32 @@
 
 (unless (boundp '*peeler*)
   (progn
-    (load "package://jsk_2020_04_pr2_curry/euslisp/model/peeler.l")
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/peeler.l")
     (setq *peeler* (peeler))
     ))
 
 (unless (boundp '*potato-peeler*)
   (progn
-    (load "package://jsk_2020_04_pr2_curry/euslisp/model/potato-peeler.l")
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/potato-peeler.l")
     (setq *potato-peeler* (peeler))
+    ))
+
+(unless (boundp '*spatula*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/spatula.l")
+    (setq *spatula* (spatula))
+    ))
+
+(unless (boundp '*ladle*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/ladle.l")
+    (setq *ladle* (ladle))
+    ))
+
+(unless (boundp '*shelf-door*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/shelf-door.l")
+    (setq *shelf-door* (shelf-door))
     ))
 
 (unless (boundp '*cutting-board*)
@@ -51,37 +69,55 @@
 (defun tool-init ()
   ;; init
   ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/move-to-kitchen-with-map.l")
+  ;; (setq *kitchen-spot* (make-coords :pos (float-vector 1110 8500 30000) :rpy (float-vector pi 0 0))) ;; original
+
+  ;; set global coords
+  ;; (setq *knife-coords* (make-coords :pos (float-vector 600 8715 30857) :rpy (float-vector 3.14 0.073 1.498))) ;; original
+  (setq *knife-coords* (make-coords :pos (float-vector 510.0 -215.0 857.0) :rpy (float-vector -0.002 0.073 1.498))) ;; fix
+  ;; (setq *peeler-coords* (make-coords :pos (float-vector 580 8815 30870) :rpy (float-vector 3.14 0.049 1.51))) ;; ピーラー original
+  (setq *peeler-coords* (make-coords :pos (float-vector 530.0 -315.0 870.0) :rpy (float-vector -0.002 0.049 1.51))) ;; ピーラー fix
+  ;; (setq *potato-peeler-coords* (make-coords :pos (float-vector 580 8915 30865) :rpy (float-vector 3.14 0.013 1.545))) ;; じゃがいもピーラー original
+  (setq *potato-peeler-coords* (make-coords :pos (float-vector 530.0 -415.0 865.0) :rpy (float-vector -0.002 0.013 1.545))) ;; じゃがいもピーラー fix
+  ;; (setq *spatula-coords-1* (make-coords :pos (float-vector 630 8549 30872) :rpy (float-vector 3.084 -0.042 1.542))) ;; ヘラ，平置き original
+  (setq *spatula-coords-1* (make-coords :pos (float-vector 480.0 -49.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix
+  ;; (setq *ladle-coords-1* (make-coords :pos (float-vector 630 8313 30877) :rpy (float-vector 3.128 -0.098 1.514))) ;; おたま，平置き original
+  (setq *ladle-coords-1* (make-coords :pos (float-vector 480.0 187.0 877.0) :rpy (float-vector -0.014 -0.098 1.514))) ;; おたま，平置き fix
+  ;; (setq *pot-coords* (make-coords :pos (float-vector 450 8080 30850) :rpy (float-vector 3.142 0 0))) ;; original
+  (setq *pot-coords* (make-coords :pos (float-vector 660.0 420.0 850.0) :rpy (float-vector 0 0 0))) ;; fix
+
+  ;; (setq *shelf-door-coords* (make-coords :pos (float-vector 400 8840 31445) :rpy (float-vector 3.14 0 0))) ;; orginal
+  (setq *shelf-door-coords* (make-coords :pos (float-vector 710.0 -340.0 1445.0) :rpy (float-vector -0.002 0.0 0.0))) ;; fix
 
   ;; set tools
+  (dissoc-object *knife*)
   (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
 
+  (dissoc-object *peeler*)
   (send *peeler* :newcoords (send *peeler-coords* :copy-worldcoords))
 
+  (dissoc-object *potato-peeler*)
   (send *potato-peeler* :newcoords (send *potato-peeler-coords* :copy-worldcoords))
 
-  (load "package://jsk_2020_04_pr2_curry/euslisp/model/spatula.l")
-  (setq *spatula* (spatula))
+  (dissoc-object *spatula*)
   (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords))
 
-  (load "package://jsk_2020_04_pr2_curry/euslisp/model/ladle.l")
-  (setq *ladle* (ladle))
+  (dissoc-object *ladle*)
   (send *ladle* :newcoords (send *ladle-coords-1* :copy-worldcoords))
 
-  (load "package://jsk_2020_04_pr2_curry/euslisp/model/cooking-pot-73b2.l")
-  (setq *pot* (cooking-pot))
+  (dissoc-object *pot*)
   (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
 
   ;; set equipment
-  (load "package://jsk_2020_04_pr2_curry/euslisp/model/shelf-door.l")
-  (setq *shelf-door* (shelf-door))
+  (dissoc-object *shelf-door*)
   (send *shelf-door* :newcoords (send *shelf-door-coords* :copy-worldcoords))
 
   (setq *shelf-look-coords* (send (send *shelf-door* :handle-handle0) :copy-worldcoords))
 
-  (move-to-kitchen-irt)
-  (objects (list *pr2* *peeler* *knife* *potato-peeler* *scene* *spatula* *ladle* *shelf-door*))
-  (update-view)
+  ;; (move-to-kitchen-irt)
+  ;; (objects (list *pr2* *peeler* *knife* *potato-peeler* *scene* *spatula* *ladle* *shelf-door*))
+  ;; (update-view)
 
+  (objects (list *pr2* *peeler* *knife* *potato-peeler* *spatula* *ladle* *shelf-door*))
   )
 
 (tool-init)
@@ -99,7 +135,7 @@
     (let ((x nil))
       (setq x (send msg :wrench :force :x))
       (if (< x *x-thre*)
-          (progn 
+          (progn
             (setq *cb-flag* t)
             (format t "OK!! x: ~A ~%" x)
             )
@@ -136,8 +172,9 @@
   (send *arrow* :newcoords (send *knife-coords* :copy-worldcoords))
   (send *arrow* :translate #f(-12 0 0))
   (send *arrow* :rotate (deg2rad -90) :x)
-  
-  (send *arrow* :translate #f(60 0 100) :world)
+
+  ;; (send *arrow* :translate #f(60 0 100) :world) ;; original
+  (send *arrow* :translate #f(-60 0 100) :world) ;; fix
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -149,15 +186,15 @@
   (send *ri* :stop-grasp :rarm)
   (send *ri* :speak-jp "包丁を握らせて下さい")
   (unix:sleep *s-time*)
-  (send *ri* :start-grasp :rarm :wait t)  
+  (send *ri* :start-grasp :rarm :wait t)
   (send *ri* :start-grasp :rarm :wait t :gain 100)
-  
+
   (send *knife* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *knife* :translate #f(12 0 0))
   (send *knife* :rotate (deg2rad 90) :x)
   (send *pr2* :rarm :end-coords :assoc *knife*)
   (send *viewer* :draw-objects)
-  
+
   (warn "please run (put-knife) ~%")
   )
 
@@ -166,8 +203,9 @@
   (send *arrow* :newcoords (send *knife-coords* :copy-worldcoords))
   (send *arrow* :translate #f(-12 0 0))
   (send *arrow* :rotate (deg2rad -90) :x)
-  
-  (send *arrow* :translate #f(60 0 100) :world)
+
+  ;; (send *arrow* :translate #f(60 0 100) :world) ;; original
+  (send *arrow* :translate #f(-60 0 100) :world) ;; fix
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -175,26 +213,27 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい")
-  (receive-with-dialogue)  
+  (receive-with-dialogue)
   (send *ri* :start-grasp :rarm :wait t :gain 100)
-  
+
   (send *knife* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *knife* :translate #f(12 0 0))
   (send *knife* :rotate (deg2rad 90) :x)
   (send *pr2* :rarm :end-coords :assoc *knife*)
   (send *viewer* :draw-objects)
-  
+
   (warn "please run (put-knife) ~%")
   )
 
-(defun put-knife ()  
+(defun put-knife ()
   (send *arrow* :newcoords (send *knife-coords* :copy-worldcoords))
   (send *arrow* :translate #f(-12 0 0))
   (send *arrow* :rotate (deg2rad -90) :x)
-  
-  (send *arrow* :translate #f(60 0 100) :world)
+
+  ;; (send *arrow* :translate #f(60 0 100) :world) ;; original
+  (send *arrow* :translate #f(-60 0 100) :world) ;; fix
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -203,7 +242,8 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
-  (send *arrow* :translate #f(-60 0 -100) :world)  
+  ;; (send *arrow* :translate #f(-60 0 -100) :world) ;; original
+  (send *arrow* :translate #f(60 0 -100) :world) ;; fix
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -211,11 +251,11 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   ;; (send *ri* :stop-grasp :rarm :wait t)
   (send *ri* :move-gripper :rarm 0.08)
   (send *pr2* :rarm :end-coords :dissoc *knife*)
-  
+
   ;; 手を上げる
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 100) :world)
@@ -226,10 +266,11 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   ;; 手を上げる
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate #f(60 -150 170) :world)
+  ;; (send *arrow* :translate #f(60 -150 170) :world) ;; original
+  (send *arrow* :translate #f(-60 150 170) :world) ;; fix
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -243,7 +284,7 @@
   ;;掴む位置
   (send *arrow* :newcoords (send *peeler-coords* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad -90) :x)
-  
+
   (send *arrow* :translate #f(60 0 100) :world)
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -252,18 +293,18 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (send *ri* :stop-grasp :rarm)
   (send *ri* :speak-jp "ピーラーを握らせて下さい")
-  
+
   (unix:sleep *s-time*)
   (send *ri* :start-grasp :rarm :wait t :gain 100)
-  
+
   (send *peeler* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *peeler* :rotate (deg2rad 90) :x)
   (send *pr2* :rarm :end-coords :assoc *peeler*)
   (send *viewer* :draw-objects)
-  
+
   (warn "please run (put-peeler) ~%")
   )
 
@@ -271,7 +312,7 @@
   ;;掴む位置
   (send *arrow* :newcoords (send *peeler-coords* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad -90) :x)
-  
+
   (send *arrow* :translate #f(60 0 100) :world)
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -280,16 +321,16 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (send *ri* :speak-jp "ピーラーを渡す準備をして，合図をして下さい")
-  (receive-with-dialogue)  
+  (receive-with-dialogue)
   (send *ri* :start-grasp :rarm :wait t :gain 100)
-  
+
   (send *peeler* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *peeler* :rotate (deg2rad 90) :x)
   (send *pr2* :rarm :end-coords :assoc *peeler*)
   (send *viewer* :draw-objects)
-  
+
   (warn "please run (put-peeler) ~%")
   )
 
@@ -357,10 +398,10 @@
   (send *ri* :wait-interpolation)
 
   (send *ri* :stop-grasp :rarm)
-  (send *ri* :speak-jp "じゃがいもピーラーを握らせて下さい")  
+  (send *ri* :speak-jp "じゃがいもピーラーを握らせて下さい")
   (unix:sleep *s-time*)
   (send *ri* :start-grasp :rarm :wait t :gain 100)
-  
+
   (send *potato-peeler* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *potato-peeler* :rotate (deg2rad 90) :x)
   (send *pr2* :rarm :end-coords :assoc *potato-peeler*)
@@ -1465,7 +1506,7 @@
 (defun grasp-peeler-with-fail-detection ()
   (setq tmp-coords (send *peeler* :copy-worldcoords))
   (grasp-peeler)
-  
+
   ;; 失敗を検知する
   (grasp-fail-detection :g-thre 10)
   (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
@@ -1493,9 +1534,9 @@
   (send *arrow* :rotate (deg2rad -90) :x)
 
   ;; つかむ
-  (grasp-tool-on-table)  
+  (grasp-tool-on-table)
   (send (send *pr2* :rarm :end-coords) :assoc *potato-peeler*)
-  
+
   ;; 手を上げる
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 50) :world)
@@ -1516,13 +1557,13 @@
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)  
+  (send *ri* :wait-interpolation)
   )
 
 (defun grasp-potato-peeler-with-fail-detection ()
   (setq tmp-coords (send *potato-peeler* :copy-worldcoords))
   (grasp-potato-peeler)
-  
+
   ;; 失敗を検知する
   (grasp-fail-detection :g-thre 10)
   (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
@@ -1543,17 +1584,17 @@
 
 (defun grasp-spatula ()
   (up-rarm)
-  
+
   ;;掴む位置
   (send *arrow* :newcoords (send *spatula* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad -90) :x)
-  
+
   (send *ri* :stop-grasp :rarm :wait t)
-  
+
   ;; つかむ
-  (grasp-tool-on-table)  
+  (grasp-tool-on-table)
   (send (send *pr2* :rarm :end-coords) :assoc *spatula*)
-  
+
   ;; 手を上げる
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 50) :world)
@@ -1591,7 +1632,7 @@
 (defun grasp-spatula-with-fail-detection ()
   (setq tmp-coords (send *spatula* :copy-worldcoords))
   (grasp-spatula)
-  
+
   ;; 失敗を検知する
   (grasp-fail-detection :g-thre 10)
   (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
@@ -1614,19 +1655,19 @@
   (send *pr2* :larm :angle-vector #f(117.007 48.3805 113.439 -103.326 38.7107 -5.72958 14.4628))
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
-  
+
   (up-rarm)
-  
+
   ;;掴む位置
   (send *arrow* :newcoords (send *ladle* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad -90) :x)
-  
+
   (send *ri* :stop-grasp :rarm :wait t)
-  
+
   ;; つかむ
-  (grasp-tool-on-table)  
+  (grasp-tool-on-table)
   (send (send *pr2* :rarm :end-coords) :assoc *ladle*)
-  
+
   ;; 手を上げる
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 50) :world)
@@ -1637,7 +1678,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   ;; 手を上げる
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(40 0 150) :world)
@@ -1648,7 +1689,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   ;; 待機姿勢になる
   ;; (setq *rav0* #f(-20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
   ;; (send *pr2* :rarm :angle-vector *rav0*)
@@ -1664,7 +1705,7 @@
 (defun grasp-ladle-with-fail-detection ()
   (setq tmp-coords (send *ladle* :copy-worldcoords))
   (grasp-ladle)
-  
+
   ;; 失敗を検知する
   (grasp-fail-detection :g-thre 10)
   (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
@@ -1761,18 +1802,18 @@
   )
 
 ;; pot codes
-(defun recieve-pot ()
+(defun receive-pot ()
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
   (send *pr2* :larm :angle-vector #f(117.007 48.3805 113.439 -103.326 38.7107 -5.72958 14.4628))
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   ;; potを置く位置
   (if (not (eql (send *pot* :parent) nil))
       (send (send *pot* :parent) :dissoc *pot*))
   (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
   (send *arrow* :newcoords (send (send *pot* :handle-handle0) :copy-worldcoords))
-  (send *arrow* :translate #f(100 0 100) :world)  
+  (send *arrow* :translate #f(100 0 100) :world)
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -1780,14 +1821,14 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   ;; potを受け取る
   (send *ri* :stop-grasp :larm :wait t)
   (send *ri* :speak-jp "鍋を握らせて下さい")
   (unix:sleep *s-time*)
   (send *ri* :start-grasp :larm :wait t)
-  
-  (warn "please run (put-pot) ~%")  
+
+  (warn "please run (put-pot) ~%")
   )
 
 (defun put-pot ()
@@ -1796,7 +1837,7 @@
       (send (send *pot* :parent) :dissoc *pot*))
   (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
   (send *arrow* :newcoords (send (send *pot* :handle-handle0) :copy-worldcoords))
-  (send *arrow* :translate #f(100 0 100) :world)  
+  (send *arrow* :translate #f(100 0 100) :world)
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -1805,7 +1846,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
-  (send *arrow* :translate #f(-100 0 -100) :world)  
+  (send *arrow* :translate #f(-100 0 -100) :world)
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -1813,9 +1854,9 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
-  
+
   (send *ri* :stop-grasp :larm :wait t)
-  
+
   (send *arrow* :translate #f(100 0 -100) :world)
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -1833,7 +1874,7 @@
   (send *pr2* :larm :angle-vector *lav4*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)  
+  (send *ri* :wait-interpolation)
   )
 
 ;; 盛り付け関連のプログラム
@@ -1848,7 +1889,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
-  
+
   (warn "please run (arrange-motion) ~%")
   )
 
@@ -1856,7 +1897,7 @@
 (defun arrange-motion ()
   ;; copy from (transfer-curry) in arrangement-codes.l
   (send *arrow* :newcoords (send (elt (send *ladle* :attention) 1) :copy-worldcoords))
-  
+
   (dotimes (i 9)
     (send *arrow* :rotate (deg2rad 10) :y :world)
     (send *pr2* :rarm :inverse-kinematics
@@ -1890,16 +1931,16 @@
     (setq av (send *pr2* :angle-vector))
     (setq avs (append avs (list av)))
     (setq tms (append tms (list 400)))
-    
+
     (send *pr2* :rarm :move-end-pos #f(0 0 40) :world)
     (setq av (send *pr2* :angle-vector))
     (setq avs (append avs (list av)))
     (setq tms (append tms (list 400)))
     )
-  
+
   (send *ri* :angle-vector-sequence avs tms)
   (send *ri* :wait-interpolation)
-  
+
   ;; avoid-pose的な姿勢になる．
   (send *arrow* :newcoords (make-coords :pos (float-vector 628.029 8528.539 31050.217) :rpy (float-vector -3.14 0.18 3.056)))
   (send *pr2* :rarm :inverse-kinematics
@@ -1921,7 +1962,7 @@
   (receive-peeler)
   (put-peeler)
   (receive-potato-peeler)
-  (put-potato-peeler)  
+  (put-potato-peeler)
   )
 
 (defun now-set-tools-with-dialogue ()
@@ -2047,16 +2088,16 @@
 (defun now-set-in-shelf ()
   ;; 棚の中におたまとヘラをセットする．
   (look-at-shelf)
-  
+
   (open-shelf-set)
   (open-shelf)
   (after-open)
-  
+
   (receive-spatula)
   (put-spatula-0)
   (receive-ladle)
   (put-ladle-0)
-  
+
   (close-shelf-set)
   (close-shelf)
   (after-close)
@@ -2071,7 +2112,7 @@
   (open-shelf-set)
   (open-shelf)
   (after-open)
-  
+
   (set-head)
   (receive-spatula-with-dialogue)
   (look-at-shelf)
@@ -2080,7 +2121,7 @@
   (receive-ladle-with-dialogue)
   (look-at-shelf)
   (put-ladle-0)
-  
+
   (close-shelf-set)
   (close-shelf)
   (after-close)
@@ -2106,22 +2147,22 @@
   (receive-ladle-with-dialogue)
   (look-at-shelf)
   (put-ladle-0)
-  
+
   ;; 棚の扉を閉める
   (close-shelf-set)
   (close-shelf)
   (after-close)
-  
+
   (set-head)
   )
 
 (defun now-set-from-shelf ()
   (look-at-shelf)
-  
+
   (open-shelf-set)
   (open-shelf)
   (after-open)
-  
+
   (rarm-middle-pose)
   (grasp-spatula-0)
   (set-head)
@@ -2132,7 +2173,7 @@
   (grasp-ladle-0)
   (rarm-middle-pose)
   (put-ladle-1)
-  
+
   (close-shelf-set)
   (close-shelf)
   (after-close)
@@ -2172,7 +2213,7 @@
   )
 
 (defun now-set-pot ()
-  (recieve-pot)
+  (receive-pot)
   (put-pot)
   )
 

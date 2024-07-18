@@ -155,7 +155,7 @@
           (setq *ok-flag* t)
           )
       (format t "data: ~A ~%" *data*)
-      ) 
+      )
     )
   )
 

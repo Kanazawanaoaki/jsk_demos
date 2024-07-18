@@ -350,7 +350,6 @@
   (send *ri* :wait-interpolation)
   )
 
-
 (defun set-look-pose ()
   (send *robot* :reset-manip-pose)
   ;; (send *robot* :head-neck-y :joint-angle 0.0)
@@ -395,14 +394,14 @@
   )
 
 (defun pr2-rarm-up (&key (num 60) (time 3000))
-  (send *pr2* :rarm :move-end-pos #f(0 0 num) :world)
+  (send *pr2* :rarm :move-end-pos (float-vector 0 0 num) :world)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) time)
   (send *ri* :wait-interpolation)
   )
 
 (defun pr2-larm-up (&key (num 60) (time 3000))
-  (send *pr2* :larm :move-end-pos #f(0 0 num) :world)
+  (send *pr2* :larm :move-end-pos (float-vector 0 0 num) :world)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) time)
   (send *ri* :wait-interpolation)
