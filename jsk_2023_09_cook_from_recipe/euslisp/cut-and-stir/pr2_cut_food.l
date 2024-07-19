@@ -67,6 +67,30 @@
       (send (send object-instance :parent) :dissoc object-instance))
   )
 
+(defun calib-check-pose-1 ()
+  (send *pr2* :head-neck-p :joint-angle 60)
+  (send *pr2* :head-neck-y :joint-angle 0)
+  (send *pr2* :larm :angle-vector #f(53.5439 39.8405 88.4637 -106.747 51.3809 -42.8174 -197.494));; reset-manip-pose -> ik (make-coords :pos #f(400 100 900)  :rpy #f(-1.571 0.0 -1.571))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun calib-check-pose-2 ()
+  (send *pr2* :head-neck-p :joint-angle 60)
+  (send *pr2* :head-neck-y :joint-angle 0)
+  (send *pr2* :larm :angle-vector #f(42.9257 27.2622 74.2284 -96.0201 42.9107 -47.1602 -203.154)) ;; reset-manip-pose -> IK (make-coords :pos #f(500 100 1000)  :rpy #f(-1.571 0.0 -1.571))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun calib-check-pose-3 ()
+  (send *pr2* :head-neck-p :joint-angle 20)
+  (send *pr2* :head-neck-y :joint-angle 0)
+  (send *pr2* :larm :angle-vector #f(20.6726 -7.25769 34.9669 -69.6827 54.571 -65.4479 -152.418)) ;; reset-manip-pose -> IK (make-coords :pos #f(550 50 1400)  :rpy #f(-1.571 0.0 0.0))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  )
+
 
 ;; defun action codes
 (defun change-hsi-param (&key (object-name "knife"))
