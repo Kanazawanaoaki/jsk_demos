@@ -100,6 +100,10 @@
                    (setq *calib-rec-flag* t)
                    (setq current-arm-diff (calc-arm-diff ideal-coords *obj-coord*))
                    (format t "current arm diff : ~A ~%" current-arm-diff)
+                   (setq current-tape-coords (send ideal-coords :copy-worldcoords))
+                   (send current-tape-coords :translate #f(-82 52 0))
+                   (setq current-tape-diff (calc-arm-diff current-tape-coords *obj-coord*))
+                   (format t "current diff with tape : ~A ~%" current-tape-diff)
                    )
                (progn
                  (format t "bbox size is too big!! ~%")

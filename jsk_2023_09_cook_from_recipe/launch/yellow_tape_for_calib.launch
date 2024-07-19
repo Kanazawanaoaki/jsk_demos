@@ -7,6 +7,12 @@
   <!-- TODO robot self mask -->
 
 
+  <!-- tape bbox  -->
+  <node name="yellow_tape_bbox_publisher" pkg="jsk_2023_09_cook_from_recipe"
+        type="yellow_tape_bbox_publisher.py" output="screen" respawn="true"
+        clear_params="true">
+  </node>
+
   <!-- hsi color filter -->
   <node name="yellow_calib_hsi_input_relay" pkg="nodelet" type="nodelet"
         args="standalone jsk_topic_tools/Relay">
