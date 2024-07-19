@@ -3,11 +3,12 @@
 ;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_tmp.l")
 ;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/wrench.l")
 ;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/move-to-adjust.l")
-(load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/pr2_cut_food.l")
+
+;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/pr2_cut_food.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/tool-use-in-kitchen-codes.l")
 
 (setq *debug-flag* t)
 (setq *s-time* 3)
-
 
 ;; load objects
 (unless (boundp '*cutting-board*)
