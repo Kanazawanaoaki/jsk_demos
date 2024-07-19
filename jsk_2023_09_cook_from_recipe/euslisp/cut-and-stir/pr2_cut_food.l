@@ -6,6 +6,13 @@
 ;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/pr2-cooking-actions.l") ;; TODO update
 ;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/cooking-exec-pddl-utils.l")
 
+;; util object
+(unless (boundp '*arrow*)
+  (progn
+    (load "models/arrow-object.l")
+    (setq *arrow* (arrow))
+    ))
+
 ;; ros init
 (ros::roseus "pr2_cut_food" :anonymous t)
 (ros::load-ros-manifest "jsk_recognition_msgs")
@@ -67,26 +74,65 @@
       (send (send object-instance :parent) :dissoc object-instance))
   )
 
+(defun calc-arm-diff (ideal-coords rec-coords)
+  (setq current-target-coords (make-coords :pos (send rec-coords :worldpos) :rot (send ideal-coords :worldrot)))
+  (setq ans (calc-object-rel-coords ideal-coords current-target-coords))
+  ans)
+
+(defun calib-check-rec ()
+  (setq calib-check-topic "/yellow_calib_hsi_segmentation_decomposer/boxes")
+  (ros::unsubscribe calib-check-topic)
+  (setq ideal-coords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+  (setq *calib-rec-flag* nil)
+  (until *calib-rec-flag*
+         (setq msg (one-shot-subscribe calib-check-topic jsk_recognition_msgs::BoundingBoxArray :timeout 5000))
+         (setq *found-obj* nil)
+
+         (when msg
+           (object-pose-cb msg)
+           (when *found-obj*
+             ;; check obj-dim
+             (setq current-dim (* *width* *height* *length*))
+             (setq dim-thre (* 40 15 20))
+             (format t "bbox size : ~A, thre is ~A ~%" current-dim dim-thre)
+             (if (< current-dim dim-thre)
+                 (progn
+                   (setq *calib-rec-flag* t)
+                   (setq current-arm-diff (calc-arm-diff ideal-coords *obj-coord*))
+                   (format t "current arm diff : ~A ~%" current-arm-diff)
+                   )
+               (progn
+                 (format t "bbox size is too big!! ~%")
+                 )
+               )
+             )
+           )
+         )
+  )
+
 (defun calib-check-pose-1 ()
+  (send *ri* :start-grasp :larm :wait t)
   (send *pr2* :head-neck-p :joint-angle 60)
   (send *pr2* :head-neck-y :joint-angle 0)
-  (send *pr2* :larm :angle-vector #f(53.5439 39.8405 88.4637 -106.747 51.3809 -42.8174 -197.494));; reset-manip-pose -> ik (make-coords :pos #f(400 100 900)  :rpy #f(-1.571 0.0 -1.571))
+  (send *pr2* :larm :angle-vector #f(51.4332 21.4607 106.115 -107.264 11.6515 -30.2623 15.9049));; reset-manip-pose -> ik (make-coords :pos #f(400 100 900)  :rpy #f(-1.571 0.0 1.571))
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   )
 
 (defun calib-check-pose-2 ()
+  (send *ri* :start-grasp :larm :wait t)
   (send *pr2* :head-neck-p :joint-angle 60)
   (send *pr2* :head-neck-y :joint-angle 0)
-  (send *pr2* :larm :angle-vector #f(42.9257 27.2622 74.2284 -96.0201 42.9107 -47.1602 -203.154)) ;; reset-manip-pose -> IK (make-coords :pos #f(500 100 1000)  :rpy #f(-1.571 0.0 -1.571))
+  (send *pr2* :larm :angle-vector #f(44.2811 9.76779 95.1416 -95.6883 5.01758 -37.9739 6.63239)) ;; reset-manip-pose -> IK (make-coords :pos #f(500 100 1000)  :rpy #f(-1.571 0.0 1.571))
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   )
 
 (defun calib-check-pose-3 ()
-  (send *pr2* :head-neck-p :joint-angle 20)
+  (send *ri* :start-grasp :larm :wait t)
+  (send *pr2* :head-neck-p :joint-angle 30)
   (send *pr2* :head-neck-y :joint-angle 0)
-  (send *pr2* :larm :angle-vector #f(20.6726 -7.25769 34.9669 -69.6827 54.571 -65.4479 -152.418)) ;; reset-manip-pose -> IK (make-coords :pos #f(550 50 1400)  :rpy #f(-1.571 0.0 0.0))
+  (send *pr2* :larm :angle-vector #f(25.7549 -12.8187 48.118 -68.8454 38.724 -57.8261 35.7247)) ;; reset-manip-pose -> IK (make-coords :pos #f(550 50 1400)  :rpy #f(-1.571 0.0 0.0))
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   )

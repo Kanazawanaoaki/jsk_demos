@@ -14,12 +14,12 @@
     <remap from="~input" to="$(arg INPUT_CLOUD)" />
   </node>
 
-  <arg name="h_max" value="-93" /><!-- 127 -->
-  <arg name="h_min" value="-128" /><!-- -128 -->
-  <arg name="s_max" value="28" /><!-- 255 -->
-  <arg name="s_min" value="0" /><!-- 0 -->
-  <arg name="i_max" value="255" /><!-- 255 -->
-  <arg name="i_min" value="209" /><!-- 0 -->
+  <arg name="h_max" value="45" /><!-- 43 -->
+  <arg name="h_min" value="30" /><!-- 30 -->
+  <arg name="s_max" value="130" /><!-- 101 -->
+  <arg name="s_min" value="70" /><!-- 77 -->
+  <arg name="i_max" value="240" /><!-- 240 -->
+  <arg name="i_min" value="100" /><!-- 156 -->
 
   <node pkg="nodelet" type="nodelet" name="yellow_calib_hsi_filter"
         args="standalone jsk_pcl/HSIColorFilter" output="screen">
@@ -49,17 +49,17 @@
       cluster_filter: 1
     </rosparam>
   </node>
-  <node name="hsi_throttle_segmentation" pkg="nodelet" type="nodelet"
+  <node name="yellow_calib_hsi_throttle_segmentation" pkg="nodelet" type="nodelet"
         args="standalone jsk_topic_tools/LightweightThrottle"
         output="screen">
-    <remap from="~input" to="hsiyellow_calib_hsi_euclidean_clustering/output" />
+    <remap from="~input" to="yellow_calib_hsi_euclidean_clustering/output" />
     <remap from="~output" to="yellow_calib_hsi_euclidean_clustering/output_throttle" />
   </node>
   <node name="yellow_calib_hsi_segmentation_decomposer" pkg="nodelet" type="nodelet"
         args="standalone jsk_pcl/ClusterPointIndicesDecomposer"
         output="screen"
 	    clear_params="true">
-    <remap from="~input" to="hsi_output" />
+    <remap from="~input" to="yellow_calib_hsi_output" />
     <!-- <remap from="~input" to="hsi_plane_extraction/output" /> -->
     <!-- <remap from="~target" to="hsi_euclidean_clustering/output" /> -->
     <remap from="~target" to="yellow_calib_hsi_euclidean_clustering/output_throttle" />
@@ -79,7 +79,7 @@
 
   <group if="$(arg run_rviz)">
     <node pkg="rviz" name="yellow_calib_rviz" type="rviz"
-          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/attention_cliper_test_pr2.rviz" />
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/yellow_calib_test.rviz" />
   </group>
 
 </launch>
