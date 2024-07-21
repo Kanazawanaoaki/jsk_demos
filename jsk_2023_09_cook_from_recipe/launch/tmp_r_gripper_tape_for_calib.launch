@@ -25,12 +25,12 @@
     <remap from="~input" to="$(arg INPUT_CLOUD)" />
   </node>
 
-  <arg name="h_max" value="45" /><!-- 43 -->
-  <arg name="h_min" value="30" /><!-- 30 -->
-  <arg name="s_max" value="130" /><!-- 101 -->
-  <arg name="s_min" value="70" /><!-- 77 -->
-  <arg name="i_max" value="240" /><!-- 240 -->
-  <arg name="i_min" value="100" /><!-- 156 -->
+  <arg name="h_max" value="127" /><!-- 43 -->
+  <arg name="h_min" value="100" /><!-- 30 -->
+  <arg name="s_max" value="63" /><!-- 101 -->
+  <arg name="s_min" value="33" /><!-- 77 -->
+  <arg name="i_max" value="241" /><!-- 240 -->
+  <arg name="i_min" value="185" /><!-- 156 -->
 
   <node pkg="nodelet" type="nodelet" name="yellow_calib_hsi_filter"
         args="standalone jsk_pcl/HSIColorFilter" output="screen">

@@ -16,8 +16,8 @@ def create_bounding_box(center, dimensions, orientation, frame_id):
     return box
 
 def publish_bounding_boxes():
-    rospy.init_node('yellow_tape_bounding_box_publisher', anonymous=True)
-    pub = rospy.Publisher('yellow_tape_bounding_boxes', BoundingBoxArray, queue_size=10)
+    rospy.init_node('l_gripper_tape_bounding_box_publisher', anonymous=True)
+    pub = rospy.Publisher('l_gripper_tape_bounding_boxes', BoundingBoxArray, queue_size=10)
     rate = rospy.Rate(10) # 10 Hz
 
     frame_id = 'l_gripper_tool_frame'

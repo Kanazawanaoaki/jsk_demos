@@ -6,9 +6,8 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /BoundingBoxArray1
         - /PointCloud23
-        - /BoundingBoxArray2
+        - /BoundingBoxArray1
         - /TF1/Frames1
       Splitter Ratio: 0.3519670069217682
     Tree Height: 891
@@ -85,9 +84,22 @@ Visualization Manager:
       Value: true
     - Class: jsk_rviz_plugin/BoundingBoxArray
       Enabled: true
-      Name: BoundingBoxArray
+      Name: LGripperBBox
       Queue Size: 10
-      Topic: /yellow_tape_bounding_boxes
+      Topic: /l_gripper_tape_bounding_boxes
+      Unreliable: false
+      Value: true
+      alpha: 0.800000011920929
+      color: 25; 255; 0
+      coloring: Auto
+      line width: 0.004999999888241291
+      only edge: true
+      show coords: false
+    - Class: jsk_rviz_plugin/BoundingBoxArray
+      Enabled: true
+      Name: RGripperBBox
+      Queue Size: 10
+      Topic: /r_gripper_tape_bounding_boxes
       Unreliable: false
       Value: true
       alpha: 0.800000011920929
@@ -858,8 +870,6 @@ Visualization Manager:
           Value: false
         sensor_mount_link:
           Value: false
-        target_cds_frame:
-          Value: true
         torso_lift_link:
           Value: false
         torso_lift_motor_screw_link:
@@ -877,8 +887,6 @@ Visualization Manager:
         wide_stereo_r_stereo_camera_optical_frame:
           Value: false
         world:
-          Value: false
-        yellow_calib_hsi_segmentation_decomposeroutput00:
           Value: false
       Marker Alpha: 1
       Marker Scale: 1
@@ -1041,10 +1049,6 @@ Visualization Manager:
                           {}
                       torso_lift_motor_screw_link:
                         {}
-                      yellow_calib_hsi_segmentation_decomposeroutput00:
-                        {}
-                    target_cds_frame:
-                      {}
             eng2/8f:
               {}
       Update Interval: 0

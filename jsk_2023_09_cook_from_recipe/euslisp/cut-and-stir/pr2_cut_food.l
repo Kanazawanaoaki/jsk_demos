@@ -69,6 +69,10 @@
   (setq target-coords (send (send base-coords :copy-worldcoords) :transform (send rel-coords :copy-worldcoords)))
   target-coords)
 
+(defun calc-diff-in-world (base-coords rel-coords)
+  (setq ans-vec (v- (send base-coords :transform-vector (send rel-coords :worldpos)) (send base-coords :worldpos)))
+  ans-vec)
+
 (defun dissoc-object (object-instance)
   (if (not (eql (send object-instance :parent) nil))
       (send (send object-instance :parent) :dissoc object-instance))
@@ -79,10 +83,10 @@
   (setq ans (calc-object-rel-coords ideal-coords current-target-coords))
   ans)
 
-(defun calib-check-rec ()
+(defun calib-check-rec (&key (arm :larm))
   (setq calib-check-topic "/yellow_calib_hsi_segmentation_decomposer/boxes")
   (ros::unsubscribe calib-check-topic)
-  (setq ideal-coords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+  (setq ideal-ee-coords (send (send *pr2* arm :end-coords) :copy-worldcoords))
   (setq *calib-rec-flag* nil)
   (until *calib-rec-flag*
          (setq msg (one-shot-subscribe calib-check-topic jsk_recognition_msgs::BoundingBoxArray :timeout 5000))
@@ -98,12 +102,17 @@
              (if (< current-dim dim-thre)
                  (progn
                    (setq *calib-rec-flag* t)
-                   (setq current-arm-diff (calc-arm-diff ideal-coords *obj-coord*))
-                   (format t "current arm diff : ~A ~%" current-arm-diff)
-                   (setq current-tape-coords (send ideal-coords :copy-worldcoords))
-                   (send current-tape-coords :translate #f(-82 52 0))
-                   (setq current-tape-diff (calc-arm-diff current-tape-coords *obj-coord*))
-                   (format t "current diff with tape : ~A ~%" current-tape-diff)
+                   (setq current-arm-diff (calc-arm-diff ideal-ee-coords *obj-coord*))
+                   (format t "current arm diff : ~A ~%" current-arm-diff) ;; armのend-effectorと認識したテープの座標の差分をend-effector座標系で
+                   (setq ideal-tape-coords (send ideal-ee-coords :copy-worldcoords))
+                   (if (equal arm :larm)
+                       (send ideal-tape-coords :translate #f(-82 52 0))
+                     (send ideal-tape-coords :translate #f(-82 -52 0))
+                     )
+                   (setq current-tape-diff (calc-arm-diff ideal-tape-coords *obj-coord*))
+                   (format t "current diff with tape : ~A ~%" current-tape-diff) ;;本来のテープの場所と認識結果の差分をend-effector座標系で
+                   (setq world-tape-diff-vec (calc-diff-in-world ideal-ee-coords current-tape-diff))
+                   (format t "current diff with tape in world : ~A ~%" world-tape-diff-vec) ;;本来のテープの場所と認識結果の差分のベクトルを世界座標系で
                    )
                (progn
                  (format t "bbox size is too big!! ~%")
@@ -112,9 +121,33 @@
              )
            )
          )
+  (list current-arm-diff current-tape-diff world-tape-diff-vec))
+
+(defun calib-check-pose-1 (&key (arm :larm)) ;; TODO
+  (send *ri* :start-grasp arm :wait t)
+  (send *pr2* :head-neck-p :joint-angle 60)
+  (send *pr2* :head-neck-y :joint-angle 0)
+  (if (equal arm :larm)
+      (send *pr2* :larm :angle-vector #f(-13.9647 61.3593 -5.56342 -115.768 -168.821 -54.3911 266.145)) ;; reset-manip-pose -> IK (make-coords :pos #f(600 100 1000)  :rpy #f(0.0 0.0 1.571))
+    (send *pr2* :rarm :angle-vector #f(12.2691 61.4493 2.75452 -115.799 167.905 -54.7026 -264.289)) ;; reset-manip-pose -> ik (make-coords :pos #f(600 -100 1000)  :rpy #f(0.0 0.0 -1.571))
+    )
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
   )
 
-(defun calib-check-pose-1 (&key (arm :larm))
+(defun calib-check-pose-2 (&key (arm :larm)) ;; TODO
+  (send *ri* :start-grasp arm :wait t)
+  (send *pr2* :head-neck-p :joint-angle 60)
+  (send *pr2* :head-neck-y :joint-angle 0)
+  (if (equal arm :larm)
+      (send *pr2* :larm :angle-vector #f(36.0882 9.29496 92.2287 -74.1248 4.67322 -51.5913 5.9309)) ;; reset-manip-pose -> IK (make-coords :pos #f(600 100 1000)  :rpy #f(-1.571 0.0 1.571))
+    (send *pr2* :rarm :angle-vector #f(-35.8771 6.16606 -97.1665 -74.1662 2.82492 -51.5477 -10.9524)) ;; reset-manip-pose -> ik (make-coords :pos #f(600 -100 1000)  :rpy #f(1.571 0.0 -1.571))
+    )
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun calib-check-pose-3 (&key (arm :larm))
   (send *ri* :start-grasp arm :wait t)
   (send *pr2* :head-neck-p :joint-angle 60)
   (send *pr2* :head-neck-y :joint-angle 0)
@@ -126,7 +159,7 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun calib-check-pose-2 (&key (arm :larm))
+(defun calib-check-pose-4 (&key (arm :larm))
   (send *ri* :start-grasp arm :wait t)
   (send *pr2* :head-neck-p :joint-angle 60)
   (send *pr2* :head-neck-y :joint-angle 0)
@@ -138,7 +171,8 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun calib-check-pose-3 (&key (arm :larm))
+
+(defun calib-check-pose-5 (&key (arm :larm))
   (send *ri* :start-grasp arm :wait t)
   (send *pr2* :head-neck-p :joint-angle 30)
   (send *pr2* :head-neck-y :joint-angle 0)
