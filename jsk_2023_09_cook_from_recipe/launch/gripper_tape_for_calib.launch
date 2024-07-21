@@ -1,0 +1,52 @@
+<launch>
+  <arg name="run_rviz" default="true" />
+
+  <arg name="INPUT_CLOUD" default="/kinect_head_remote/depth_registered/points" />
+  <arg name="target_frame" default="base_link" />
+
+  <!-- TODO robot self mask -->
+
+
+  <!-- tape bbox publisher -->
+  <node name="l_gripper_tape_bbox_publisher" pkg="jsk_2023_09_cook_from_recipe"
+        type="l_gripper_tape_bbox_publisher.py" output="screen" respawn="true"
+        clear_params="true">
+  </node>
+
+  <node name="r_gripper_tape_bbox_publisher" pkg="jsk_2023_09_cook_from_recipe"
+        type="r_gripper_tape_bbox_publisher.py" output="screen" respawn="true"
+        clear_params="true">
+  </node>
+
+  <!-- r gripper hsi color filter -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/hsi_filter_bbox.launch">
+    <arg name="namespace" value="r_gripper_tape_hsi" />
+    <arg name="INPUT_CLOUD" value="$(arg INPUT_CLOUD)" />
+    <arg name="target_frame" value="$(arg target_frame)" />
+    <arg name="h_max" value="127" /><!-- 127 -->
+    <arg name="h_min" value="100" /><!-- 100 -->
+    <arg name="s_max" value="63" /><!-- 63 -->
+    <arg name="s_min" value="33" /><!-- 33 -->
+    <arg name="i_max" value="241" /><!-- 241 -->
+    <arg name="i_min" value="185" /><!-- 185 -->
+  </include>
+
+  <!-- l gripper hsi color filter -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/hsi_filter_bbox.launch">
+    <arg name="namespace" value="l_gripper_tape_hsi" />
+    <arg name="INPUT_CLOUD" value="$(arg INPUT_CLOUD)" />
+    <arg name="target_frame" value="$(arg target_frame)" />
+    <arg name="h_max" value="45" /><!-- 45 -->
+    <arg name="h_min" value="30" /><!-- 30 -->
+    <arg name="s_max" value="130" /><!-- 130 -->
+    <arg name="s_min" value="70" /><!-- 70 -->
+    <arg name="i_max" value="240" /><!-- 240 -->
+    <arg name="i_min" value="100" /><!-- 100 -->
+  </include>
+
+  <group if="$(arg run_rviz)">
+    <node pkg="rviz" name="gripper_tape_calib_rviz" type="rviz"
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/gripper_tape_calib.rviz" />
+  </group>
+
+</launch>

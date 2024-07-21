@@ -1,0 +1,75 @@
+<launch>
+  <arg name="run_rviz" default="false" /> <!-- TODO -->
+
+  <arg name="namespace" default="hsi_filter" />
+  <arg name="INPUT_CLOUD" default="/kinect_head_remote/depth_registered/points" />
+  <arg name="target_frame" default="base_link" />
+
+  <arg name="h_max" default="45" /><!-- 43 -->
+  <arg name="h_min" default="30" /><!-- 30 -->
+  <arg name="s_max" default="130" /><!-- 101 -->
+  <arg name="s_min" default="70" /><!-- 77 -->
+  <arg name="i_max" default="240" /><!-- 240 -->
+  <arg name="i_min" default="100" /><!-- 156 -->
+
+  <group ns='$(arg namespace)'>
+
+    <node name="hsi_input_relay" pkg="nodelet" type="nodelet"
+          args="standalone jsk_topic_tools/Relay">
+      <remap from="~input" to="$(arg INPUT_CLOUD)" />
+    </node>
+
+    <node pkg="nodelet" type="nodelet" name="hsi_filter"
+          args="standalone jsk_pcl/HSIColorFilter" output="screen">
+      <remap from="~input" to="hsi_input_relay/output" />
+      <remap from="~output" to="hsi_output" />
+      <rosparam>
+        use_indices: false
+        keep_organized: true
+      </rosparam>
+      <param name="h_limit_max" value="$(arg h_max)" />
+      <param name="h_limit_min" value="$(arg h_min)" />
+      <param name="s_limit_max" value="$(arg s_max)" />
+      <param name="s_limit_min" value="$(arg s_min)" />
+      <param name="i_limit_max" value="$(arg i_max)" />
+      <param name="i_limit_min" value="$(arg i_min)" />
+    </node>
+
+    <node pkg="nodelet" type="nodelet" name="hsi_euclidean_clustering"
+          args="standalone jsk_pcl/EuclideanClustering" output="screen">
+    <remap from="~input" to="hsi_output" />
+    <rosparam>
+      tolerance: 0.03
+      min_size: 100
+      cluster_filter: 1
+    </rosparam>
+    </node>
+
+    <node name="hsi_throttle_segmentation" pkg="nodelet" type="nodelet"
+        args="standalone jsk_topic_tools/LightweightThrottle"
+        output="screen">
+      <remap from="~input" to="hsi_euclidean_clustering/output" />
+      <remap from="~output" to="hsi_euclidean_clustering/output_throttle" />
+    </node>
+
+    <node name="hsi_segmentation_decomposer" pkg="nodelet" type="nodelet"
+          args="standalone jsk_pcl/ClusterPointIndicesDecomposer"
+          output="screen"
+	      clear_params="true">
+      <remap from="~input" to="hsi_output" />
+      <remap from="~target" to="hsi_euclidean_clustering/output_throttle" />
+      <!-- <remap from="~align_planes" to="hsi_multi_plane_estimate/output_refined_polygon" /> -->
+      <!-- <remap from="~align_planes_coefficients" -->
+      <!--        to="hsi_multi_plane_estimate/output_refined_coefficients" /> -->
+      <rosparam subst_value="true">
+        align_boxes: true
+        align_boxes_with_plane: false
+        target_frame_id: $(arg target_frame)
+        use_pca: true
+        publish_clouds: false
+        publish_tf: true
+        sort_by: -cloud_size
+      </rosparam>
+    </node>
+  </group>
+</launch>
