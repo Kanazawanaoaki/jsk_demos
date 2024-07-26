@@ -15,3 +15,11 @@
     local-name: moveit_pr2
     uri: https://github.com/ros-planning/moveit_pr2.git
     version: melodic-devel
+- git:
+    local-name: lc_state_recognition
+    uri: git@github.com:Kanazawanaoaki/lc_state_recognition.git
+    version: main
+- git:
+    local-name: vil_ros
+    uri: git@github.com:Kanazawanaoaki/vil_ros.git
+    version: main
