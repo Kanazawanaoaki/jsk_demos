@@ -21,6 +21,8 @@ roslaunch jsk_2023_09_cook_from_recipe only_planner.launch
 roscd jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/
 roseus solve-read-file-dish.l
 (read-file "prompt_poached-egg_conv.l")
+## if you want to dump in /planned
+(dump-plan-file "prompt_poached-egg_conv_planned.l")
 ```
 
 補完されたプランをみてみる
