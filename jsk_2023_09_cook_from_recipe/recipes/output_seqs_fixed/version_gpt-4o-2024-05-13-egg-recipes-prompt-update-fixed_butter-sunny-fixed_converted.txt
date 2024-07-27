@@ -1,0 +1,5 @@
+[Function Sequence]
+pour(butter, frying-pan)
+heat(butter, melt)
+pour(egg, frying-pan)
+cook(egg, cooked-egg)

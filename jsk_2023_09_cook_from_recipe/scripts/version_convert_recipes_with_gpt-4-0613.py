@@ -2,13 +2,15 @@ import openai
 import argparse
 import os
 
+version_name = "gpt-4-0613"
+
 def generate_text(prompt, conversation_history, temperature):
     # プロンプトを会話履歴に追加
     conversation_history.append({"role": "user", "content": prompt})
 
     # GPT-4モデルを使用する場合
     response = openai.ChatCompletion.create(
-        model="gpt-4",
+        model=version_name,
         temperature=temperature,
         messages=conversation_history
     )
@@ -45,10 +47,10 @@ if __name__ == "__main__":
     # parser.add_argument('-r','--recipe', default="../recipes/new_recipes/butter-sunny-jp.txt", help="未知のレシピのテキストへのパス")
     # parser.add_argument('-l','--language', default="jp", help="使用する自然言語の言語")
     # parser.add_argument('-p','--prompt', default="../recipes/prompts/egg-recipes-prompt.txt", help="プロンプトテキストへのパス")
-    parser.add_argument('-p','--prompt', default="../recipes/prompts/egg-recipes-prompt-fixed.txt", help="プロンプトテキストへのパス")
+    # parser.add_argument('-p','--prompt', default="../recipes/prompts/egg-recipes-prompt-fixed.txt", help="プロンプトテキストへのパス")
+    parser.add_argument('-p','--prompt', default="../recipes/prompts/egg-recipes-prompt-update-fixed.txt", help="プロンプトテキストへのパス")
     parser.add_argument('-r','--recipe', default="../recipes/new_recipes/butter-sunny-fixed.txt", help="未知のレシピのテキストへのパス")
     parser.add_argument('-l','--language', choices=['en', 'jp'], default="en", help="使用する自然言語の言語 (en, jp)")
-    # parser.add_argument('-o','--output_dir', default="../recipes/output_seqs/", help="出力のフォルダへのパス")
     parser.add_argument('-o','--output_dir', default="../recipes/output_seqs_fixed/", help="出力のフォルダへのパス")
 
     args = parser.parse_args()
@@ -81,7 +83,7 @@ if __name__ == "__main__":
     prompt_name = extract_file_name(prompt_text_path)
     recipe_name = extract_file_name(recipe_text_path)
 
-    output_file_path = os.path.join(output_dir_path, f"{prompt_name}_{recipe_name}_converted.txt")
+    output_file_path = os.path.join(output_dir_path, f"version_{version_name}-{prompt_name}_{recipe_name}_converted.txt")
     with open(output_file_path, 'w', encoding='utf-8') as file:
         file.write(generated_text)
     print("\nOutput is saved in {}".format(output_file_path))

@@ -1,0 +1,13 @@
+To convert the given recipe into a sequence of functions, we can follow the structure provided in the examples. Here's the breakdown:
+
+**Recipe:**
+1. Pour the butter into the frying-pan and heat to melt.
+2. Add the egg and cook until the egg is cooked.
+
+**Function Sequence:**
+1. `pour(butter, frying-pan)`
+2. `heat(butter, melted)`
+3. `pour(egg, frying-pan)`
+4. `cook(egg, cooked-egg)`
+
+This sequence of functions represents the steps described in the recipe, using the defined functions to express each cooking action.
