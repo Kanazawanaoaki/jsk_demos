@@ -49,7 +49,8 @@ if __name__ == "__main__":
     # parser.add_argument('-p','--prompt', default="../recipes/prompts/egg-recipes-prompt.txt", help="プロンプトテキストへのパス")
     # parser.add_argument('-p','--prompt', default="../recipes/prompts/egg-recipes-prompt-fixed.txt", help="プロンプトテキストへのパス")
     parser.add_argument('-p','--prompt', default="../recipes/prompts/egg-recipes-prompt-update-fixed.txt", help="プロンプトテキストへのパス")
-    parser.add_argument('-r','--recipe', default="../recipes/new_recipes/butter-sunny-fixed.txt", help="未知のレシピのテキストへのパス")
+    # parser.add_argument('-r','--recipe', default="../recipes/new_recipes/butter-sunny-fixed.txt", help="未知のレシピのテキストへのパス")
+    parser.add_argument('-r','--recipe', default="../recipes/new_recipes/sauteed-broccoli.txt", help="未知のレシピのテキストへのパス")
     parser.add_argument('-l','--language', choices=['en', 'jp'], default="en", help="使用する自然言語の言語 (en, jp)")
     parser.add_argument('-o','--output_dir', default="../recipes/output_seqs_fixed/", help="出力のフォルダへのパス")
 

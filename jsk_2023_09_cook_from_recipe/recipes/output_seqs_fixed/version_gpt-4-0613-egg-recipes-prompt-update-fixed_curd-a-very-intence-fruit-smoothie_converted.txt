@@ -1,0 +1,3 @@
+mix(frozen-fruit, canned-fruit, fruit-mixture, blender, blender-tool)
+pour(honey, blender)
+mix(fruit-mixture, honey, smooth-mixture, blender, blender-tool)

@@ -1,0 +1,16 @@
+To convert the given recipe into a sequence of functions, we can define each step using the provided function templates. Here's how the recipe can be expressed:
+
+[Recipe]
+Bring a pot of water to a boil and boil broccoli for 3 minutes.
+After 3 minutes, turn off the heat of the pot and heat the butter in a frying pan to melt.
+When the butter is melted, add the broccoli to the pan and saute for 20 seconds.
+
+[Function Sequence]
+1. boil(water, boiled-water)
+2. pour(broccoli, pot)
+3. boil(broccoli, three-minutes)
+4. turn-off-stove(pot)
+5. pour(butter, frying-pan)
+6. heat(butter, melted)
+7. pour(broccoli, frying-pan)
+8. stir-fry(broccoli, twenty-seconds, frying-pan)

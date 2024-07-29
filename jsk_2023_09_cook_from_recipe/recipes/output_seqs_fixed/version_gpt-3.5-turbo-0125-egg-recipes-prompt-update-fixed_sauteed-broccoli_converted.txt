@@ -1,0 +1,7 @@
+boil(water, boiled-water)
+boil(broccoli, three-minutes)
+turn-off-stove(pot)
+pour(butter, frying-pan)
+heat(butter, melt)
+pour(broccoli, frying-pan)
+stir-fry(broccoli, sauteed, spatula)

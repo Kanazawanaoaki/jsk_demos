@@ -1,0 +1,5 @@
+mix(ice-cream, milk, mixture1, blender, blender-tool)
+mix(mixture1, whipped-cream, mixture2, blender, blender-tool)
+mix(mixture2, hot-chocolate-mix, mixture3, blender, blender-tool)
+mix(mixture3, crushed-cookies, smooth-mixture, blender, blender-tool)
+pour(smooth-mixture, large-chilled-glass)

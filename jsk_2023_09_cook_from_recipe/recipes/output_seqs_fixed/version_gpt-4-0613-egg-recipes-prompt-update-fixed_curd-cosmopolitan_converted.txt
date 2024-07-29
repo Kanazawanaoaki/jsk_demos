@@ -1,0 +1,5 @@
+pour(all-ingredients, shaker)
+pour(ice, shaker)
+stir(all-ingredients, vigorously-shaken, shaker)
+pour(all-ingredients, cocktail-glass)
+garnish(lime-twist, cocktail-glass)
