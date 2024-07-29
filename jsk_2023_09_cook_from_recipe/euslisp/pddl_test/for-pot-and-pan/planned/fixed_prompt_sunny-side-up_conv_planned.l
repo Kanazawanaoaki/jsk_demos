@@ -1,0 +1,1 @@
+(setq *plan-list* '((hold salad-oil arm2 stove) (pour salad-oil frying-pan arm2 stove) (place salad-oil arm2 stove) (turn-on-stove frying-pan arm1) (heat salad-oil frying-pan thirty-seconds) (hold bowl arm2 stove) (transfer egg bowl frying-pan arm2 stove) (place bowl arm2 stove) (cook egg cooked-egg) (turn-off-stove middle frying-pan arm1)))
