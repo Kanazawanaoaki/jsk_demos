@@ -1,3 +1,5 @@
-mix(ice-cream, milk, whipped-cream, hot-chocolate-mix, crushed-cookies, blender)
-heat(mixture, smooth)
-pour(mixture, large-chilled-glass)
+mix(ice-cream, milk, mixture1, blender, blender-tool)
+mix(mixture1, whipped-cream, mixture2, blender, blender-tool)
+mix(mixture2, hot-chocolate-mix, mixture3, blender, blender-tool)
+mix(mixture3, crushed-cookies, final-mixture, blender, blender-tool)
+pour(final-mixture, large-chilled-glass)
