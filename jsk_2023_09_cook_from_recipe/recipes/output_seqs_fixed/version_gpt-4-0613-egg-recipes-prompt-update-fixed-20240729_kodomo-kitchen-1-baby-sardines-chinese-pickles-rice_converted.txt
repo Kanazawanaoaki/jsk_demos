@@ -1,0 +1,4 @@
+pour(rice, rice-bowl)
+pour(Chinese-pickles, rice-bowl)
+pour(baby-sardines, rice-bowl)
+pour(sesame-oil, rice-bowl)

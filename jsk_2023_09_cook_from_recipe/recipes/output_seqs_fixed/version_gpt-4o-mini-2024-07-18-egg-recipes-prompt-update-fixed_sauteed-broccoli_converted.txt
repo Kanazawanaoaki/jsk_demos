@@ -1,8 +1,9 @@
 [Function Sequence]
-boil(water, boiling-water)
+boil(water, boiled-water)
 pour(broccoli, pot)
 boil(broccoli, three-minutes)
 turn-off-stove(pot)
 pour(butter, frying-pan)
 heat(butter, melt)
+heat(broccoli, sautéed-broccoli)
 stir-fry(broccoli, sautéed-broccoli, spatula)

@@ -15,7 +15,7 @@ For example,
 [Recipe]
 Mix the eggs and milk well to make the egg mixture.
 Melt the butter in a frying pan.
-Pour the egg mixture into the frying pan and leave it there without touching it until the surrounding mixture hardens. When the egg mixture hardens, fry the eggs quickly with a wooden spatula until they are tender.
+Pour the egg mixture into the frying pan and leave it there without touching it until the surrounding mixture hardens. When the egg mixture hardens, fry the eggs quickly with a wooden spoon until they are tender.
 [Function Sequence]
 mix(egg, milk, egg-mixture, bowl, whisk)
 pour(butter, frying-pan)

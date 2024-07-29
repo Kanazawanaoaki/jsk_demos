@@ -1,0 +1,3 @@
+pour(ingredients, mug)
+pour(boiling-water, mug)
+mix(ingredients, boiling-water, mixture, mug, spoon)

@@ -1,0 +1,6 @@
+mix(cabbage, potatoes, onion, salt, pepper, mixture, slow-cooker, hand)
+pour(broth, slow-cooker)
+pour(sausage, slow-cooker)
+set-stove(low, slow-cooker)
+cook(mixture, eight-to-nine-hours)
+heat(sausage, heated-through)

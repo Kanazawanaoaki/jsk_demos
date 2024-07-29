@@ -1,0 +1,4 @@
+pour(rice, rice-bowl)
+pour(corn, rice)
+pour(butter, rice)
+pour(soy-sauce, rice)

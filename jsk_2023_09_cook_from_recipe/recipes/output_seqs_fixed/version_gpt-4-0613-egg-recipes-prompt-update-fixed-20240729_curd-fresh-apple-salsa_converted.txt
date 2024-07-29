@@ -1,0 +1,4 @@
+stir(apples, lime-juice, large-bowl, spoon)
+stir(jalapeno, Anaheim-chile-slices, large-bowl, spoon)
+stir(onion, cilantro, walnuts, ginger, salt, large-bowl, spoon)
+mix(apples, lime-juice, jalapeno, Anaheim-chile-slices, onion, cilantro, walnuts, ginger, salt, large-bowl, spoon)

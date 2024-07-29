@@ -1,0 +1,3 @@
+mix(drink-mix, pineapple-juice, mixture, punch-bowl, spoon)
+stir(mixture, dissolved-mixture, spoon)
+stir-in(ginger-ale, mixture, spoon)
