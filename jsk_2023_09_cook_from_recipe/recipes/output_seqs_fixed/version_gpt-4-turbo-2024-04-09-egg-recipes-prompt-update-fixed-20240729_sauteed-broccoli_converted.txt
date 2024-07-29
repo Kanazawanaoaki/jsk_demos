@@ -1,4 +1,4 @@
-To convert the given recipe into a sequence of functions as defined, we can break down each step of the recipe into the appropriate function calls:
+To convert the given recipe into a sequence of functions, we can break down each step of the cooking process into the appropriate function calls using the variables ingredient, vessel, tool, and state. Here's how the recipe can be expressed:
 
 [Recipe]
 Bring a pot of water to a boil and boil broccoli for 3 minutes.
@@ -13,6 +13,6 @@ When the butter is melted, add the broccoli to the pan and saute for 20 seconds.
 5. pour(butter, frying-pan)
 6. heat(butter, melted)
 7. pour(broccoli, frying-pan)
-8. stir-fry(broccoli, twenty-seconds, frying-pan)
+8. stir-fry(broccoli, twenty-seconds, spatula)
 
-This sequence of functions represents each step of the cooking process in the recipe using the defined functions and parameters.
+This sequence of functions captures each step of the cooking process as described in the recipe, using the defined functions and appropriate parameters.
