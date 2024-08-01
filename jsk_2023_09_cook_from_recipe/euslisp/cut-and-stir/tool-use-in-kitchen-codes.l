@@ -1245,7 +1245,7 @@
 (defun put-ladle-0 ()
   ;; 中間姿勢になる
   (rarm-middle-pose)
-  
+
   ;; ladleを置く位置
   (send *arrow* :newcoords (send *ladle-coords-0* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad -90) :x)
@@ -1322,7 +1322,7 @@
         :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)  
+  (send *ri* :wait-interpolation)
 
   ;; 中間姿勢になる
   (rarm-middle-pose)
@@ -1330,14 +1330,14 @@
 
 
 
-(defun reset-rarm ()
+(defun reset-rarm () ;; TODO Fix
   ;; (setq *rav0* #f(-20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
   ;; (send *pr2* :rarm :angle-vector *rav0*)
   (send *arrow* :newcoords (make-coords :pos (float-vector 628.029 8828.539 31050.217) :rpy (float-vector -3.14 0.18 -0.086)))
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
-        :debug-view *debug-flag*)  
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
@@ -1348,11 +1348,11 @@
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
-        :debug-view *debug-flag*)  
+        :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
-  
+
   (setq *rav3* #f(-75.0 50.0 -110.0 -110.0 20.0 -10.0 -10.0))
   (send *pr2* :rarm :angle-vector *rav3*)
   (send *viewer* :draw-objects)

@@ -37,6 +37,7 @@
   <depend>vil_msgs</depend>
   <depend>vision_and_language_ros</depend>
   <depend>jsk_rosbag_tools</depend>
+  <depend>jsk_demo_common</depend>
   <depend>pr2eus_moveit</depend>
   <depend>pddl_planner</depend>
   <!--   Note that this is equivalent to the following: -->
