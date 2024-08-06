@@ -1,0 +1,10 @@
+<launch>
+  <arg name="run_rviz" default="true" />
+  <arg name="rviz_name" default="view_rviz_cook" />
+
+  <group if="$(arg run_rviz)">
+    <node name="view_cook_$(arg rviz_name)"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/$(arg rviz_name).rviz" />
+  </group>
+</launch>
