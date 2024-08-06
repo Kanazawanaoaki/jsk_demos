@@ -1,39 +1,56 @@
 import argparse
+import base64
+import os
 from PIL import Image
-import openai
-import io
+import matplotlib.pyplot as plt
+from openai import OpenAI
 
-# OpenAI APIキーを設定します
-openai.api_key = 'YOUR_OPENAI_API_KEY'
+# OpenAI APIキーとモデル名の設定
+MODEL = "gpt-4o-mini"
 
-def generate_image_description(image_path):
-    # 画像を読み込みます
-    image = Image.open(image_path)
+def encode_image(image_path):
+    """画像ファイルをbase64エンコードする関数"""
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode("utf-8")
 
-    # 画像をバイナリデータに変換します
-    image_bytes = io.BytesIO()
-    image.save(image_bytes, format=image.format)
-    image_bytes = image_bytes.getvalue()
+def main(image_path, key):
+    client = OpenAI(api_key=key)
 
-    # OpenAI APIを使用して画像の説明を生成します
-    response = openai.Image.create(
-        file=image_bytes,
-        file_format=image.format,
-        purpose='description'
+    # 画像をbase64エンコード
+    base64_image = encode_image(image_path)
+
+    # APIリクエストを作成
+    response = client.chat.completions.create(
+        model=MODEL,
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant that responds in Markdown. Help me with my math homework!"},
+            {"role": "user", "content": [
+                {"type": "text", "text": "画像に書かれている内容を文字起こししてください"},
+                {"type": "image_url", "image_url": {
+                    "url": f"data:image/png;base64,{base64_image}"}
+                }
+            ]}
+        ],
+        temperature=0.0,
     )
 
-    # APIレスポンスを確認します
-    if response.status_code == 200:
-        description = response['choices'][0]['text']
-        print("画像の説明:", description)
-    else:
-        print("エラーが発生しました:", response.status_code, response.text)
+    # APIからの応答を表示
+    print(response.choices[0].message.content)
+
+    # 画像を読み込み、表示する
+    img = Image.open(image_path)
+    plt.imshow(img)
+    plt.axis('off')  # 軸を表示しないようにする
+    plt.show()
 
 if __name__ == "__main__":
-    # コマンドライン引数の解析
-    parser = argparse.ArgumentParser(description='画像の説明を生成するプログラム')
-    parser.add_argument('image_path', type=str, help='画像ファイルのパス')
+    parser = argparse.ArgumentParser(description="OpenAI APIを使って画像に関する説明を生成します。")
+    parser.add_argument('-k', '--key', required=True, help="受け取ったAPI key")
+    parser.add_argument('-i', '--image', required=True, help="画像ファイルのパス")
     args = parser.parse_args()
 
-    # 画像の説明を生成します
-    generate_image_description(args.image_path)
+    if not os.path.isfile(args.image):
+        print(f"Error: File not found at {args.image}")
+        exit(1)
+
+    main(args.image, args.key)
