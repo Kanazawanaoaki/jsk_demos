@@ -1,0 +1,55 @@
+<launch>
+  <arg name="input_image" default="/kinect_head_remote/rgb/image_rect_color" />
+  <arg name="input_cloud" default="/kinect_head_remote/depth_registered/points" />
+  <arg name="target_frame_id" default="base_footprint" />
+  <arg name="mask_image" default="/deva_node/output/segmentation" />
+
+  <arg name="run_rviz" default="false"/>
+  <!-- <arg name="run_collection" default="false"/> -->
+  <arg name="run_decomp" default="false" />
+  <arg name="run_tabletop" default="true" />
+
+  <!-- dava mask -->
+  <arg name="run_with_table" default="true" />
+  <arg name="run_deva_only" default="false" />
+
+  <arg name="with_table_namespace" default="table_and_deva_apply" />
+  <arg name="deva_only_namespace" default="deva_apply_mask" />
+
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/for_cut/tabletop_object_rec.launch" if="$(arg run_tabletop)" >
+    <arg name="run_rviz" value="false" />
+  </include>
+
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/pr2_decompress.launch" if="$(arg run_decomp)" />
+
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/ns_apply_track_object_mask.launch" if="$(arg run_with_table)">
+    <arg name="namespace" value="$(arg with_table_namespace)" />
+    <arg name="INPUT_IMAGE" value="$(arg input_image)" />
+    <arg name="INPUT_CLOUD" value="/plane_extraction/output" />
+    <arg name="MASK_IMAGE" value="$(arg mask_image)" />
+    <arg name="run_rviz" value="false" />
+    <arg name="run_collection" value="false" />
+    <arg name="target_frame_id" value="$(arg target_frame_id)" />
+  </include>
+
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/ns_apply_track_object_mask.launch" if="$(arg run_deva_only)">
+    <arg name="namespace" value="$(arg deva_only_namespace)" />
+    <arg name="INPUT_IMAGE" value="$(arg input_image)" />
+    <arg name="INPUT_CLOUD" value="$(arg input_cloud)" />
+    <arg name="MASK_IMAGE" value="$(arg mask_image)" />
+    <arg name="run_rviz" value="false" />
+    <arg name="run_collection" value="false" />
+    <arg name="target_frame_id" value="$(arg target_frame_id)" />
+  </include>
+
+  <!-- <include file="$(find jsk_2023_09_cook_from_recipe)/launch/pr2_tracking_data_collection.launch" if="$(arg run_collection)" /> -->
+
+  <!-- rviz -->
+  <group if="$(arg run_rviz)">
+    <node name="ns_table_and_deva_applay_rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/ns_table_and_deva_apply_track_3d.rviz">
+    </node>
+  </group>
+
+</launch>
