@@ -174,7 +174,8 @@
   (send *arrow* :rotate (deg2rad -90) :x)
 
   ;; (send *arrow* :translate #f(60 0 100) :world) ;; original
-  (send *arrow* :translate #f(-60 0 100) :world) ;; fix
+  ;; (send *arrow* :translate #f(-60 0 100) :world) ;; fix
+  (send *arrow* :translate #f(0 0 100) :world) ;; fix tmp
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -189,6 +190,7 @@
   (send *ri* :start-grasp :rarm :wait t)
   (send *ri* :start-grasp :rarm :wait t :gain 100)
 
+  ;; assoc knife
   (send *knife* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *knife* :translate #f(12 0 0))
   (send *knife* :rotate (deg2rad 90) :x)
@@ -1956,7 +1958,8 @@
 ;; now codes
 (defun now-set-tools ()
   ;; 包丁，ピーラー，じゃがいもピーラーをセットする．
-  (up-rarm)
+  ;; (up-rarm)
+  (pr2-rarm-up :num 50)
   (receive-knife)
   (put-knife)
   (receive-peeler)

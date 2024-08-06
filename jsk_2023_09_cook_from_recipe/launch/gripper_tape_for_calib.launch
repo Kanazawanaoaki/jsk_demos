@@ -28,7 +28,7 @@
     <arg name="s_max" value="63" /><!-- 63 -->
     <arg name="s_min" value="33" /><!-- 33 -->
     <arg name="i_max" value="241" /><!-- 241 -->
-    <arg name="i_min" value="185" /><!-- 185 -->
+    <arg name="i_min" value="140" /><!-- 185 -->
   </include>
 
   <!-- l gripper hsi color filter -->
@@ -38,8 +38,8 @@
     <arg name="target_frame" value="$(arg target_frame)" />
     <arg name="h_max" value="45" /><!-- 45 -->
     <arg name="h_min" value="30" /><!-- 30 -->
-    <arg name="s_max" value="130" /><!-- 130 -->
-    <arg name="s_min" value="70" /><!-- 70 -->
+    <arg name="s_max" value="240" /><!-- 130 -->
+    <arg name="s_min" value="53" /><!-- 70 -->
     <arg name="i_max" value="240" /><!-- 240 -->
     <arg name="i_min" value="100" /><!-- 100 -->
   </include>

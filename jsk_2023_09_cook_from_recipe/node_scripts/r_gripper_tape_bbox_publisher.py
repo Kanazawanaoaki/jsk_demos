@@ -20,8 +20,9 @@ def publish_bounding_boxes():
     pub = rospy.Publisher('r_gripper_tape_bounding_boxes', BoundingBoxArray, queue_size=10)
     rate = rospy.Rate(10) # 10 Hz
 
-    frame_id = 'r_gripper_tool_frame'
     while not rospy.is_shutdown():
+        ## sokumen tape
+        frame_id = 'r_gripper_tool_frame'
         bbox_array = BoundingBoxArray()
         bbox_array.header.frame_id = frame_id
         bbox_array.header.stamp = rospy.Time.now()
@@ -32,8 +33,19 @@ def publish_bounding_boxes():
         # orientation = Quaternion(0.0, 0.0, 0.0, 1.0)
         quaternion = tf.transformations.quaternion_from_euler(0, -1.5708, 0) # -90度
         orientation = Quaternion(*quaternion)
+        bbox = create_bounding_box(center, dimensions, orientation, frame_id)
 
+        bbox_array.boxes.append(bbox)
 
+        ## syoumen tape 
+
+        # ダミーのバウンディングボックスの作成
+        frame_id = 'r_gripper_tool_frame'
+        center = Point(-0.115, 0.0, 0.03)
+        dimensions = [0.01, 0.005, 0.02]
+        # orientation = Quaternion(0.0, 0.0, 0.0, 1.0)
+        quaternion = tf.transformations.quaternion_from_euler(1.5708, 0, 0) # -90度
+        orientation = Quaternion(*quaternion)
         bbox = create_bounding_box(center, dimensions, orientation, frame_id)
 
         bbox_array.boxes.append(bbox)

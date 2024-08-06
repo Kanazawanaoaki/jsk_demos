@@ -83,8 +83,10 @@
   (setq ans (calc-object-rel-coords ideal-coords current-target-coords))
   ans)
 
-(defun calib-check-rec (&key (arm :larm))
-  (setq calib-check-topic "/yellow_calib_hsi_segmentation_decomposer/boxes")
+(defun calib-check-rec (&key (arm :larm) (set-offset nil))
+  (if (equal arm :larm)
+      (setq calib-check-topic "/l_gripper_tape_hsi/hsi_segmentation_decomposer/boxes")
+    (setq calib-check-topic "/r_gripper_tape_hsi/hsi_segmentation_decomposer/boxes"))
   (ros::unsubscribe calib-check-topic)
   (setq ideal-ee-coords (send (send *pr2* arm :end-coords) :copy-worldcoords))
   (setq *calib-rec-flag* nil)
@@ -113,6 +115,12 @@
                    (format t "current diff with tape : ~A ~%" current-tape-diff) ;;本来のテープの場所と認識結果の差分をend-effector座標系で
                    (setq world-tape-diff-vec (calc-diff-in-world ideal-ee-coords current-tape-diff))
                    (format t "current diff with tape in world : ~A ~%" world-tape-diff-vec) ;;本来のテープの場所と認識結果の差分のベクトルを世界座標系で
+                   (when set-offset ;;offsetをセットする
+                     (if (equal arm :larm)
+                         (setq *larm-calib-offset-vec* world-tape-diff-vec)
+                       (setq *rarm-calib-offset-vec* world-tape-diff-vec)
+                       )
+                     )
                    )
                (progn
                  (format t "bbox size is too big!! ~%")
@@ -245,15 +253,25 @@
                                   :rot (send first-coords :worldrot)))
     ans-coords))
 
-(defun grasp-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm) (is-grasp t))
+(defun grasp-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm) (is-grasp t) (use-calib-offset nil) (wait-after-grasp nil) (exit-after-grasp nil))
   (cond
    ((and (string= object-name "knife") (equal arm :rarm))
-    (setq object-offset (make-coords :pos #f(-105.089 -11.948 -2.399) :rpy #f(-0.09 0.071 0.061))) ;; for only deva
+    (if use-calib-offset
+        (progn
+          ;; (setq object-offset (make-coords :pos #f(-104.764 -12.283 2.579) :rpy #f(-0.003 0.065 0.067))) ;; for only deva and with offset
+          (setq object-offset (make-coords :pos #f(-100.308 -12.233 -10.919) :rpy #f(-0.09 0.071 0.061))) ;; for only deva and with offset
+          )
+      (progn
+        (setq object-offset (make-coords :pos #f(-105.089 -11.948 -2.399) :rpy #f(-0.09 0.071 0.061))) ;; for only deva
+        )
+      )
+
     ;; (setq object-offset (make-coords :pos #f(-3.846 -15.18 -28.556) :rpy #f(-0.171 0.071 0.061))) ;; for with tabletop
 
     (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
     (setq pre-set-val #f(-100 0 100))
     (setq fix-rot nil)
+    (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
     )
    ((and (string= object-name "peeler") (equal arm :rarm))
     ;; (setq object-offset (make-coords :pos #f(-53.198 -7.425 -12.732) :rpy #f(-0.109 0.026 -0.005)))
@@ -262,20 +280,48 @@
     (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
     (setq pre-set-val #f(-100 0 100))
     (setq fix-rot nil)
+    (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
     )
    ((and (string= object-name "white cup") (equal arm :rarm))
-    (setq object-offset (make-coords :pos #f(-98.527 0.551 -14.482) :rpy #f(-0.033 0.036 -0.057)))
+    (if use-calib-offset
+        (progn
+          ;; (setq object-offset (make-coords :pos #f(-113.441 11.776 7.149) :rpy #f(-0.033 0.036 -0.005))) ;; for with table mite tyousetu
+          ;; (setq object-offset (make-coords :pos #f(-93.773 1.137 -23.002) :rpy #f(-0.033 0.036 -0.057))) ;; for with table for origin
+          (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for with table sukoshi ue
+          )
+      (progn
+        ;; (setq object-offset (make-coords :pos #f(-98.527 0.551 -14.482) :rpy #f(-0.033 0.036 -0.057))) ;; for deva only
+        ;; (setq object-offset (make-coords :pos #f(-113.441 11.776 7.149) :rpy #f(-0.033 0.036 -0.005))) ;; for with table
+        (setq object-offset (make-coords :pos #f(-88.997 0.777 -11.522) :rpy #f(-0.033 0.036 -0.057))) ;; for with table sukoshi ue
+        )
+      )
+
     (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
     (setq pre-set-val #f(-100 0 100))
     (setq fix-rot nil)
+    ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+    (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
     )
    ((and (string= object-name "white cup") (equal arm :larm))
-    (setq object-offset (make-coords :pos #f(-98.527 0.551 -14.482) :rpy #f(-0.033 0.036 -0.057))) ;; save as rarm
-    ;; (setq object-offset (make-coords :pos #f(-98.527 0.551 30) :rpy #f(-0.033 0.036 -0.057))) ;; fix for henna calib
-    (setq object-offset (make-coords :pos #f(-79.009 2.446 -34.482) :rpy #f(-0.033 0.036 -0.057))) ;; fix for matomo calib
+    (if use-calib-offset
+        (progn
+          ;; (setq object-offset (make-coords :pos #f(-113.441 11.776 7.149) :rpy #f(-0.033 0.036 -0.005))) ;; for with table mite tyousetu
+          ;; (setq object-offset (make-coords :pos #f(-93.773 1.137 -23.002) :rpy #f(-0.033 0.036 -0.057))) ;; for with table for origin
+          (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for with table sukoshi ue
+          )
+      (progn
+        ;; (setq object-offset (make-coords :pos #f(-98.527 0.551 -14.482) :rpy #f(-0.033 0.036 -0.057))) ;; save as rarm
+        ;; (setq object-offset (make-coords :pos #f(-98.527 0.551 30) :rpy #f(-0.033 0.036 -0.057))) ;; fix for henna calib
+        ;; (setq object-offset (make-coords :pos #f(-79.009 2.446 -34.482) :rpy #f(-0.033 0.036 -0.057))) ;; fix for matomo calib
+        (setq object-offset (make-coords :pos #f(-79.009 2.446 -4.482) :rpy #f(-0.033 0.036 -0.057))) ;; for with table sukoshi ue TODO
+        )
+      )
+
     (setq wait-av #f(18.6793 40.7013 -15.7633 -105.901 -210.673 -70.7818 203.18))
     (setq pre-set-val #f(-100 0 100))
     (setq fix-rot nil)
+    ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+    (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
     )
    ((and (string= object-name "onion") (equal arm :larm))
     ;; (setq object-offset (make-coords :pos #f(-29.83 -6.456 -5.102) :rpy #f(-1.593 0.604 0.126)))
@@ -286,6 +332,7 @@
     (setq wait-av #f(41.0448 2.03593 63.3981 -67.6587 27.9651 -69.6477 -117.945))
     (setq pre-set-val #f(-100 0 100))
     (setq fix-rot t)
+    (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
     )
    (t
     (format t "this setting is not implemented yet! ~%")
@@ -305,9 +352,9 @@
   (setq *found-obj* nil)
   (setq rec-cnt 0)
   (setq rec-av-coords nil)
-  (ros::unsubscribe "/deva_segmentor/output/boxes")
+  (ros::unsubscribe bbox-topic)
   (until *found-obj*
-         (setq msg (one-shot-subscribe "/deva_segmentor/output/boxes" jsk_recognition_msgs::BoundingBoxArray :timeout 5000))
+         (setq msg (one-shot-subscribe bbox-topic jsk_recognition_msgs::BoundingBoxArray :timeout 5000))
 
          ;; grasp
          (when msg
@@ -334,6 +381,18 @@
 
   (publish-cds-tf *grasp-coords*)
 
+  (if use-calib-offset
+      (progn
+        (setq *grasp-coords-exec* (send *grasp-coords* :copy-worldcoords))
+        (if (equal arm :rarm)
+            (send *grasp-coords-exec* :translate *rarm-calib-offset-vec* :world)
+          (send *grasp-coords-exec* :translate *larm-calib-offset-vec* :world)
+          )
+        )
+    (progn
+      (setq *grasp-coords-exec* (send *grasp-coords* :copy-worldcoords))
+      ))
+
   (when (null is-grasp)
     (format t "now is-grasp is nil, so return ~%")
     (return-from grasp-rec-object)
@@ -345,7 +404,7 @@
 
   (send *ri* :stop-grasp arm :wait t)
 
-  (setq set-coords (send *grasp-coords* :copy-worldcoords))
+  (setq set-coords (send *grasp-coords-exec* :copy-worldcoords))
   ;; (send set-coords :translate pre-set-val :world)
   (send set-coords :translate pre-set-val :local)
   (send *pr2* arm :inverse-kinematics
@@ -364,11 +423,18 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
-  ;; (do-until-key
-  ;;  (print "wait for key pressed")
-  ;;  (unix:usleep 100000)
-  ;;  )
+
   (send *ri* :start-grasp arm :gain grasp-gain :wait t)
+  (when exit-after-grasp
+    (format t "exit from grasp-rec-object function because arg exit-after-grasp is t! ~%")
+    (return-from grasp-rec-object)
+    )
+  (when wait-after-grasp
+    (do-until-key
+     (print "wait for key pressed")
+     (unix:usleep 100000)
+     )
+    )
 
   (send set-coords :translate pre-set-val :local)
   (send *pr2* arm :inverse-kinematics
