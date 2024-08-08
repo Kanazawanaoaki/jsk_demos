@@ -2,17 +2,17 @@
 # -*- coding: utf-8 -*-
 
 import rospy
-from sensor_msgs.msg import Image, CompressedImage
+from sensor_msgs.msg import Image, CompressedImage, LaserScan
 from sound_play.msg import SoundRequest, SoundRequestAction, SoundRequestGoal
 import actionlib
 import time
 
-class ImageSubscriber:
+class BaseScanChecker:
     def __init__(self):
-        rospy.init_node('image_subscriber_node', anonymous=True)
+        rospy.init_node('base_scan_checker_node', anonymous=True)
 
         # イメージメッセージをサブスクライブ
-        self.image_sub = rospy.Subscriber('/k4a/rgb/image_rect_color/compressed', CompressedImage, self.image_callback)
+        self.topic_sub = rospy.Subscriber('/base_scan', LaserScan, self.topic_callback)
 
         # Create an Action client for the sound_play node
         self.sound_client = actionlib.SimpleActionClient('/robotsound', SoundRequestAction)
@@ -24,13 +24,13 @@ class ImageSubscriber:
         # 最後にトピックが更新された時間
         self.last_image_time = time.time()
 
-        self.say_something("image check start")
+        self.say_something("base scan check start")
         self.no_topic_flag = False
 
-    def image_callback(self, msg):
+    def topic_callback(self, msg):
         # トピックが更新されたら呼び出されるコールバック
         self.last_image_time = time.time()
-        # rospy.loginfo("Recieve image topic !!")
+        # rospy.loginfo("Recieve base scan topic !!")
 
     def check_timeout(self):
         # 一定時間以上トピックが更新されていないかチェック
@@ -39,7 +39,7 @@ class ImageSubscriber:
                 return
             else:
                 self.no_topic_flag = True
-                self.say_something("I haven't seen the image topic for {} seconds.".format(self.timeout_threshold))
+                self.say_something("I haven't seen the base scan topic for {} seconds.".format(self.timeout_threshold))
         else:
             if self.no_topic_flag:
                 self.no_topic_flag = False
@@ -70,7 +70,7 @@ class ImageSubscriber:
 
 if __name__ == '__main__':
     try:
-        image_subscriber = ImageSubscriber()
-        image_subscriber.run()
+        topic_checker = BaseScanChecker()
+        topic_checker.run()
     except rospy.ROSInterruptException:
         pass

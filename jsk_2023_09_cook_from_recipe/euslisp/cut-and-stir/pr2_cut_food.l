@@ -497,6 +497,21 @@
   ;; rec fail
   )
 
+
+(defun manip-wait-pose (&key (rarm t) (larm t))
+  (setq manip-wait-rav #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
+  (setq manip-wait-lav #f(18.6793 40.7013 -15.7633 -105.901 -210.673 -70.7818 203.18))
+  (send *pr2* :head :neck-y :joint-angle 0.0)
+  (send *pr2* :head :neck-p :joint-angle 50.0)
+  (send *pr2* :torso_lift_joint :joint-angle 300)
+  (if rarm
+      (send *pr2* :rarm :angle-vector manip-wait-rav))
+  (if larm
+      (send *pr2* :larm :angle-vector manip-wait-lav))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+  )
+
 (defun cut-wait-pose (&key (rarm t) (larm t))
   (setq cut-wait-rav #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
   (setq cut-wait-lav #f(41.0448 2.03593 63.3981 -67.6587 27.9651 -69.6477 -117.945))

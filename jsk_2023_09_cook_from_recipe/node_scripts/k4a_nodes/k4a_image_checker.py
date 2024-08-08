@@ -24,7 +24,7 @@ class ImageSubscriber:
         # 最後にトピックが更新された時間
         self.last_image_time = time.time()
 
-        self.say_something("image check start")
+        self.say_something("k4a image check start")
         self.no_topic_flag = False
 
     def image_callback(self, msg):
@@ -39,7 +39,7 @@ class ImageSubscriber:
                 return
             else:
                 self.no_topic_flag = True
-                self.say_something("I haven't seen the image topic for {} seconds.".format(self.timeout_threshold))
+                self.say_something("I haven't seen the k4a image topic for {} seconds.".format(self.timeout_threshold))
         else:
             if self.no_topic_flag:
                 self.no_topic_flag = False

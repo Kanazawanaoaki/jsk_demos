@@ -1,0 +1,28 @@
+<launch>
+  <arg name="input_image" default="/kinect_head_remote/rgb/image_rect_color" />
+  <arg name="input_cloud" default="/kinect_head_remote/depth_registered/points" />
+
+  <!-- <node pkg="robot_self_filter_color" type="self_filter_color" -->
+  <!--   name="robot_self_filter_kinect" -->
+  <!--   respawn="true" output="screen"> -->
+  <node pkg="robot_self_filter" type="self_filter"
+	name="robot_self_filter_kinect"
+	respawn="true" output="screen">
+    <!-- The topic for the input cloud -->
+    <remap from="cloud_in" to="$(arg input_cloud)" />
+    <!-- The topic for the output cloud -->
+    <remap from="cloud_out" to="grasp_object_points_filtered" />
+    <!-- The frame of the sensor used to obtain the data to be
+	 filtered; This parameter is optional. If it is not specified,
+	 shadow points will be considered outside -->
+    <!-- <param name="sensor_frame" type="string" value="openni_depth_optical_frame" /> -->
+    <!-- Minimum distance to sensor (for point not to be considered inside) -->
+    <param name="min_sensor_dist" type="double" value="0.01" />
+    <!-- The padding to be added for the body parts the robot can see -->
+    <param name="self_see_padd" type="double" value="0.02" />
+    <!-- The scaling to be added for the body parts the robot can see -->
+    <param name="self_see_scale" type="double" value="1.0" />
+    <param name="subsample_value" type="double" value="0.0"/>
+    <rosparam file="$(find jsk_2023_09_cook_from_recipe)/config/self_filter.yaml" command="load" />
+  </node>
+</launch>

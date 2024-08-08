@@ -1,0 +1,64 @@
+<launch>
+  <arg name="input_image" default="/kinect_head_remote/rgb/image_rect_color" />
+  <arg name="input_cloud" default="/kinect_head_remote/depth_registered/points" />
+  <arg name="input_camera_info" default="/kinect_head/rgb/camera_info" />
+
+  <node name="robot_to_mask_image"
+        pkg="nodelet" type="nodelet"
+        args="standalone jsk_perception/RobotToMaskImage"
+        output="screen">
+    <remap from="~input/camera_info" to="$(arg input_camera_info)"/>
+    <rosparam>
+      self_see_links:
+      - name: base_link
+      - name: l_shoulder_pan_link
+      - name: l_shoulder_lift_link
+      - name: l_upper_arm_link
+      - name: l_upper_arm_roll_link
+      - name: l_elbow_flex_link
+      - name: l_forearm_link
+      - name: l_forearm_roll_link
+      - name: l_wrist_flex_link
+      - name: l_wrist_roll_link
+      - name: l_gripper_palm_link
+      - name: l_gripper_l_finger_link
+      - name: l_gripper_l_finger_tip_link
+      - name: l_gripper_r_finger_link
+      - name: l_gripper_r_finger_tip_link
+      - name: r_shoulder_pan_link
+      - name: r_shoulder_lift_link
+      - name: r_upper_arm_link
+      - name: r_upper_arm_roll_link
+      - name: r_elbow_flex_link
+      - name: r_forearm_link
+      - name: r_forearm_roll_link
+      - name: r_wrist_flex_link
+      - name: r_wrist_roll_link
+      - name: r_gripper_palm_link
+      - name: r_gripper_l_finger_link
+      - name: r_gripper_l_finger_tip_link
+      - name: r_gripper_r_finger_link
+      - name: r_gripper_r_finger_tip_link
+      self_see_default_padding: 1.0
+    </rosparam>
+  </node>
+
+  <!-- <node name="mask_image_filter" -->
+  <!--       pkg="nodelet" type="nodelet" -->
+  <!--       args="load jsk_pcl/MaskImageFilter $(arg MANAGER)" -->
+  <!--       respawn="true"> -->
+  <!--   <param name="~negative" value="false" /> -->
+  <!--   <remap from="~input" to="$(arg camera)/depth_registered/points" /> -->
+  <!--   <remap from="~input/mask" to="/pointcloud_to_mask_image/output" /> -->
+  <!--   <remap from="~input/camera_info" to="$(arg camera)/depth_registered/camera_info" /> -->
+  <!--   </node> -->
+
+  <!-- <node name="extract_indices" -->
+  <!--       pkg="nodelet" type="nodelet" -->
+  <!--       args="load jsk_pcl/ExtractIndices $(arg MANAGER)" > -->
+  <!--   <remap from="~input" to="$(arg camera)/depth_registered/points" /> -->
+  <!--   <remap from="~indices" to="/mask_image_filter/output" /> -->
+  <!-- </node> -->
+
+
+</launch>

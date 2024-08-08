@@ -117,6 +117,8 @@
   ;; (objects (list *pr2* *peeler* *knife* *potato-peeler* *scene* *spatula* *ladle* *shelf-door*))
   ;; (update-view)
 
+  ;; TODO Add dissoc
+
   (objects (list *pr2* *peeler* *knife* *potato-peeler* *spatula* *ladle* *shelf-door*))
   )
 
@@ -175,7 +177,7 @@
 
   ;; (send *arrow* :translate #f(60 0 100) :world) ;; original
   ;; (send *arrow* :translate #f(-60 0 100) :world) ;; fix
-  (send *arrow* :translate #f(0 0 100) :world) ;; fix tmp
+  (send *arrow* :translate #f(60 0 100) :world) ;; fix tmp
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -235,7 +237,8 @@
   (send *arrow* :rotate (deg2rad -90) :x)
 
   ;; (send *arrow* :translate #f(60 0 100) :world) ;; original
-  (send *arrow* :translate #f(-60 0 100) :world) ;; fix
+  ;; (send *arrow* :translate #f(-60 0 100) :world) ;; fix
+  (send *arrow* :translate #f(60 0 100) :world) ;; fix tmp
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -245,7 +248,8 @@
   (send *ri* :wait-interpolation)
 
   ;; (send *arrow* :translate #f(-60 0 -100) :world) ;; original
-  (send *arrow* :translate #f(60 0 -100) :world) ;; fix
+  ;; (send *arrow* :translate #f(60 0 -100) :world) ;; fix
+  (send *arrow* :translate #f(-60 0 -100) :world) ;; fix tmp
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -260,7 +264,8 @@
 
   ;; 手を上げる
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate #f(0 0 100) :world)
+  ;; (send *arrow* :translate #f(0 0 100) :world) ;; TODO fix ここがIK解けないみたい
+  (send *arrow* :translate #f(30 0 100) :world) ;; TODO fix ここがIK解けないみたい
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
