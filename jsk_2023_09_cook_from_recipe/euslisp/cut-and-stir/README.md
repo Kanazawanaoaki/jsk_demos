@@ -161,3 +161,30 @@ roslaunch jsk_2023_09_cook_from_recipe service_save_ptcloud_in_pcd.launch object
 ## or
 roslaunch jsk_2023_09_cook_from_recipe save_ptcloud_in_pcd.launch INPUT:=/tf_transform_cloud/output
 ```
+
+
+### Z800も使うバージョン
+
+Z800で立ち上げる
+```bash
+roslaunch jsk_2023_09_cook_from_recipe pr2_decompress.launch
+roslaunch jsk_2023_09_cook_from_recipe use_k4a_remote.launch
+roslaunch jsk_2023_09_cook_from_recipe gripper_tape_for_calib.launch  run_rviz:=false
+roslaunch jsk_2023_09_cook_from_recipe ns_tabletop_and_deva_apply_mask.launch run_tabletop:=true run_rviz:=false run_deva_only:=true
+```
+TRで立ち上げる
+```bash
+source ~/ros/known_object_ws/devel/setup.bash 
+roscd tracking_ros_utils/../tracking_ros
+./run_docker -host pr1040 -launch deva.launch     input_image:=/kinect_head/rgb/image_rect_color     model_type:=vit_t     device:=cuda:0
+```
+手元PCでrvizを立ち上げる
+```
+roslaunch jsk_pr2_startup rviz.launch
+roslaunch jsk_2023_09_cook_from_recipe view_rviz_cook.launch 
+```
+
+必要に応じて立ち上げる
+```
+roslaunch jsk_2023_09_cook_from_recipe kitchen_template_matching_k4a.launch
+```

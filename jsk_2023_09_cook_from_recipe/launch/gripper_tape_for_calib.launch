@@ -26,7 +26,7 @@
     <arg name="h_max" value="127" /><!-- 127 -->
     <arg name="h_min" value="100" /><!-- 100 -->
     <arg name="s_max" value="63" /><!-- 63 -->
-    <arg name="s_min" value="33" /><!-- 33 -->
+    <arg name="s_min" value="15" /><!-- 33 -->
     <arg name="i_max" value="241" /><!-- 241 -->
     <arg name="i_min" value="140" /><!-- 185 -->
   </include>
