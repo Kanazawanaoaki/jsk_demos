@@ -30,21 +30,18 @@ def publish_bounding_boxes():
         # ダミーのバウンディングボックスの作成
         center = Point(-0.082, -0.052, 0.0)
         dimensions = [0.035, 0.005, 0.015]
-        # orientation = Quaternion(0.0, 0.0, 0.0, 1.0)
         quaternion = tf.transformations.quaternion_from_euler(0, -1.5708, 0) # -90度
         orientation = Quaternion(*quaternion)
         bbox = create_bounding_box(center, dimensions, orientation, frame_id)
 
         bbox_array.boxes.append(bbox)
 
-        ## syoumen tape 
-
+        ## syoumen tape
         # ダミーのバウンディングボックスの作成
         frame_id = 'r_gripper_tool_frame'
         center = Point(-0.115, 0.0, 0.03)
         dimensions = [0.01, 0.005, 0.02]
-        # orientation = Quaternion(0.0, 0.0, 0.0, 1.0)
-        quaternion = tf.transformations.quaternion_from_euler(1.5708, 0, 0) # -90度
+        quaternion = tf.transformations.quaternion_from_euler(1.5708, 0, 0) # 90度
         orientation = Quaternion(*quaternion)
         bbox = create_bounding_box(center, dimensions, orientation, frame_id)
 
