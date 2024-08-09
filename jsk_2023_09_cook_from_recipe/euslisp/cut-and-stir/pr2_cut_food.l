@@ -20,6 +20,15 @@
 (setq *tfb* (instance ros::transform-broadcaster :init)))
 
 ;; define cb
+(defun get-pr2-cam-coords (&optional (frame-id "head_mount_kinect_rgb_optical_frame"))
+  (let ((tm2)
+        (cam-coords nil))
+    (setq tm2 (send *tfl* :get-latest-common-time "base_footprint" frame-id))
+    (when (send *tfl* :wait-for-transform  "base_footprint" frame-id tm2 10)
+      (setq cam-coords (send (send *pr2* :copy-worldcoords) :transform
+                             (send *tfl* :lookup-transform "base_footprint" frame-id tm2))))
+    cam-coords))
+
 (defun object-pose-cb (msg)
   (setq *msg* msg)
   (setq *bbox* (car (send msg :boxes)))
@@ -132,7 +141,7 @@
                          (setq ideal-rec (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
                          (setq current-rec (send ideal-rec :copy-worldcoords))
                          (send current-rec :translate world-tape-diff-vec :world)
-                         (format t "current-rec (rarm end-coords) : ~A ~%" current-rec) ;;実際の左のend-coordsの座標
+                         (format t "current-rec (rarm end-coords) : ~A ~%" current-rec) ;;実際の右のend-coordsの座標
                          ))
 
                    (when set-offset ;;offsetをセットする
@@ -247,10 +256,8 @@
     (setq polygons (send msg :polygons))
 
     (setq frame-id (send (send msg :header) :frame_id))
-    (setq tm2 (send *tfl* :get-latest-common-time "base_footprint" frame-id))
-    (when (send *tfl* :wait-for-transform  "base_footprint" frame-id tm2 10)
-      (setq cam-coords (send (send *pr2* :copy-worldcoords) :transform
-                             (send *tfl* :lookup-transform "base_footprint" frame-id tm2))))
+    (setq cam-coords (get-pr2-cam-coords frame-id))
+
     (setq current-polygons-cds (list))
     (dolist (polygon polygons)
       (setq points (send (send polygon :polygon) :points))
