@@ -26,7 +26,7 @@ Panels:
   - Class: rviz/Time
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: PointCloud2
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -64,7 +64,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: RGB8
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Min Color: 0; 0; 0
@@ -79,7 +79,7 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Class: jsk_rviz_plugin/BoundingBoxArray
       Enabled: true
       Name: LGripperBBox
@@ -704,6 +704,34 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: RGB8
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: RobotMaskCloud
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Points
+      Topic: /robot_mask/extract_indices/output
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
     - Class: rviz/TF
       Enabled: true
       Filter (blacklist): ""
@@ -934,6 +962,148 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
+        odom_combined:
+          base_footprint:
+            base_link:
+              base_bellow_link:
+                {}
+              base_laser_link:
+                {}
+              bl_caster_rotation_link:
+                bl_caster_l_wheel_link:
+                  {}
+                bl_caster_r_wheel_link:
+                  {}
+              br_caster_rotation_link:
+                br_caster_l_wheel_link:
+                  {}
+                br_caster_r_wheel_link:
+                  {}
+              fl_caster_rotation_link:
+                fl_caster_l_wheel_link:
+                  {}
+                fl_caster_r_wheel_link:
+                  {}
+              fr_caster_rotation_link:
+                fr_caster_l_wheel_link:
+                  {}
+                fr_caster_r_wheel_link:
+                  {}
+              torso_lift_link:
+                head_pan_link:
+                  head_tilt_link:
+                    head_chain_cb_link:
+                      {}
+                    head_plate_frame:
+                      head_mount_link:
+                        head_mount_kinect_ir_link:
+                          head_mount_kinect_ir_optical_frame:
+                            {}
+                          head_mount_kinect_rgb_link:
+                            head_mount_kinect_rgb_optical_frame:
+                              {}
+                        head_mount_prosilica_link:
+                          head_mount_prosilica_optical_frame:
+                            {}
+                      projector_wg6802418_frame:
+                        projector_wg6802418_child_frame:
+                          {}
+                      sensor_mount_link:
+                        double_stereo_link:
+                          narrow_stereo_link:
+                            narrow_stereo_l_stereo_camera_frame:
+                              narrow_stereo_l_stereo_camera_optical_frame:
+                                {}
+                              narrow_stereo_r_stereo_camera_frame:
+                                narrow_stereo_r_stereo_camera_optical_frame:
+                                  {}
+                            narrow_stereo_optical_frame:
+                              {}
+                          wide_stereo_link:
+                            wide_stereo_l_stereo_camera_frame:
+                              wide_stereo_l_stereo_camera_optical_frame:
+                                {}
+                              wide_stereo_r_stereo_camera_frame:
+                                wide_stereo_r_stereo_camera_optical_frame:
+                                  {}
+                            wide_stereo_optical_frame:
+                              {}
+                        high_def_frame:
+                          high_def_optical_frame:
+                            {}
+                imu_link:
+                  {}
+                l_shoulder_pan_link:
+                  l_shoulder_lift_link:
+                    l_upper_arm_roll_link:
+                      l_upper_arm_link:
+                        l_elbow_flex_link:
+                          l_forearm_roll_link:
+                            l_forearm_cam_frame:
+                              l_forearm_cam_optical_frame:
+                                {}
+                            l_forearm_link:
+                              l_wrist_flex_link:
+                                l_wrist_roll_link:
+                                  l_gripper_palm_link:
+                                    l_gripper_l_finger_link:
+                                      l_gripper_l_finger_tip_link:
+                                        {}
+                                    l_gripper_led_frame:
+                                      {}
+                                    l_gripper_motor_accelerometer_link:
+                                      {}
+                                    l_gripper_motor_slider_link:
+                                      l_gripper_motor_screw_link:
+                                        {}
+                                    l_gripper_r_finger_link:
+                                      l_gripper_r_finger_tip_link:
+                                        l_gripper_l_finger_tip_frame:
+                                          {}
+                                    l_gripper_tool_frame:
+                                      {}
+                                  left_arm_chain_cb_link:
+                                    {}
+                l_torso_lift_side_plate_link:
+                  {}
+                laser_tilt_mount_link:
+                  laser_tilt_link:
+                    {}
+                r_shoulder_pan_link:
+                  r_shoulder_lift_link:
+                    r_upper_arm_roll_link:
+                      r_upper_arm_link:
+                        r_elbow_flex_link:
+                          r_forearm_roll_link:
+                            r_forearm_cam_frame:
+                              r_forearm_cam_optical_frame:
+                                {}
+                            r_forearm_link:
+                              r_wrist_flex_link:
+                                r_wrist_roll_link:
+                                  r_gripper_palm_link:
+                                    r_gripper_l_finger_link:
+                                      r_gripper_l_finger_tip_link:
+                                        {}
+                                    r_gripper_led_frame:
+                                      {}
+                                    r_gripper_motor_accelerometer_link:
+                                      {}
+                                    r_gripper_motor_slider_link:
+                                      r_gripper_motor_screw_link:
+                                        {}
+                                    r_gripper_r_finger_link:
+                                      r_gripper_r_finger_tip_link:
+                                        r_gripper_l_finger_tip_frame:
+                                          {}
+                                    r_gripper_tool_frame:
+                                      {}
+                                  right_arm_chain_cb_link:
+                                    {}
+                r_torso_lift_side_plate_link:
+                  {}
+              torso_lift_motor_screw_link:
+                {}
         world:
           eng2:
             eng2/1f:
@@ -946,148 +1116,7 @@ Visualization Manager:
               eng2/7f/73B2:
                 {}
               map:
-                odom_combined:
-                  base_footprint:
-                    base_link:
-                      base_bellow_link:
-                        {}
-                      base_laser_link:
-                        {}
-                      bl_caster_rotation_link:
-                        bl_caster_l_wheel_link:
-                          {}
-                        bl_caster_r_wheel_link:
-                          {}
-                      br_caster_rotation_link:
-                        br_caster_l_wheel_link:
-                          {}
-                        br_caster_r_wheel_link:
-                          {}
-                      fl_caster_rotation_link:
-                        fl_caster_l_wheel_link:
-                          {}
-                        fl_caster_r_wheel_link:
-                          {}
-                      fr_caster_rotation_link:
-                        fr_caster_l_wheel_link:
-                          {}
-                        fr_caster_r_wheel_link:
-                          {}
-                      torso_lift_link:
-                        head_pan_link:
-                          head_tilt_link:
-                            head_chain_cb_link:
-                              {}
-                            head_plate_frame:
-                              head_mount_link:
-                                head_mount_kinect_ir_link:
-                                  head_mount_kinect_ir_optical_frame:
-                                    {}
-                                  head_mount_kinect_rgb_link:
-                                    head_mount_kinect_rgb_optical_frame:
-                                      {}
-                                head_mount_prosilica_link:
-                                  head_mount_prosilica_optical_frame:
-                                    {}
-                              projector_wg6802418_frame:
-                                projector_wg6802418_child_frame:
-                                  {}
-                              sensor_mount_link:
-                                double_stereo_link:
-                                  narrow_stereo_link:
-                                    narrow_stereo_l_stereo_camera_frame:
-                                      narrow_stereo_l_stereo_camera_optical_frame:
-                                        {}
-                                      narrow_stereo_r_stereo_camera_frame:
-                                        narrow_stereo_r_stereo_camera_optical_frame:
-                                          {}
-                                    narrow_stereo_optical_frame:
-                                      {}
-                                  wide_stereo_link:
-                                    wide_stereo_l_stereo_camera_frame:
-                                      wide_stereo_l_stereo_camera_optical_frame:
-                                        {}
-                                      wide_stereo_r_stereo_camera_frame:
-                                        wide_stereo_r_stereo_camera_optical_frame:
-                                          {}
-                                    wide_stereo_optical_frame:
-                                      {}
-                                high_def_frame:
-                                  high_def_optical_frame:
-                                    {}
-                        imu_link:
-                          {}
-                        l_shoulder_pan_link:
-                          l_shoulder_lift_link:
-                            l_upper_arm_roll_link:
-                              l_upper_arm_link:
-                                l_elbow_flex_link:
-                                  l_forearm_roll_link:
-                                    l_forearm_cam_frame:
-                                      l_forearm_cam_optical_frame:
-                                        {}
-                                    l_forearm_link:
-                                      l_wrist_flex_link:
-                                        l_wrist_roll_link:
-                                          l_gripper_palm_link:
-                                            l_gripper_l_finger_link:
-                                              l_gripper_l_finger_tip_link:
-                                                {}
-                                            l_gripper_led_frame:
-                                              {}
-                                            l_gripper_motor_accelerometer_link:
-                                              {}
-                                            l_gripper_motor_slider_link:
-                                              l_gripper_motor_screw_link:
-                                                {}
-                                            l_gripper_r_finger_link:
-                                              l_gripper_r_finger_tip_link:
-                                                l_gripper_l_finger_tip_frame:
-                                                  {}
-                                            l_gripper_tool_frame:
-                                              {}
-                                          left_arm_chain_cb_link:
-                                            {}
-                        l_torso_lift_side_plate_link:
-                          {}
-                        laser_tilt_mount_link:
-                          laser_tilt_link:
-                            {}
-                        r_shoulder_pan_link:
-                          r_shoulder_lift_link:
-                            r_upper_arm_roll_link:
-                              r_upper_arm_link:
-                                r_elbow_flex_link:
-                                  r_forearm_roll_link:
-                                    r_forearm_cam_frame:
-                                      r_forearm_cam_optical_frame:
-                                        {}
-                                    r_forearm_link:
-                                      r_wrist_flex_link:
-                                        r_wrist_roll_link:
-                                          r_gripper_palm_link:
-                                            r_gripper_l_finger_link:
-                                              r_gripper_l_finger_tip_link:
-                                                {}
-                                            r_gripper_led_frame:
-                                              {}
-                                            r_gripper_motor_accelerometer_link:
-                                              {}
-                                            r_gripper_motor_slider_link:
-                                              r_gripper_motor_screw_link:
-                                                {}
-                                            r_gripper_r_finger_link:
-                                              r_gripper_r_finger_tip_link:
-                                                r_gripper_l_finger_tip_frame:
-                                                  {}
-                                            r_gripper_tool_frame:
-                                              {}
-                                          right_arm_chain_cb_link:
-                                            {}
-                        r_torso_lift_side_plate_link:
-                          {}
-                      torso_lift_motor_screw_link:
-                        {}
+                {}
             eng2/8f:
               {}
       Update Interval: 0

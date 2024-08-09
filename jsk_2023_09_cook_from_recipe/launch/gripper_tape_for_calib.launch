@@ -1,11 +1,23 @@
 <launch>
   <arg name="run_rviz" default="true" />
 
-  <arg name="INPUT_CLOUD" default="/kinect_head_remote/depth_registered/points" />
+  <arg name="input_image" default="/kinect_head_remote/rgb/image_rect_color" />
+  <arg name="input_cloud" default="/kinect_head_remote/depth_registered/points" />
+  <arg name="input_camera_info" default="/kinect_head/rgb/camera_info" />
+
   <arg name="target_frame" default="base_link" />
+  <arg name="use_robot_mask" default="true" />
 
-  <!-- TODO robot self mask -->
+  <arg name="HSI_INPUT_CLOUD" value="$(arg input_cloud)" unless="$(arg use_robot_mask)" />
+  <arg name="HSI_INPUT_CLOUD" value="/robot_mask/extract_indices/output" if="$(arg use_robot_mask)" />
 
+  <!-- robot self mask -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/robot_mask_filter_test.launch" if="$(arg use_robot_mask)">
+    <arg name="input_image" value="$(arg input_image)" />
+    <arg name="input_cloud" value="$(arg input_cloud)" />
+    <arg name="input_camera_info" value="$(arg input_camera_info)" />
+    <arg name="run_rviz" value="false" />
+  </include>
 
   <!-- tape bbox publisher -->
   <node name="l_gripper_tape_bbox_publisher" pkg="jsk_2023_09_cook_from_recipe"
@@ -21,7 +33,7 @@
   <!-- r gripper hsi color filter -->
   <include file="$(find jsk_2023_09_cook_from_recipe)/launch/hsi_filter_bbox.launch">
     <arg name="namespace" value="r_gripper_tape_hsi" />
-    <arg name="INPUT_CLOUD" value="$(arg INPUT_CLOUD)" />
+    <arg name="INPUT_CLOUD" value="$(arg HSI_INPUT_CLOUD)" />
     <arg name="target_frame" value="$(arg target_frame)" />
     <arg name="h_max" value="127" /><!-- 127 -->
     <arg name="h_min" value="100" /><!-- 100 -->
@@ -34,7 +46,7 @@
   <!-- l gripper hsi color filter -->
   <include file="$(find jsk_2023_09_cook_from_recipe)/launch/hsi_filter_bbox.launch">
     <arg name="namespace" value="l_gripper_tape_hsi" />
-    <arg name="INPUT_CLOUD" value="$(arg INPUT_CLOUD)" />
+    <arg name="INPUT_CLOUD" value="$(arg HSI_INPUT_CLOUD)" />
     <arg name="target_frame" value="$(arg target_frame)" />
     <arg name="h_max" value="45" /><!-- 45 -->
     <arg name="h_min" value="30" /><!-- 30 -->
