@@ -239,6 +239,45 @@
   )
 
 
+;; plane rec
+
+(defun plane-cb (msg)
+  (let ((cam-coords nil))
+    (setq *msg* msg)
+    (setq polygons (send msg :polygons))
+
+    (setq frame-id (send (send msg :header) :frame_id))
+    (setq tm2 (send *tfl* :get-latest-common-time "base_footprint" frame-id))
+    (when (send *tfl* :wait-for-transform  "base_footprint" frame-id tm2 10)
+      (setq cam-coords (send (send *pr2* :copy-worldcoords) :transform
+                             (send *tfl* :lookup-transform "base_footprint" frame-id tm2))))
+    (setq current-polygons-cds (list))
+    (dolist (polygon polygons)
+      (setq points (send (send polygon :polygon) :points))
+      (setq current-cds (list))
+      (dolist (point points)
+        (setq current-pos (ros::tf-point->pos point))
+        (setq cam->obj-coords (make-coords :pos current-pos))
+        (when cam-coords
+          (setq obj-coord (send cam-coords :transform cam->obj-coords))
+          (setq current-cds (append current-cds (list (make-coords :pos (send obj-coord :worldpos)))))
+          )
+        )
+      (setq current-polygons-cds (append current-polygons-cds (list current-cds)))
+      )
+    current-polygons-cds))
+
+(defun plane-rec-test ()
+  (let ((plane-topic "/multi_plane_estimate/output_polygon")
+        )
+    (ros::unsubscribe plane-topic)
+    (setq msg (one-shot-subscribe plane-topic jsk_recognition_msgs::PolygonArray :timeout 5000))
+
+    (when msg
+      (plane-cb msg)
+      )
+    ))
+
 ;; defun action codes
 (defun change-hsi-param (&key (object-name "knife"))
   (cond
