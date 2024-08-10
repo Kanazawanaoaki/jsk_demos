@@ -277,6 +277,7 @@
     (setq polygons (send msg :polygons))
 
     (setq frame-id (send (send msg :header) :frame_id))
+    (print frame-id)
     (setq cam-coords (get-pr2-cam-coords frame-id))
 
     (setq current-polygons-cds (list))
@@ -287,13 +288,30 @@
         (setq current-pos (ros::tf-point->pos point))
         (setq cam->obj-coords (make-coords :pos current-pos))
         (when cam-coords
-          (setq obj-coord (send cam-coords :transform cam->obj-coords))
+          (setq obj-coord (send cam-coords :copy-worldcoords))
+          (setq obj-coord (send obj-coord :transform cam->obj-coords))
           (setq current-cds (append current-cds (list (make-coords :pos (send obj-coord :worldpos)))))
           )
         )
       (setq current-polygons-cds (append current-polygons-cds (list current-cds)))
       )
     current-polygons-cds))
+
+(defun analyze-z-polygons-cds (current-polygons-cds)
+  (dotimes (i (length current-polygons-cds))
+    (setq z-min 1000000)
+    (setq z-max 0)
+    (dolist (cds (elt current-polygons-cds i))
+      (if (> (elt (send cds :worldpos) 0) z-max)
+          (setq z-max (elt (send cds :worldpos) 2))
+        )
+      (if (< (elt (send cds :worldpos) 0) z-min)
+          (setq z-min (elt (send cds :worldpos) 2))
+        )
+      )
+    (format t "index ~A  z-max: ~A, z-min: ~A ~%" i z-max z-min)
+    ))
+
 
 (defun plane-rec-test ()
   (let ((plane-topic "/multi_plane_estimate/output_polygon")
@@ -302,7 +320,7 @@
     (setq msg (one-shot-subscribe plane-topic jsk_recognition_msgs::PolygonArray :timeout 5000))
 
     (when msg
-      (plane-cb msg)
+      (setq current-polygons-cds (plane-cb msg))
       )
     ))
 
