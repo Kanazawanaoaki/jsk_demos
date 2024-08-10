@@ -21,14 +21,15 @@ def publish_bounding_boxes():
     rate = rospy.Rate(10) # 10 Hz
 
     while not rospy.is_shutdown():
-        ## sokumen tape
         frame_id = 'r_gripper_tool_frame'
         bbox_array = BoundingBoxArray()
         bbox_array.header.frame_id = frame_id
         bbox_array.header.stamp = rospy.Time.now()
 
+        ## right taple
         # ダミーのバウンディングボックスの作成
-        center = Point(-0.082, -0.052, 0.0)
+        frame_id = 'r_gripper_tool_frame'
+        center = Point(-0.090, -0.052, 0.0)
         dimensions = [0.035, 0.005, 0.015]
         quaternion = tf.transformations.quaternion_from_euler(0, -1.5708, 0) # -90度
         orientation = Quaternion(*quaternion)
@@ -36,10 +37,32 @@ def publish_bounding_boxes():
 
         bbox_array.boxes.append(bbox)
 
-        ## syoumen tape
+        ## left taple
         # ダミーのバウンディングボックスの作成
         frame_id = 'r_gripper_tool_frame'
-        center = Point(-0.115, 0.0, 0.03)
+        center = Point(-0.090, 0.052, 0.0)
+        dimensions = [0.035, 0.005, 0.015]
+        quaternion = tf.transformations.quaternion_from_euler(0, -1.5708, 0) # -90度
+        orientation = Quaternion(*quaternion)
+        bbox = create_bounding_box(center, dimensions, orientation, frame_id)
+
+        bbox_array.boxes.append(bbox)
+
+        ## lower tape
+        # ダミーのバウンディングボックスの作成
+        frame_id = 'r_gripper_tool_frame'
+        center = Point(-0.122, 0.0, 0.023)
+        dimensions = [0.01, 0.005, 0.017]
+        quaternion = tf.transformations.quaternion_from_euler(1.5708, 0, 0) # 90度
+        orientation = Quaternion(*quaternion)
+        bbox = create_bounding_box(center, dimensions, orientation, frame_id)
+
+        bbox_array.boxes.append(bbox)
+
+        ## upper tape
+        # ダミーのバウンディングボックスの作成
+        frame_id = 'r_gripper_tool_frame'
+        center = Point(-0.127, 0.0, -0.023)
         dimensions = [0.01, 0.005, 0.02]
         quaternion = tf.transformations.quaternion_from_euler(1.5708, 0, 0) # 90度
         orientation = Quaternion(*quaternion)

@@ -53,7 +53,7 @@
     <arg name="s_max" value="240" /><!-- 130 -->
     <arg name="s_min" value="53" /><!-- 70 -->
     <arg name="i_max" value="240" /><!-- 240 -->
-    <arg name="i_min" value="100" /><!-- 100 -->
+    <arg name="i_min" value="130" /><!-- 100 -->
   </include>
 
   <group if="$(arg run_rviz)">

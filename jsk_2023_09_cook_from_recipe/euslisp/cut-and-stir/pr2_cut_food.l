@@ -92,7 +92,7 @@
   (setq ans (calc-object-rel-coords ideal-coords current-target-coords))
   ans)
 
-(defun calib-check-rec (&key (arm :larm) (set-offset nil) (mode :normal))
+(defun calib-check-rec (&key (arm :larm) (set-offset nil) (side :upper))
   (if (equal arm :larm)
       (setq calib-check-topic "/l_gripper_tape_hsi/hsi_segmentation_decomposer/boxes")
     (setq calib-check-topic "/r_gripper_tape_hsi/hsi_segmentation_decomposer/boxes"))
@@ -116,15 +116,24 @@
                    (setq current-arm-diff (calc-arm-diff ideal-ee-coords *obj-coord*))
                    (format t "current arm diff : ~A ~%" current-arm-diff) ;; armのend-effectorと認識したテープの座標の差分をend-effector座標系で
                    (setq ideal-tape-coords (send ideal-ee-coords :copy-worldcoords))
-                   (if (equal mode :manip)
-                       (progn
-                         (send ideal-tape-coords :translate #f(-115 0 30))
+                   (case side
+                         (:upper
+                          (send ideal-tape-coords :translate #f(-127 0 -23))
+                          )
+                         (:lower
+                          (send ideal-tape-coords :translate #f(-122 0 23))
+                          )
+                         (:right
+                          (if (equal arm :larm)
+                              (send ideal-tape-coords :translate #f(-90 52 0))
+                            (send ideal-tape-coords :translate #f(-90 -52 0))
+                            ))
+                         (:left ;; TODO check
+                          (if (equal arm :larm)
+                              (send ideal-tape-coords :translate #f(-90 -52 0))
+                            (send ideal-tape-coords :translate #f(-90 52 0))
+                            ))
                          )
-                     (progn
-                       (if (equal arm :larm)
-                           (send ideal-tape-coords :translate #f(-82 52 0))
-                         (send ideal-tape-coords :translate #f(-82 -52 0))
-                         )))
                    (setq current-tape-diff (calc-arm-diff ideal-tape-coords *obj-coord*))
                    (format t "current diff with tape : ~A ~%" current-tape-diff) ;;本来のテープの場所と認識結果の差分をend-effector座標系で
                    (setq world-tape-diff-vec (calc-diff-in-world ideal-ee-coords current-tape-diff))
@@ -178,22 +187,34 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   )
-
-(defun calib-check-pose-kitchen (&key (arm :larm) (mode :manip))
+)
+(defun calib-check-pose-kitchen (&key (arm :larm) (side :upper))
   (send *ri* :start-grasp arm :wait t)
   (send *pr2* :head-neck-p :joint-angle 60)
   (send *pr2* :head-neck-y :joint-angle 0)
-  (if (equal mode :manip)
-      (progn
-        (if (equal arm :larm)
-            (send *pr2* :larm :angle-vector #f(-15.0814 60.0228 -11.3813 -89.7081 -169.334 -29.1046 176.337)) ;; reset-manip-pose -> IK (make-coords :pos #f(700 100 900)  :rpy #f(0.0 0.0 0.0))
-          (send *pr2* :rarm :angle-vector #f(19.7226 59.0367 19.9508 -89.3953 174.973 -28.4826 -185.699)) ;; reset-manip-pose -> ik (make-coords :pos #f(700 -100 900)  :rpy #f(0.0 0.0 0.0))
-          ))
-    (progn
-      (if (equal arm :larm)
-          (send *pr2* :larm :angle-vector #f(-28.0117 55.5277 -36.3109 -88.4267 -186.302 -28.5984 295.161)) ;; reset-manip-pose -> IK (make-coords :pos #f(700 100 900)  :rpy #f(0.0 0.0 1.571))
-        (send *pr2* :rarm :angle-vector #f(7.47352 60.4724 -2.3408 -89.8573 161.245 -30.9175 -252.602)) ;; reset-manip-pose -> ik (make-coords :pos #f(700 -100 900)  :rpy #f(0.0 0.0 -1.571))
-        )))
+  (case side
+        (:upper
+         (if (equal arm :larm)
+               (send *pr2* :larm :angle-vector #f(-15.0893 60.0216 -11.3956 -89.7077 -169.343 -29.1032 356.261))
+           (send *pr2* :rarm :angle-vector #f(19.7425 59.0312 19.9882 -89.3936 174.999 -28.4809 -5.64965)) ;; reset-manip-pose -> ik (make-coords :pos #f(700 -100 900)  :rpy #f(0.0 0.0 -3.14))
+           ))
+        (:lower
+         (if (equal arm :larm)
+             (send *pr2* :larm :angle-vector #f(-15.0814 60.0228 -11.3813 -89.7081 -169.334 -29.1046 176.337)) ;; reset-manip-pose -> IK (make-coords :pos #f(700 100 900)  :rpy #f(0.0 0.0 0.0))
+           (send *pr2* :rarm :angle-vector #f(19.7226 59.0367 19.9508 -89.3953 174.973 -28.4826 -185.699)) ;; reset-manip-pose -> ik (make-coords :pos #f(700 -100 900)  :rpy #f(0.0 0.0 0.0))
+           ))
+        (:right
+         (if (equal arm :larm)
+             (send *pr2* :larm :angle-vector #f(-28.0117 55.5277 -36.3109 -88.4267 -186.302 -28.5984 295.161)) ;; reset-manip-pose -> IK (make-coords :pos #f(700 100 900)  :rpy #f(0.0 0.0 1.571))
+           (send *pr2* :rarm :angle-vector #f(7.47352 60.4724 -2.3408 -89.8573 161.245 -30.9175 -252.602)) ;; reset-manip-pose -> ik (make-coords :pos #f(700 -100 900)  :rpy #f(0.0 0.0 -1.571))
+           ))
+        (:left ;; TODO make
+         (if (equal arm :larm)
+             (send *pr2* :larm :angle-vector #f(-28.0117 55.5277 -36.3109 -88.4267 -186.302 -28.5984 295.161)) ;; reset-manip-pose -> IK (make-coords :pos #f(700 100 900)  :rpy #f(0.0 0.0 1.571))
+           (send *pr2* :rarm :angle-vector #f(7.47352 60.4724 -2.3408 -89.8573 161.245 -30.9175 -252.602)) ;; reset-manip-pose -> ik (make-coords :pos #f(700 -100 900)  :rpy #f(0.0 0.0 -1.571))
+           ))
+        )
+
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
   )
@@ -345,7 +366,51 @@
                                   :rot (send first-coords :worldrot)))
     ans-coords))
 
-(defun grasp-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm) (is-grasp t) (use-calib-offset nil) (wait-after-grasp nil) (exit-after-grasp nil))
+(defun deva-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (rec-num 5) (bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes"))
+  ;; TODO Add let
+
+  ;; set object rec
+  (if change-deva
+      (progn
+        (change-deva-param :object-name object-name)
+        (unix:sleep 3)
+        ))
+
+  ;; object rec
+  (setq msg nil)
+  (setq *found-obj* nil)
+  (setq rec-cnt 0)
+  (setq rec-av-coords nil)
+  (ros::unsubscribe bbox-topic)
+  (until *found-obj*
+         (setq msg (one-shot-subscribe bbox-topic jsk_recognition_msgs::BoundingBoxArray :timeout 5000))
+
+         ;; grasp
+         (when msg
+           (object-pose-cb msg)
+           (when fix-rot
+             (send *obj-coord* :newcoords (make-coords :pos (send (send *obj-coord* :copy-worldcoords) :worldpos)))
+             )
+           (send *obj-coord* :draw-on :flush t)
+           (setq *grasp-coords* (send (send *obj-coord* :copy-worldcoords) :transform object-offset))
+           (format t "grasp object in ~A ~%" *grasp-coords*)
+           (when multi-rec
+             (setq rec-cnt (+ rec-cnt 1))
+             (setq *found-obj* nil)
+             (if (null rec-av-coords)
+                 (setq rec-av-coords (send *grasp-coords* :copy-worldcoords))
+               (setq rec-av-coords (calc-average-two-coords rec-av-coords (send *grasp-coords* :copy-worldcoords)))
+               )
+             (when (>= rec-cnt rec-num)
+               (setq *found-obj* t)
+               (setq *grasp-coords* rec-av-coords)
+               )
+             )
+           ))
+
+  *grasp-coords*)
+
+(defun grasp-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm) (use-calib-offset nil) (wait-after-grasp nil) (exit-after-grasp nil) (wait-before-reach nil) (exit-before-reach nil))
   (cond
    ((and (string= object-name "knife") (equal arm :rarm))
     (if use-calib-offset
@@ -432,44 +497,7 @@
     )
    )
 
-  ;; set object rec
-  (if change-deva
-      (progn
-        (change-deva-param :object-name object-name)
-        (unix:sleep 3)
-        ))
-
-  ;; object rec
-  (setq msg nil)
-  (setq *found-obj* nil)
-  (setq rec-cnt 0)
-  (setq rec-av-coords nil)
-  (ros::unsubscribe bbox-topic)
-  (until *found-obj*
-         (setq msg (one-shot-subscribe bbox-topic jsk_recognition_msgs::BoundingBoxArray :timeout 5000))
-
-         ;; grasp
-         (when msg
-           (object-pose-cb msg)
-           (when fix-rot
-             (send *obj-coord* :newcoords (make-coords :pos (send (send *obj-coord* :copy-worldcoords) :worldpos)))
-             )
-           (send *obj-coord* :draw-on :flush t)
-           (setq *grasp-coords* (send (send *obj-coord* :copy-worldcoords) :transform object-offset))
-           (format t "grasp object in ~A ~%" *grasp-coords*)
-           (when multi-rec
-             (setq rec-cnt (+ rec-cnt 1))
-             (setq *found-obj* nil)
-             (if (null rec-av-coords)
-                 (setq rec-av-coords (send *grasp-coords* :copy-worldcoords))
-               (setq rec-av-coords (calc-average-two-coords rec-av-coords (send *grasp-coords* :copy-worldcoords)))
-               )
-             (when (>= rec-cnt 5)
-               (setq *found-obj* t)
-               (setq *grasp-coords* rec-av-coords)
-               )
-             )
-           ))
+  (setq *grasp-coords* (deva-rec-object :object-name object-name :change-deva change-deva :multi-rec multi-rec :bbox-topic bbox-topic))
 
   (publish-cds-tf *grasp-coords*)
 
@@ -485,9 +513,15 @@
       (setq *grasp-coords-exec* (send *grasp-coords* :copy-worldcoords))
       ))
 
-  (when (null is-grasp)
-    (format t "now is-grasp is nil, so return ~%")
+  (when exit-before-reach
+    (format t "exit from grasp-rec-object function because arg exit-after-grasp is t! ~%")
     (return-from grasp-rec-object)
+    )
+  (when wait-before-reach
+    (do-until-key
+     (print "wait for key pressed")
+     (unix:usleep 100000)
+     )
     )
 
   (send *pr2* arm :angle-vector wait-av)
