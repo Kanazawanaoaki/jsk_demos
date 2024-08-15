@@ -11,7 +11,7 @@ class BaseScanChecker:
     def __init__(self):
         rospy.init_node('base_scan_checker_node', anonymous=True)
 
-        # イメージメッセージをサブスクライブ
+        # トピックをサブスクライブ
         self.topic_sub = rospy.Subscriber('/base_scan', LaserScan, self.topic_callback)
 
         # Create an Action client for the sound_play node
