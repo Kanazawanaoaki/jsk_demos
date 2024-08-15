@@ -611,11 +611,7 @@
                         :rotation-axis t
                         :debug-view nil))
   (when (equal ik-result nil)
-    (speak-with-log "I Kを解くのに失敗しました")
-    (do-until-key
-     (print "wait for key pressed (after IK fail)")
-     (unix:usleep 100000)
-     )
+    (ik-fail-report :wait t)
     )
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
@@ -627,11 +623,7 @@
                         :rotation-axis t
                         :debug-view nil))
   (when (equal ik-result nil)
-    (speak-with-log "I Kを解くのに失敗しました")
-    (do-until-key
-     (print "wait for key pressed (after IK fail)")
-     (unix:usleep 100000)
-     )
+    (ik-fail-report :wait t)
     )
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
@@ -660,10 +652,13 @@
     )
 
   (send set-coords :translate pre-set-val :local)
-  (send *pr2* arm :inverse-kinematics
-        (send set-coords :copy-worldcoords)
-        :rotation-axis t
-        :debug-view nil)
+  (setq ik-result (send *pr2* arm :inverse-kinematics
+                        (send set-coords :copy-worldcoords)
+                        :rotation-axis t
+                        :debug-view nil))
+  (when (equal ik-result nil)
+    (ik-fail-report :wait t)
+    )
   (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
   (send *ri* :wait-interpolation)
 

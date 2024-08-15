@@ -62,6 +62,15 @@
   (format t "[PR2 speak] ~A ~%" speak-word)
   )
 
+(defun ik-fail-report (&key (wait t)) ;; TODO ask support?
+  (speak-with-log "I Kを解くのに失敗しました")
+  (when wait
+    (do-until-key
+     (print "wait for key pressed (after IK fail)")
+     (unix:usleep 100000)
+     )
+    ))
+
 ;; manequine
 (ros::load-ros-manifest "pr2_mechanism_msgs")
 ;; (ros::wait-for-service "/pr2_controller_manager/switch_controller")
