@@ -43,7 +43,7 @@ class ImageSubscriber:
         else:
             if self.no_topic_flag:
                 self.no_topic_flag = False
-                self.say_something("Image topic is arrive.")
+                self.say_something("K4a image topic is arrive.")
 
     def say_something(self, text):
         # ロボットに喋らせる
