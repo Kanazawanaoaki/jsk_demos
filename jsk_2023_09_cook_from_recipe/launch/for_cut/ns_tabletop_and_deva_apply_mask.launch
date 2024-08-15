@@ -30,6 +30,7 @@
     <arg name="MASK_IMAGE" value="$(arg mask_image)" />
     <arg name="run_rviz" value="false" />
     <arg name="run_collection" value="false" />
+    <arg name="publish_rec_tf" value="false" />
     <arg name="target_frame_id" value="$(arg target_frame_id)" />
   </include>
 
@@ -40,6 +41,7 @@
     <arg name="MASK_IMAGE" value="$(arg mask_image)" />
     <arg name="run_rviz" value="false" />
     <arg name="run_collection" value="false" />
+    <arg name="publish_rec_tf" value="false" />
     <arg name="target_frame_id" value="$(arg target_frame_id)" />
   </include>
 

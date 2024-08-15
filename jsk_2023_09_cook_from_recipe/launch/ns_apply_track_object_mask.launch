@@ -17,6 +17,7 @@
   <arg name="run_rviz" default="true"/>
   <arg name="run_collection" default="true"/>
 
+  <arg name="publish_rec_tf" default="true"/>
   <arg name="object_frame_name" default="objectoutput00"/>
 
   <group ns='$(arg namespace)'>
@@ -97,7 +98,7 @@
         target_frame_id: $(arg target_frame_id)
         approximate_sync: true
         queue_size: 100
-        publish_tf: true
+        publish_tf: $(arg publish_rec_tf)
         tf_prefix: object
       </rosparam>
     </node>
