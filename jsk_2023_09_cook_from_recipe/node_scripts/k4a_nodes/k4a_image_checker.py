@@ -25,7 +25,7 @@ class ImageSubscriber:
         self.last_image_time = time.time()
 
         self.say_something("k4a image check start")
-        self.no_topic_flag = False
+        self.no_topic_flag = True
 
     def image_callback(self, msg):
         # トピックが更新されたら呼び出されるコールバック
