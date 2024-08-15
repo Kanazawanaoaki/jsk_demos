@@ -43,7 +43,7 @@ class BaseScanChecker:
         else:
             if self.no_topic_flag:
                 self.no_topic_flag = False
-                self.say_something("Image topic is arrive.")
+                self.say_something("Base scan topic is arrive.")
 
     def say_something(self, text):
         # ロボットに喋らせる
