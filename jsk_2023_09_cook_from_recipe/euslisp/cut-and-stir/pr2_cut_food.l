@@ -384,7 +384,7 @@
                                   :rot (send first-coords :worldrot)))
     ans-coords))
 
-(defun deva-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (rec-num 5) (bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes"))
+(defun deva-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (rec-num 5) (fix-rot nil) (bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes"))
   ;; TODO Add let
 
   ;; set object rec

@@ -18,6 +18,7 @@
 
   <include file="$(find jsk_2023_09_cook_from_recipe)/launch/for_cut/tabletop_object_rec.launch" if="$(arg run_tabletop)" >
     <arg name="run_rviz" value="false" />
+    <arg name="publish_objects_tf" value="false" />
   </include>
 
   <include file="$(find jsk_2023_09_cook_from_recipe)/launch/pr2_decompress.launch" if="$(arg run_decomp)" />
