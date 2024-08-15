@@ -195,8 +195,8 @@
   (case side
         (:upper
          (if (equal arm :larm)
-               (send *pr2* :larm :angle-vector #f(-15.0893 60.0216 -11.3956 -89.7077 -169.343 -29.1032 356.261))
-           (send *pr2* :rarm :angle-vector #f(19.7425 59.0312 19.9882 -89.3936 174.999 -28.4809 -5.64965)) ;; reset-manip-pose -> ik (make-coords :pos #f(700 -100 900)  :rpy #f(0.0 0.0 -3.14))
+               (send *pr2* :larm :angle-vector #f(-15.0893 60.0216 -11.3956 -89.7077 -169.343 -29.1032 356.261)) ;; reset-cook-pose -> ik (make-coords :pos #f(700 100 900)  :rpy #f(0.0 0.0 3.14))
+           (send *pr2* :rarm :angle-vector #f(19.7425 59.0312 19.9882 -89.3936 174.999 -28.4809 -5.64965)) ;; reset-cook-pose -> ik (make-coords :pos #f(700 -100 900)  :rpy #f(0.0 0.0 -3.14))
            ))
         (:lower
          (if (equal arm :larm)
