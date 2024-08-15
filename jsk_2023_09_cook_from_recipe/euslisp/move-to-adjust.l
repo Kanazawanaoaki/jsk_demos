@@ -133,7 +133,7 @@
             (send *ri* :speak "move fail. Please help or retry")
             (return-from move-to-spot nil)
             ))
-      (when move-suc-flag
+      (when move-suc-flag ;; 移動が成功したら
         (setq adjust-suc-flag nil)
         (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
         (until adjust-suc-flag
