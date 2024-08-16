@@ -35,6 +35,16 @@
     (setq *pot* (cooking-pot))
     ))
 
+(unless (boundp '*kitchen-plane*)
+  (progn
+    (setq *kitchen-plane* (make-cube 570 700 10))
+    (send *kitchen-plane* :translate #f(815 -20 835))
+    (setq *kitchen-plane-end-1* (make-coords :pos #f(1100 330 840)))
+    (setq *kitchen-plane-end-2* (make-coords :pos #f(1100 -370 840)))
+    (setq *kitchen-plane-end-3* (make-coords :pos #f(530 330 840)))
+    (setq *kitchen-plane-end-4* (make-coords :pos #f(530 -370 840)))
+    ))
+
 (unless (boundp '*arrow*)
   (progn
     (load "models/arrow-object.l")
@@ -49,13 +59,20 @@
   ;; (setq *kitchen-spot* (make-coords :pos (float-vector 1110 8500 30000) :rpy (float-vector pi 0 0))) ;; original
 
   ;; (setq *cutting-board-coords* (make-coords :pos (float-vector 560 8420 30840) :rpy (float-vector 0 0 0))) ;; original
-  (setq *cutting-board-coords* (make-coords :pos (float-vector 550.0 80.0 840.0) :rpy (float-vector -3.142 0.0 0.0))) ;; fix
+  ;; (setq *cutting-board-coords* (make-coords :pos (float-vector 550.0 80.0 840.0) :rpy (float-vector -3.142 0.0 0.0))) ;; fix
+  (setq *cutting-board-coords* (make-coords :pos (float-vector 670.0 80.0 840.0) :rpy (float-vector -3.142 0.0 0.0))) ;; cutting-board fix v2
+
   ;; (setq *bowl-1-kitchen-coords* (make-coords :pos (float-vector 279 8747 30823) :rpy (float-vector 0 0 0))) ;; original
-  (setq *bowl-1-kitchen-coords* (make-coords :pos (float-vector 831.0 -247.0 823.0) :rpy (float-vector -3.142 0.0 0.0))) ;; fix
+  ;; (setq *bowl-1-kitchen-coords* (make-coords :pos (float-vector 831.0 -247.0 823.0) :rpy (float-vector -3.142 0.0 0.0))) ;; fix
+  (setq *bowl-1-kitchen-coords* (make-coords :pos (float-vector 951.0 -247.0 823.0) :rpy (float-vector -3.142 0.0 0.0))) ;; bowl1 fix v2
+
   ;; (setq *knife-coords* (make-coords :pos (float-vector 600 8715 30857) :rpy (float-vector 3.14 0.073 1.498))) ;; original
-  (setq *knife-coords* (make-coords :pos (float-vector 510.0 -215.0 857.0) :rpy (float-vector -0.002 0.073 1.498))) ;; fix
+  ;; (setq *knife-coords* (make-coords :pos (float-vector 510.0 -215.0 857.0) :rpy (float-vector -0.002 0.073 1.498))) ;; fix
+  (setq *knife-coords* (make-coords :pos (float-vector 630.0 -215.0 857.0) :rpy (float-vector -0.002 0.073 1.498))) ;; knfife fix v2
+
   ;; (setq *pot-coords* (make-coords :pos (float-vector 450 8080 30850) :rpy (float-vector 3.142 0 0))) ;; original
-  (setq *pot-coords* (make-coords :pos (float-vector 660.0 420.0 850.0) :rpy (float-vector 0 0 0))) ;; fix
+  ;; (setq *pot-coords* (make-coords :pos (float-vector 660.0 420.0 850.0) :rpy (float-vector 0 0 0))) ;; fix
+ (setq *pot-coords* (make-coords :pos (float-vector 660.0 420.0 850.0) :rpy (float-vector 0 0 0))) ;; pot fix v2
 
   ;; set objects
   (if (not (eql (send *cutting-board* :parent) nil))
@@ -93,7 +110,7 @@
   ;; ;; for original coords
   ;; (send *pr2* :move-to (send *kitchen-spot* :copy-worldcoords) :world)
 
-  (objects (list *pr2* *cutting-board* *knife* *pot* *bowl-1* *arrow*))
+  (objects (list *pr2* *kitchen-plane* *cutting-board* *knife* *pot* *bowl-1* *arrow*))
 
   )
 
