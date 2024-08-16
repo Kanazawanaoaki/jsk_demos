@@ -1348,19 +1348,6 @@
   (reset-cook-pose :arm :rarm :time 2000)
   )
 
-(defun up-rarm ()
-  ;; 手を上げる
-  (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate #f(0 0 50) :world)
-  (send *pr2* :rarm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-  )
-
 ;; grasp-codes
 (defun grasp-tool-on-table ()
   ;; arrow　はセットしてある前提
@@ -1389,7 +1376,7 @@
 
 
 (defun grasp-knife ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
 
   ;;掴む位置
   (send *arrow* :newcoords (send *knife* :copy-worldcoords))
@@ -1456,7 +1443,7 @@
   )
 
 (defun grasp-peeler ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
 
   ;;掴む位置
   (send *arrow* :newcoords (send *peeler* :copy-worldcoords))
@@ -1515,7 +1502,7 @@
 
 
 (defun grasp-potato-peeler ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
 
   ;;掴む位置
   (send *arrow* :newcoords (send *potato-peeler* :copy-worldcoords))
@@ -1571,7 +1558,7 @@
   )
 
 (defun grasp-spatula ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
 
   ;;掴む位置
   (send *arrow* :newcoords (send *spatula* :copy-worldcoords))
@@ -1644,7 +1631,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
 
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
 
   ;;掴む位置
   (send *arrow* :newcoords (send *ladle* :copy-worldcoords))
@@ -1944,8 +1931,7 @@
 ;; now codes
 (defun now-set-tools ()
   ;; 包丁，ピーラー，じゃがいもピーラーをセットする．
-  ;; (up-rarm)
-  (pr2-rarm-up :num 50)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-knife)
   (put-knife)
   (receive-peeler)
@@ -1956,7 +1942,7 @@
 
 (defun now-set-tools-with-dialogue ()
   ;; 包丁，ピーラー，じゃがいもピーラーをセットする．
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-knife-with-dialogue)
   (put-knife)
   (receive-peeler-with-dialogue)
@@ -1966,73 +1952,73 @@
   )
 
 (defun now-set-knife ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-knife)
   (put-knife)
   )
 
 (defun now-set-knife-with-dialogue ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-knife-with-dialogue)
   (put-knife)
   )
 
 (defun now-set-peeler ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-peeler)
   (put-peeler)
   )
 
 (defun now-set-peeler-with-dialogue ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-peeler-with-dialogue)
   (put-peeler)
   )
 
 (defun now-set-potato-peeler ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-potato-peeler)
   (put-potato-peeler)
   )
 
 (defun now-set-potato-peeler-with-dialogue ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-potato-peeler-with-dialogue)
   (put-potato-peeler)
   )
 
 (defun now-set-spatula-1 ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-spatula)
   (put-spatula-1)
   )
 
 (defun now-set-ladle-1 ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-ladle)
   (put-ladle-1)
   )
 
 (defun now-set-spatula-0 ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-spatula)
   (put-spatula-0)
   )
 
 (defun now-set-spatula-0-with-dialogue ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-spatula-with-dialogue)
   (put-spatula-0)
   )
 
 (defun now-set-ladle-0 ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-ladle)
   (put-ladle-0)
   )
 
 (defun now-set-ladle-0-with-dialogue ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-ladle-with-dialogue)
   (put-ladle-0)
   )
@@ -2209,20 +2195,20 @@
 
 ;; 盛り付けの位置での プログラム
 (defun now-set-spatula-a ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-spatula)
   (put-spatula-a)
   )
 
 (defun now-set-ladle-a ()
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-ladle)
   (put-ladle-a)
   )
 
 (defun now-set-ladle-a-with-dialogue ()
   ;; おたまを受け取ってセットする
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-ladle-with-dialogue)
   (put-ladle-a)
   (reset-rarm)
@@ -2230,7 +2216,7 @@
 
 (defun now-set-ladle-a-and-plate-with-dialogue ()
   ;; おたまを受け取る
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-ladle-with-dialogue)
 
   ;; 盛り付ける動作をして皿を人にセットしてもらう
@@ -2248,7 +2234,7 @@
 
 (defun now-set-tools-a ()
   ;; ヘラとおたまを受け取ってセットする
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-spatula)
   (put-spatula-a)
   (receive-ladle)
@@ -2258,7 +2244,7 @@
 
 (defun now-set-tools-a-with-dialogue ()
   ;; ヘラとおたまを受け取ってセットする
-  (up-rarm)
+  (pr2-arm-up :num 50 :side :upper :arm :rarm)
   (receive-spatula-with-dialogue)
   (put-spatula-a)
   (receive-ladle-with-dialogue)

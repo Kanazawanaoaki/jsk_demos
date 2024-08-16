@@ -209,7 +209,8 @@
   ;; (send *viewer* :draw-objects)
   ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   ;; (send *ri* :wait-interpolation)
-  (pr2-rarm-up :num 100 :time 4000)
+  ;; (pr2-rarm-up :num 100 :time 4000)
+  (pr2-arm-up :num 100 :time 4000 :side :upper :arm :rarm)
 
   ;; (setq *rav0* (float-vector -25.6468 7.87241 -48.2704 -85.3763 253.675 -77.8887 -147.102))
   ;; (send *pr2* :rarm :angle-vector *rav0*)
@@ -1352,7 +1353,8 @@
   (knife-slide-transfer-set-bowl-1)
   (knife-slide-transfer)
 
-  (pr2-rarm-up 60)
+  ;; (pr2-rarm-up 60)
+  (pr2-arm-up :num 60 :side :upper :arm :rarm)
   (knife-slide-transfer-set-bowl-1)
   (wait-for-bowl-1-rarm)
   (after-transfer-board)
@@ -1381,7 +1383,8 @@
 
   (now-cutting-board-transfer-bowl-1-fix)
 
-  (pr2-rarm-up 60)
+  ;; (pr2-rarm-up 60)
+  (pr2-arm-up :num 60 :side :upper :arm :rarm)
   (knife-slide-transfer-set-bowl-1)
   (wait-for-bowl-1-rarm)
   (after-transfer-board)
