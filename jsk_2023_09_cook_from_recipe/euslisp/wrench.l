@@ -1,4 +1,5 @@
 (ros::roseus "kitchen_wrench_detector")
+(ros::load-ros-manifest "geometry_msgs")
 
 ;; We cannot use (one-shot-subscribe) because we need wrench information at high frequency
 ;; wrench topic is published at about 20 hz, but one-shot-subscribe can be called at about 1~2 hz
@@ -49,3 +50,24 @@ Return t if touch is detected
   (ros::unsubscribe "/right_endeffector/wrench")
   (ros::unsubscribe "/left_endeffector/wrench")
   )
+
+
+;; tmp Add
+;; add for sense
+(setq *topic-name* "/right_endeffector/wrench")
+(setq *cb-flag* nil)
+
+(setq *x-thre* -15)
+
+(defun wrench-x-cb (msg)
+  (when msg
+    (let ((x nil))
+      (setq x (send msg :wrench :force :x))
+      (if (< x *x-thre*)
+          (progn
+            (setq *cb-flag* t)
+            (format t "OK!! x: ~A ~%" x)
+            )
+        (format t "x: ~A ~%" x))
+      )))
+

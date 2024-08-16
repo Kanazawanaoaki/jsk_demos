@@ -5,6 +5,7 @@
 ;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/move-to-adjust.l")
 
 ;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/pr2_cut_food.l")
+;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/73b2-kitchen-coords.l")
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/tool-use-in-kitchen-codes.l")
 
 (setq *debug-flag* t)
@@ -38,11 +39,6 @@
 (unless (boundp '*kitchen-plane*)
   (progn
     (setq *kitchen-plane* (make-cube 570 700 10))
-    (send *kitchen-plane* :translate #f(815 -20 835))
-    (setq *kitchen-plane-end-1* (make-coords :pos #f(1100 330 840)))
-    (setq *kitchen-plane-end-2* (make-coords :pos #f(1100 -370 840)))
-    (setq *kitchen-plane-end-3* (make-coords :pos #f(530 330 840)))
-    (setq *kitchen-plane-end-4* (make-coords :pos #f(530 -370 840)))
     ))
 
 (unless (boundp '*arrow*)
@@ -51,58 +47,43 @@
     (setq *arrow* (arrow))
     ))
 
-(defun cutting-board-init ()
+(defun cutting-board-init (&key (reset-obj-cds t) (init-cds t))
   ;; init
   ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
 
-  ;; set objects coords, copy from https://github.com/Kanazawanaoaki/jsk_demos/blob/kanazawa-ow/jsk_2020_04_pr2_curry/euslisp/model/my-eng2-coords.l
-  ;; (setq *kitchen-spot* (make-coords :pos (float-vector 1110 8500 30000) :rpy (float-vector pi 0 0))) ;; original
-
-  ;; (setq *cutting-board-coords* (make-coords :pos (float-vector 560 8420 30840) :rpy (float-vector 0 0 0))) ;; original
-  ;; (setq *cutting-board-coords* (make-coords :pos (float-vector 550.0 80.0 840.0) :rpy (float-vector -3.142 0.0 0.0))) ;; fix
-  (setq *cutting-board-coords* (make-coords :pos (float-vector 670.0 80.0 840.0) :rpy (float-vector -3.142 0.0 0.0))) ;; cutting-board fix v2
-
-  ;; (setq *bowl-1-kitchen-coords* (make-coords :pos (float-vector 279 8747 30823) :rpy (float-vector 0 0 0))) ;; original
-  ;; (setq *bowl-1-kitchen-coords* (make-coords :pos (float-vector 831.0 -247.0 823.0) :rpy (float-vector -3.142 0.0 0.0))) ;; fix
-  (setq *bowl-1-kitchen-coords* (make-coords :pos (float-vector 951.0 -247.0 823.0) :rpy (float-vector -3.142 0.0 0.0))) ;; bowl1 fix v2
-
-  ;; (setq *knife-coords* (make-coords :pos (float-vector 600 8715 30857) :rpy (float-vector 3.14 0.073 1.498))) ;; original
-  ;; (setq *knife-coords* (make-coords :pos (float-vector 510.0 -215.0 857.0) :rpy (float-vector -0.002 0.073 1.498))) ;; fix
-  (setq *knife-coords* (make-coords :pos (float-vector 630.0 -215.0 857.0) :rpy (float-vector -0.002 0.073 1.498))) ;; knfife fix v2
-
-  ;; (setq *pot-coords* (make-coords :pos (float-vector 450 8080 30850) :rpy (float-vector 3.142 0 0))) ;; original
-  ;; (setq *pot-coords* (make-coords :pos (float-vector 660.0 420.0 850.0) :rpy (float-vector 0 0 0))) ;; fix
- (setq *pot-coords* (make-coords :pos (float-vector 660.0 420.0 850.0) :rpy (float-vector 0 0 0))) ;; pot fix v2
+  ;; set global coords
+  (when init-cds
+    (73b2-kitchen-coords-init))
 
   ;; set objects
-  (if (not (eql (send *cutting-board* :parent) nil))
-      (send (send *cutting-board* :parent) :dissoc *cutting-board*))
-  (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
+  (when reset-obj-cds
+    (dissoc-object *cutting-board*)
+    (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
 
-  (if (not (eql (send *bowl-1* :parent) nil))
-      (send (send *bowl-1* :parent) :dissoc *bowl-1*))
-  (send *bowl-1* :newcoords (send *bowl-1-kitchen-coords* :copy-worldcoords))
+    (dissoc-object *bowl-1*)
+    (send *bowl-1* :newcoords (send *bowl-1-kitchen-coords* :copy-worldcoords))
 
-  (if (not (eql (send *knife* :parent) nil))
-      (send (send *knife* :parent) :dissoc *knife*))
-  (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
+    (dissoc-object *knife*)
+    (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
 
-  (if (not (eql (send *pot* :parent) nil))
-      (send (send *pot* :parent) :dissoc *pot*))
-  (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+    (dissoc-object *pot*)
+    (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
 
-  ;; def global-coords
-  ;; (setq *slide-rarm-coords* (make-coords :pos (float-vector 430.297 8421.198 30852.165) :rpy (float-vector -3.086 1.155 3.132))) ;; original
-  ;; (setq *slide-rarm-coords* (make-coords :pos (float-vector 679.703 78.802 852.165) :rpy (float-vector 0.056 1.155 3.132))) ;; fix
-  (setq *slide-rarm-coords-rel* (make-coords :pos (float-vector -129.703 1.145 12.165) :rpy (float-vector -3.085 1.155 3.132))) ;; fix rel
+    (send *kitchen-plane* :newcoords  (send *kitchen-plane-coords* :copy-worldcoords))
 
-  ;; (setq *slide-larm-coords* (make-coords :pos (float-vector 735.864 8441.372 30866.716) :rpy (float-vector 2.244 -1.518 0.872))) ;; original
-  ;; (setq *slide-larm-coords* (make-coords :pos (float-vector 374.136 58.628 866.716) :rpy (float-vector -0.898 -1.518 0.872))) ;; fix
-  (setq *slide-larm-coords-rel* (make-coords :pos (float-vector 175.855 21.444 26.716) :rpy (float-vector 2.244 -1.518 0.872))) ;; fix rel
+    ;; def global-coords
+    ;; (setq *slide-rarm-coords* (make-coords :pos (float-vector 430.297 8421.198 30852.165) :rpy (float-vector -3.086 1.155 3.132))) ;; original
+    ;; (setq *slide-rarm-coords* (make-coords :pos (float-vector 679.703 78.802 852.165) :rpy (float-vector 0.056 1.155 3.132))) ;; fix
+    (setq *slide-rarm-coords-rel* (make-coords :pos (float-vector -129.703 1.145 12.165) :rpy (float-vector -3.085 1.155 3.132))) ;; fix rel
 
-  ;; (setq *grasp-larm-coords* (make-coords :pos (float-vector 679.695 8281.493 30832.711) :rpy (float-vector 1.882 0.065 1.548))) ;; original
-  ;; (setq *grasp-larm-coords* (make-coords :pos (float-vector 430.305 218.507 832.711) :rpy (float-vector -1.26 0.065 1.548))) ;; fix
-  (setq *grasp-larm-coords-rel* (make-coords :pos (float-vector 19.748 -138.501 -7.289) :rpy (float-vector 1.882 0.065 1.548))) ;; fix rel
+    ;; (setq *slide-larm-coords* (make-coords :pos (float-vector 735.864 8441.372 30866.716) :rpy (float-vector 2.244 -1.518 0.872))) ;; original
+    ;; (setq *slide-larm-coords* (make-coords :pos (float-vector 374.136 58.628 866.716) :rpy (float-vector -0.898 -1.518 0.872))) ;; fix
+    (setq *slide-larm-coords-rel* (make-coords :pos (float-vector 175.855 21.444 26.716) :rpy (float-vector 2.244 -1.518 0.872))) ;; fix rel
+
+    ;; (setq *grasp-larm-coords* (make-coords :pos (float-vector 679.695 8281.493 30832.711) :rpy (float-vector 1.882 0.065 1.548))) ;; original
+    ;; (setq *grasp-larm-coords* (make-coords :pos (float-vector 430.305 218.507 832.711) :rpy (float-vector -1.26 0.065 1.548))) ;; fix
+    (setq *grasp-larm-coords-rel* (make-coords :pos (float-vector 19.748 -138.501 -7.289) :rpy (float-vector 1.882 0.065 1.548))) ;; fix rel
+    )
 
   ;; (move-to-kitchen-irt)
   ;; (objects (list *pr2* *scene* *cutting-board* *knife* *pot* *bowl-1*))
@@ -219,15 +200,16 @@
 ;; def util-funcs
 (defun reset-rarm ()
   ;;少し上に
-  (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate #f(0 0 100) :world)
-  (send *pr2* :rarm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis nil
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
+  ;; (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+  ;; (send *arrow* :translate #f(0 0 100) :world)
+  ;; (send *pr2* :rarm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis nil
+  ;;       :debug-view *debug-flag*)
+  ;; (send *viewer* :draw-objects)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  ;; (send *ri* :wait-interpolation)
+  (pr2-rarm-up :num 100 :time 4000)
 
   ;; (setq *rav0* (float-vector -25.6468 7.87241 -48.2704 -85.3763 253.675 -77.8887 -147.102))
   ;; (send *pr2* :rarm :angle-vector *rav0*)
@@ -266,11 +248,12 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
 
-  (setq *rav3* (float-vector -75.0 50.0 -110.0 -110.0 20.0 -10.0 -10.0))
-  (send *pr2* :rarm :angle-vector *rav3*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)
+  ;; (setq *rav3* (float-vector -75.0 50.0 -110.0 -110.0 20.0 -10.0 -10.0))
+  ;; (send *pr2* :rarm :angle-vector *rav3*)
+  ;; (send *viewer* :draw-objects)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  ;; (send *ri* :wait-interpolation)
+  (reset-cook-pose :arm :rarm :time 3000)
   )
 
 (defun reset-larm ()
@@ -302,7 +285,7 @@
   ;; (setq *lav2* (float-vector 41.8129 -20.2467 85.9536 -82.3235 -13.8272 -47.9804 -0.0))
   ;; (send *pr2* :larm :angle-vector *lav2*)
   ;; (send *arrow* :newcoords (make-coords :pos (float-vector 660.0 8390.0 31290.0) :rpy (float-vector 1.571 0.0 1.722))) ;; original
-  (send *arrow* :newcoords (make-coords :pos (float-vector 450.0 110.0 1290.0) :rpy (float-vector -1.571 -5.551e-17 1.722))) ;; fix
+  (send *arrow* :newcoords (make-coords :pos (float-vector 450.0 110.0 1290.0) :rpy (float-vector -1.571 0.0 1.722))) ;; fix
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t

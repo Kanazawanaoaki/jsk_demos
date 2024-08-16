@@ -3,14 +3,13 @@
 (ros::load-ros-manifest "roseus")
 (ros::load-ros-package "lc_state_recognition")
 (ros::load-ros-manifest "speech_recognition_msgs")
-(ros::roseus "pr2_cook_with_teaching_motion")
+(ros::roseus "pr2_cook_with_teaching_motion" :anonymous t)
 
 (format t "init ~%")
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2-utils.l")
 (require :detection-interface "package://jsk_perception/euslisp/detection_interface.l")
 
 (setq *co* (make-coords))
-
 
 ;; adj coords offset
 (defun set-offset-cds (target-cds offset-cds)
@@ -139,6 +138,24 @@
          )
   ;; (send *ri* :speak-jp "ありがとうございました" :wait t)
   )
+
+
+;; add for grasp detection
+(defun grasp-fail-detection (&rest args &key (g-thre 10) (arm :rarm) &allow-other-keys)
+  (let ((gripper-len))
+    (setq *fail-flag* nil)
+    (setq gripper-len (send *ri* :state :gripper arm :position))
+    (if (< gripper-len g-thre)
+        (setq *fail-flag* t))
+    *fail-flag*))
+
+;; release gripper
+(defun release-object (&rest args &key (g-num 0.025) (arm :rarm) &allow-other-keys)
+  (let ((curr-gripper))
+    ;;グリッパを微妙に開く
+    (setq curr-gripper (* 0.001 (send *ri* :state :gripper arm :position)))
+    (send *ri* :move-gripper arm (+ g-num curr-gripper))
+    ))
 
 ;; pose teaching
 (defun initial-pose-teaching () ;; 道具を握らせて貰って初期姿勢を教わる
@@ -394,10 +411,12 @@
          (send *robot* :torso_lift_joint :joint-angle torso-lift)
          )
         (:rarm
-         (send *robot* :rarm :angle-vector #f(-75.0 50.0 -110.0 -110.0 20.0 -10.0 -10.0))
+         ;; (send *robot* :rarm :angle-vector #f(-75.0 50.0 -110.0 -110.0 20.0 -10.0 -10.0))
+         (send *robot* :rarm :angle-vector #f(-75.0 50.0 -110.0 -110.0 20.0 -10.0 170.0))
          )
         (:larm
-         (send *robot* :larm :angle-vector #f(75.0 50.0 110.0 -110.0 -20.0 -10.0 -10.0))
+         ;; (send *robot* :larm :angle-vector #f(75.0 50.0 110.0 -110.0 -20.0 -10.0 -10.0))
+         (send *robot* :larm :angle-vector #f(75.0 50.0 110.0 -110.0 -20.0 -10.0 170.0))
          )
         )
   (send *robot* :head-neck-p :joint-angle head-p)
