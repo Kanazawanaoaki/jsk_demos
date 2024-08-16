@@ -8,8 +8,14 @@
 ;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/73b2-kitchen-coords.l")
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/tool-use-in-kitchen-codes.l")
 
+
+;; set global variables
 (setq *debug-flag* t)
 (setq *s-time* 3)
+(setq *w-time* 2)
+
+(setq *cb-flag* nil)
+(setq *z-thre* 15)
 
 ;; load objects
 (unless (boundp '*cutting-board*)
@@ -100,75 +106,7 @@
 (warn "If you use real robot, run (update-pos) ~%")
 (warn "please run (slide-board-set) ~%")
 
-;; add for sense
-(setq *z-thre* 15)
-
-(ros::roseus "board_rec_test" :anonymous t)
-(setq *topic-name* "/left_endeffector/wrench")
-(ros::load-ros-manifest "geometry_msgs")
-(setq *cb-flag* nil)
-(defun wrench-z-cb (msg)
-  (when msg
-    (let ((z nil))
-      (setq z (send msg :wrench :force :z))
-      (if (> z *z-thre*)
-          (progn
-            (setq *cb-flag* t)
-            (format t "OK!! z: ~A ~%" z)
-            )
-        (format t "z: ~A ~%" z))
-      )))
-
 ;; add for voice recognition
-(ros::load-ros-manifest "speech_recognition_msgs")
-(setq *data-flag* nil)
-(defun voice-cb (msg)
-  (when msg
-    (setq *msg* msg)
-    (setq *data* (send *msg* :transcript))
-    (setq *data-flag* t)
-    (format t "data: ~A ~%" *data*)
-    )
-  )
-
-(defun dialogue-func ()
-  (ros::unsubscribe "/speech_to_text")
-  (setq *data-flag* nil)
-  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
-  (until *data-flag*
-         (ros::spin-once)
-         (ros::sleep)
-         )
-  (send *ri* :speak-jp "ありがとうございます")
-  (unix:sleep 1)
-  )
-
-(setq *ok-flag* nil)
-(defun voice-ok-cb (msg)
-  (when msg
-    (setq *msg* msg)
-    (setq *data* (send *msg* :transcript))
-    (if (equal *data* '("OK"))
-        (progn
-          (format t "了解しました！ ~%" *data*)
-          (setq *ok-flag* t)
-          )
-      (format t "data: ~A ~%" *data*)
-      )
-    )
-  )
-
-(defun ok-wait ()
-  (ros::unsubscribe "/speech_to_text")
-  (setq *ok-flag* nil)
-  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
-  (until *ok-flag*
-         (ros::spin-once)
-         (ros::sleep)
-         )
-  (send *ri* :speak-jp "ありがとうございます")
-  (unix:sleep *w-time*)
-  )
 
 (defun ok-grasp-larm (&rest args &key (gain 0.01) &allow-other-keys)
   (ok-wait)
@@ -183,7 +121,8 @@
          (ok-grasp-larm :gain gain)
          (send *ri* :speak-jp "上手く掴めていますか？")
          (dialogue-func)
-         (if (equal *data* '("はい"))
+         (send *ri* :speak-jp "ありがとうございます" :wait t)
+         (if (equal *voice-data* '("はい"))
              (setq *yes-flag* t)
            (progn
              (send *ri* :speak-jp "グリッパを開きます.もう一度お願いします")
@@ -831,7 +770,6 @@
   (send *ri* :angle-vector-sequence avs tms)
 
   (ros::unsubscribe "/left_endeffector/wrench")
-  (setq *topic-name* "/left_endeffector/wrench")
   (setq *cb-flag* nil)
   (ros::subscribe "/left_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-z-cb)
 
@@ -877,7 +815,6 @@
   (send *ri* :angle-vector-sequence avs tms)
 
   ;; (ros::unsubscribe "/left_endeffector/wrench")
-  ;; (setq *topic-name* "/left_endeffector/wrench")
   ;; (setq *cb-flag* nil)
   ;; (ros::subscribe "/left_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-z-cb)
 
@@ -927,7 +864,7 @@
 
 
 (defun after-push-board ()
-  
+
   )
 
 (defun after-push-board-1 ()

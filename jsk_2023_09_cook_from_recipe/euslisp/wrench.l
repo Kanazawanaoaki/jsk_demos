@@ -53,11 +53,10 @@ Return t if touch is detected
 
 
 ;; tmp Add
-;; add for sense
-(setq *topic-name* "/right_endeffector/wrench")
 (setq *cb-flag* nil)
 
 (setq *x-thre* -15)
+(setq *z-thre* 15)
 
 (defun wrench-x-cb (msg)
   (when msg
@@ -71,3 +70,14 @@ Return t if touch is detected
         (format t "x: ~A ~%" x))
       )))
 
+(defun wrench-z-cb (msg)
+  (when msg
+    (let ((z nil))
+      (setq z (send msg :wrench :force :z))
+      (if (> z *z-thre*)
+          (progn
+            (setq *cb-flag* t)
+            (format t "OK!! z: ~A ~%" z)
+            )
+        (format t "z: ~A ~%" z))
+      )))
