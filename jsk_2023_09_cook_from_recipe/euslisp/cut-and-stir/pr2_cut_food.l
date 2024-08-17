@@ -389,6 +389,9 @@
    ((string= object-name "peeler")
     (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "orange peeler;")
     )
+   ((string= object-name "potato peeler")
+    (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "yellow and black potato peeler;")
+    )
    ((string= object-name "white cup")
     ;; (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "white cup;")
     (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "white and black cup;")
@@ -518,6 +521,24 @@
     (setq fix-rot nil)
     (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
     )
+   ((and (string= object-name "potato peeler") (equal arm :rarm))
+    (if use-calib-offset
+        (progn
+          (setq object-offset (make-coords :pos #f(-100.308 -12.233 -10.919) :rpy #f(-0.09 0.071 0.061))) ;; for only deva and with offset TODO
+          )
+      (progn
+        (setq object-offset (make-coords :pos #f(-58.86 -2.424 -11.255) :rpy #f(0.138 0.036 3.127))) ;; for only deva for upper
+        )
+      )
+
+    ;; (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
+    (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)) ;; for upper
+
+    ;; (setq pre-set-val #f(-100 0 100))
+    (setq pre-set-val #f(-50 0 -100)) ;; for upper
+    (setq fix-rot nil)
+    (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+    )
    ((and (string= object-name "peeler") (equal arm :rarm))
     ;; (setq object-offset (make-coords :pos #f(-53.198 -7.425 -12.732) :rpy #f(-0.109 0.026 -0.005)))
     ;; (setq object-offset (make-coords :pos #f(-53.198 -7.425 -10.732) :rpy #f(-0.109 0.026 -0.005)))
@@ -594,6 +615,45 @@
 
     ;; (setq pre-set-val #f(-100 0 100))
     (setq pre-set-val #f(-100 50 0)) ;; for upper
+    (setq fix-rot t)
+    ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+    (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
+    )
+   ((and (string= object-name "gray bowl") (equal arm :rarm)) ;; TODO
+    (if use-calib-offset
+        (progn
+          (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
+          )
+      (progn
+        (setq object-offset (make-coords :pos #f(-78.028 33.761 -22.64) :rpy #f(0.124 1.34 -1.321))) ;; for with table and upper and rotate (upper is in outside)
+        )
+      )
+
+    ;; (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
+    ;; (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)) ;; for upper
+    (setq wait-av #f(-38.3278 -3.2288 -63.6414 -68.0071 -83.1809 -108.309 393.782)) ;; for green bowl, upper outside TODO
+
+    ;; (setq pre-set-val #f(-100 0 100))
+    (setq pre-set-val #f(-100 0 100)) ;; for upper
+    (setq fix-rot t)
+    ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+    (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
+    )
+   ((and (string= object-name "gray bowl") (equal arm :larm)) ;; TODO
+    (if use-calib-offset
+        (progn
+          (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
+          )
+      (progn
+        (setq object-offset (make-coords :pos #f(-78.028 33.761 -22.64) :rpy #f(0.124 1.34 -1.321))) ;; for with table and upper and rotate (upper is in outside)
+        )
+      )
+
+    ;; (setq wait-av #f(18.6793 40.7013 -15.7633 -105.901 -210.673 -70.7818 383.1)) ;; for upper
+    (setq wait-av #f(41.0448 2.03593 63.3981 -67.6587 27.9651 -69.6477 -117.945)) ;; TODO
+
+    ;; (setq pre-set-val #f(-100 0 100))
+    (setq pre-set-val #f(-100 0 100)) ;; for upper
     (setq fix-rot t)
     ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
     (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
