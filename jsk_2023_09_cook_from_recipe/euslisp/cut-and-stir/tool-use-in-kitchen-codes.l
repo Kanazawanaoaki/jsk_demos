@@ -67,7 +67,7 @@
 
 (unless (boundp '*kitchen-plane*)
   (progn
-    (setq *kitchen-plane* (make-cube 570 700 10))
+    (setq *kitchen-plane* (make-cube 570 690 10))
     ))
 
 (unless (boundp '*arrow*)

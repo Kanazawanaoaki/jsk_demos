@@ -498,14 +498,18 @@
           (setq object-offset (make-coords :pos #f(-100.308 -12.233 -10.919) :rpy #f(-0.09 0.071 0.061))) ;; for only deva and with offset
           )
       (progn
-        (setq object-offset (make-coords :pos #f(-105.089 -11.948 -2.399) :rpy #f(-0.09 0.071 0.061))) ;; for only deva
+        ;; (setq object-offset (make-coords :pos #f(-105.089 -11.948 -2.399) :rpy #f(-0.09 0.071 0.061))) ;; for only deva
+        (setq object-offset (make-coords :pos #f(-105.089 -11.948 -2.399) :rpy #f(-0.09 0.071 -3.081))) ;; for only deva for upper
         )
       )
 
     ;; (setq object-offset (make-coords :pos #f(-3.846 -15.18 -28.556) :rpy #f(-0.171 0.071 0.061))) ;; for with tabletop
 
-    (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
-    (setq pre-set-val #f(-100 0 100))
+    ;; (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
+    (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)) ;; for upper
+
+    ;; (setq pre-set-val #f(-100 0 100))
+    (setq pre-set-val #f(-50 0 -100)) ;; for upper
     (setq fix-rot nil)
     (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
     )
