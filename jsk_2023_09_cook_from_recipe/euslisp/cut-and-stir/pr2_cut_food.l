@@ -123,15 +123,15 @@
                          (:lower
                           (send ideal-tape-coords :translate #f(-122 0 23))
                           )
-                         (:right
+                         (:right ;; TODO check
                           (if (equal arm :larm)
-                              (send ideal-tape-coords :translate #f(-90 52 0))
-                            (send ideal-tape-coords :translate #f(-90 -52 0))
+                              (send ideal-tape-coords :translate #f(-90 -55 0))
+                            (send ideal-tape-coords :translate #f(-90 55 0))
                             ))
-                         (:left ;; TODO check
+                         (:left
                           (if (equal arm :larm)
-                              (send ideal-tape-coords :translate #f(-90 -52 0))
-                            (send ideal-tape-coords :translate #f(-90 52 0))
+                              (send ideal-tape-coords :translate #f(-90 55 0))
+                            (send ideal-tape-coords :translate #f(-90 -55 0)) ;; -52
                             ))
                          )
                    (setq current-tape-diff (calc-arm-diff ideal-tape-coords *obj-coord*))
@@ -189,6 +189,37 @@
   )
 )
 (defun calib-check-pose-kitchen (&key (arm :larm) (side :upper))
+  (send *ri* :start-grasp arm :wait t)
+  (send *pr2* :head-neck-p :joint-angle 60)
+  (send *pr2* :head-neck-y :joint-angle 0)
+  (case side
+        (:upper
+         (if (equal arm :larm)
+               (send *pr2* :larm :angle-vector #f(-15.0893 60.0216 -11.3956 -89.7077 -169.343 -29.1032 356.261)) ;; reset-cook-pose -> ik (make-coords :pos #f(700 100 900)  :rpy #f(0.0 0.0 3.14))
+           (send *pr2* :rarm :angle-vector #f(19.7425 59.0312 19.9882 -89.3936 174.999 -28.4809 -5.64965)) ;; reset-cook-pose -> ik (make-coords :pos #f(700 -100 900)  :rpy #f(0.0 0.0 -3.14))
+           ))
+        (:lower
+         (if (equal arm :larm)
+             (send *pr2* :larm :angle-vector #f(-15.0814 60.0228 -11.3813 -89.7081 -169.334 -29.1046 176.337)) ;; reset-manip-pose -> IK (make-coords :pos #f(700 100 900)  :rpy #f(0.0 0.0 0.0))
+           (send *pr2* :rarm :angle-vector #f(19.7226 59.0367 19.9508 -89.3953 174.973 -28.4826 -185.699)) ;; reset-manip-pose -> ik (make-coords :pos #f(700 -100 900)  :rpy #f(0.0 0.0 0.0))
+           ))
+        (:right ;; TODO make
+         (if (equal arm :larm)
+             (send *pr2* :larm :angle-vector #f(-28.0117 55.5277 -36.3109 -88.4267 -186.302 -28.5984 295.161)) ;; reset-manip-pose -> IK (make-coords :pos #f(700 100 900)  :rpy #f(0.0 0.0 1.571))
+           (send *pr2* :rarm :angle-vector #f(7.47352 60.4724 -2.3408 -89.8573 161.245 -30.9175 -252.602)) ;; reset-manip-pose -> ik (make-coords :pos #f(700 -100 900)  :rpy #f(0.0 0.0 -1.571))
+           ))
+        (:left
+         (if (equal arm :larm)
+             (send *pr2* :larm :angle-vector #f(-28.0117 55.5277 -36.3109 -88.4267 -186.302 -28.5984 295.161)) ;; reset-manip-pose -> IK (make-coords :pos #f(700 100 900)  :rpy #f(0.0 0.0 1.571))
+           (send *pr2* :rarm :angle-vector #f(7.47352 60.4724 -2.3408 -89.8573 161.245 -30.9175 -252.602)) ;; reset-manip-pose -> ik (make-coords :pos #f(700 -100 900)  :rpy #f(0.0 0.0 -1.571))
+           ))
+        )
+
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun calib-check-pose-kitchen-2 (&key (arm :larm) (side :upper)) ;; TODO tmp
   (send *ri* :start-grasp arm :wait t)
   (send *pr2* :head-neck-p :joint-angle 60)
   (send *pr2* :head-neck-y :joint-angle 0)
