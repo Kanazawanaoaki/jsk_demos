@@ -408,7 +408,12 @@
 
 (defun publish-cds-tf (cds)
   (send *tfb* :send-transform
-        cds "/base_footprint" "/target_cds_frame")
+        (send cds :copy-worldcoords) "/base_footprint" "/target_cds_frame")
+  )
+
+(defun show-cds-arrow (cds)
+  (send *arrow* :newcoords (send cds :copy-worldcoords))
+  (objects *arrow*)
   )
 
 (defun calc-offset (rec-coords grasp-coords)

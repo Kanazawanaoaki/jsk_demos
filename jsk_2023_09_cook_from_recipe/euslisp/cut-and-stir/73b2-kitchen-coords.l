@@ -3,7 +3,8 @@
   ;; (setq *knife-coords* (make-coords :pos (float-vector 600 8715 30857) :rpy (float-vector 3.14 0.073 1.498))) ;; original
   ;; (setq *knife-coords* (make-coords :pos (float-vector 510.0 -215.0 857.0) :rpy (float-vector -0.002 0.073 1.498))) ;; fix
   ;; (setq *knife-coords* (make-coords :pos (float-vector 630.0 -215.0 857.0) :rpy (float-vector -0.002 0.073 1.498))) ;; knife fix v2
-  (setq *knife-coords* (make-coords :pos (float-vector 630.0 -115.0 857.0) :rpy (float-vector -0.002 0.073 1.498))) ;; knife fix v2 upper
+  ;; (setq *knife-coords* (make-coords :pos (float-vector 630.0 -115.0 857.0) :rpy (float-vector -0.002 0.073 1.498))) ;; knife fix v2 upper
+  (setq *knife-coords* (make-coords :pos (float-vector 608.887 -297.217 838.11) :rpy (float-vector 0.062 0.168 -1.546))) ;; knife fix v3 upper
 
   ;; (setq *peeler-coords* (make-coords :pos (float-vector 580 8815 30870) :rpy (float-vector 3.14 0.049 1.51))) ;; ピーラー original
   ;; (setq *peeler-coords* (make-coords :pos (float-vector 530.0 -315.0 870.0) :rpy (float-vector -0.002 0.049 1.51))) ;; ピーラー fix
@@ -13,7 +14,8 @@
   ;; (setq *potato-peeler-coords* (make-coords :pos (float-vector 580 8915 30865) :rpy (float-vector 3.14 0.013 1.545))) ;; じゃがいもピーラー original
   ;; (setq *potato-peeler-coords* (make-coords :pos (float-vector 530.0 -415.0 865.0) :rpy (float-vector -0.002 0.013 1.545))) ;; じゃがいもピーラー fix
   ;; (setq *potato-peeler-coords* (make-coords :pos (float-vector 650.0 -415.0 865.0) :rpy (float-vector -0.002 0.013 1.545))) ;; じゃがいもピーラー fix v2
-  (setq *potato-peeler-coords* (make-coords :pos (float-vector 650.0 -315.0 865.0) :rpy (float-vector -0.002 0.013 1.545))) ;; じゃがいもピーラー fix v2 upper
+  ;; (setq *potato-peeler-coords* (make-coords :pos (float-vector 650.0 -315.0 865.0) :rpy (float-vector -0.002 0.013 1.545))) ;; じゃがいもピーラー fix v2 upper
+ (setq *potato-peeler-coords* (make-coords :pos (float-vector 602.942 -206.253 848.018) :rpy (float-vector -0.019 0.112 -1.557))) ;; じゃがいもピーラー fix v3 upper
 
   ;; (setq *spatula-coords-1* (make-coords :pos (float-vector 630 8549 30872) :rpy (float-vector 3.084 -0.042 1.542))) ;; ヘラ，平置き original
   ;; (setq *spatula-coords-1* (make-coords :pos (float-vector 480.0 -49.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix
