@@ -68,6 +68,32 @@
   (manequine-end)
   )
 
+(defun ok-grasp (&rest args &key (gain 0.01) (arm :rarm) &allow-other-keys)
+  (ok-wait)
+  (send *ri* :start-grasp arm :wait t :gain gain)
+  )
+
+(defun receive-with-dialogue (&rest args &key (gain 0.01) (arm :rarm) &allow-other-keys)
+  ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
+  (setq *yes-flag* nil)
+  (until *yes-flag*
+         (send *ri* :stop-grasp arm :wait t)
+         (ok-grasp :gain gain)
+         (speak-with-log "上手く掴めていますか？")
+         (dialogue-func)
+         (if (equal *voice-data* '("はい"))
+             (setq *yes-flag* t)
+           (progn
+             (speak-with-log "グリッパを開きます.もう一度お願いします")
+             ;; (unix:sleep *w-time*)
+             )
+           )
+         )
+
+  (speak-with-log "次の行動に移ります")
+  ;; (unix:sleep *w-time*)
+  )
+
 
 (defun dialogue-manip (&key (init-pose (send *pr2* :reset-manip-pose)) (r-grasp-gain 0.01) (l-grasp-gain 0.01) (r-gripper-dis 0.09) (l-gripper-dis 0.09) (pose-initialize nil))
   (manequine-end)
@@ -414,10 +440,8 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun pr2-arm-up (&key (num 60) (time 3000) (side :upper) (arm :rarm))
-  (if (equal side :upper)
-      (send *pr2* arm :move-end-pos (float-vector 0 0 (- num)) :world)
-    (send *pr2* arm :move-end-pos (float-vector 0 0 num) :world))
+(defun pr2-arm-up (&key (num 60) (time 3000) (arm :rarm))
+  (send *pr2* arm :move-end-pos (float-vector 0 0 num) :world)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) time)
   (send *ri* :wait-interpolation)

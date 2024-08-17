@@ -130,6 +130,10 @@ Visualization Manager:
           Value: false
         br_caster_rotation_link:
           Value: false
+        camera_base:
+          Value: true
+        depth_camera_link:
+          Value: true
         double_stereo_link:
           Value: false
         eng2:
@@ -304,6 +308,8 @@ Visualization Manager:
           Value: false
         r_wrist_roll_link:
           Value: false
+        rgb_camera_link:
+          Value: true
         right_arm_chain_cb_link:
           Value: false
         sensor_mount_link:
@@ -379,6 +385,12 @@ Visualization Manager:
                               {}
                             head_plate_frame:
                               head_mount_link:
+                                camera_base:
+                                  depth_camera_link:
+                                    imu_link:
+                                      {}
+                                    rgb_camera_link:
+                                      {}
                                 head_mount_kinect_ir_link:
                                   head_mount_kinect_ir_optical_frame:
                                     {}
@@ -414,8 +426,6 @@ Visualization Manager:
                                 high_def_frame:
                                   high_def_optical_frame:
                                     {}
-                        imu_link:
-                          {}
                         l_shoulder_pan_link:
                           l_shoulder_lift_link:
                             l_upper_arm_roll_link:
@@ -1165,17 +1175,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.7047604918479919
-        Y: 0.1293165236711502
-        Z: 1.3403102159500122
+        X: 0.23007676005363464
+        Y: -0.025157663971185684
+        Z: 1.1246731281280518
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.899796187877655
+      Pitch: 0.7947961091995239
       Target Frame: <Fixed Frame>
-      Yaw: 0.4190308451652527
+      Yaw: 2.0390310287475586
     Saved: ~
 Window Geometry:
   Displays:
@@ -1198,4 +1208,4 @@ Window Geometry:
     collapsed: false
   Width: 1848
   X: 712
-  Y: 145
+  Y: 108

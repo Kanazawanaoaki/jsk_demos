@@ -429,8 +429,6 @@
                                   :rot (send first-coords :worldrot)))
     ans-coords))
 
-(defun test ()
-  )
 (defun analysis-cds-list (cds-list)
   (let ((x-list (list))
         (y-list (list))
@@ -625,16 +623,15 @@
           (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
           )
       (progn
-        (setq object-offset (make-coords :pos #f(-78.028 33.761 -22.64) :rpy #f(0.124 1.34 -1.321))) ;; for with table and upper and rotate (upper is in outside)
+        (setq object-offset (make-coords :pos #f(-4.353 147.388 -10.049) :rpy #f(-1.143 1.405 -1.282))) ;; for with table and upper and rotate (upper is in outside)
         )
       )
 
-    ;; (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
     ;; (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)) ;; for upper
-    (setq wait-av #f(-38.3278 -3.2288 -63.6414 -68.0071 -83.1809 -108.309 393.782)) ;; for green bowl, upper outside TODO
+    ;; (setq wait-av #f(-38.3278 -3.2288 -63.6414 -68.0071 -83.1809 -108.309 393.782)) ;; for green bowl, upper outside
+    (setq wait-av #f(-39.4916 -5.60379 -51.4586 -70.0476 -75.5379 -114.544 397.394)) ;; for grary bowl, upper outside TODO
 
-    ;; (setq pre-set-val #f(-100 0 100))
-    (setq pre-set-val #f(-100 0 100)) ;; for upper
+    (setq pre-set-val #f(-147 -23 7)) ;; for upper #f(0 0 150) :world
     (setq fix-rot t)
     ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
     (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
