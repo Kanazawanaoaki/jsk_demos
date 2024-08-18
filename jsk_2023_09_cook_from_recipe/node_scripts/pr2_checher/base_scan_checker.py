@@ -30,6 +30,9 @@ class BaseScanChecker:
     def topic_callback(self, msg):
         # トピックが更新されたら呼び出されるコールバック
         self.last_image_time = time.time()
+        if self.no_topic_flag:
+            self.no_topic_flag = False
+            self.say_something("Base scan topic is arrive.")
         # rospy.loginfo("Recieve base scan topic !!")
 
     def check_timeout(self):
@@ -43,7 +46,7 @@ class BaseScanChecker:
         else:
             if self.no_topic_flag:
                 self.no_topic_flag = False
-                self.say_something("Base scan topic is arrive.")
+                # self.say_something("Base scan topic is arrive.")
 
     def say_something(self, text):
         # ロボットに喋らせる

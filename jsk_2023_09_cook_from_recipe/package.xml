@@ -40,6 +40,7 @@
   <depend>jsk_demo_common</depend>
   <depend>pr2eus_moveit</depend>
   <depend>pddl_planner</depend>
+  <depend>jsk_pr2_startup</depend>
   <!--   Note that this is equivalent to the following: -->
   <!--   <build_depend>roscpp</build_depend> -->
   <!--   <exec_depend>roscpp</exec_depend> -->
