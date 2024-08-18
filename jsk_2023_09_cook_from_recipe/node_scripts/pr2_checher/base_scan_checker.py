@@ -10,6 +10,7 @@ import time
 class BaseScanChecker:
     def __init__(self):
         rospy.init_node('base_scan_checker_node', anonymous=True)
+        self.no_topic_flag = True
 
         # トピックをサブスクライブ
         self.topic_sub = rospy.Subscriber('/base_scan', LaserScan, self.topic_callback)
@@ -25,7 +26,6 @@ class BaseScanChecker:
         self.last_image_time = time.time()
 
         self.say_something("base scan check start")
-        self.no_topic_flag = True
 
     def topic_callback(self, msg):
         # トピックが更新されたら呼び出されるコールバック
@@ -43,9 +43,9 @@ class BaseScanChecker:
             else:
                 self.no_topic_flag = True
                 self.say_something("I haven't seen the base scan topic for {} seconds.".format(self.timeout_threshold))
-        else:
-            if self.no_topic_flag:
-                self.no_topic_flag = False
+        # else:
+            # if self.no_topic_flag:
+            #     self.no_topic_flag = False
                 # self.say_something("Base scan topic is arrive.")
 
     def say_something(self, text):

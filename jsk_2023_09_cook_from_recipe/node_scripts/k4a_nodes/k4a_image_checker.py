@@ -10,6 +10,7 @@ import time
 class ImageSubscriber:
     def __init__(self):
         rospy.init_node('image_subscriber_node', anonymous=True)
+        self.no_topic_flag = True
 
         # イメージメッセージをサブスクライブ
         self.image_sub = rospy.Subscriber('/k4a/rgb/image_rect_color/compressed', CompressedImage, self.image_callback)
@@ -25,11 +26,13 @@ class ImageSubscriber:
         self.last_image_time = time.time()
 
         self.say_something("k4a image check start")
-        self.no_topic_flag = True
 
     def image_callback(self, msg):
         # トピックが更新されたら呼び出されるコールバック
         self.last_image_time = time.time()
+        if self.no_topic_flag:
+            self.no_topic_flag = False
+            self.say_something("K4a image topic is arrive.")
         # rospy.loginfo("Recieve image topic !!")
 
     def check_timeout(self):
@@ -40,10 +43,10 @@ class ImageSubscriber:
             else:
                 self.no_topic_flag = True
                 self.say_something("I haven't seen the k4a image topic for {} seconds.".format(self.timeout_threshold))
-        else:
-            if self.no_topic_flag:
-                self.no_topic_flag = False
-                self.say_something("K4a image topic is arrive.")
+        # else:
+        #     if self.no_topic_flag:
+        #         self.no_topic_flag = False
+        #         self.say_something("K4a image topic is arrive.")
 
     def say_something(self, text):
         # ロボットに喋らせる
