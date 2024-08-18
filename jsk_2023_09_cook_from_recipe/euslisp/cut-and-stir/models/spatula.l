@@ -15,7 +15,7 @@
      ;; definition of link
      (setq b1 (make-prism (list #f(60 40 0) #f(90 -40 0) #f(0 -35 0) #f(-45 -12 0) #f(-45 12 0) #f(0 35 0)) 8))
      (setq b2 (make-cube 180 15 8))
-     
+
      (send b2 :locate #f(45 0 0))
      (send b1 :locate #f(180 0 -4))
 
@@ -44,7 +44,7 @@
      (send link1 :assoc attention1)
 
 
-     ;; init-ending 
+     ;; init-ending
      (setq links (list link1))
      (send self :init-ending)
      (send self :move-to (make-coords :pos pos :rot rot))

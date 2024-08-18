@@ -67,7 +67,8 @@
 
 (unless (boundp '*kitchen-plane*)
   (progn
-    (setq *kitchen-plane* (make-cube 570 690 10))
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/kitchen-plane.l")
+    (setq *kitchen-plane* (kitchen-plane :cube-x 570 :cube-y 690 :cube-z 10))
     ))
 
 (unless (boundp '*arrow*)
@@ -246,7 +247,7 @@
   ;; (send *ri* :wait-interpolation)
   )
 
-(defun receive-peeler ()
+(defun receive-peeler (&key (with-dialogue t))
   ;;掴む位置
   (send *arrow* :newcoords (send *peeler-coords* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad -90) :x)
@@ -261,37 +262,18 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
-  (send *ri* :stop-grasp :rarm)
-  (send *ri* :speak-jp "ピーラーを握らせて下さい")
-
-  (unix:sleep *s-time*)
-  (send *ri* :start-grasp :rarm :wait t :gain 100)
-
-  (send *peeler* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  (send *peeler* :rotate (deg2rad 90) :x)
-  (send *pr2* :rarm :end-coords :assoc *peeler*)
-  (send *viewer* :draw-objects)
-
-  (warn "please run (put-peeler) ~%")
-  )
-
-(defun receive-peeler-with-dialogue ()
-  ;;掴む位置
-  (send *arrow* :newcoords (send *peeler-coords* :copy-worldcoords))
-  (send *arrow* :rotate (deg2rad -90) :x)
-  (send *arrow* :translate #f(60 0 100) :world)
-
-  (send *pr2* :rarm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-  (send *ri* :speak-jp "ピーラーを渡す準備をして，合図をして下さい")
-  (receive-with-dialogue)
-  (send *ri* :start-grasp :rarm :wait t :gain 100)
+  (if with-dialogue
+      (progn
+        (send *ri* :speak-jp "ピーラーを渡す準備をして，合図をして下さい")
+        (receive-with-dialogue)
+        (send *ri* :start-grasp :rarm :wait t :gain 100)
+        )
+    (progn
+      (send *ri* :stop-grasp :rarm)
+      (send *ri* :speak-jp "ピーラーを握らせて下さい")
+      (unix:sleep *s-time*)
+      (send *ri* :start-grasp :rarm :wait t :gain 100)
+      ))
 
   (send *peeler* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *peeler* :rotate (deg2rad 90) :x)
@@ -305,7 +287,10 @@
   (send *arrow* :newcoords (send *peeler-coords* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad -90) :x)
 
-  (send *arrow* :translate #f(60 0 100) :world)
+  ;; (send *arrow* :translate #f(60 0 100) :world)
+  (setq pre-set-val #f(-60 0 100))
+
+  (send *arrow* :translate pre-set-val :world)
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -314,7 +299,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
 
-  (send *arrow* :translate #f(-60 0 -100) :world)
+  (send *arrow* :translate (scale -1 pre-set-val) :world)
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -329,7 +314,7 @@
 
   ;; 手を上げる
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate #f(60 0 100) :world)
+  (send *arrow* :translate pre-set-val :world)
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -1903,10 +1888,10 @@
   (pr2-arm-up :num 100 :arm :rarm)
   (receive-knife :with-dialogue with-dialogue)
   (put-knife)
-  ;; (receive-peeler)
-  ;; (put-peeler)
   (receive-potato-peeler :with-dialogue with-dialogue)
-  (put-potato-peeler)
+  (put-potato-peeler :with-dialogue with-dialogue)
+  (receive-peeler)
+  (put-peeler)
   )
 
 (defun now-set-knife (&key (with-dialogue t))
@@ -1916,14 +1901,8 @@
   )
 
 (defun now-set-peeler (&key (with-dialogue t))
-  (pr2-arm-up :num 50 :arm :rarm)
-  (receive-peeler)
-  (put-peeler)
-  )
-
-(defun now-set-peeler-with-dialogue ()
-  (pr2-arm-up :num 50 :arm :rarm)
-  (receive-peeler-with-dialogue)
+  (pr2-arm-up :num 100 :arm :rarm)
+  (receive-peeler :with-dialogue with-dialogue)
   (put-peeler)
   )
 
