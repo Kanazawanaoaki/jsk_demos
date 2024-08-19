@@ -22,7 +22,7 @@
 (unless (boundp '*mcup*)
   (progn
     (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/measuring-cup-73b2.l")
-    (setq *mcup* (mcup))
+    (setq *mcup* (measuring-cup-73b2))
     ))
 
 (unless (boundp '*rcup*)
@@ -37,6 +37,24 @@
     (setq *bowl-1* (bowl-1))
     ))
 
+(unless (boundp '*oil-dispenser*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/dispenser.l")
+    (setq *oil-dispenser* (dispenser))
+    ))
+
+
+(unless (boundp '*kitchen-plane*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/kitchen-plane.l")
+    (setq *kitchen-plane* (kitchen-plane :cube-x 570 :cube-y 690 :cube-z 10))
+    ))
+
+(unless (boundp '*arrow*)
+  (progn
+    (load "models/arrow-object.l")
+    (setq *arrow* (arrow))
+    ))
 
 (defun bowl-init (&key (reset-obj-cds t) (init-cds t))
   ;; init
@@ -64,6 +82,12 @@
     (dissoc-object *bowl-1*)
     (send *bowl-1* :newcoords (send *bowl-1-kitchen-coords* :copy-worldcoords))
 
+    (dissoc-object *oil-dispenser*)
+    (send *oil-dispenser* :newcoords (send *oil-dispenser-coords* :copy-worldcoords))
+
+    (send *kitchen-plane* :newcoords  (send *kitchen-plane-coords* :copy-worldcoords))
+    )
+
   ;; (unless (boundp '*bowl-2*)
   ;;   (progn
   ;;     (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-2.l")
@@ -85,20 +109,8 @@
   ;;     ))
   ;; (send *bowl-4* :newcoords (send *bowl-4-coords* :copy-worldcoords))
 
-  (unless (boundp '*oil-dispenser*)
-    (progn
-      (load "package://jsk_2020_04_pr2_curry/euslisp/model/dispenser.l")
-      (setq *oil-dispenser* (dispenser))
-      ))
-  (if (not (eql (send *oil-dispenser* :parent) nil))
-      (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
-  (send *oil-dispenser* :newcoords (send *oil-dispenser-coords* :copy-worldcoords))
-
-  (objects (list *pr2* *scene* *spatula* *mcup* *rcup* *ladle* *pot* *bowl-1* *oil-dispenser*))
-  (update-view)
-
   ;; def bowl grasp coords
-  ;; (setq *bowl-1-grasp-coords* (make-coords :pos (float-vector 383 8425 30889) :rpy (float-vector 2.892 1.01 1.404))) 
+  ;; (setq *bowl-1-grasp-coords* (make-coords :pos (float-vector 383 8425 30889) :rpy (float-vector 2.892 1.01 1.404)))
   (setq *bowl-1-grasp-coords* (make-coords :pos (float-vector 379.901 8646.113 30889.23) :rpy (float-vector 2.699 0.835 -1.841)))
 
   (setq *bowl-1-change-rarm-coords* (make-coords :pos (float-vector 506.328 8618.878 31080.768) :rpy (float-vector -1.592 1.41 1.516)))
@@ -111,7 +123,11 @@
   (setq *bowl-3-grasp-coords* (make-coords :pos (float-vector 672 7632 30873) :rpy (float-vector -2.152 1.02 1.606)))
   (setq *bowl-4-grasp-coords* (make-coords :pos (float-vector 567 7824 30920) :rpy (float-vector -2.624 1.195 2.113)))
 
-  (move-to-kitchen-irt)
+  ;; (objects (list *pr2* *scene* *spatula* *mcup* *rcup* *ladle* *pot* *bowl-1* *oil-dispenser*))
+  ;; (move-to-kitchen-irt)
+  ;; (update-view)
+
+  (objects (list *pr2* *spatula* *mcup* *rcup* *ladle* *pot* *bowl-1* *oil-dispenser* *arrow*))
   )
 
 
@@ -132,7 +148,7 @@
     (let ((x nil))
       (setq x (send msg :wrench :force :x))
       (if (< x *x-thre*)
-          (progn 
+          (progn
             (setq *cb-flag* t)
             (format t "OK!! x: ~A ~%" x)
             )
@@ -2152,12 +2168,12 @@
   (send *bowl-2* :newcoords (send *bowl-2-set-coords* :copy-worldcoords))
   (setq *target* (make-coords))
   (send *target* :newcoords (send (send *bowl-2* :handle-handle0) :copy-worldcoords))
-  
+
   (grasp-bowl-larm)
 
   (set-bowl-2-model)
-  
-  (warn "please run (transfer-bowl-2-to-pot) ~%")  
+
+  (warn "please run (transfer-bowl-2-to-pot) ~%")
   )
 
 (defun grasp-bowl-2-set-rarm-model () ;;右腕
@@ -2167,12 +2183,12 @@
   (send *bowl-2* :newcoords (send *bowl-2-set-coords* :copy-worldcoords))
   (setq *target* (make-coords))
   (send *target* :newcoords (send (send *bowl-2* :handle-handle0) :copy-worldcoords))
-  
+
   (grasp-bowl-rarm)
 
   (set-bowl-2-model-rarm)
-  
-  (warn "please run (put-bowl-2-model) ~%")  
+
+  (warn "please run (put-bowl-2-model) ~%")
   )
 
 
@@ -2183,7 +2199,7 @@
   (send *bowl-2* :newcoords (send *bowl-2-set-coords* :copy-worldcoords))
   (send *arrow* :newcoords (send (send *bowl-2* :handle-handle0) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
-  
+
   (put-bowl-larm)
   )
 
@@ -2212,7 +2228,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   ;; ボウル３を置く位置
   (if (not (eql (send *bowl-3* :parent) nil))
       (send (send *bowl-3* :parent) :dissoc *bowl-3*))
@@ -2220,19 +2236,19 @@
   (send *arrow* :newcoords (send (send *bowl-3* :handle-handle0) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
 
-  (put-bowl-larm)  
+  (put-bowl-larm)
   )
 
 (defun grasp-bowl-3-model ()
   ;; ボウル３の位置
   (setq *target* (make-coords))
   (send *target* :newcoords (send (send *bowl-3* :handle-handle0) :copy-worldcoords))
-  
+
   (grasp-bowl-larm)
 
   (set-bowl-3-model)
-  
-  (warn "please run (transfer-bowl-3-to-pot) ~%")  
+
+  (warn "please run (transfer-bowl-3-to-pot) ~%")
   )
 
 (defun set-bowl-4-model ()
@@ -2260,27 +2276,27 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   ;; ボウル４を置く位置
   (if (not (eql (send *bowl-4* :parent) nil))
       (send (send *bowl-4* :parent) :dissoc *bowl-4*))
   (send *bowl-4* :newcoords (send *bowl-4-coords* :copy-worldcoords))
   (send *arrow* :newcoords (send (send *bowl-4* :handle-handle0) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
-  
-  (put-bowl-larm)  
+
+  (put-bowl-larm)
   )
 
 (defun grasp-bowl-4-model ()
   ;; ボウル４の位置
   (setq *target* (make-coords))
   (send *target* :newcoords (send (send *bowl-4* :handle-handle0) :copy-worldcoords))
-  
+
   (grasp-bowl-larm)
-  
+
   (set-bowl-4-model)
-  
-  (warn "please run (transfer-bowl-4-to-pot) ~%")  
+
+  (warn "please run (transfer-bowl-4-to-pot) ~%")
   )
 
 
@@ -2293,7 +2309,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (send *pr2* :larm :move-end-pos (float-vector 0 -100 0) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
   (send *ri* :wait-interpolation)
@@ -2322,7 +2338,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (send *pr2* :larm :move-end-pos (float-vector -100 100 0) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
   (send *ri* :wait-interpolation)
@@ -2331,9 +2347,9 @@
 
 (defun transfer-bowl-1-to-pot ()
   (set-bowl-1-model)
-  
+
   (transfer-to-pot-set)
-  
+
   ;; 注ぐ位置
   (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
   (send *arrow* :translate #f(0 -50 120) :world)
@@ -2354,7 +2370,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (send *arrow* :rotate (deg2rad -30) :x)
   (send *arrow* :rotate (deg2rad 45) :y)
   (send *arrow* :translate #f(20 -150 -150) :world)
@@ -2366,22 +2382,22 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
-  (warn "please run (after-transfer) ~%")  
+
+  (warn "please run (after-transfer) ~%")
   )
 
 (defun transfer-bowl-2-to-pot ()
   (set-bowl-2-model)
-  
+
   (transfer-to-pot-set)
-  
+
   ;; 注ぐ位置
   (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
   (send *arrow* :translate #f(0 -50 120) :world)
   (send *arrow* :rotate (deg2rad -90) :z :world)
-  
+
   (look-at-arrow)
-  
+
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :move-target (send *bowl-2* :attention-attention0)
@@ -2390,22 +2406,22 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
-  (warn "please run (after-transfer) ~%")  
+
+  (warn "please run (after-transfer) ~%")
   )
 
 (defun transfer-bowl-3-to-pot ()
   (set-bowl-3-model)
-  
+
   (transfer-to-pot-left-set)
-  
+
   ;; 注ぐ位置
   (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
   (send *arrow* :translate #f(0 -50 120) :world)
   (send *arrow* :rotate (deg2rad -90) :z :world)
-  
+
   (look-at-arrow)
-  
+
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :move-target (send *bowl-3* :attention-attention0)
@@ -2414,20 +2430,20 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (warn "please run (after-transfer-left) ~%")
   )
 
 (defun transfer-bowl-4-to-pot ()
   (set-bowl-4-model)
-  
+
   (transfer-to-pot-left-set)
-  
+
   ;; 注ぐ位置
   (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
   (send *arrow* :translate #f(0 -50 120) :world)
   (send *arrow* :rotate (deg2rad -90) :z :world)
-  
+
   (look-at-arrow)
 
   (send *pr2* :larm :inverse-kinematics
@@ -2947,7 +2963,7 @@
   (warn "please run (carry-rcup-pose) ~%")
   )
 
-(defun after-grasp-rcup ()  
+(defun after-grasp-rcup ()
   ;; (send *arrow* :newcoords (make-coords :pos (float-vector 604.833 8300.101 31079.393) :rpy (float-vector 3.141 0.75 0.0)))
   ;; (send *pr2* :larm :inverse-kinematics
   ;;       (send *arrow* :copy-worldcoords)
@@ -2956,7 +2972,7 @@
   ;; (send *viewer* :draw-objects)
   ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
   ;; (send *ri* :wait-interpolation)
-  
+
   (send *arrow* :newcoords (make-coords :pos (float-vector 474.868 8300.116 31134.418) :rpy (float-vector 1.57 0.0 -1.57)))
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -2982,7 +2998,7 @@
   (grasp-rcup-with-fail-detection)
   (after-grasp-rcup)
   (carry-rcup-pose)
-  
+
   (warn "please go to sink spot ~%")
   )
 
@@ -2992,7 +3008,7 @@
   (transfer-rcup-model)
   (unix:sleep sleep-time)
   (after-rcup-model)
-  (carry-rcup-pose)  
+  (carry-rcup-pose)
   )
 
 

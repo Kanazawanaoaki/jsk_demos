@@ -10,16 +10,28 @@
 (setq *cb-flag* nil)
 
 ;; load objects
-(unless (boundp '*knife*)
+(unless (boundp '*veg*)
   (progn
     (setq *veg* (make-cube 100 50 40))
     (send *veg* :set-color :green)
     ))
 
+(unless (boundp '*mcup*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/measuring-cup-73b2.l")
+    (setq *mcup* (measuring-cup-73b2))
+    ))
+
+(unless (boundp '*rcup*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/red-cup.l")
+    (setq *rcup* (red-cup))
+    ))
 
 (defun water-init ()
   ;; init
-  (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
+  ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
+  ;; (setq *sink-spot* (make-coords :pos (float-vector 1110 9100 30000) :rpy (float-vector pi 0 0))) ;; sink
 
   ;; set objects
 
@@ -39,6 +51,8 @@
 
 
 ;; TODO seiri
+
+
 ;; check mizukumi rec
 (ros::roseus "bowl_transfer_test" :anonymous t)
 (ros::load-ros-manifest "geometry_msgs")
@@ -112,6 +126,78 @@
 
 
 ;; water funcs
+
+;; Add from
+(defun sink-lever-test (&key (use-cds-offset t))
+  (let ((wait-rav-1 #f(-41.4059 32.4107 -50.5582 -112.849 -176.587 -63.8396 38.962)) ;; 手前の姿勢
+        (wait-rav-2 #f(-24.8704 3.91558 -78.0752 -40.0538 -31.1184 -40.1947 20.8712)) ;; 奥の姿勢
+        )
+    (send *pr2* :rarm :angle-vector wait-rav-1)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+    (send *ri* :wait-interpolation)
+
+    (send *pr2* :rarm :angle-vector wait-rav-2)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+    (send *ri* :wait-interpolation)
+
+    (send *ri* :move-gripper :rarm 0.03 :effort (* 2000 0.03) :wait t)
+
+    ;; set
+    ;; off
+    (setq now-coords (make-coords :pos #f(877.466 -25.883 1012.658) :rpy #f(0.794 0.215 -1.428)))
+    (if use-cds-offset
+        (setq target-coords (set-offset-cds now-coords *sink-offset-cds*))
+      (setq target-coords (send  now-coords :copy-worldcoords)))
+    (send *pr2* :rarm :inverse-kinematics
+          (send target-coords :copy-worldcoords)
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send *ri* :start-grasp :rarm :wait t)
+
+    ;; on
+    ;; (setq now-coords (make-coords :pos #f(893.597 -17.28 1043.267) :rpy #f(0.539 0.466 -1.373)))
+    (setq now-coords (make-coords :pos #f(895.364 -32.896 1044.233) :rpy #f(0.556 0.444 -1.265)))
+    (if use-cds-offset
+        (setq target-coords (set-offset-cds now-coords *sink-offset-cds*))
+      (setq target-coords (send  now-coords :copy-worldcoords)))
+    (send *pr2* :rarm :inverse-kinematics
+          (send target-coords :copy-worldcoords)
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (unix:sleep 1) ;; TODO なにか処理
+
+    ;; off
+    (setq now-coords (make-coords :pos #f(884.415 -30.443 1012.658) :rpy #f(0.81 0.215 -1.428)))
+    (if use-cds-offset
+        (setq target-coords (set-offset-cds now-coords *sink-offset-cds*))
+      (setq target-coords (send  now-coords :copy-worldcoords)))
+    (setq target-coords (set-offset-cds now-coords *sink-offset-cds*))
+    (send *pr2* :rarm :inverse-kinematics
+          (send target-coords :copy-worldcoords)
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send *ri* :move-gripper :rarm 0.03 :effort (* 2000 0.03) :wait t)
+
+    (send *pr2* :rarm :angle-vector wait-rav-2)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+    (send *ri* :wait-interpolation)
+
+    (send *pr2* :rarm :angle-vector wait-rav-1)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+    (send *ri* :wait-interpolation)
+    ))
+
+
+
 (defun grasp-lever (&rest args &key (adjust 0) &allow-other-keys)
   ;;少し上に
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
