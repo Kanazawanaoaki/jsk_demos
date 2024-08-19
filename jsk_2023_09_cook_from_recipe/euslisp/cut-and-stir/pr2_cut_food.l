@@ -414,6 +414,14 @@
         (send cds :copy-worldcoords) "/base_footprint" "/target_cds_frame")
   )
 
+(defun publish-cds-tf-list (cds-list)
+  (let ((frame-name))
+    (dotimes (i (length cds-list))
+      (send *tfb* :send-transform
+            (send cds :copy-worldcoords) "/base_footprint" (format nil "/target_cds_frame_" i))
+      )
+    )
+
 (defun show-cds-arrow (cds)
   (send *arrow* :newcoords (send cds :copy-worldcoords))
   (objects *arrow*)

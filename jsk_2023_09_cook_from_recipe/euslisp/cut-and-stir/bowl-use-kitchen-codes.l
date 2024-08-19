@@ -127,7 +127,7 @@
   ;; (move-to-kitchen-irt)
   ;; (update-view)
 
-  (objects (list *pr2* *spatula* *mcup* *rcup* *ladle* *pot* *bowl-1* *oil-dispenser* *arrow*))
+  (objects (list *pr2* *kitchen-plane* *spatula* *mcup* *rcup* *ladle* *pot* *bowl-1* *oil-dispenser* *arrow*))
   )
 
 
