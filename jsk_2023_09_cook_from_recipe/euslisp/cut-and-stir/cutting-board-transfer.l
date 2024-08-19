@@ -8,7 +8,6 @@
 ;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/73b2-kitchen-coords.l")
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/tool-use-in-kitchen-codes.l")
 
-
 ;; set global variables
 (setq *debug-flag* t)
 (setq *s-time* 3)
@@ -53,52 +52,70 @@
     (setq *arrow* (arrow))
     ))
 
-(defun cutting-board-init (&key (reset-obj-cds t) (init-cds t))
+(defun cutting-board-init (&key (reset-obj-cds t) (init-cds t) (type :curry))
   ;; init
   ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
+  ;; (setq *kitchen-spot* (make-coords :pos (float-vector 1110 8500 30000) :rpy (float-vector pi 0 0))) ;; original
 
   ;; set global coords
   (when init-cds
-    (73b2-kitchen-coords-init))
+    (73b2-kitchen-coords-init :type type))
 
   ;; set objects
+  (send *kitchen-plane* :newcoords  (send *kitchen-plane-coords* :copy-worldcoords))
   (when reset-obj-cds
-    (dissoc-object *cutting-board*)
-    (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
+    (case type
+          (:curry
+           (dissoc-object *cutting-board*)
+           (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
 
-    (dissoc-object *bowl-1*)
-    (send *bowl-1* :newcoords (send *bowl-1-kitchen-coords* :copy-worldcoords))
+           (dissoc-object *gray-bowl*)
+           (send *gray-bowl* :newcoords (send *gray-bowl-kitchen-coords* :copy-worldcoords))
 
-    (dissoc-object *knife*)
-    (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
+           (dissoc-object *knife*)
+           (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
 
-    (dissoc-object *pot*)
-    (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+           (dissoc-object *pot*)
+           (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
 
-    (send *kitchen-plane* :newcoords  (send *kitchen-plane-coords* :copy-worldcoords))
+           (objects (list *pr2* *kitchen-plane* *cutting-board* *knife* *pot* *gray-bowl* *arrow*))
+           )
+          (:old-curry
+           (dissoc-object *cutting-board*)
+           (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
 
-    ;; def global-coords
-    ;; (setq *slide-rarm-coords* (make-coords :pos (float-vector 430.297 8421.198 30852.165) :rpy (float-vector -3.086 1.155 3.132))) ;; original
-    ;; (setq *slide-rarm-coords* (make-coords :pos (float-vector 679.703 78.802 852.165) :rpy (float-vector 0.056 1.155 3.132))) ;; fix
-    (setq *slide-rarm-coords-rel* (make-coords :pos (float-vector -129.703 1.145 12.165) :rpy (float-vector -3.085 1.155 3.132))) ;; fix rel
+           (dissoc-object *bowl-1*)
+           (send *bowl-1* :newcoords (send *bowl-1-kitchen-coords* :copy-worldcoords))
 
-    ;; (setq *slide-larm-coords* (make-coords :pos (float-vector 735.864 8441.372 30866.716) :rpy (float-vector 2.244 -1.518 0.872))) ;; original
-    ;; (setq *slide-larm-coords* (make-coords :pos (float-vector 374.136 58.628 866.716) :rpy (float-vector -0.898 -1.518 0.872))) ;; fix
-    (setq *slide-larm-coords-rel* (make-coords :pos (float-vector 175.855 21.444 26.716) :rpy (float-vector 2.244 -1.518 0.872))) ;; fix rel
+           (dissoc-object *knife*)
+           (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
 
-    ;; (setq *grasp-larm-coords* (make-coords :pos (float-vector 679.695 8281.493 30832.711) :rpy (float-vector 1.882 0.065 1.548))) ;; original
-    ;; (setq *grasp-larm-coords* (make-coords :pos (float-vector 430.305 218.507 832.711) :rpy (float-vector -1.26 0.065 1.548))) ;; fix
-    (setq *grasp-larm-coords-rel* (make-coords :pos (float-vector 19.748 -138.501 -7.289) :rpy (float-vector 1.882 0.065 1.548))) ;; fix rel
+           (dissoc-object *pot*)
+           (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+
+           (objects (list *pr2* *kitchen-plane* *cutting-board* *knife* *pot* *bowl-1* *arrow*))
+           )
+          )
     )
+
+  ;; def global-coords
+  ;; (setq *slide-rarm-coords* (make-coords :pos (float-vector 430.297 8421.198 30852.165) :rpy (float-vector -3.086 1.155 3.132))) ;; original
+  ;; (setq *slide-rarm-coords* (make-coords :pos (float-vector 679.703 78.802 852.165) :rpy (float-vector 0.056 1.155 3.132))) ;; fix
+  (setq *slide-rarm-coords-rel* (make-coords :pos (float-vector -129.703 1.145 12.165) :rpy (float-vector -3.085 1.155 3.132))) ;; fix rel
+
+  ;; (setq *slide-larm-coords* (make-coords :pos (float-vector 735.864 8441.372 30866.716) :rpy (float-vector 2.244 -1.518 0.872))) ;; original
+  ;; (setq *slide-larm-coords* (make-coords :pos (float-vector 374.136 58.628 866.716) :rpy (float-vector -0.898 -1.518 0.872))) ;; fix
+  (setq *slide-larm-coords-rel* (make-coords :pos (float-vector 175.855 21.444 26.716) :rpy (float-vector 2.244 -1.518 0.872))) ;; fix rel
+
+  ;; (setq *grasp-larm-coords* (make-coords :pos (float-vector 679.695 8281.493 30832.711) :rpy (float-vector 1.882 0.065 1.548))) ;; original
+  ;; (setq *grasp-larm-coords* (make-coords :pos (float-vector 430.305 218.507 832.711) :rpy (float-vector -1.26 0.065 1.548))) ;; fix
+  (setq *grasp-larm-coords-rel* (make-coords :pos (float-vector 19.748 -138.501 -7.289) :rpy (float-vector 1.882 0.065 1.548))) ;; fix rel
 
   ;; (move-to-kitchen-irt)
   ;; (objects (list *pr2* *scene* *cutting-board* *knife* *pot* *bowl-1*))
   ;; (update-view)
   ;; ;; for original coords
   ;; (send *pr2* :move-to (send *kitchen-spot* :copy-worldcoords) :world)
-
-  (objects (list *pr2* *kitchen-plane* *cutting-board* *knife* *pot* *bowl-1* *arrow*))
-
   )
 
 (cutting-board-init)

@@ -37,6 +37,12 @@
     (setq *bowl-1* (bowl-1))
     ))
 
+(unless (boundp '*gray-bowl*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/gray-bowl.l")
+    (setq *gray-bowl* (gray-bowl))
+    ))
+
 (unless (boundp '*oil-dispenser*)
   (progn
     (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/dispenser.l")
@@ -56,36 +62,63 @@
     (setq *arrow* (arrow))
     ))
 
-(defun bowl-init (&key (reset-obj-cds t) (init-cds t))
+(defun bowl-init (&key (reset-obj-cds t) (init-cds t) (type :curry))
   ;; init
   ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   ;; (setq *kitchen-spot* (make-coords :pos (float-vector 1110 8500 30000) :rpy (float-vector pi 0 0))) ;; original
 
   ;; set global coords
   (when init-cds
-    (73b2-kitchen-coords-init))
+    (73b2-kitchen-coords-init :type type))
 
   ;; set objects
+  (send *kitchen-plane* :newcoords  (send *kitchen-plane-coords* :copy-worldcoords))
   (when reset-obj-cds
-    (dissoc-object *spatula*)
-    (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; spatula on the cutting board
+    (case type
+          (:curry
+           (dissoc-object *spatula*)
+           (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; spatula on the cutting board
 
-    (dissoc-object *pot*)
-    (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+           (dissoc-object *pot*)
+           (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
 
-    (dissoc-object *mcup*)
-    (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
+           ;; (dissoc-object *mcup*)
+           ;; (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
 
-    (dissoc-object *rcup*)
-    (send *rcup* :newcoords (send *rcup-coords* :copy-worldcoords))
+           ;; (dissoc-object *rcup*)
+           ;; (send *rcup* :newcoords (send *rcup-coords* :copy-worldcoords))
 
-    (dissoc-object *bowl-1*)
-    (send *bowl-1* :newcoords (send *bowl-1-kitchen-coords* :copy-worldcoords))
+           (dissoc-object *gray-bowl*)
+           (send *gray-bowl* :newcoords (send *gray-bowl-kitchen-coords* :copy-worldcoords))
 
-    (dissoc-object *oil-dispenser*)
-    (send *oil-dispenser* :newcoords (send *oil-dispenser-coords* :copy-worldcoords))
+           (dissoc-object *oil-dispenser*)
+           (send *oil-dispenser* :newcoords (send *oil-dispenser-coords* :copy-worldcoords))
 
-    (send *kitchen-plane* :newcoords  (send *kitchen-plane-coords* :copy-worldcoords))
+           ;; (objects (list *pr2* *kitchen-plane* *spatula* *mcup* *rcup* *ladle* *pot* *bowl-1* *oil-dispenser* *arrow*))
+           (objects (list *pr2* *kitchen-plane* *spatula* *ladle* *pot* *gray-bowl* *oil-dispenser* *arrow*))
+           )
+          (:old-curry
+           (dissoc-object *spatula*)
+           (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; spatula on the cutting board
+
+           (dissoc-object *pot*)
+           (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+
+           (dissoc-object *mcup*)
+           (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
+
+           (dissoc-object *rcup*)
+           (send *rcup* :newcoords (send *rcup-coords* :copy-worldcoords))
+
+           (dissoc-object *bowl-1*)
+           (send *bowl-1* :newcoords (send *bowl-1-kitchen-coords* :copy-worldcoords))
+
+           (dissoc-object *oil-dispenser*)
+           (send *oil-dispenser* :newcoords (send *oil-dispenser-coords* :copy-worldcoords))
+
+           (objects (list *pr2* *kitchen-plane* *spatula* *mcup* *rcup* *ladle* *pot* *bowl-1* *oil-dispenser* *arrow*))
+           )
+          )
     )
 
   ;; (unless (boundp '*bowl-2*)
@@ -126,8 +159,6 @@
   ;; (objects (list *pr2* *scene* *spatula* *mcup* *rcup* *ladle* *pot* *bowl-1* *oil-dispenser*))
   ;; (move-to-kitchen-irt)
   ;; (update-view)
-
-  (objects (list *pr2* *kitchen-plane* *spatula* *mcup* *rcup* *ladle* *pot* *bowl-1* *oil-dispenser* *arrow*))
   )
 
 
