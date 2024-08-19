@@ -28,14 +28,28 @@
     (setq *rcup* (red-cup))
     ))
 
-(defun water-init ()
+;; offset cds for tmp
+(unless (boundp '*sink-offset-cds*)
+  (progn
+    (setq *sink-offset-cds* (make-coords))
+    ))
+
+(defun water-init (&key (use-cds-offset t))
   ;; init
   ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/bowl-use-kitchen-codes.l")
   ;; (setq *sink-spot* (make-coords :pos (float-vector 1110 9100 30000) :rpy (float-vector pi 0 0))) ;; sink
 
   ;; set objects
 
-  ;; set global num
+  ;; set global coords
+  (setq *faucet-orig-coords* (make-coords :pos #f(776.855 -17.7464 1000.0) :rpy #f(-0.008 0.0 0.0))) ;; for without rec
+  (if use-cds-offset
+      (setq *faucet-coords* (set-offset-cds *faucet-orig-coords* *sink-offset-cds*))
+    (setq *faucet-coords* (send *faucet-orig-coords* :copy-worldcoords))
+    )
+
+  (setq *sink-sink-end-1* (make-coords :pos #f(575.0 145.0 1000.0) :rpy #f(0.017 0.0 0.0))) ;; for check
+  (setq *sink-sink-end-2* (make-coords :pos #f(505.0 55.0 1000.0) :rpy #f(0.017 0.0 0.0))) ;; for check
 
   ;; (move-to-sink-irt)
   ;; (objects (list *veg* *pr2* *scene* *mcup* *rcup*))
@@ -128,10 +142,41 @@
 ;; water funcs
 
 ;; Add from
-(defun sink-lever-test (&key (use-cds-offset t))
-  (let ((wait-rav-1 #f(-41.4059 32.4107 -50.5582 -112.849 -176.587 -63.8396 38.962)) ;; 手前の姿勢
-        (wait-rav-2 #f(-24.8704 3.91558 -78.0752 -40.0538 -31.1184 -40.1947 20.8712)) ;; 奥の姿勢
+(defun sink-lever-rec ()
+  (let ((rec-coords)
+        (rec-to-target-offset)
+        (grasp-cds))
+    ;; (setq rec-to-target-offset (make-coords :pos #f(330.658 123.566 236.368) :rpy #f(-1.215 0.72 0.426))) ;; v1 ik fail
+    (setq rec-to-grasp-offset (make-coords :pos #f(336.154 125.843 243.1) :rpy #f(-1.204 0.722 0.445)))
+    (setq rec-to-faucet-offset (make-coords :pos #f(342.957 118.145 345.331) :rpy #f(0.018 1.503 -3.13)))
+
+    ;; rec sink landmark
+    (reset-cook-pose :head-p 30 :arm :rarm)
+    (unix::sleep 1)
+    (setq rec-coords (k4a-check-detection "/point_pose_sink/ObjectDetection"))
+    ;; (setq hoge (send rec-coords :copy-worldcoords))
+    (format t "point_pose_sink result: ~A ~%" rec-coords)
+
+    (setq grasp-cds (calc-coords-from-rel rec-coords rec-to-grasp-offset))
+    (setq faucet-cds (calc-coords-from-rel rec-coords rec-to-faucet-offset))
+    (publish-cds-tf-list (list grasp-cds faucet-cds))
+    (setq *faucet-rec-coords* (send faucet-cds :copy-worldcoords))
+
+    grasp-cds))
+
+(defun sink-lever-test (&key (use-cds-offset nil) (with-rec t))
+  (let (
+        ;; (wait-rav-1 #f(-41.4059 32.4107 -50.5582 -112.849 -176.587 -63.8396 38.962)) ;; 手前の姿勢
+        ;; (wait-rav-2 #f(-24.8704 3.91558 -78.0752 -40.0538 -31.1184 -40.1947 20.8712)) ;; 奥の姿勢
+        (wait-rav-1 #f(-15.8895 46.2354 -3.87426 -115.597 190.444 -68.0734 -1.41295)) ;; 手前の姿勢 for upper
+        (wait-rav-2 #f(-8.79278 18.6346 3.39867 -41.8748 246.993 -69.8632 31.6097)) ;; 奥の姿勢
+        (rec-lever-cds)
         )
+
+    (when with-rec
+      (setq rec-lever-cds (sink-lever-rec))
+      (reset-cook-pose :head-p 50 :arm :rarm)
+      )
 
     (send *pr2* :rarm :angle-vector wait-rav-1)
     (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
@@ -145,10 +190,14 @@
 
     ;; set
     ;; off
-    (setq now-coords (make-coords :pos #f(877.466 -25.883 1012.658) :rpy #f(0.794 0.215 -1.428)))
-    (if use-cds-offset
-        (setq target-coords (set-offset-cds now-coords *sink-offset-cds*))
-      (setq target-coords (send  now-coords :copy-worldcoords)))
+    (if with-rec
+        (setq target-coords (send rec-lever-cds :copy-worldcoords))
+      (progn
+        (setq now-coords (make-coords :pos #f(877.466 -25.883 1012.658) :rpy #f(0.794 0.215 -1.428)))
+        (if use-cds-offset
+            (setq target-coords (set-offset-cds now-coords *sink-offset-cds*))
+          (setq target-coords (send now-coords :copy-worldcoords)))
+        ))
     (send *pr2* :rarm :inverse-kinematics
           (send target-coords :copy-worldcoords)
           :rotation-axis t
@@ -159,11 +208,18 @@
     (send *ri* :start-grasp :rarm :wait t)
 
     ;; on
-    ;; (setq now-coords (make-coords :pos #f(893.597 -17.28 1043.267) :rpy #f(0.539 0.466 -1.373)))
-    (setq now-coords (make-coords :pos #f(895.364 -32.896 1044.233) :rpy #f(0.556 0.444 -1.265)))
-    (if use-cds-offset
-        (setq target-coords (set-offset-cds now-coords *sink-offset-cds*))
-      (setq target-coords (send  now-coords :copy-worldcoords)))
+    (if with-rec
+        (progn
+          (setq off-on-rel (make-coords :pos #f(0.634896 -34.6435 -12.8812) :rpy #f(0.207 0.246 0.267)))
+          (setq target-coords (calc-coords-from-rel target-coords off-on-rel))
+          )
+      (progn
+        ;; (setq now-coords (make-coords :pos #f(893.597 -17.28 1043.267) :rpy #f(0.539 0.466 -1.373)))
+        (setq now-coords (make-coords :pos #f(895.364 -32.896 1044.233) :rpy #f(0.556 0.444 -1.265)))
+        (if use-cds-offset
+            (setq target-coords (set-offset-cds now-coords *sink-offset-cds*))
+          (setq target-coords (send  now-coords :copy-worldcoords)))
+        ))
     (send *pr2* :rarm :inverse-kinematics
           (send target-coords :copy-worldcoords)
           :rotation-axis t
@@ -174,11 +230,14 @@
     (unix:sleep 1) ;; TODO なにか処理
 
     ;; off
-    (setq now-coords (make-coords :pos #f(884.415 -30.443 1012.658) :rpy #f(0.81 0.215 -1.428)))
-    (if use-cds-offset
-        (setq target-coords (set-offset-cds now-coords *sink-offset-cds*))
-      (setq target-coords (send  now-coords :copy-worldcoords)))
-    (setq target-coords (set-offset-cds now-coords *sink-offset-cds*))
+    (if with-rec
+        (setq target-coords (send rec-lever-cds :copy-worldcoords))
+      (progn
+        (setq now-coords (make-coords :pos #f(877.466 -25.883 1012.658) :rpy #f(0.794 0.215 -1.428)))
+        (if use-cds-offset
+            (setq target-coords (set-offset-cds now-coords *sink-offset-cds*))
+          (setq target-coords (send  now-coords :copy-worldcoords)))
+        ))
     (send *pr2* :rarm :inverse-kinematics
           (send target-coords :copy-worldcoords)
           :rotation-axis t
@@ -309,10 +368,10 @@
         :debug-view *debug-flag*)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (send *ri* :start-grasp :rarm :wait t)
-  
-  (warn "please run (water-on) ~%") 
+
+  (warn "please run (water-on) ~%")
   )
 
 (defun water-on ()
@@ -345,7 +404,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (warn "please run (release-lever) ~%")
   )
 
@@ -353,7 +412,7 @@
 (defun release-lever ()
   ;;グリッパを微妙に開く
   (send *ri* :move-gripper :rarm 0.04)
-  
+
   (send *arrow* :newcoords (send *fauset-lever-rarm-coords* :copy-worldcoords))
   (send *arrow* :translate #f(100 60 20) :world)
   (send *pr2* :rarm :inverse-kinematics
@@ -362,14 +421,14 @@
         :debug-view *debug-flag*)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (reset-rarm)
   )
 
 (defun release-lever-tmp ()
   ;;グリッパを微妙に開く
   (send *ri* :move-gripper :rarm 0.04)
-  
+
   (send *arrow* :newcoords (send *fauset-lever-rarm-coords* :copy-worldcoords))
   (send *arrow* :translate #f(100 60 20) :world)
   (send *pr2* :rarm :inverse-kinematics
@@ -378,7 +437,6 @@
         :debug-view *debug-flag*)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
   )
 
 

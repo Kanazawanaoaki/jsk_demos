@@ -325,7 +325,7 @@
 
   ;; 手を上げる
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate #f(0 0 80) :world)
+  (send *arrow* :translate #f(80 0 80) :world)
   (send *pr2* :rarm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
         :rotation-axis t
@@ -1889,8 +1889,8 @@
   (receive-knife :with-dialogue with-dialogue)
   (put-knife)
   (receive-potato-peeler :with-dialogue with-dialogue)
-  (put-potato-peeler :with-dialogue with-dialogue)
-  (receive-peeler)
+  (put-potato-peeler)
+  (receive-peeler :with-dialogue with-dialogue)
   (put-peeler)
   )
 
@@ -1900,8 +1900,10 @@
   (put-knife)
   )
 
-(defun now-set-peeler (&key (with-dialogue t))
-  (pr2-arm-up :num 100 :arm :rarm)
+(defun now-set-peeler (&key (with-dialogue t) (up-arm t))
+  (when up-arm
+    (pr2-arm-up :num 100 :arm :rarm)
+    )
   (receive-peeler :with-dialogue with-dialogue)
   (put-peeler)
   )

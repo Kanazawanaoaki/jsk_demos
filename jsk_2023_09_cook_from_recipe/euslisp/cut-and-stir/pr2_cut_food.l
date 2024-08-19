@@ -82,6 +82,10 @@
   (setq ans-vec (v- (send base-coords :transform-vector (send rel-coords :worldpos)) (send base-coords :worldpos)))
   ans-vec)
 
+(defun print-cds-format (cds)
+  (format t "(setq tmp-cds (make-coords :pos ~A :rot ~A)) ~%" (send cds :worldpos) (send cds :worldrot))
+  )
+
 (defun dissoc-object (object-instance)
   (if (not (eql (send object-instance :parent) nil))
       (send (send object-instance :parent) :dissoc object-instance))
@@ -387,7 +391,8 @@
     (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "white cutting board;")
     )
    ((string= object-name "peeler")
-    (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "orange peeler;")
+    ;; (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "orange peeler;")
+    (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "light blue peeler;")
     )
    ((string= object-name "potato peeler")
     (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "yellow and black potato peeler;")
@@ -415,12 +420,15 @@
   )
 
 (defun publish-cds-tf-list (cds-list)
-  (let ((frame-name))
+  (let ((frame-name)
+        (cds))
     (dotimes (i (length cds-list))
+      (setq frame-name (format nil "/target_cds_frame_~A" i))
+      (setq cds (elt cds-list i))
       (send *tfb* :send-transform
-            (send cds :copy-worldcoords) "/base_footprint" (format nil "/target_cds_frame_" i))
+            (send cds :copy-worldcoords) "/base_footprint" frame-name)
       )
-    )
+    ))
 
 (defun show-cds-arrow (cds)
   (send *arrow* :newcoords (send cds :copy-worldcoords))
@@ -548,9 +556,13 @@
    ((and (string= object-name "peeler") (equal arm :rarm))
     ;; (setq object-offset (make-coords :pos #f(-53.198 -7.425 -12.732) :rpy #f(-0.109 0.026 -0.005)))
     ;; (setq object-offset (make-coords :pos #f(-53.198 -7.425 -10.732) :rpy #f(-0.109 0.026 -0.005)))
-    (setq object-offset (make-coords :pos #f(-43.198 -7.425 -10.732) :rpy #f(-0.109 0.026 -0.005)))
-    (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
-    (setq pre-set-val #f(-100 0 100))
+    ;; (setq object-offset (make-coords :pos #f(-43.198 -7.425 -10.732) :rpy #f(-0.109 0.026 -0.005)))
+    (setq object-offset (make-coords :pos #f(-49.884 -6.29 -7.923) :rpy #f(0.091 -0.008 -3.131))) ;; for upper
+
+    ;; (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
+    (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)) ;; for upper
+    ;; (setq pre-set-val #f(-100 0 100))
+    (setq pre-set-val #f(-50 0 -100)) ;;for upper
     (setq fix-rot nil)
     (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
     )
@@ -626,14 +638,8 @@
     (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
     )
    ((and (string= object-name "gray bowl") (equal arm :rarm)) ;; TODO
-    (if use-calib-offset
-        (progn
-          (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
-          )
-      (progn
-        (setq object-offset (make-coords :pos #f(-4.353 147.388 -10.049) :rpy #f(-1.143 1.405 -1.282))) ;; for with table and upper and rotate (upper is in outside)
-        )
-      )
+
+    (setq object-offset (make-coords :pos #f(-4.353 147.388 -10.049) :rpy #f(-1.143 1.405 -1.282))) ;; for with table and upper and rotate (upper is in outside)
 
     ;; (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)) ;; for upper
     ;; (setq wait-av #f(-38.3278 -3.2288 -63.6414 -68.0071 -83.1809 -108.309 393.782)) ;; for green bowl, upper outside

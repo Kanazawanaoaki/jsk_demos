@@ -3,7 +3,8 @@
 
   ;; (setq *kitchen-spot* (make-coords :pos (float-vector 1110 8500 30000) :rpy (float-vector pi 0 0))) ;; original
 
-  (setq *kitchen-plane-coords* (make-coords :pos #f(815 -15 835)))
+  ;; (setq *kitchen-plane-coords* (make-coords :pos #f(815 -15 835)))
+  (setq *kitchen-plane-coords* (make-coords :pos #f(815 -15 830)))
   (setq *kitchen-plane-end-1* (make-coords :pos #f(1100 330 840)))
   (setq *kitchen-plane-end-2* (make-coords :pos #f(1100 -360 840)))
   (setq *kitchen-plane-end-3* (make-coords :pos #f(530 330 840)))
@@ -19,7 +20,7 @@
   ;; (setq *peeler-coords* (make-coords :pos (float-vector 530.0 -315.0 870.0) :rpy (float-vector -0.002 0.049 1.51))) ;; ピーラー fix
   ;; (setq *peeler-coords* (make-coords :pos (float-vector 650.0 -315.0 870.0) :rpy (float-vector -0.002 0.049 1.51))) ;; ピーラー fix v2
   ;; (setq *peeler-coords* (make-coords :pos (float-vector 650.0 -215.0 870.0) :rpy (float-vector -0.002 0.049 1.51))) ;; ピーラー fix v2 upper
-  (setq *peeler-coords* (make-coords :pos (float-vector 650.0 -115.0 870.0) :rpy (float-vector -0.002 0.049 1.632))) ;; ピーラー fix v3 upper
+  (setq *peeler-coords* (make-coords :pos (float-vector 585.801 -107.456 852.203) :rpy (float-vector -0.006 -0.008 -1.56))) ;; ピーラー fix v3 upper
 
   ;; (setq *potato-peeler-coords* (make-coords :pos (float-vector 580 8915 30865) :rpy (float-vector 3.14 0.013 1.545))) ;; じゃがいもピーラー original
   ;; (setq *potato-peeler-coords* (make-coords :pos (float-vector 530.0 -415.0 865.0) :rpy (float-vector -0.002 0.013 1.545))) ;; じゃがいもピーラー fix
