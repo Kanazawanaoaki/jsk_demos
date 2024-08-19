@@ -132,6 +132,7 @@
   (let ((wait-rav-1 #f(-41.4059 32.4107 -50.5582 -112.849 -176.587 -63.8396 38.962)) ;; 手前の姿勢
         (wait-rav-2 #f(-24.8704 3.91558 -78.0752 -40.0538 -31.1184 -40.1947 20.8712)) ;; 奥の姿勢
         )
+
     (send *pr2* :rarm :angle-vector wait-rav-1)
     (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
     (send *ri* :wait-interpolation)
