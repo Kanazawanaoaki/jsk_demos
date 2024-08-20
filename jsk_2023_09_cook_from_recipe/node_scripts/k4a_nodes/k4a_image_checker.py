@@ -10,7 +10,8 @@ import time
 class ImageSubscriber:
     def __init__(self):
         rospy.init_node('image_subscriber_node', anonymous=True)
-        self.no_topic_flag = True
+        self.no_topic_flag = False ## topicが来ていない状況ならTrue
+        self.once_topic_flag = False ## topicが一度でも来ていたらTrue
 
         # イメージメッセージをサブスクライブ
         self.image_sub = rospy.Subscriber('/k4a/rgb/image_rect_color/compressed', CompressedImage, self.image_callback)
@@ -30,8 +31,9 @@ class ImageSubscriber:
     def image_callback(self, msg):
         # トピックが更新されたら呼び出されるコールバック
         self.last_image_time = time.time()
-        if self.no_topic_flag:
+        if self.no_topic_flag or self.once_topic_flag==False:
             self.no_topic_flag = False
+            self.once_topic_flag = True
             self.say_something("K4a image topic is arrive.")
         # rospy.loginfo("Recieve image topic !!")
 
