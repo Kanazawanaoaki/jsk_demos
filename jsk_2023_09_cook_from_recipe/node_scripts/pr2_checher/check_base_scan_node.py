@@ -49,6 +49,7 @@ class BaseScanChecker:
             else:
                 self.no_topic_flag = True
                 self.say_something("I haven't seen the base scan topic for {} seconds.".format(self.timeout_threshold))
+                self.restart_hokuyo()
         # else:
             # if self.no_topic_flag:
             #     self.no_topic_flag = False
