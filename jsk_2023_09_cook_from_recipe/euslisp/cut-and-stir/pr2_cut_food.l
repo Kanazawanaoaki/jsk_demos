@@ -192,6 +192,7 @@
   (send *ri* :wait-interpolation)
   )
 )
+
 (defun calib-check-pose-kitchen (&key (arm :larm) (side :upper))
   (send *ri* :start-grasp arm :wait t)
   (send *pr2* :head-neck-p :joint-angle 60)
@@ -221,6 +222,24 @@
 
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
+  )
+
+(defun test ()
+  )
+(defun kitchen-pose-calib-check ()
+  (let ((l-arm-calib-list)
+        (r-arm-calib-list))
+
+    (calib-check-pose-kitchen :arm :rarm :side :upper)
+    (calib-check-pose-kitchen :arm :larm :side :upper)
+
+    (unix:sleep 3)
+    (setq l-arm-calib-list (calib-check-rec :arm :larm :side :upper))
+    (setq r-arm-calib-list (calib-check-rec :arm :rarm :side :upper))
+
+    (publish-cds-tf-list (list current-rec ideal-rec current-lec ideal-lec))
+    (format t "[world-tape-diff-vec] rarm:~A, larm:~A ~%" (elt r-arm-calib-list 2) (elt l-arm-calib-list 2))
+    )
   )
 
 (defun calib-check-pose-kitchen-2 (&key (arm :larm) (side :upper)) ;; TODO tmp
@@ -482,7 +501,10 @@
 
          ;; grasp
          (when msg
-           (object-pose-cb msg)
+           (setq *obj-coord* nil)
+           (until *obj-coord*
+                  (object-pose-cb msg)
+                  )
            (when fix-rot
              (send *obj-coord* :newcoords (make-coords :pos (send (send *obj-coord* :copy-worldcoords) :worldpos)))
              )

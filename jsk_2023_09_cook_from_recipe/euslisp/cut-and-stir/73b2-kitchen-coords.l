@@ -124,10 +124,18 @@
 
   ;; (setq *kitchen-plane-coords* (make-coords :pos #f(815 -15 835)))
   (setq *kitchen-plane-coords* (make-coords :pos #f(815 -15 830)))
-  (setq *kitchen-plane-end-1* (make-coords :pos #f(1100 330 840)))
-  (setq *kitchen-plane-end-2* (make-coords :pos #f(1100 -360 840)))
-  (setq *kitchen-plane-end-3* (make-coords :pos #f(530 330 840)))
-  (setq *kitchen-plane-end-4* (make-coords :pos #f(530 -360 840)))
+
+  (setq *stove-kitchen-plane-end-1* (make-coords :pos #f(655 480 840)))
+  (setq *stove-kitchen-plane-end-2* (make-coords :pos #f(1260 480 840)))
+  (setq *stove-kitchen-plane-end-3* (make-coords :pos #f(655.0 -550.0 840.0)))
+  (setq *stove-kitchen-plane-end-4* (make-coords :pos #f(1240.0 -550.0 840.0)))
+
+  (setq *stove-ih-plane-end-1* (make-coords :pos #f(700 -260 840)))
+  (setq *stove-ih-plane-end-2* (make-coords :pos #f(1175 -260 840)))
+  (setq *stove-ih-plane-end-3* (make-coords :pos #f(1175 320 840)))
+  (setq *stove-ih-plane-end-4* (make-coords :pos #f(700 320 840)))
+  (setq *stove-ih-plane-left* (make-coords :pos (float-vector 880 170 840)))
+  (setq *stove-ih-plane-right* (make-coords :pos (float-vector 880 -110 840)))
 
   (case type
         (:curry
