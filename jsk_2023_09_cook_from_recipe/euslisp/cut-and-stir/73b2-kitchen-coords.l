@@ -114,6 +114,54 @@
 
   )
 
+
+(defun 73b2-stove-coords-init (&key (type :curry))
+  ;; set global coords
+
+  ;; (setq *kitchen-spot* (make-coords :pos (float-vector 1110 8500 30000) :rpy (float-vector pi 0 0))) ;; original
+  ;; (setq *stove-spot* (make-coords :pos (float-vector 1200 8100 30000) :rpy (float-vector pi 0 0))) ;; original
+
+
+  ;; (setq *kitchen-plane-coords* (make-coords :pos #f(815 -15 835)))
+  (setq *kitchen-plane-coords* (make-coords :pos #f(815 -15 830)))
+  (setq *kitchen-plane-end-1* (make-coords :pos #f(1100 330 840)))
+  (setq *kitchen-plane-end-2* (make-coords :pos #f(1100 -360 840)))
+  (setq *kitchen-plane-end-3* (make-coords :pos #f(530 330 840)))
+  (setq *kitchen-plane-end-4* (make-coords :pos #f(530 -360 840)))
+
+  (case type
+        (:curry
+
+         )
+        (:old-curry
+         ;; (setq *spatula-coords-1* (make-coords :pos (float-vector 630 8549 30872) :rpy (float-vector 3.084 -0.042 1.542))) ;; ヘラ，平置き original
+         (setq *spatula-coords-1* (make-coords :pos (float-vector 570.0 -449.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix
+
+         ;; (setq *ladle-coords-1* (make-coords :pos (float-vector 630 8313 30877) :rpy (float-vector 3.128 -0.098 1.514))) ;; おたま，平置き original
+         (setq *ladle-coords-1* (make-coords :pos (float-vector 570.0 -213.0 877.0) :rpy (float-vector -0.014 -0.098 1.514))) ;; おたま，平置き fix
+
+         ;; (setq *mcup-coords* (make-coords :pos (float-vector 530 7710 30850) :rpy (float-vector -0.948 0 0))) ;; 計量カップ original
+         (setq *mcup-coords* (make-coords :pos (float-vector 670.0 390.0 850.0) :rpy (float-vector 2.194 0.0 0.0))) ;; 計量カップ fix
+
+         ;; (setq *bowl-1-stove-coords* (make-coords :pos (float-vector 330 8661 30840) :rpy (float-vector -0.423 0 0))) ;; bowl1 original
+         (setq *bowl-1-stove-coords* (make-coords :pos (float-vector 870.0 -561.0 840.0) :rpy (float-vector 2.719 0.0 0.0))) ;; bowl1 fix
+
+         ;; (setq *bowl-2-stove-coords* (make-coords :pos (float-vector 480 7845 30850) :rpy (float-vector -0.175 0 0))) ;; bowl-2 original
+         (setq *bowl-2-stove-coords* (make-coords :pos (float-vector 720.0 255.0 850.0) :rpy (float-vector 2.967 0.0 0.0))) ;; bowl-2 fix
+
+         ;; (setq *bowl-3-stove-coords* (make-coords :pos (float-vector 555 7585 30840) :rpy (float-vector 1.048 0 0))) ;; bowl-3 original
+         (setq *bowl-3-stove-coords* (make-coords :pos (float-vector 645.0 515.0 840.0) :rpy (float-vector -2.094 0.0 0.0))) ;; bowl-3 fix
+
+         ;; (setq *oil-dispenser-stove-coords* (make-coords :pos (float-vector 400 7570 30845) :rpy (float-vector 3.14 0.0 0.0))) ;; oil dispenser original
+         (setq *oil-dispenser-stove-coords* (make-coords :pos (float-vector 800.0 530.0 845.0) :rpy (float-vector -0.002 0.0 0.0))) ;; oil dispenser fix
+
+         ;; (setq *pot-coords* (make-coords :pos (float-vector 450 8080 30850) :rpy (float-vector 3.142 0 0))) ;; pot original
+         (setq *pot-coords* (make-coords :pos (float-vector 750.0 20.0 850.0) :rpy (float-vector 0.0 0.0 0.0))) ;; pot fix
+
+         )
+        )
+  )
+
 (warn "please run (curry-kitchen-view) ~%")
 
 (defun curry-kitchen-view ()

@@ -52,7 +52,7 @@
 ;; (setq *mcup-coords* (make-coords :pos (float-vector 555 7674 30850) :rpy (float-vector -0.948 0 0)))
 (setq *mcup-coords* (make-coords :pos (float-vector 530 7710 30850) :rpy (float-vector -0.948 0 0)))
 (setq *rcup-coords* (make-coords :pos (float-vector 320 8525 30840)))
-(setq *oil-dispenser-coords* (make-coords :pos (float-vector 300 8280 30845) :rpy (float-vector 3.14 0.0 0.0))) 
+(setq *oil-dispenser-coords* (make-coords :pos (float-vector 300 8280 30845) :rpy (float-vector 3.14 0.0 0.0)))
 (setq *oil-dispenser-stove-coords* (make-coords :pos (float-vector 400 7570 30845) :rpy (float-vector 3.14 0.0 0.0))) ;; tmp
 
 (setq *curry-dish-coords* (make-coords :pos (float-vector 530 8400 30840) :rpy (float-vector 0 0 0)))

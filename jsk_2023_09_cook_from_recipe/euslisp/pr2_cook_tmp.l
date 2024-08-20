@@ -440,6 +440,19 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun look-at-cds (cds &key (update-arrow nil) (potentio-vector t))
+  (when update-arrow
+    (send *arrow* :newcoords (send cds :copy-worldcoords))
+    )
+  (when potentio-vector
+    (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+    )
+  (send *pr2* :head :look-at (send (send cds :copy-worldcoords) :worldpos))
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
+  )
+
 (defun pr2-arm-up (&key (num 60) (time 3000) (arm :rarm))
   (send *pr2* arm :move-end-pos (float-vector 0 0 num) :world)
   (send *viewer* :draw-objects)
