@@ -96,82 +96,93 @@
   (setq ans (calc-object-rel-coords ideal-coords current-target-coords))
   ans)
 
-(defun calib-check-rec (&key (arm :larm) (set-offset nil) (side :upper))
-  (if (equal arm :larm)
-      (setq calib-check-topic "/l_gripper_tape_hsi/hsi_segmentation_decomposer/boxes")
-    (setq calib-check-topic "/r_gripper_tape_hsi/hsi_segmentation_decomposer/boxes"))
-  (ros::unsubscribe calib-check-topic)
-  (setq ideal-ee-coords (send (send *pr2* arm :end-coords) :copy-worldcoords))
-  (setq *calib-rec-flag* nil)
-  (until *calib-rec-flag*
-         (setq msg (one-shot-subscribe calib-check-topic jsk_recognition_msgs::BoundingBoxArray :timeout 5000))
-         (setq *found-obj* nil)
+(defun calib-check-rec (&key (arm :larm) (set-offset t) (side :upper))
+  (let ((calib-check-topic)
+        (ideal-ee-coords)
+        (calib-rec-flag)
+        (msg)
+        (current-dim)
+        (dim-thre)
+        (current-arm-diff)
+        (ideal-tape-coords)
+        (current-tape-diff)
+        (world-tape-diff-vec)
+        )
+    (if (equal arm :larm)
+        (setq calib-check-topic "/l_gripper_tape_hsi/hsi_segmentation_decomposer/boxes")
+      (setq calib-check-topic "/r_gripper_tape_hsi/hsi_segmentation_decomposer/boxes"))
+    (ros::unsubscribe calib-check-topic)
+    (setq ideal-ee-coords (send (send *pr2* arm :end-coords) :copy-worldcoords))
+    (setq calib-rec-flag nil)
+    (until calib-rec-flag
+           (setq msg (one-shot-subscribe calib-check-topic jsk_recognition_msgs::BoundingBoxArray :timeout 5000))
+           (setq *found-obj* nil)
 
-         (when msg
-           (object-pose-cb msg)
-           (when *found-obj*
-             ;; check obj-dim
-             (setq current-dim (* *width* *height* *length*))
-             (setq dim-thre (* 40 15 20))
-             (format t "bbox size : ~A, thre is ~A ~%" current-dim dim-thre)
-             (if (< current-dim dim-thre)
-                 (progn
-                   (setq *calib-rec-flag* t)
-                   (setq current-arm-diff (calc-arm-diff ideal-ee-coords *obj-coord*))
-                   (format t "current arm diff : ~A ~%" current-arm-diff) ;; armのend-effectorと認識したテープの座標の差分をend-effector座標系で
-                   (setq ideal-tape-coords (send ideal-ee-coords :copy-worldcoords))
-                   (case side
-                         (:upper
-                          (send ideal-tape-coords :translate #f(-127 0 -23))
-                          )
-                         (:lower
-                          (send ideal-tape-coords :translate #f(-122 0 23))
-                          )
-                         (:right ;; TODO check
-                          (if (equal arm :larm)
-                              (send ideal-tape-coords :translate #f(-90 -55 0))
-                            (send ideal-tape-coords :translate #f(-90 55 0))
-                            ))
-                         (:left
-                          (if (equal arm :larm)
+           (when msg
+             (object-pose-cb msg)
+             (when *found-obj*
+               ;; check obj-dim
+               (setq current-dim (* *width* *height* *length*))
+               (setq dim-thre (* 40 15 20))
+               (format t "bbox size : ~A, thre is ~A ~%" current-dim dim-thre)
+               (if (< current-dim dim-thre)
+                   (progn
+                     (setq calib-rec-flag t)
+                     (setq current-arm-diff (calc-arm-diff ideal-ee-coords *obj-coord*))
+                     (format t "current arm diff : ~A ~%" current-arm-diff) ;; armのend-effectorと認識したテープの座標の差分をend-effector座標系で
+                     (setq ideal-tape-coords (send ideal-ee-coords :copy-worldcoords))
+                     (case side
+                           (:upper
+                            (send ideal-tape-coords :translate #f(-127 0 -23))
+                            )
+                           (:lower
+                            (send ideal-tape-coords :translate #f(-122 0 23))
+                            )
+                           (:right ;; TODO check
+                            (if (equal arm :larm)
+                                (send ideal-tape-coords :translate #f(-90 -55 0))
                               (send ideal-tape-coords :translate #f(-90 55 0))
-                            (send ideal-tape-coords :translate #f(-90 -55 0)) ;; -52
-                            ))
-                         )
-                   (setq current-tape-diff (calc-arm-diff ideal-tape-coords *obj-coord*))
-                   (format t "current diff with tape : ~A ~%" current-tape-diff) ;;本来のテープの場所と認識結果の差分をend-effector座標系で
-                   (setq world-tape-diff-vec (calc-diff-in-world ideal-ee-coords current-tape-diff))
-                   (format t "current diff with tape in world : ~A ~%" world-tape-diff-vec) ;;本来のテープの場所と認識結果の差分のベクトルを世界座標系で
+                              ))
+                           (:left
+                            (if (equal arm :larm)
+                                (send ideal-tape-coords :translate #f(-90 55 0))
+                              (send ideal-tape-coords :translate #f(-90 -55 0)) ;; -52
+                              ))
+                           )
+                     (setq current-tape-diff (calc-arm-diff ideal-tape-coords *obj-coord*))
+                     (format t "current diff with tape : ~A ~%" current-tape-diff) ;;本来のテープの場所と認識結果の差分をend-effector座標系で
+                     (setq world-tape-diff-vec (calc-diff-in-world ideal-ee-coords current-tape-diff))
+                     (format t "current diff with tape in world : ~A ~%" world-tape-diff-vec) ;;本来のテープの場所と認識結果の差分のベクトルを世界座標系で
 
-                   (if (equal arm :larm)
+                     (if (equal arm :larm)
+                         (progn
+                           (setq *ideal-lec* (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+                           (setq *current-lec* (send ideal-lec :copy-worldcoords))
+                           (send *current-lec* :translate world-tape-diff-vec :world)
+                           (format t "current-lec (larm end-coords) : ~A ~%" *current-lec*) ;;実際の左のend-coordsの座標
+                           )
                        (progn
-                         (setq ideal-lec (send (send *pr2* :larm :end-coords) :copy-worldcoords))
-                         (setq current-lec (send ideal-lec :copy-worldcoords))
-                         (send current-lec :translate world-tape-diff-vec :world)
-                         (format t "current-lec (larm end-coords) : ~A ~%" current-lec) ;;実際の左のend-coordsの座標
-                         )
-                     (progn
-                         (setq ideal-rec (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-                         (setq current-rec (send ideal-rec :copy-worldcoords))
-                         (send current-rec :translate world-tape-diff-vec :world)
-                         (format t "current-rec (rarm end-coords) : ~A ~%" current-rec) ;;実際の右のend-coordsの座標
+                         (setq *ideal-rec* (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+                         (setq *current-rec* (send ideal-rec :copy-worldcoords))
+                         (send *current-rec* :translate world-tape-diff-vec :world)
+                         (format t "current-rec (rarm end-coords) : ~A ~%" *current-rec*) ;;実際の右のend-coordsの座標
                          ))
 
-                   (when set-offset ;;offsetをセットする
-                     (if (equal arm :larm)
-                         (setq *larm-calib-offset-vec* world-tape-diff-vec)
-                       (setq *rarm-calib-offset-vec* world-tape-diff-vec)
+                     (when set-offset ;;offsetをセットする
+                       (if (equal arm :larm)
+                           (setq *larm-calib-offset-vec* world-tape-diff-vec)
+                         (setq *rarm-calib-offset-vec* world-tape-diff-vec)
+                         )
                        )
                      )
+                 (progn
+                   (format t "bbox size is too big!! ~%")
                    )
-               (progn
-                 (format t "bbox size is too big!! ~%")
                  )
                )
              )
            )
-         )
-  (list current-arm-diff current-tape-diff world-tape-diff-vec))
+    (list current-arm-diff current-tape-diff world-tape-diff-vec)))
 
 (defun calib-check-pose-1 (&key (arm :larm) (mode :normal))
   (send *ri* :start-grasp arm :wait t)
@@ -237,7 +248,7 @@
     (setq l-arm-calib-list (calib-check-rec :arm :larm :side :upper))
     (setq r-arm-calib-list (calib-check-rec :arm :rarm :side :upper))
 
-    (publish-cds-tf-list (list current-rec ideal-rec current-lec ideal-lec))
+    (publish-cds-tf-list (list *current-rec* *ideal-rec* *current-lec* *ideal-lec*))
     (format t "[world-tape-diff-vec] rarm:~A, larm:~A ~%" (elt r-arm-calib-list 2) (elt l-arm-calib-list 2))
     )
   )
@@ -533,7 +544,7 @@
 
   *obj-coord*)
 
-(defun place-objects-on-table (&key (object-name "ボウル1") (arm :rarm) (set-flag nil) (grasp-flag nil) (only-grasp nil) (spot-name "stove"))
+(defun place-objects-on-table (&key (object-name "ボウル1") (arm :rarm) (action-mode :put) (spot-name "stove"))
   (let ((pre-set-avs (list))
         (pre-set-val (float-vector 0 0 0))
         (set-target-coords (make-coords))
@@ -642,224 +653,151 @@
       )
      )
 
-    (if grasp-flag
-        (progn
-          (dolist (pre-set-av pre-set-avs)
-            (send *pr2* arm :angle-vector pre-set-av)
-            (send *ri* :angle-vector (send *pr2* :angle-vector))
-            (send *ri* :wait-interpolation)
-            ))
-      (progn
-        (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
-        (send *ri* :angle-vector (send *pr2* :angle-vector))
-        (send *ri* :wait-interpolation)
-        )
-      )
-
-    (setq set-coords (send set-target-coords :copy-worldcoords))
-
-    (if set-flag
-        (progn
-          ;; 物体を握らせて貰う
-          (send *ri* :stop-grasp arm :wait t)
-          (send *ri* :speak-jp (format nil "~AをセットしてOKと言ってください" object-name))
-          (ok-wait)
-          (send *ri* :start-grasp arm :wait t)
-          ))
-    (if grasp-flag
-        (progn
-          ;; 物体を握るために手を開く
-          (send *ri* :stop-grasp arm :wait t)
-          ))
-
-    (send set-coords :translate pre-set-val :world)
-    (setq ik-target-adj (adjust-cds-with-spot set-coords spot-name))
-    (send *pr2* arm :inverse-kinematics
-          (send ik-target-adj :copy-worldcoords)
-          :rotation-axis t
-          :debug-view nil)
-    (send *ri* :angle-vector (send *pr2* :angle-vector))
-    (send *ri* :wait-interpolation)
-
-    (send set-coords :translate (scale -1 pre-set-val) :world)
-    (setq ik-target-adj (adjust-cds-with-spot set-coords spot-name))
-    (send *pr2* arm :inverse-kinematics
-          (send ik-target-adj :copy-worldcoords)
-          :rotation-axis t
-          :debug-view nil)
-    (send *ri* :angle-vector (send *pr2* :angle-vector))
-    (send *ri* :wait-interpolation)
-
-    (if grasp-flag
-        (progn
-          ;; 物体を握る
-          (send *ri* :start-grasp arm :wait t)
-          )
-      (send *ri* :stop-grasp arm :wait t) ;; 物体を置く
-      )
-
-    (when (not only-grasp)
-
-      (send set-coords :translate pre-set-val :world)
-      (setq ik-target-adj (adjust-cds-with-spot set-coords spot-name))
-      (send *pr2* arm :inverse-kinematics
-            (send ik-target-adj :copy-worldcoords)
-            :rotation-axis t
-            :debug-view nil)
-      (send *ri* :angle-vector (send *pr2* :angle-vector))
-      (send *ri* :wait-interpolation)
-
-      (if grasp-flag
-          (progn
-            (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
-            (send *ri* :angle-vector (send *pr2* :angle-vector))
-            (send *ri* :wait-interpolation)
-            )
-        (progn
-          (dolist (pre-set-av (reverse pre-set-avs))
-            (send *pr2* arm :angle-vector pre-set-av)
-            (send *ri* :angle-vector (send *pr2* :angle-vector))
-            (send *ri* :wait-interpolation)
-            )
-          (reset-manip-pose :arm arm))
-        )
-      )
+    (setq ik-target-adj (adjust-cds-with-spot set-target-coords spot-name))
+    (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords ik-target-adj :pre-set-val pre-set-val :arm arm :action-mode action-mode :object-name object-name)
     ))
 
 
-(defun grasp-object-primitive (&key (wait-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041)
-                                                    #f(-17.2701 6.61532 -15.8472 -46.5569 -153.821 -114.592 99.202)
-                                                    ))
+(defun grasp-object-primitive (&key (pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041)
+                                                       #f(-17.2701 6.61532 -15.8472 -46.5569 -153.821 -114.592 99.202)
+                                                       ))
                                     (grasp-coords (make-coords :pos #f(690.181 -527.149 870.629) :rpy #f(0.478 1.218 -0.929)))
                                     (pre-set-val #f(-50 0 50))
-                                    (grasp-gain 0.01)
                                     (arm :rarm)
-                                    (set-flag nil) (grasp-flag t) ;; TODO change mode :set :put :hold :grasp :reach
-                                    (object-name "bowl1") ;; only use for set speak
-                                    (wait-after-grasp nil) (exit-after-grasp nil) (wait-before-grasp nil) (exit-before-grasp nil))
+                                    (action-mode :grasp) ;;current defined mode is :set :put :grasp :hold :reach :push
+                                    (object-name "bowl1") ;; only use for speak in set mode
+                                    (grasp-gain 0.01) ;; only for grasp or hold
+                                    (wait-after-grasp nil) (wait-before-grasp nil) (reset-pose-end nil))
 
-  (if grasp-flag
-      (progn
-        (dolist (pre-set-av wait-avs)
-          (send *pr2* arm :angle-vector pre-set-av)
-          (send *ri* :angle-vector (send *pr2* :angle-vector))
-          (send *ri* :wait-interpolation)
-          ))
-    (progn
-      (send *pr2* arm :angle-vector (elt (reverse wait-avs) 0))
+  (let ((set-coords)
+        (ik-result)
+        )
+
+    ;; before pose
+    (cond
+     ((or (equal action-mode :put) (equal action-mode :set))
+      (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
       (send *ri* :angle-vector (send *pr2* :angle-vector))
       (send *ri* :wait-interpolation)
       )
-    )
-
-  ;; (send *pr2* arm :angle-vector wait-av)
-  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  ;; (send *ri* :wait-interpolation)
-
-  (if set-flag
-      (progn
-        ;; 物体を握らせて貰う
-        (send *ri* :stop-grasp arm :wait t)
-        (send *ri* :speak-jp (format nil "~AをセットしてOKと言ってください" object-name))
-        (ok-wait)
-        (send *ri* :start-grasp arm :wait t)
-        ))
-  (if grasp-flag
-      (progn
-        ;; 物体を握る前に手を開く
-        (send *ri* :stop-grasp arm :wait t)
-        ))
-
-  ;; pre grasp
-  (setq set-coords (send grasp-coords :copy-worldcoords))
-  ;; (send set-coords :translate pre-set-val :world)
-  (send set-coords :translate pre-set-val :local)
-  (setq ik-result (send *pr2* arm :inverse-kinematics
-                        (send set-coords :copy-worldcoords)
-                        :rotation-axis t
-                        :debug-view nil))
-  (when (equal ik-result nil)
-    (ik-fail-report :wait t)
-    )
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)
-
-  ;; reaching
-  ;; (send set-coords :translate (scale -1 pre-set-val) :world)
-  (send set-coords :translate (scale -1 pre-set-val) :local)
-  (setq ik-result (send *pr2* arm :inverse-kinematics
-                        (send set-coords :copy-worldcoords)
-                        :rotation-axis t
-                        :debug-view nil))
-  (when (equal ik-result nil)
-    (ik-fail-report :wait t)
-    )
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  (send *ri* :wait-interpolation)
-
-  (when exit-before-grasp
-    (format t "exit from grasp-object-primitive function because arg exit-after-grasp is t! ~%")
-    (return-from grasp-object-primitive)
-    )
-  (when wait-before-grasp
-    (do-until-key
-     (print "wait for key pressed")
-     (unix:usleep 100000)
-     )
-    )
-
-  (if grasp-flag
-      (progn
-        ;; 物体を握る
-        (send *ri* :start-grasp arm :gain grasp-gain :wait t)
-        )
-    (send *ri* :stop-grasp arm :wait t) ;; 物体を置く
-    )
-  (when exit-after-grasp
-    (format t "exit from grasp-object-primitive function because arg exit-after-grasp is t! ~%")
-    (return-from grasp-object-primitive)
-    )
-  (when wait-after-grasp
-    (do-until-key
-     (print "wait for key pressed")
-     (unix:usleep 100000)
-     )
-    )
-
-  (send set-coords :translate pre-set-val :local)
-  (setq ik-result (send *pr2* arm :inverse-kinematics
-                        (send set-coords :copy-worldcoords)
-                        :rotation-axis t
-                        :debug-view nil))
-  (when (equal ik-result nil)
-    (ik-fail-report :wait t)
-    )
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
-  (send *ri* :wait-interpolation)
-
-  ;; (send *pr2* arm :angle-vector wait-av)
-  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  ;; (send *ri* :wait-interpolation)
-  (if grasp-flag
-      (progn
-        (send *pr2* arm :angle-vector (elt (reverse wait-avs) 0))
+     (t
+      (dolist (pre-set-av pre-set-avs)
+        (send *pr2* arm :angle-vector pre-set-av)
         (send *ri* :angle-vector (send *pr2* :angle-vector))
         (send *ri* :wait-interpolation)
-        )
-    (progn
-      (dolist (pre-set-av (reverse wait-avs))
+        ))
+     )
+
+    ;; prepare gripper
+    (cond
+     ((equal action-mode :set)
+      ;; 物体を握らせて貰う
+      (send *ri* :stop-grasp arm :wait t)
+      (send *ri* :speak-jp (format nil "~AをセットしてOKと言ってください" object-name))
+      (ok-wait)
+      (send *ri* :start-grasp arm :wait t)
+      )
+     ((or (equal action-mode :grasp) (equal action-mode :hold))
+      ;; 物体を握る前に手を開く
+      (send *ri* :stop-grasp arm :wait t)
+      )
+     ((equal action-mode :push)
+      ;; 物体を押す前に手を閉じる ;; もしかしたらpushでも手を閉じないpushもあるかも
+      (send *ri* :start-grasp arm :wait t)
+      )
+     )
+
+    ;; pre grasp
+    (setq set-coords (send grasp-coords :copy-worldcoords))
+    ;; (send set-coords :translate pre-set-val :world)
+    (send set-coords :translate pre-set-val :local)
+    (setq ik-result (send *pr2* arm :inverse-kinematics
+                          (send set-coords :copy-worldcoords)
+                          :rotation-axis t
+                          :debug-view nil))
+    (when (equal ik-result nil)
+      (ik-fail-report :wait t)
+      )
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    ;; reaching
+    ;; (send set-coords :translate (scale -1 pre-set-val) :world)
+    (send set-coords :translate (scale -1 pre-set-val) :local)
+    (setq ik-result (send *pr2* arm :inverse-kinematics
+                          (send set-coords :copy-worldcoords)
+                          :rotation-axis t
+                          :debug-view nil))
+    (when (equal ik-result nil)
+      (ik-fail-report :wait t)
+      )
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+    (send *ri* :wait-interpolation)
+
+    (when (equal action-mode :reach)
+      (format t "exit from grasp-object-primitive function because arg action-mode is ~A ~%" action-mode)
+      (return-from grasp-object-primitive)
+      )
+    (when wait-before-grasp
+      (do-until-key
+       (print "wait for key pressed")
+       (unix:usleep 100000)
+       )
+      )
+
+    (cond
+     ((or (equal action-mode :put) (equal action-mode :set))
+      (send *ri* :stop-grasp arm :wait t) ;; 物体を置く
+      )
+     ((or (equal action-mode :grasp) (equal action-mode :hold))
+      ;; 物体を握る
+      (send *ri* :start-grasp arm :gain grasp-gain :wait t)
+      )
+     )
+
+    (when (equal action-mode :grasp)
+      (format t "exit from grasp-object-primitive function because arg action-mode is ~A ~%" action-mode)
+      (return-from grasp-object-primitive)
+      )
+    (when wait-after-grasp
+      (do-until-key
+       (print "wait for key pressed")
+       (unix:usleep 100000)
+       )
+      )
+
+    (send set-coords :translate pre-set-val :local)
+    (setq ik-result (send *pr2* arm :inverse-kinematics
+                          (send set-coords :copy-worldcoords)
+                          :rotation-axis t
+                          :debug-view nil))
+    (when (equal ik-result nil)
+      (ik-fail-report :wait t)
+      )
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+    (send *ri* :wait-interpolation)
+
+    (cond
+     ((or (equal action-mode :put) (equal action-mode :set))
+      (dolist (pre-set-av (reverse pre-set-avs))
         (send *pr2* arm :angle-vector pre-set-av)
         (send *ri* :angle-vector (send *pr2* :angle-vector))
         (send *ri* :wait-interpolation)
         )
-      ;; (reset-manip-pose :arm arm)) ;; TODO add args?
-    )
-  )
+      )
+     (t
+      (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
+      (send *ri* :angle-vector (send *pr2* :angle-vector))
+      (send *ri* :wait-interpolation)
+      )
+     )
+    (when reset-pose-end
+      (reset-manip-pose :arm arm)) ;; TODO add args?
+    ))
 
 
 
-
-(defun grasp-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm) (is-grasp t) (use-calib-offset nil) (wait-after-grasp nil) (exit-after-grasp nil) (wait-before-grasp nil) (exit-before-grasp nil))
+(defun hold-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm) (is-grasp t) (action-mode :hold) (use-calib-offset nil) (wait-after-grasp nil) (exit-after-grasp nil) (wait-before-grasp nil) (exit-before-grasp nil))
   (cond
    ((and (string= object-name "knife") (equal arm :rarm))
     (if use-calib-offset
@@ -1056,10 +994,10 @@
     (return-from grasp-rec-object)
     )
 
-  (grasp-object-primitive :wait-avs (list wait-av) :grasp-coords *grasp-coords-exec* :pre-set-val pre-set-val :arm arm
-                          :object-name object-name :grasp-flag t :wait-after-grasp wait-after-grasp :exit-after-grasp exit-after-grasp :wait-before-grasp wait-before-grasp :exit-before-grasp exit-before-grasp)
+  (grasp-object-primitive :pre-set-avs (list wait-av) :grasp-coords *grasp-coords-exec* :pre-set-val pre-set-val :arm arm
+                          :object-name object-name :action-mode :hold :wait-after-grasp wait-after-grasp :exit-after-grasp exit-after-grasp :wait-before-grasp wait-before-grasp :exit-before-grasp exit-before-grasp)
 
-  ;; rec fail
+  ;; TODO rec fail pattern
   )
 
 
