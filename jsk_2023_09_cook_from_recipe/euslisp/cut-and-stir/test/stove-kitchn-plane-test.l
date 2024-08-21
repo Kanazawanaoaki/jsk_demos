@@ -9,3 +9,23 @@
 ;; (setq *gray-bowl* (gray-bowl))
 
 (objects (list *stove-kitchen-plane*))
+
+
+(defun view-plane-coords ()
+  (send (send *stove-kitchen-plane* :attention-attention0) :draw-on :flush t)
+  (send (send *stove-kitchen-plane* :attention-attention1) :draw-on :flush t)
+  (send (send *stove-kitchen-plane* :attention-attention2) :draw-on :flush t)
+  (send (send *stove-kitchen-plane* :attention-attention3) :draw-on :flush t)
+  )
+
+(defun view-stove-coords ()
+  (send (send *stove-kitchen-plane* :attention-attention4) :draw-on :flush t)
+  (send (send *stove-kitchen-plane* :attention-attention5) :draw-on :flush t)
+  (send (send *stove-kitchen-plane* :attention-attention6) :draw-on :flush t)
+  (send (send *stove-kitchen-plane* :attention-attention7) :draw-on :flush t)
+  )
+
+(defun view-ih-coords ()
+  (send (send *stove-kitchen-plane* :attention-attention8) :draw-on :flush t)
+  (send (send *stove-kitchen-plane* :attention-attention9) :draw-on :flush t)
+  )

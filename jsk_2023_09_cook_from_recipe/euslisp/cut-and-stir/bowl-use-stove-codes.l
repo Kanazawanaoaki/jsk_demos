@@ -58,6 +58,18 @@
     (setq *oil-dispenser* (dispenser))
     ))
 
+(unless (boundp '*stove-kitchen-plane*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/stove-kitchen-plane.l")
+    (setq *stove-kitchen-plane* (stove-kitchen-plane))
+    ))
+
+(unless (boundp '*arrow*)
+  (progn
+    (load "models/arrow-object.l")
+    (setq *arrow* (arrow))
+    ))
+
 (defun bowl-stove-init (&key (reset-obj-cds t) (init-cds t) (type :old-curry))
   ;; init
   ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
@@ -68,6 +80,7 @@
     (73b2-stove-coords-init :type type))
 
   ;; set objects
+  (send *stove-kitchen-plane* :newcoords  (send *stove-kitchen-plane-coords* :copy-worldcoords))
   (when reset-obj-cds
     (case type
           (:old-curry
@@ -98,7 +111,7 @@
            ;; (objects (list *pr2* *scene* *spatula* *mcup* *ladle* *pot* *bowl-1* *bowl-2* *bowl-3* *oil-dispenser*))
            ;; (move-to-stove-irt)
            ;; (update-view)
-           (objects (list *pr2* *spatula* *mcup* *ladle* *pot* *bowl-1* *bowl-2* *bowl-3* *oil-dispenser*))
+           (objects (list *pr2* *stove-kitchen-plane* *spatula* *mcup* *ladle* *pot* *bowl-1* *bowl-2* *bowl-3* *oil-dispenser*))
            ))
 
     )

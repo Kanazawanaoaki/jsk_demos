@@ -123,7 +123,8 @@
 
 
   ;; (setq *kitchen-plane-coords* (make-coords :pos #f(815 -15 835)))
-  (setq *kitchen-plane-coords* (make-coords :pos #f(815 -15 830)))
+  ;; (setq *kitchen-plane-coords* (make-coords :pos #f(815 -15 830)))
+  (setq *stove-kitchen-plane-coords* (make-coords :pos #f(957.5 -35 835)))
 
   (setq *stove-kitchen-plane-end-1* (make-coords :pos #f(655 480 840)))
   (setq *stove-kitchen-plane-end-2* (make-coords :pos #f(1260 480 840)))
