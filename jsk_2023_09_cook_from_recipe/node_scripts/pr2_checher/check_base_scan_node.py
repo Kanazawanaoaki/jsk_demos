@@ -69,7 +69,7 @@ class HokuyoScanChecker:
         self.sound_client.wait_for_result()
 
     def restart_hokuyo(self):
-        rospy.logerr("Restart base hokuyo")
+        rospy.logerr("Restarting base hokuyo")
         retcode = -1
         if self.launch_process:
             self.launch_process.terminate() ## launchを強制終了
@@ -90,6 +90,7 @@ class HokuyoScanChecker:
             self.launch_process = subprocess.Popen(['roslaunch', 'base_hokuyo_test.launch'])
             rospy.loginfo("Restart base hokuyo node")
             time.sleep(30)
+            rospy.loginfo("Restarting base hokuyo node is Done")
 
         except Exception as e:
             rospy.logerr('[%s] Unable to kill base hokuyo node, caught exception:\n%s', self.__class__.__name__, traceback.format_exc())
