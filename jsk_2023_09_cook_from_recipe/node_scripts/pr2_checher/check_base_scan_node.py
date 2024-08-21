@@ -9,9 +9,9 @@ from sensor_msgs.msg import Image, CompressedImage, LaserScan
 from sound_play.msg import SoundRequest, SoundRequestAction, SoundRequestGoal
 import actionlib
 
-class BaseScanChecker:
+class HokuyoScanChecker:
     def __init__(self):
-        rospy.init_node('base_scan_checker_node', anonymous=True)
+        rospy.init_node('hokuyo_scan_checker_node', anonymous=True)
         self.no_topic_flag = False ## topicが来ていない状況ならTrue
         self.once_topic_flag = False ## topicが一度でも来ていたらTrue
 
@@ -31,6 +31,7 @@ class BaseScanChecker:
 
         # トピックをサブスクライブ
         self.topic_sub = rospy.Subscriber('/base_scan', LaserScan, self.topic_callback)
+        self.launch_process = None
 
     def topic_callback(self, msg):
         # トピックが更新されたら呼び出されるコールバック
@@ -39,7 +40,6 @@ class BaseScanChecker:
             self.no_topic_flag = False
             self.once_topic_flag = True
             self.say_something("Base scan topic is arrive.")
-        # rospy.loginfo("Recieve base scan topic !!")
 
     def check_timeout(self):
         # 一定時間以上トピックが更新されていないかチェック
@@ -50,10 +50,6 @@ class BaseScanChecker:
                 self.no_topic_flag = True
                 self.say_something("I haven't seen the base scan topic for {} seconds.".format(self.timeout_threshold))
                 self.restart_hokuyo()
-        # else:
-            # if self.no_topic_flag:
-            #     self.no_topic_flag = False
-                # self.say_something("Base scan topic is arrive.")
 
     def say_something(self, text):
         # ロボットに喋らせる
@@ -75,6 +71,9 @@ class BaseScanChecker:
     def restart_hokuyo(self):
         rospy.logerr("Restart base hokuyo")
         retcode = -1
+        if self.launch_process:
+            self.launch_process.terminate() ## launchを強制終了
+            self.launch_process.wait()
         try:
             # 1. kill base hokuyo node
             retcode = subprocess.call('rosnode kill /base_hokuyo_node', shell=True)
@@ -88,38 +87,10 @@ class BaseScanChecker:
             time.sleep(10)
 
             # 3 Restarting base hokuyo node
-            retcode = subprocess.call('roslaunch base_hokuyo_test.launch', shell=True)
+            self.launch_process = subprocess.Popen(['roslaunch', 'base_hokuyo_test.launch'])
             rospy.loginfo("Restart base hokuyo node")
+            time.sleep(30)
 
-            # # 3. usbreset...
-            # self.say_something("resetting base hokuyo")
-            # p = subprocess.Popen("lsusb", shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            # stdout, stderr = p.communicate()
-            # lines = stdout.decode('utf-8').split("\n")
-            # ms_line = [l for l in lines if "Microsoft" in l][0]
-            # # it should be like Bus 002 Device 013: ID 045e:02ad Microsoft Corp. Xbox NUI Audio
-            # bus_id = ms_line.split(' ')[1]
-            # bus_device_dir = "/dev/bus/usb/" + bus_id
-            # files = os.listdir(bus_device_dir)
-            # for f in files:
-            #     full_path = os.path.join(bus_device_dir, f)
-            #     if os.access(full_path, os.W_OK):
-            #         retcode = subprocess.call('rosrun openni2_camera usb_reset ' + full_path, shell=True)
-            # time.sleep(10)
-            # # 1. kill nodelet manager
-            # self.speak("something wrong with kinect, I'll restart it, killing nodelet manager")
-            # retcode = subprocess.call('rosnode kill /%s/%s_nodelet_manager' % (self.camera, self.camera), shell=True)
-            # retcode = subprocess.call('pkill -f %s_nodelet_manager' % self.camera, shell=True)
-
-
-            # time.sleep(10)
-            # 2. pkill
-            # self.speak("killing child processes")
-            # retcode = subprocess.call('pkill -f %s_nodelet_manager' % self.camera, shell=True)
-            # time.sleep(10)
-            # 3 restarting
-            # self.speak("restarting processes")
-            # retcode = subprocess.call('roslaunch openni_launch openni.launch camera:=%s publish_tf:=false depth_registration:=true rgb_processing:=false ir_processing:=false depth_processing:=false depth_registered_processing:=false disparity_processing:=false disparity_registered_processing:=false hw_registered_processing:=true sw_registered_processing:=false rgb_frame_id:=/head_mount_kinect_rgb_optical_frame depth_frame_id:=/head_mount_kinect_ir_optical_frame' % self.camera, shell=True)
         except Exception as e:
             rospy.logerr('[%s] Unable to kill base hokuyo node, caught exception:\n%s', self.__class__.__name__, traceback.format_exc())
 
@@ -131,7 +102,7 @@ class BaseScanChecker:
 
 if __name__ == '__main__':
     try:
-        topic_checker = BaseScanChecker()
+        topic_checker = HokuyoScanChecker()
         topic_checker.run()
     except rospy.ROSInterruptException:
         pass
