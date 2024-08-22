@@ -1,5 +1,6 @@
 (require :pr2-interface "package://pr2eus/pr2-interface.l")
 (require :pr2-cook-tmp "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_tmp.l")
+(require :move-to-adjust "package://jsk_2023_09_cook_from_recipe/euslisp/move-to-adjust.l")
 
 (setq *initial-head-neck-y* 0.0)
 (setq *initial-head-neck-p* 50.0)

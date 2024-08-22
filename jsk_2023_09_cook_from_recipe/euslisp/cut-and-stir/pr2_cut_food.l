@@ -544,11 +544,11 @@
 
   *obj-coord*)
 
-(defun place-objects-on-table (&key (object-name "ボウル1") (arm :rarm) (action-mode :put) (spot-name "stove"))
+(defun place-objects-on-table (&key (object-name "ボウル1") (arm :rarm) (action-mode :put) (spot-name "stove") (use-cds-offset t))
   (let ((pre-set-avs (list))
         (pre-set-val (float-vector 0 0 0))
         (set-target-coords (make-coords))
-        ik-target-adj
+        (adj-target-cds)
         )
     (cond
      ((and (string= object-name "水カップ") (string= spot-name "stove") (equal arm :larm))
@@ -653,8 +653,11 @@
       )
      )
 
-    (setq ik-target-adj (adjust-cds-with-spot set-target-coords spot-name))
-    (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords ik-target-adj :pre-set-val pre-set-val :arm arm :action-mode action-mode :object-name object-name)
+    (if use-cds-offset
+        (setq adj-target-cds (adjust-cds-with-spot set-target-coords spot-name))
+      (setq adj-target-cds (send set-target-coords :copy-worldcoords))
+      )
+    (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm arm :action-mode action-mode :object-name object-name)
     ))
 
 
@@ -693,7 +696,7 @@
      ((equal action-mode :set)
       ;; 物体を握らせて貰う
       (send *ri* :stop-grasp arm :wait t)
-      (send *ri* :speak-jp (format nil "~AをセットしてOKと言ってください" object-name))
+      (speak-with-log (format nil "~Aを握らせる準備をして，OKと言ってください" object-name) :wait nil)
       (ok-wait)
       (send *ri* :start-grasp arm :wait t)
       )
@@ -706,6 +709,7 @@
       (send *ri* :start-grasp arm :wait t)
       )
      )
+    (send *viewer* :draw-objects)
 
     ;; pre grasp
     (setq set-coords (send grasp-coords :copy-worldcoords))
@@ -715,6 +719,7 @@
                           (send set-coords :copy-worldcoords)
                           :rotation-axis t
                           :debug-view nil))
+    (send *viewer* :draw-objects)
     (when (equal ik-result nil)
       (ik-fail-report :wait t)
       )
@@ -728,6 +733,7 @@
                           (send set-coords :copy-worldcoords)
                           :rotation-axis t
                           :debug-view nil))
+    (send *viewer* :draw-objects)
     (when (equal ik-result nil)
       (ik-fail-report :wait t)
       )
@@ -771,6 +777,7 @@
                           (send set-coords :copy-worldcoords)
                           :rotation-axis t
                           :debug-view nil))
+    (send *viewer* :draw-objects)
     (when (equal ik-result nil)
       (ik-fail-report :wait t)
       )
@@ -791,8 +798,10 @@
       (send *ri* :wait-interpolation)
       )
      )
+    (send *viewer* :draw-objects)
     (when reset-pose-end
       (reset-manip-pose :arm arm)) ;; TODO add args?
+    (send *viewer* :draw-objects)
     ))
 
 
@@ -968,7 +977,7 @@
     )
    (t
     (format t "this setting is not implemented yet! ~%")
-    (return-from grasp-rec-object)
+    (return-from hold-rec-object)
     )
    )
 
@@ -990,8 +999,8 @@
       ))
 
   (unless is-grasp
-    (format t "exit from grasp-rec-object function because arg is-grasp is nil ! ~%")
-    (return-from grasp-rec-object)
+    (format t "exit from hold-rec-object function because arg is-grasp is nil ! ~%")
+    (return-from hold-rec-object)
     )
 
   (grasp-object-primitive :pre-set-avs (list wait-av) :grasp-coords *grasp-coords-exec* :pre-set-val pre-set-val :arm arm

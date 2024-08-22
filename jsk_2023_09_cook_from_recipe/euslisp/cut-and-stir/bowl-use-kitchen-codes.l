@@ -7,6 +7,9 @@
 (setq *debug-flag* t)
 (setq *s-time* 3)
 
+(setq *x-thre* -10)
+(setq *cb-flag* nil)
+
 (unless (boundp '*spatula*)
   (progn
     (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/spatula.l")
@@ -167,111 +170,79 @@
 
 ;; kitchenの位置からbowl1を移すプログラムを用意する．
 
-;; add for sense rec
-(setq *x-thre* -10)
 
-(ros::roseus "bowl_transfer_test" :anonymous t)
-(setq *topic-name* "/right_endeffector/wrench")
-(ros::load-ros-manifest "geometry_msgs")
-(setq *cb-flag* nil)
-(defun wrench-x-cb (msg)
-  (when msg
-    (let ((x nil))
-      (setq x (send msg :wrench :force :x))
-      (if (< x *x-thre*)
-          (progn
-            (setq *cb-flag* t)
-            (format t "OK!! x: ~A ~%" x)
-            )
-        (format t "x: ~A ~%" x))
-      )))
 
 ;; add for rosservice
-(ros::load-ros-manifest "std_srvs")
-;; (ros::wait-for-service "after_stow_data_collection/save_request")
-(setq req (instance std_srvs::TriggerRequest :init))
+;; (ros::load-ros-manifest "std_srvs")
+;; ;; (ros::wait-for-service "after_stow_data_collection/save_request")
+;; (setq req (instance std_srvs::TriggerRequest :init))
 
 
-(defun rossrv-test ()
-  (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
-  )
+;; (defun rossrv-test ()
+;;   (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
+;;   )
 
-(defun look-at-arrow ()
-  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-  (send *pr2* :head :look-at (send (send *arrow* :copy-worldcoords) :worldpos))
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
-  (send *ri* :wait-interpolation)
-  )
-
-(defun look-at-pot ()
-  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-  (send *pr2* :head :look-at (send (send (send *pot* :attention-attention0) :copy-worldcoords) :worldpos))
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  (send *ri* :wait-interpolation)
-  )
-
+;; TODO fix
 ;; add for voice recognition
-(ros::load-ros-manifest "speech_recognition_msgs")
-(setq *data-flag* nil)
-(defun voice-cb (msg)
-  (when msg
-    (setq *msg* msg)
-    (setq *data* (send *msg* :transcript))
-    (setq *data-flag* t)
-    (format t "data: ~A ~%" *data*)
-    )
-  )
+;; (ros::load-ros-manifest "speech_recognition_msgs")
+;; (setq *data-flag* nil)
+;; (defun voice-cb (msg)
+;;   (when msg
+;;     (setq *msg* msg)
+;;     (setq *data* (send *msg* :transcript))
+;;     (setq *data-flag* t)
+;;     (format t "data: ~A ~%" *data*)
+;;     )
+;;   )
 
-(defun dialogue-func ()
-  (ros::unsubscribe "/speech_to_text")
-  (setq *data-flag* nil)
-  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
-  (until *data-flag*
-         (ros::spin-once)
-         (ros::sleep)
-         )
-  (send *ri* :speak-jp "ありがとうございます")
-  (unix:sleep 1)
-  )
+;; (defun dialogue-func ()
+;;   (ros::unsubscribe "/speech_to_text")
+;;   (setq *data-flag* nil)
+;;   (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+;;   (until *data-flag*
+;;          (ros::spin-once)
+;;          (ros::sleep)
+;;          )
+;;   (send *ri* :speak-jp "ありがとうございます")
+;;   (unix:sleep 1)
+;;   )
 
-(setq *ok-flag* nil)
-(defun voice-ok-cb (msg)
-  (when msg
-    (setq *msg* msg)
-    (setq *data* (send *msg* :transcript))
-    (if (equal *data* '("OK"))
-        (progn
-          (format t "了解しました！ ~%" *data*)
-          (setq *ok-flag* t)
-          )
-      (format t "data: ~A ~%" *data*)
-      ) 
-    )
-  )
+;; (setq *ok-flag* nil)
+;; (defun voice-ok-cb (msg)
+;;   (when msg
+;;     (setq *msg* msg)
+;;     (setq *data* (send *msg* :transcript))
+;;     (if (equal *data* '("OK"))
+;;         (progn
+;;           (format t "了解しました！ ~%" *data*)
+;;           (setq *ok-flag* t)
+;;           )
+;;       (format t "data: ~A ~%" *data*)
+;;       ) 
+;;     )
+;;   )
 
-(defun ok-wait ()
-  (ros::unsubscribe "/speech_to_text")
-  (setq *ok-flag* nil)
-  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
-  (until *ok-flag*
-         (ros::spin-once)
-         (ros::sleep)
-         )
-  (send *ri* :speak-jp "ありがとうございます")
-  (unix:sleep *w-time*)
-  )
+;; (defun ok-wait ()
+;;   (ros::unsubscribe "/speech_to_text")
+;;   (setq *ok-flag* nil)
+;;   (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
+;;   (until *ok-flag*
+;;          (ros::spin-once)
+;;          (ros::sleep)
+;;          )
+;;   (send *ri* :speak-jp "ありがとうございます")
+;;   (unix:sleep *w-time*)
+;;   )
 
-(defun ok-grasp-larm (&rest args &key (gain 0.01) &allow-other-keys)
-  (ok-wait)
-  (send *ri* :start-grasp :larm :wait t :gain gain)
-  )
+;; (defun ok-grasp-larm (&rest args &key (gain 0.01) &allow-other-keys)
+;;   (ok-wait)
+;;   (send *ri* :start-grasp :larm :wait t :gain gain)
+;;   )
 
-(defun ok-grasp ()
-  (ok-wait)
-  (send *ri* :start-grasp :rarm :wait t)
-  )
+;; (defun ok-grasp ()
+;;   (ok-wait)
+;;   (send *ri* :start-grasp :rarm :wait t)
+;;   )
 
 (defun receive-with-dialogue-larm (&rest args &key (gain 0.01) &allow-other-keys)
   ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
@@ -289,7 +260,6 @@
              )
            )
          )
-  
   (send *ri* :speak-jp "次の行動に移ります")
   (unix:sleep *w-time*)
   )
@@ -327,9 +297,55 @@
 (warn "please run (now-set-bowls) or (set-bowl-1) ~%")
 
 ;; def util-funcs
+;; update funcs
+(defun set-bowl-on-table (&key (object-name "gray bowl") (arm :rarm) (action-mode :set) (spot-name "kitchen") (use-cds-offset nil))
+  (let ((pre-set-avs (list))
+        (pre-set-val (float-vector 0 0 0))
+        (set-target-coords (make-coords))
+        adj-target-cds
+        )
+    (cond
+     ((and (string= object-name "gray bowl") (string= spot-name "kitchen") (equal arm :rarm))
+      (setq pre-set-avs (list #f(-39.4916 -5.60379 -51.4586 -70.0476 -75.5379 -114.544 397.394)))
+      (setq pre-set-val #f(-147 -23 7)) ;; for upper #f(0 0 150) :world
+
+      ;; calc from defined coords
+      (send *arrow* :newcoords (send *gray-bowl-kitchen-coords* :copy-worldcoords))
+      (send *arrow* :newcoords (calc-coords-from-rel *gray-bowl-kitchen-coords* (make-coords :pos #f(-101.233 0.0 53.999) :rpy #f(0.265 1.405 -1.282))))
+      (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *knife-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
+      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
+      )
+     (t
+      (format t "Sorry, object-name ~A, spot-name ~A, arm ~A is not defined now !!!~%" object-name spot-name arm)
+      (return-from set-bowl-on-table nil)
+      )
+     )
+
+    (if use-cds-offset
+        (setq adj-target-cds (adjust-cds-with-spot set-target-coords spot-name))
+      (setq adj-target-cds (send set-target-coords :copy-worldcoords))
+      )
+    (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm arm :action-mode action-mode :object-name object-name)
+
+    ;; TODO add dissoc object
+    ))
+
+(defun receive-and-set-gray-bowl ()
+  (set-bowl-on-table :object-name "gray bowl" :arm :rarm :action-mode :set :spot-name "kitchen" :use-cds-offset nil)
+  )
+
+(defun put-gray-bowl ()
+  (set-bowl-on-table :object-name "gray bowl" :arm :rarm :action-mode :put :spot-name "kitchen" :use-cds-offset nil)
+  )
+
+(defun look-at-pot ()
+  (look-at-cds (send (send *pot* :attention-attention0) :copy-worldcoords))
+  )
+
+
+;; TODO fix
 (defun reset-rarm ()
-  
-  ;; (setq *rav0* (float-vector -25.6468 7.87241 -48.2704 -85.3763 253.675 -77.8887 -147.102))
+    ;; (setq *rav0* (float-vector -25.6468 7.87241 -48.2704 -85.3763 253.675 -77.8887 -147.102))
   ;; (send *pr2* :rarm :angle-vector *rav0*)
   (send *arrow* :newcoords (make-coords :pos (float-vector 556.424 8603.557 31158.464) :rpy (float-vector -2.286 0.656 0.542)))
   (send *pr2* :rarm :inverse-kinematics
@@ -712,6 +728,7 @@
   )
 
 ;; bowl funcs
+
 (defun recieve-bowl-1 ()
   (before-recieve-larm)
   
@@ -869,9 +886,9 @@
   ;; ボウル２の位置
   (setq *target* (make-coords))
   (send *target* :newcoords (send *bowl-2-grasp-coords* :copy-worldcoords))
-  
+
   (grasp-bowl-rarm)
-  
+
   (warn "please run (move-bowl-2-set) ~%")
   )
 
@@ -879,12 +896,12 @@
   (send *pr2* :rarm :move-end-pos (float-vector 100 0 0) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
-  
+
   ;; ボウル２を置く位置 set
   (send *arrow* :newcoords (send *bowl-2-grasp-set-coords* :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)
-  
-  (put-bowl-rarm)  
+
+  (put-bowl-rarm)
   )
 
 
@@ -1880,7 +1897,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
-  
+
   (send *arrow* :translate #f(-100 0 0) :world)
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -1889,13 +1906,13 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
-  
+
   (send *ri* :start-grasp :larm :wait t)
-  
+
   (if (not (eql (send *oil-dispenser* :parent) nil))
       (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
   (send *pr2* :larm :end-coords :assoc *oil-dispenser*)
-  
+
   ;; 右腕を戻して左腕をputの前位置にする．
   (send *ri* :stop-grasp :rarm :wait t)
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
@@ -1907,7 +1924,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (reset-rarm)
 
   (send *pr2* :larm :move-end-pos #f(0 100 0) :world)
@@ -2386,7 +2403,7 @@
   (send *arrow* :translate #f(0 -50 120) :world)
   (send *arrow* :rotate (deg2rad -90) :z :world)
 
-  (look-at-arrow)
+  (look-at-cds *arrow*)
 
   (send *arrow* :translate #f(0 0 20) :world)
 
@@ -2427,7 +2444,7 @@
   (send *arrow* :translate #f(0 -50 120) :world)
   (send *arrow* :rotate (deg2rad -90) :z :world)
 
-  (look-at-arrow)
+  (look-at-cds *arrow*)
 
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -2451,7 +2468,7 @@
   (send *arrow* :translate #f(0 -50 120) :world)
   (send *arrow* :rotate (deg2rad -90) :z :world)
 
-  (look-at-arrow)
+  (look-at-cds *arrow*)
 
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -2475,7 +2492,7 @@
   (send *arrow* :translate #f(0 -50 120) :world)
   (send *arrow* :rotate (deg2rad -90) :z :world)
 
-  (look-at-arrow)
+  (look-at-cds *arrow*)
 
   (send *pr2* :larm :inverse-kinematics
         (send *arrow* :copy-worldcoords)
@@ -2487,6 +2504,130 @@
   (send *ri* :wait-interpolation)
 
   (warn "please run (after-transfer-left) ~%")
+  )
+
+
+(defun show-arrow ()
+  (objects *arrow*)
+  (update-view)
+  )
+
+(defun pot-coords ()
+  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
+  (send *arrow* :translate #f(0 30 180) :world)
+  )
+
+;; add for rcup
+(defun recieve-rcup ()
+  (carry-rcup-pose)
+  
+  ;; mcupを受け取る
+  (send *ri* :stop-grasp :larm :wait t)
+  (send *ri* :speak-jp "赤いコップを握らせて下さい")
+  (unix:sleep *s-time*)
+  (send *ri* :start-grasp :larm :wait t)
+  
+  (set-rcup)
+  
+  (warn "please run (put-rcup) ~%")
+  )
+
+(defun recieve-rcup-with-dialogue ()
+  (carry-rcup-pose)
+  
+  ;; mcupを受け取る
+  (send *ri* :speak-jp "赤いコップを渡す準備をして，合図をして下さい")
+  (receive-with-dialogue-larm :gain 0.1)  
+  
+  (set-rcup)
+  (warn "please run (put-rcup) ~%")
+  )
+
+
+
+(defun put-rcup ()
+  ;; rcupを置く位置
+  (if (not (eql (send *rcup* :parent) nil))
+      (send (send *rcup* :parent) :dissoc *rcup*))
+  (send *rcup* :newcoords (send *mcup-coords* :copy-worldcoords))
+  (send *rcup* :rotate (deg2rad 45) :z)
+  (send *arrow* :newcoords (send (send *rcup* :handle-handle0) :copy-worldcoords))
+  (send *arrow* :translate (float-vector 0 0 200) :world)
+
+  (put-bowl-larm :slide -100)
+  )
+
+(defun transfer-rcup-model-to-pot-side ()
+  (if (not (eql (send *rcup* :parent) nil))
+      (send (send *rcup* :parent) :dissoc *rcup*))
+  (send *rcup* :newcoords (send *mcup-coords* :copy-worldcoords))
+  (send *rcup* :rotate (deg2rad 45) :z)
+  (send *viewer* :draw-objects)
+  )
+
+(defun grasp-rcup (&rest args &key (gain 0.1) &allow-other-keys)
+  ;; rcupの位置
+  (setq *target* (make-coords))
+  (send *target* :newcoords (send (send *rcup* :handle-handle0) :copy-worldcoords))
+  
+  (grasp-bowl-larm :gain gain :slide -100)
+  
+  (set-rcup)
+  
+  (warn "please run (carry-rcup-pose) ~%")
+  )
+
+
+(defun grasp-rcup-with-fail-detection ()
+  (setq tmp-coords (send *rcup* :copy-worldcoords))
+  (grasp-rcup :gain 0.1)
+  
+  ;; 失敗を検知する
+  (grasp-fail-detection-larm :g-thre 2)
+  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
+      (progn
+        (if (not (eql (send *rcup* :parent) nil))
+            (send (send *rcup* :parent) :dissoc *rcup*))
+        (send *rcup* :newcoords (send tmp-coords :copy-worldcoords))
+        (grasp-rcup :gain 0.1)
+        (grasp-fail-detection-larm :g-thre 2)
+        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
+            (progn
+              (send *ri* :speak-jp "計量カップの把持が失敗しました，渡す準備をして合図をして下さい")
+              (receive-with-dialogue-larm :gain 0.1)
+              ))
+        ))
+  
+  (warn "please run (carry-rcup-pose) ~%")
+  )
+
+(defun after-grasp-rcup ()
+  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 604.833 8300.101 31079.393) :rpy (float-vector 3.141 0.75 0.0)))
+  ;; (send *pr2* :larm :inverse-kinematics
+  ;;       (send *arrow* :copy-worldcoords)
+  ;;       :rotation-axis t
+  ;;       :debug-view *debug-flag*)
+  ;; (send *viewer* :draw-objects)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
+  ;; (send *ri* :wait-interpolation)
+
+  (send *arrow* :newcoords (make-coords :pos (float-vector 474.868 8300.116 31134.418) :rpy (float-vector 1.57 0.0 -1.57)))
+  (send *pr2* :larm :inverse-kinematics
+        (send *arrow* :copy-worldcoords)
+        :rotation-axis t
+        :debug-view *debug-flag*)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
+  (send *ri* :wait-interpolation)
+  )
+
+;; now codes
+(defun now-set-gray-bowl (&key (up-arm t))
+  ;; gray bowlをセット
+  (when up-arm
+    (pr2-arm-up :num 100 :arm :rarm)
+    )
+  (receive-and-set-gray-bowl)
   )
 
 
@@ -2557,7 +2698,7 @@
   (squeeze-test-set)
   (squeeze-test)
   (avoid-rarm)
-  
+
   (after-transfer-left)
   )
 
@@ -2574,12 +2715,11 @@
   (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
   (send *arrow* :translate #f(0 -50 120) :world)
   (send *arrow* :rotate (deg2rad -90) :z :world)
-  
-  (look-at-arrow)
+
+  (look-at-cds *arrow*)
 
   (now-transfer)
 
-  
   (put-bowl-2-set)
   (reset-larm)
   )
@@ -2876,58 +3016,6 @@
   (put-bowl-1-model-rarm)
   )
 
-(defun show-arrow ()
-  (objects *arrow*)
-  (update-view)
-  )
-
-(defun pot-coords ()
-  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
-  (send *arrow* :translate #f(0 30 180) :world)
-  )
-
-
-;; add for rcup
-(defun recieve-rcup ()
-  (carry-rcup-pose)
-  
-  ;; mcupを受け取る
-  (send *ri* :stop-grasp :larm :wait t)
-  (send *ri* :speak-jp "赤いコップを握らせて下さい")
-  (unix:sleep *s-time*)
-  (send *ri* :start-grasp :larm :wait t)
-  
-  (set-rcup)
-  
-  (warn "please run (put-rcup) ~%")
-  )
-
-(defun recieve-rcup-with-dialogue ()
-  (carry-rcup-pose)
-  
-  ;; mcupを受け取る
-  (send *ri* :speak-jp "赤いコップを渡す準備をして，合図をして下さい")
-  (receive-with-dialogue-larm :gain 0.1)  
-  
-  (set-rcup)
-  (warn "please run (put-rcup) ~%")
-  )
-
-
-
-
-(defun put-rcup ()
-  ;; rcupを置く位置
-  (if (not (eql (send *rcup* :parent) nil))
-      (send (send *rcup* :parent) :dissoc *rcup*))
-  (send *rcup* :newcoords (send *mcup-coords* :copy-worldcoords))
-  (send *rcup* :rotate (deg2rad 45) :z)
-  (send *arrow* :newcoords (send (send *rcup* :handle-handle0) :copy-worldcoords))
-  (send *arrow* :translate (float-vector 0 0 200) :world)
-
-  (put-bowl-larm :slide -100)
-  )
-
 (defun now-set-rcup ()
   (recieve-rcup)
   (put-rcup)
@@ -2950,77 +3038,12 @@
   (reset-larm)
   )
 
-(defun transfer-rcup-model-to-pot-side ()
-  (if (not (eql (send *rcup* :parent) nil))
-      (send (send *rcup* :parent) :dissoc *rcup*))
-  (send *rcup* :newcoords (send *mcup-coords* :copy-worldcoords))
-  (send *rcup* :rotate (deg2rad 45) :z)
-  (send *viewer* :draw-objects)
-  )
-
-(defun grasp-rcup (&rest args &key (gain 0.1) &allow-other-keys)
-  ;; rcupの位置
-  (setq *target* (make-coords))
-  (send *target* :newcoords (send (send *rcup* :handle-handle0) :copy-worldcoords))
-  
-  (grasp-bowl-larm :gain gain :slide -100)
-  
-  (set-rcup)
-  
-  (warn "please run (carry-rcup-pose) ~%")
-  )
-
-
-(defun grasp-rcup-with-fail-detection ()
-  (setq tmp-coords (send *rcup* :copy-worldcoords))
-  (grasp-rcup :gain 0.1)
-  
-  ;; 失敗を検知する
-  (grasp-fail-detection-larm :g-thre 2)
-  (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
-      (progn
-        (if (not (eql (send *rcup* :parent) nil))
-            (send (send *rcup* :parent) :dissoc *rcup*))
-        (send *rcup* :newcoords (send tmp-coords :copy-worldcoords))
-        (grasp-rcup :gain 0.1)
-        (grasp-fail-detection-larm :g-thre 2)
-        (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
-            (progn
-              (send *ri* :speak-jp "計量カップの把持が失敗しました，渡す準備をして合図をして下さい")
-              (receive-with-dialogue-larm :gain 0.1)
-              ))
-        ))
-  
-  (warn "please run (carry-rcup-pose) ~%")
-  )
-
-(defun after-grasp-rcup ()
-  ;; (send *arrow* :newcoords (make-coords :pos (float-vector 604.833 8300.101 31079.393) :rpy (float-vector 3.141 0.75 0.0)))
-  ;; (send *pr2* :larm :inverse-kinematics
-  ;;       (send *arrow* :copy-worldcoords)
-  ;;       :rotation-axis t
-  ;;       :debug-view *debug-flag*)
-  ;; (send *viewer* :draw-objects)
-  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
-  ;; (send *ri* :wait-interpolation)
-
-  (send *arrow* :newcoords (make-coords :pos (float-vector 474.868 8300.116 31134.418) :rpy (float-vector 1.57 0.0 -1.57)))
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 8000)
-  (send *ri* :wait-interpolation)
-  )
-
-
 (defun now-grasp-rcup-pot-side ()
   (transfer-rcup-model-to-pot-side)
   (grasp-rcup)
   (after-grasp-rcup)
   (carry-rcup-pose)
-  
+
   (warn "please go to sink spot ~%")
   )
 

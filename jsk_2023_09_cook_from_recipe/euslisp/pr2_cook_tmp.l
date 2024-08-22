@@ -46,17 +46,22 @@
 
 ;; daialogue
 (defun ok-wait ()
-  (setq *ok-flag* nil)
-  (until *ok-flag*
-	 (dialogue-func)
-	 (if (equal *voice-data* '("OK"))
-	     (progn
-	       (format t "了解しました！ ~%" *voice-data*)
-	       (setq *ok-flag* t)
-	       )
-	   (format t "data: ~A ~%" *voice-data*)
-	   ))
-
+  (if (send *ri* :simulation-modep) ;; kinematic simulatorでは音声認識できない
+      (unix:usleep 500000)
+    (progn
+      (format t "OKの合図を待ちます ~%" *voice-data*)
+      (setq *ok-flag* nil)
+      (until *ok-flag*
+             (dialogue-func)
+             (if (equal *voice-data* '("OK"))
+                 (progn
+                   (format t "了解しました！ ~%" *voice-data*)
+                   (setq *ok-flag* t)
+                   )
+               (format t "data: ~A ~%" *voice-data*)
+               ))
+      )
+    )
   (speak-with-log "ありがとうございます")
   )
 
