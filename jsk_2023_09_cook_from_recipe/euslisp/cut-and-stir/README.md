@@ -162,6 +162,15 @@ roslaunch jsk_2023_09_cook_from_recipe service_save_ptcloud_in_pcd.launch object
 roslaunch jsk_2023_09_cook_from_recipe save_ptcloud_in_pcd.launch INPUT:=/tf_transform_cloud/output
 ```
 
+### Rvizでインタラクティブに座標指定
+```
+roslaunch jsk_2023_09_cook_from_recipe interactive_tf_pr2.launch
+```
+で立ち上げたrvizでインタラクティブマーカを移動させる
+```
+rosrun tf tf_echo base_footprint tf2
+```
+等で座標を取得することも可能
 
 ### Z800も使うバージョン
 
@@ -187,4 +196,5 @@ roslaunch jsk_2023_09_cook_from_recipe view_rviz_cook.launch
 必要に応じて立ち上げる
 ```
 roslaunch jsk_2023_09_cook_from_recipe kitchen_template_matching_k4a.launch
+roslaunch jsk_2023_09_cook_from_recipe interactive_tf_pr2.launch
 ```
