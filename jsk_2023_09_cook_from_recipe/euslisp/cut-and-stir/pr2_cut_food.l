@@ -6,7 +6,7 @@
 ;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/pr2-cooking-actions.l") ;; TODO update
 ;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/cooking-exec-pddl-utils.l")
 
-;; util object
+;; set objects
 (unless (boundp '*arrow*)
   (progn
     (load "models/arrow-object.l")
@@ -16,8 +16,12 @@
 ;; ros init
 (ros::roseus "pr2_cut_food" :anonymous t)
 (ros::load-ros-manifest "jsk_recognition_msgs")
-(setq *tfl* (instance ros::transform-listener :init))
-(setq *tfb* (instance ros::transform-broadcaster :init)))
+(unless (boundp '*tfl*)
+  (setq *tfl* (instance ros::transform-listener :init))
+  )
+(unless (boundp '*tfb*)
+  (setq *tfb* (instance ros::transform-broadcaster :init))
+  )
 
 ;; define cb
 (defun get-pr2-cam-coords (&optional (frame-id "head_mount_kinect_rgb_optical_frame"))
@@ -70,32 +74,6 @@
 ;; global variables
 
 ;; defun util fuction
-(defun calc-object-rel-coords (base-coords target-coords)
-  (setq rel-coords (send (send (send base-coords :copy-worldcoords) :inverse-transformation) :transform (send target-coords :copy-worldcoords)))
-  rel-coords)
-
-(defun calc-coords-from-rel (base-coords rel-coords)
-  (setq target-coords (send (send base-coords :copy-worldcoords) :transform (send rel-coords :copy-worldcoords)))
-  target-coords)
-
-(defun calc-diff-in-world (base-coords rel-coords)
-  (setq ans-vec (v- (send base-coords :transform-vector (send rel-coords :worldpos)) (send base-coords :worldpos)))
-  ans-vec)
-
-(defun print-cds-format (cds)
-  (format t "(setq tmp-cds (make-coords :pos ~A :rot ~A)) ~%" (send cds :worldpos) (send cds :worldrot))
-  )
-
-(defun dissoc-object (object-instance)
-  (if (not (eql (send object-instance :parent) nil))
-      (send (send object-instance :parent) :dissoc object-instance))
-  )
-
-(defun calc-arm-diff (ideal-coords rec-coords)
-  (setq current-target-coords (make-coords :pos (send rec-coords :worldpos) :rot (send ideal-coords :worldrot)))
-  (setq ans (calc-object-rel-coords ideal-coords current-target-coords))
-  ans)
-
 (defun calib-check-rec (&key (arm :larm) (set-offset t) (side :upper))
   (let ((calib-check-topic)
         (ideal-ee-coords)
@@ -103,9 +81,9 @@
         (msg)
         (current-dim)
         (dim-thre)
-        (current-arm-diff)
+        (current-arm-rel)
         (ideal-tape-coords)
-        (current-tape-diff)
+        (current-tape-rel)
         (world-tape-diff-vec)
         )
     (if (equal arm :larm)
@@ -128,8 +106,8 @@
                (if (< current-dim dim-thre)
                    (progn
                      (setq calib-rec-flag t)
-                     (setq current-arm-diff (calc-arm-diff ideal-ee-coords *obj-coord*))
-                     (format t "current arm diff : ~A ~%" current-arm-diff) ;; armのend-effectorと認識したテープの座標の差分をend-effector座標系で
+                     (setq current-arm-rel (calc-rel-only-pos ideal-ee-coords *obj-coord*))
+                     (format t "current arm diff : ~A ~%" current-arm-rel) ;; armのend-effectorと認識したテープの座標の差分をend-effector座標系で
                      (setq ideal-tape-coords (send ideal-ee-coords :copy-worldcoords))
                      (case side
                            (:upper
@@ -149,9 +127,9 @@
                               (send ideal-tape-coords :translate #f(-90 -55 0)) ;; -52
                               ))
                            )
-                     (setq current-tape-diff (calc-arm-diff ideal-tape-coords *obj-coord*))
-                     (format t "current diff with tape : ~A ~%" current-tape-diff) ;;本来のテープの場所と認識結果の差分をend-effector座標系で
-                     (setq world-tape-diff-vec (calc-diff-in-world ideal-ee-coords current-tape-diff))
+                     (setq current-tape-rel (calc-rel-only-pos ideal-tape-coords *obj-coord*))
+                     (format t "current diff with tape : ~A ~%" current-tape-rel) ;;本来のテープの場所と認識結果の差分をend-effector座標系で
+                     (setq world-tape-diff-vec (calc-diff-world-vec-from-rel ideal-ee-coords current-tape-rel))
                      (format t "current diff with tape in world : ~A ~%" world-tape-diff-vec) ;;本来のテープの場所と認識結果の差分のベクトルを世界座標系で
 
                      (if (equal arm :larm)
@@ -182,7 +160,7 @@
                )
              )
            )
-    (list current-arm-diff current-tape-diff world-tape-diff-vec)))
+    (list current-arm-rel current-tape-rel world-tape-diff-vec)))
 
 (defun calib-check-pose-1 (&key (arm :larm) (mode :normal))
   (send *ri* :start-grasp arm :wait t)
@@ -235,8 +213,6 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun test ()
-  )
 (defun kitchen-pose-calib-check ()
   (let ((l-arm-calib-list)
         (r-arm-calib-list))
@@ -444,52 +420,10 @@
   (format t "change deva class to ~A detection ~%" object-name)
   t)
 
-(defun publish-cds-tf (cds)
-  (send *tfb* :send-transform
-        (send cds :copy-worldcoords) "/base_footprint" "/target_cds_frame")
-  )
 
-(defun publish-cds-tf-list (cds-list)
-  (let ((frame-name)
-        (cds))
-    (dotimes (i (length cds-list))
-      (setq frame-name (format nil "/target_cds_frame_~A" i))
-      (setq cds (elt cds-list i))
-      (send *tfb* :send-transform
-            (send cds :copy-worldcoords) "/base_footprint" frame-name)
-      )
-    ))
 
-(defun show-cds-arrow (cds)
-  (send *arrow* :newcoords (send cds :copy-worldcoords))
-  (objects *arrow*)
-  )
 
-(defun calc-offset (rec-coords grasp-coords)
-  (setq offset-coords (send (send rec-coords :copy-worldcoords) :transformation (send grasp-coords :copy-worldcoords)))
-  offset-coords)
-
-(defun calc-average-two-coords (first-coords second-coords)
-  (let (ans-coords)
-    (setq ans-coords (make-coords :pos (scale 0.5 (v+ (send first-coords :worldpos) (send second-coords :worldpos)))
-                                  :rot (send first-coords :worldrot)))
-    ans-coords))
-
-(defun analysis-cds-list (cds-list)
-  (let ((x-list (list))
-        (y-list (list))
-        (z-list (list))
-        )
-    (dolist (cds cds-list)
-      (setq x-list (append x-list (list (elt (send cds :worldpos) 0))))
-      (setq y-list (append y-list (list (elt (send cds :worldpos) 1))))
-      (setq z-list (append z-list (list (elt (send cds :worldpos) 2))))
-      )
-    (format t "x-list is ~A, x-max:~A, x-min:~A max-min-diff:~A ~%" x-list (apply #'max x-list) (apply #'min x-list) (- (apply #'max x-list) (apply #'min x-list)))
-    (format t "y-list is ~A, y-max:~A, y-min:~A max-min-diff:~A ~%" y-list (apply #'max y-list) (apply #'min y-list) (- (apply #'max y-list) (apply #'min y-list)))
-    (format t "z-list is ~A, z-max:~A, z-min:~A max-min-diff:~A ~%" z-list (apply #'max z-list) (apply #'min z-list) (- (apply #'max z-list) (apply #'min z-list)))
-    ))
-
+;; for rec
 (defun deva-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (rec-num 5) (fix-rot nil) (bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes"))
   ;; TODO Add let
 

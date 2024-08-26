@@ -139,7 +139,22 @@
   (setq *stove-ih-plane-right* (make-coords :pos (float-vector 880 -110 840)))
 
   (case type
+        (:sunny-side-up
+         ;; (setq *oil-dispenser-stove-coords* (make-coords :pos (float-vector 400 7570 30845) :rpy (float-vector 3.14 0.0 0.0))) ;; oil dispenser original
+         (setq *oil-dispenser-stove-coords* (make-coords :pos (float-vector 800.0 530.0 845.0) :rpy (float-vector -0.002 0.0 0.0))) ;; oil dispenser fix
+
+         (setq *gray-bowl-stove-coords* (make-coords :pos (float-vector 780 -540 830) :rpy (float-vector 0 0 0))) ;; fix
+
+         (setq *green-bowl-stove-coords* (make-coords :pos (float-vector 740 -370 830) :rpy (float-vector 0 0 0))) ;; fix
+         )
         (:curry
+         (setq *spatula-coords-1* (make-coords :pos (float-vector 570.0 -449.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix
+
+         (setq *ladle-coords-1* (make-coords :pos (float-vector 570.0 -213.0 877.0) :rpy (float-vector -0.014 -0.098 1.514))) ;; おたま，平置き fix
+
+         (setq *oil-dispenser-stove-coords* (make-coords :pos (float-vector 800.0 530.0 845.0) :rpy (float-vector -0.002 0.0 0.0))) ;; oil dispenser fix
+
+         (setq *green-bowl-stove-coords* (make-coords :pos (float-vector 732.733 394.164 831.797) :rpy (float-vector 0 0 0))) ;; fix
 
          )
         (:old-curry

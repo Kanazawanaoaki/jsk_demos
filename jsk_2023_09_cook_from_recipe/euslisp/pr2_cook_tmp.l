@@ -11,18 +11,6 @@
 
 (setq *co* (make-coords))
 
-;; adj coords offset
-(defun set-offset-cds (target-cds offset-cds)
-  (let (ans-cds)
-    (setq ans-cds (send (send offset-cds :copy-worldcoords) :transform (send target-cds :copy-worldcoords)))
-    ans-cds))
-
-(defun inv-offset-cds (target-cds offset-cds)
-  (let (ans-cds)
-    ;; (setq ans-cds (send (send offset-cds :copy-worldcoords) :transform (send target-cds :copy-worldcoords)))
-    (setq ans-cds (send (send (send offset-cds :copy-worldcoords) :inverse-transformation) :transform (send target-cds :copy-worldcoords)))
-    ans-cds))
-
 ;; object detection with k4a
 (defun k4a-check-detection (detecion-topic) ;; TODO 10回くらいsubscribeしてその平均か，外れ値ではないものを使いたいなど
   (let (cds

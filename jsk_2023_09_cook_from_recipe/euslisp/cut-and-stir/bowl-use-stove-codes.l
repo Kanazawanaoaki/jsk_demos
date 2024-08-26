@@ -34,12 +34,6 @@
     (setq *bowl-1* (bowl-1))
     ))
 
-(unless (boundp '*gray-bowl*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/gray-bowl.l")
-    (setq *gray-bowl* (gray-bowl))
-    ))
-
 (unless (boundp '*bowl-2*)
   (progn
     (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/bowl-2.l")
@@ -50,6 +44,18 @@
   (progn
     (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/bowl-3.l")
     (setq *bowl-3* (bowl-3))
+    ))
+
+(unless (boundp '*gray-bowl*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/gray-bowl.l")
+    (setq *gray-bowl* (gray-bowl))
+    ))
+
+(unless (boundp '*green-bowl*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/green-bowl.l")
+    (setq *green-bowl* (green-bowl))
     ))
 
 (unless (boundp '*oil-dispenser*)
@@ -83,6 +89,18 @@
   (send *stove-kitchen-plane* :newcoords  (send *stove-kitchen-plane-coords* :copy-worldcoords))
   (when reset-obj-cds
     (case type
+          (:sunny-side-up
+           (dissoc-object *oil-dispenser*)
+           (send *oil-dispenser* :newcoords (send *oil-dispenser-stove-coords* :copy-worldcoords))
+
+           (dissoc-object *gray-bowl*)
+           (send *gray-bowl* :newcoords (send *gray-bowl-stove-coords* :copy-worldcoords))
+
+           (dissoc-object *green-bowl*)
+           (send *green-bowl* :newcoords (send *green-bowl-stove-coords* :copy-worldcoords))
+
+           (objects (list *pr2* *stove-kitchen-plane* *gray-bowl* *green-bowl* *oil-dispenser*)) ;; frying pan
+           )
           (:old-curry
            (dissoc-object *spatula*)
            (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; spatula on the cutting board
@@ -128,7 +146,7 @@
 
 (bowl-stove-init)
 
-
+;; TODO fix
 ;; add for rosservice
 ;; (ros::load-ros-manifest "std_srvs")
 ;; (ros::wait-for-service "after_stow_data_collection/save_request")
@@ -138,91 +156,149 @@
 ;;   (setq res (ros::service-call "after_stow_data_collection/save_request" req t))
 ;;   )
 
-;; add for voice recognition
-(ros::load-ros-manifest "speech_recognition_msgs")
-(setq *data-flag* nil)
-(defun voice-cb (msg)
-  (when msg
-    (setq *msg* msg)
-    (setq *data* (send *msg* :transcript))
-    (setq *data-flag* t)
-    (format t "data: ~A ~%" *data*)
-    )
-  )
+;; ;; add for voice recognition
+;; (ros::load-ros-manifest "speech_recognition_msgs")
+;; (setq *data-flag* nil)
+;; (defun voice-cb (msg)
+;;   (when msg
+;;     (setq *msg* msg)
+;;     (setq *data* (send *msg* :transcript))
+;;     (setq *data-flag* t)
+;;     (format t "data: ~A ~%" *data*)
+;;     )
+;;   )
 
-(defun dialogue-func ()
-  (ros::unsubscribe "/speech_to_text")
-  (setq *data-flag* nil)
-  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
-  (until *data-flag*
-         (ros::spin-once)
-         (ros::sleep)
-         )
-  (send *ri* :speak-jp "ありがとうございます")
-  (unix:sleep 1)
-  )
+;; (defun dialogue-func ()
+;;   (ros::unsubscribe "/speech_to_text")
+;;   (setq *data-flag* nil)
+;;   (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-cb)
+;;   (until *data-flag*
+;;          (ros::spin-once)
+;;          (ros::sleep)
+;;          )
+;;   (send *ri* :speak-jp "ありがとうございます")
+;;   (unix:sleep 1)
+;;   )
 
-(setq *ok-flag* nil)
-(defun voice-ok-cb (msg)
-  (when msg
-    (setq *msg* msg)
-    (setq *data* (send *msg* :transcript))
-    (if (equal *data* '("OK"))
-        (progn
-          (format t "了解しました！ ~%" *data*)
-          (setq *ok-flag* t)
-          )
-      (format t "data: ~A ~%" *data*)
-      )
-    )
-  )
+;; (setq *ok-flag* nil)
+;; (defun voice-ok-cb (msg)
+;;   (when msg
+;;     (setq *msg* msg)
+;;     (setq *data* (send *msg* :transcript))
+;;     (if (equal *data* '("OK"))
+;;         (progn
+;;           (format t "了解しました！ ~%" *data*)
+;;           (setq *ok-flag* t)
+;;           )
+;;       (format t "data: ~A ~%" *data*)
+;;       )
+;;     )
+;;   )
 
-(defun ok-grasp-larm ()
-  (ros::unsubscribe "/speech_to_text")
-  (setq *ok-flag* nil)
-  (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
-  (until *ok-flag*
-         (ros::spin-once)
-         (ros::sleep)
-         )
-  (send *ri* :speak-jp "ありがとうございます")
-  (unix:sleep *w-time*)
-  (send *ri* :start-grasp :larm :wait t)
-  )
+;; (defun ok-grasp-larm ()
+;;   (ros::unsubscribe "/speech_to_text")
+;;   (setq *ok-flag* nil)
+;;   (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
+;;   (until *ok-flag*
+;;          (ros::spin-once)
+;;          (ros::sleep)
+;;          )
+;;   (send *ri* :speak-jp "ありがとうございます")
+;;   (unix:sleep *w-time*)
+;;   (send *ri* :start-grasp :larm :wait t)
+;;   )
 
-(defun receive-with-dialogue-larm ()
-  ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
-  (setq *yes-flag* nil)
-  (until *yes-flag*
-         (send *ri* :stop-grasp :larm :wait t)
-         (ok-grasp-larm)
-         (send *ri* :speak-jp "上手く掴めていますか？")
-         (dialogue-func)
-         (if (equal *data* '("はい"))
-             (setq *yes-flag* t)
-           (progn
-             (send *ri* :speak-jp "グリッパを開きます.もう一度お願いします")
-             (unix:sleep *w-time*)
-             )
-           )
-         )
+;; (defun receive-with-dialogue-larm ()
+;;   ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
+;;   (setq *yes-flag* nil)
+;;   (until *yes-flag*
+;;          (send *ri* :stop-grasp :larm :wait t)
+;;          (ok-grasp-larm)
+;;          (send *ri* :speak-jp "上手く掴めていますか？")
+;;          (dialogue-func)
+;;          (if (equal *data* '("はい"))
+;;              (setq *yes-flag* t)
+;;            (progn
+;;              (send *ri* :speak-jp "グリッパを開きます.もう一度お願いします")
+;;              (unix:sleep *w-time*)
+;;              )
+;;            )
+;;          )
 
-  (send *ri* :speak-jp "次の行動に移ります")
-  (unix:sleep *w-time*)
-  )
+;;   (send *ri* :speak-jp "次の行動に移ります")
+;;   (unix:sleep *w-time*)
+;;   )
 
-;; add for grasp detection
-(defun grasp-fail-detection-larm (&rest args &key (g-thre 10) &allow-other-keys)
-  (setq *fail-flag* nil)
-  (setq gripper-len (send *ri* :state :gripper :larm :position))
-  (if (< gripper-len g-thre)
-      (setq *fail-flag* t))
-  )
+;; ;; add for grasp detection
+;; (defun grasp-fail-detection-larm (&rest args &key (g-thre 10) &allow-other-keys)
+;;   (setq *fail-flag* nil)
+;;   (setq gripper-len (send *ri* :state :gripper :larm :position))
+;;   (if (< gripper-len g-thre)
+;;       (setq *fail-flag* t))
+;;   )
 
 (warn "If you use real robot, run (update-pos) ~%")
 (warn "please run (now-set-bowls) or (set-bowl-1) ~%")
 
 ;; def util-funcs
+;; update funcs
+(defun set-bowl-on-table (&key (object-name "gray bowl") (arm :rarm) (action-mode :set) (spot-name "stove") (use-cds-offset nil))
+  (let ((pre-set-avs (list))
+        (pre-set-val (float-vector 0 0 0))
+        (set-target-coords (make-coords))
+        adj-target-cds
+        )
+    (cond
+     ((and (string= object-name "gray bowl") (string= spot-name "stove") (equal arm :rarm)) ;; TODO
+      (setq pre-set-avs (list #f(-39.4916 -5.60379 -51.4586 -70.0476 -75.5379 -114.544 397.394)))
+      (setq pre-set-val #f(-147 -23 7)) ;; for upper #f(0 0 150) :world
+
+      ;; calc from defined coords
+      (send *arrow* :newcoords (calc-coords-from-rel *gray-bowl-stove-coords* (make-coords :pos #f(-89.819 12.851 40.629) :rpy #f(0.478 1.218 -0.929))))
+      (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *gray-bowl-stove-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
+      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
+      )
+     ((and (string= object-name "green bowl") (string= spot-name "stove") (equal arm :rarm))
+      (setq pre-set-avs (list #f(-38.3278 -3.2288 -63.6414 -68.0071 -83.1809 -108.309 393.782))) ;; for green bowl, upper outside
+      (setq pre-set-val #f(-100 50 0)) ;; for upper #f(0 0 150) :world
+
+      ;; calc from defined coords
+      (send *arrow* :newcoords (calc-coords-from-rel *green-bowl-stove-coords* (make-coords :pos #f(-57.768 20.693 22.929) :rpy #f(0.115 1.25 -1.37))))
+      (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *green-bowl-stove-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
+      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
+      )
+     (t
+      (format t "Sorry, object-name ~A, spot-name ~A, arm ~A is not defined now !!!~%" object-name spot-name arm)
+      (return-from set-bowl-on-table nil)
+      )
+     )
+
+    (if use-cds-offset
+        (setq adj-target-cds (adjust-cds-with-spot set-target-coords spot-name))
+      (setq adj-target-cds (send set-target-coords :copy-worldcoords))
+      )
+    (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm arm :action-mode action-mode :object-name object-name)
+
+    ;; TODO add dissoc object and put object
+    ))
+
+(defun receive-and-set-gray-bowl ();; TODO add head
+  (set-bowl-on-table :object-name "gray bowl" :arm :rarm :action-mode :set :spot-name "stove" :use-cds-offset nil)
+  )
+
+(defun put-gray-bowl ()
+  (set-bowl-on-table :object-name "gray bowl" :arm :rarm :action-mode :put :spot-name "stove" :use-cds-offset nil)
+  )
+
+(defun receive-and-set-green-bowl ()
+  (set-bowl-on-table :object-name "green bowl" :arm :rarm :action-mode :set :spot-name "stove" :use-cds-offset nil)
+  )
+
+(defun put-green-bowl ()
+  (set-bowl-on-table :object-name "green bowl" :arm :rarm :action-mode :put :spot-name "stove" :use-cds-offset nil)
+  )
+
+;; TODO fix
 (defun reset-rarm ()
 
   (setq *rav0* (float-vector -25.6468 7.87241 -48.2704 -85.3763 253.675 -77.8887 -147.102))
@@ -234,8 +310,8 @@
   ;;       :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)  
-  
+  (send *ri* :wait-interpolation)
+
   (setq *rav1* (float-vector -20.8048 54.2396 -5.42985 -119.734 197.32 -75.8373 -189.059))
   (send *pr2* :rarm :angle-vector *rav1*)
   ;; (send *arrow* :newcoords (make-coords :pos (float-vector 628.029 8828.539 31050.217) :rpy (float-vector -3.14 0.18 -0.086)))
@@ -246,7 +322,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (setq *rav3* (float-vector -75.0 50.0 -110.0 -110.0 20.0 -10.0 -10.0))
   (send *pr2* :rarm :angle-vector *rav3*)
   ;; (send *arrow* :newcoords (make-coords :pos (float-vector 800.191 8689.104 30866.677) :rpy (float-vector -2.341 -0.222 -0.482)))
@@ -257,7 +333,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
-  
+
   (setq *rav3* (float-vector -75.0 50.0 -110.0 -110.0 20.0 -10.0 -10.0))
   (send *pr2* :rarm :angle-vector *rav3*)
   (send *viewer* :draw-objects)
@@ -277,7 +353,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   ;; 少し上にして水平に
   (setq *lav1* (float-vector 16.6498 -20.1996 123.812 -51.9785 -42.6397 -65.2851 -0.059116))
   (send *pr2* :larm :angle-vector *lav1*)
@@ -289,7 +365,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   ;; 手前にする
   (setq *lav2* (float-vector 41.8129 -20.2467 85.9536 -82.3235 -13.8272 -47.9804 -0.0))
   (send *pr2* :larm :angle-vector *lav2*)

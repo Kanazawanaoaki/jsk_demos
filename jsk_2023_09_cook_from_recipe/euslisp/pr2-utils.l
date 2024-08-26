@@ -1,4 +1,7 @@
+#!/usr/bin/env roseus
+
 (require :pr2-interface "package://pr2eus/pr2-interface.l")
+(require :kanazawa-roseus-utils "package://jsk_2023_09_cook_from_recipe/euslisp/kanazawa-roseus-utils.l")
 
 (defun init-pr2 ()
   (unless (boundp '*ri*) (pr2-init))
