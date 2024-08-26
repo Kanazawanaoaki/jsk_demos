@@ -41,6 +41,7 @@
   <depend>pr2eus_moveit</depend>
   <depend>pddl_planner</depend>
   <depend>jsk_pr2_startup</depend>
+  <depend>rviz_interactive_tf</depend>
   <!--   Note that this is equivalent to the following: -->
   <!--   <build_depend>roscpp</build_depend> -->
   <!--   <exec_depend>roscpp</exec_depend> -->

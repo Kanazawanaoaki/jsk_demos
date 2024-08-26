@@ -1,7 +1,7 @@
 - git:
     local-name: jsk_demos
     uri: git@github.com:Kanazawanaoaki/jsk_demos.git
-    version: cook-from-recipe
+    version: cut-and-stir
 - git:
     local-name: jsk-ros-pkg/jsk_common
     uri: git@github.com:jsk-ros-pkg/jsk_common.git
@@ -23,3 +23,6 @@
     local-name: vil_ros
     uri: git@github.com:Kanazawanaoaki/vil_ros.git
     version: main
+- git:
+    local-name: rviz_interactive_tf
+    uri: git@github.com:lucasw/rviz_interactive_tf.git
