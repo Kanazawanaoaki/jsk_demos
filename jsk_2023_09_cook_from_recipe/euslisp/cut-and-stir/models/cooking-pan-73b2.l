@@ -1,4 +1,4 @@
-(defclass cooking-pot-object
+(defclass cooking-pan-object
   :super cascaded-link
   :slots (
       handle0
@@ -7,20 +7,20 @@
       bottom
       ))
 
-(defmethod cooking-pot-object
+(defmethod cooking-pan-object
   (:init
-   (&rest args &key (name "cooking-pot") (bottom-thick 10) (bottom-radius 70) (pot-height 100) (pot-thick 5) (handle-x 100) (handle-y 35) (handle-z 10) (pot-radius 100) (pos (float-vector 0 0 0)) (rot (unit-matrix 3)) &allow-other-keys)
+   (&rest args &key (name "cooking-pan") (bottom-thick 10) (bottom-radius 100) (pan-height 60) (pan-thick 5) (pan-radius 120) (handle-x 180) (handle-y 40) (handle-z 20) (pos (float-vector 0 0 0)) (rot (unit-matrix 3)) &allow-other-keys)
    (let (link1 bc1 bc2 bc3 bc4)
      (send-super* :init :name name args)
 
      ;; definition of link
      ;; (setq bc1 (make-solid-of-revolution (list (float-vector 0 0 bottom-thick) (float-vector bottom-radius 0 bottom-thick) #f(95 0 100) #f(100 0 100) #f(73 0 5) #f(72.5 0 0) #f(0 0 0))))
-     (setq bc1 (make-solid-of-revolution (list (float-vector 0 0 bottom-thick) (float-vector bottom-radius 0 bottom-thick) (float-vector (- pot-radius pot-thick) 0 pot-height) (float-vector pot-radius 0 pot-height) (float-vector (+ bottom-radius (/ pot-thick 2)) 0 0) #f(0 0 0))))
+     (setq bc1 (make-solid-of-revolution (list (float-vector 0 0 bottom-thick) (float-vector bottom-radius 0 bottom-thick) (float-vector (- pan-radius pan-thick) 0 pan-height) (float-vector pan-radius 0 pan-height) (float-vector (+ bottom-radius (/ pan-thick 2)) 0 0) #f(0 0 0))))
      (send bc1 :locate (float-vector 0 0 (/ bottom-thick 2)))
      ;; (send bc1 :set-color :red)
 
      ;; (setq bc2 (make-solid-of-revolution (list #f(0 0 73) #f(95 0 100) #f(70 0 10) #f(0 0 10))))
-     (setq bc2 (make-solid-of-revolution (list (float-vector 0 0 pot-height) (float-vector (- pot-radius pot-thick) 0 pot-height) (float-vector bottom-radius 0 bottom-thick) (float-vector 0 0 bottom-thick))))
+     (setq bc2 (make-solid-of-revolution (list (float-vector 0 0 pan-height) (float-vector (- pan-radius pan-thick) 0 pan-height) (float-vector bottom-radius 0 bottom-thick) (float-vector 0 0 bottom-thick))))
      (setq content bc2)
      (send bc1 :assoc content)
 
@@ -31,8 +31,8 @@
      (setq bc4 (make-cube handle-x handle-y handle-z))
      ;; (send bc4 :locate #f(-140 0 90))
      (send bc4 :locate (float-vector (- (/ handle-x 2)) 0 (/ handle-z 2)))
-     (send bc4 :locate #f(-90 0 80))
-     (send bc4 :set-color :black)
+     (send bc4 :locate #f(-110 0 40))
+     ;; (send bc4 :set-color :black)
      (send bc1 :assoc bc4)
 
      (setq link1 (instance bodyset-link :init (make-cascoords) :bodies (list bc1 bc4) :weight 1 :centroid (float-vector 0.0 0.0 0.0) :inertia-tensor #2f((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0))))
@@ -85,4 +85,4 @@
 
   )
 
-(defun cooking-pot (&rest args) (instance* cooking-pot-object :init args))
+(defun cooking-pan (&rest args) (instance* cooking-pan-object :init args))

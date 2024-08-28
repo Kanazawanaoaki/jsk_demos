@@ -10,16 +10,28 @@
 (setq *x-thre* -10)
 (setq *cb-flag* nil)
 
+(unless (boundp '*pot*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cooking-pot-73b2.l")
+    (setq *pot* (cooking-pot))
+    ))
+
+(unless (boundp '*pan*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cooking-pan-73b2.l")
+    (setq *pan* (cooking-pan))
+    ))
+
 (unless (boundp '*spatula*)
   (progn
     (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/spatula.l")
     (setq *spatula* (spatula))
     ))
 
-(unless (boundp '*pot*)
+(unless (boundp '*ladle*)
   (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cooking-pot-73b2.l")
-    (setq *pot* (cooking-pot))
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/ladle.l")
+    (setq *ladle* (ladle))
     ))
 
 (unless (boundp '*mcup*)
@@ -90,8 +102,20 @@
   (when reset-obj-cds
     (case type
           (:sunny-side-up
+           (dissoc-object *pan*)
+           (send *pan* :newcoords (send *pan-coords* :copy-worldcoords))
+
            (dissoc-object *oil-dispenser*)
            (send *oil-dispenser* :newcoords (send *oil-dispenser-stove-coords* :copy-worldcoords))
+
+           (dissoc-object *gray-bowl*)
+           (send *gray-bowl* :newcoords (send *gray-bowl-stove-coords* :copy-worldcoords))
+
+           (objects (list *pr2* *stove-kitchen-plane* *pan* *gray-bowl* *oil-dispenser*))
+           )
+          (:butter-sunny-side-up
+           (dissoc-object *pan*)
+           (send *pan* :newcoords (send *pan-coords* :copy-worldcoords))
 
            (dissoc-object *gray-bowl*)
            (send *gray-bowl* :newcoords (send *gray-bowl-stove-coords* :copy-worldcoords))
@@ -99,7 +123,60 @@
            (dissoc-object *green-bowl*)
            (send *green-bowl* :newcoords (send *green-bowl-stove-coords* :copy-worldcoords))
 
-           (objects (list *pr2* *stove-kitchen-plane* *gray-bowl* *green-bowl* *oil-dispenser*)) ;; frying pan
+           (objects (list *pr2* *stove-kitchen-plane* *pan* *gray-bowl* *green-bowl*))
+           )
+          (:scrambled-egg
+           (dissoc-object *pan*)
+           (send *pan* :newcoords (send *pan-coords* :copy-worldcoords))
+
+           (dissoc-object *green-bowl*)
+           (send *green-bowl* :newcoords (send *green-bowl-stove-coords* :copy-worldcoords))
+
+           (dissoc-object *spatula*)
+           (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords))
+
+           (objects (list *pr2* *stove-kitchen-plane* *pan* *green-bowl* *spatula*))
+           )
+          (:poached-egg
+           (dissoc-object *pot*)
+           (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+
+           (dissoc-object *gray-bowl*)
+           (send *gray-bowl* :newcoords (send *gray-bowl-stove-coords* :copy-worldcoords))
+
+           ;; spoon
+
+           (objects (list *pr2* *stove-kitchen-plane* *pot* *gray-bowl*))
+           )
+          (:curry
+           (dissoc-object *spatula*)
+           (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; spatula on the cutting board
+
+           (dissoc-object *ladle*)
+           (send *ladle* :newcoords (send *ladle-coords-1* :copy-worldcoords))
+
+           (dissoc-object *pot*)
+           (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+
+           (dissoc-object *mcup*)
+           (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
+
+           (dissoc-object *bowl-2*)
+           (send *bowl-2* :newcoords (send *bowl-2-stove-coords* :copy-worldcoords))
+
+           (dissoc-object *gray-bowl*)
+           (send *gray-bowl* :newcoords (send *gray-bowl-stove-coords* :copy-worldcoords))
+
+           (dissoc-object *green-bowl*)
+           (send *green-bowl* :newcoords (send *green-bowl-stove-coords* :copy-worldcoords))
+
+           (dissoc-object *oil-dispenser*)
+           (send *oil-dispenser* :newcoords (send *oil-dispenser-stove-coords* :copy-worldcoords))
+
+           ;; (objects (list *pr2* *scene* *spatula* *mcup* *ladle* *pot* *bowl-1* *bowl-2* *bowl-3* *oil-dispenser*))
+           ;; (move-to-stove-irt)
+           ;; (update-view)
+           (objects (list *pr2* *stove-kitchen-plane* *spatula* *mcup* *ladle* *pot* *bowl-2* *gray-bowl* *green-bowl* *oil-dispenser*))
            )
           (:old-curry
            (dissoc-object *spatula*)
@@ -267,6 +344,24 @@
       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *green-bowl-stove-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
       )
+     ((and (string= object-name "green bowl") (string= spot-name "stove") (equal arm :larm))
+      (setq pre-set-avs (list #f(48.7972 1.40098 47.7424 -89.0343 68.0991 -99.506 -53.0755))) ;; TODO
+      (setq pre-set-val #f(-100 50 0)) ;; for upper #f(0 0 150) :world
+
+      ;; calc from defined coords
+      (send *arrow* :newcoords (calc-coords-from-rel *green-bowl-stove-coords* (make-coords :pos #f(-57.768 20.693 22.929) :rpy #f(0.115 1.25 -1.37))))
+      (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *green-bowl-stove-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
+      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
+      )
+     ((and (string= object-name "oil dispenser") (string= spot-name "stove") (equal arm :larm))
+      (setq pre-set-avs (list #f(48.7972 1.40098 47.7424 -89.0343 68.0991 -99.506 -53.0755))) ;; TODO
+      (setq pre-set-val #f(-100 50 0)) ;; for upper #f(0 0 150) :world
+
+      ;; calc from defined coords
+      (send *arrow* :newcoords (calc-coords-from-rel *oil-dispenser-stove-coords* (make-coords :pos #f(-9.925 5.389 113.022) :rpy #f(-0.023 0.057 3.124))))
+      (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *oil-dispenser-stove-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
+      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
+      )
      (t
       (format t "Sorry, object-name ~A, spot-name ~A, arm ~A is not defined now !!!~%" object-name spot-name arm)
       (return-from set-bowl-on-table nil)
@@ -291,11 +386,19 @@
   )
 
 (defun receive-and-set-green-bowl ()
-  (set-bowl-on-table :object-name "green bowl" :arm :rarm :action-mode :set :spot-name "stove" :use-cds-offset nil)
+  (set-bowl-on-table :object-name "green bowl" :arm :larm :action-mode :set :spot-name "stove" :use-cds-offset nil)
   )
 
 (defun put-green-bowl ()
-  (set-bowl-on-table :object-name "green bowl" :arm :rarm :action-mode :put :spot-name "stove" :use-cds-offset nil)
+  (set-bowl-on-table :object-name "green bowl" :arm :larm :action-mode :put :spot-name "stove" :use-cds-offset nil)
+  )
+
+(defun receive-and-set-oil-dispenser ()
+  (set-bowl-on-table :object-name "oil dispenser" :arm :larm :action-mode :set :spot-name "stove" :use-cds-offset nil)
+  )
+
+(defun put-oil-dispenser ()
+  (set-bowl-on-table :object-name "oil dispenser" :arm :larm :action-mode :put :spot-name "stove" :use-cds-offset nil)
   )
 
 ;; TODO fix

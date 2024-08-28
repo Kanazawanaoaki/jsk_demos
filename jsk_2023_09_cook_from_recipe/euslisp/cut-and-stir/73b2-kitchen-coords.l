@@ -4,6 +4,7 @@
   ;; set global coords
 
   ;; (setq *kitchen-spot* (make-coords :pos (float-vector 1110 8500 30000) :rpy (float-vector pi 0 0))) ;; original
+  (setq *kitchen-spot* (make-coords :pos (float-vector 1170 8540 30000) :rpy (float-vector pi 0 0))) ;; fix
 
   ;; (setq *kitchen-plane-coords* (make-coords :pos #f(815 -15 835)))
   (setq *kitchen-plane-coords* (make-coords :pos #f(815 -15 830)))
@@ -120,6 +121,7 @@
 
   ;; (setq *kitchen-spot* (make-coords :pos (float-vector 1110 8500 30000) :rpy (float-vector pi 0 0))) ;; original
   ;; (setq *stove-spot* (make-coords :pos (float-vector 1200 8100 30000) :rpy (float-vector pi 0 0))) ;; original
+  (setq *stove-spot* (make-coords :pos (float-vector 1300 8000 30000) :rpy (float-vector pi 0 0))) ;; fix
 
 
   ;; (setq *kitchen-plane-coords* (make-coords :pos #f(815 -15 835)))
@@ -141,21 +143,60 @@
   (case type
         (:sunny-side-up
          ;; (setq *oil-dispenser-stove-coords* (make-coords :pos (float-vector 400 7570 30845) :rpy (float-vector 3.14 0.0 0.0))) ;; oil dispenser original
-         (setq *oil-dispenser-stove-coords* (make-coords :pos (float-vector 800.0 530.0 845.0) :rpy (float-vector -0.002 0.0 0.0))) ;; oil dispenser fix
+         ;; (setq *oil-dispenser-stove-coords* (make-coords :pos (float-vector 800.0 530.0 845.0) :rpy (float-vector -0.002 0.0 0.0))) ;; oil dispenser fix
+         (setq *oil-dispenser-stove-coords* (make-coords :pos (float-vector 880.0 400.0 830.0) :rpy (float-vector -0.002 0.0 0.0))) ;; oil dispenser fix v2
 
          (setq *gray-bowl-stove-coords* (make-coords :pos (float-vector 780 -540 830) :rpy (float-vector 0 0 0))) ;; fix
 
          (setq *green-bowl-stove-coords* (make-coords :pos (float-vector 740 -370 830) :rpy (float-vector 0 0 0))) ;; fix
+
+         (setq *pan-coords* (make-coords :pos (float-vector 880.0 -110.0 840.0) :rpy (float-vector 0.0 0.0 0.0))) ;; pot fix v2
+         )
+        (:butter-sunny-side-up
+         (setq *gray-bowl-stove-coords* (make-coords :pos (float-vector 780 -540 830) :rpy (float-vector 0 0 0))) ;; fix
+
+         (setq *green-bowl-stove-coords* (make-coords :pos (float-vector 740 -370 830) :rpy (float-vector 0 0 0))) ;; fix
+
+         (setq *pan-coords* (make-coords :pos (float-vector 880.0 -110.0 840.0) :rpy (float-vector 0.0 0.0 0.0))) ;; pot fix v2
+         )
+        (:scrambled-egg
+         (setq *green-bowl-stove-coords* (make-coords :pos (float-vector 732.733 394.164 831.797) :rpy (float-vector 0 0 0))) ;; fix
+
+         ;; (setq *spatula-coords-1* (make-coords :pos (float-vector 700.0 -579.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix v2
+         (setq *spatula-coords-1* (make-coords :pos (float-vector 730.0 -300.0 852.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix v3
+
+         (setq *pan-coords* (make-coords :pos (float-vector 880.0 -110.0 840.0) :rpy (float-vector 0.0 0.0 0.0))) ;; pot fix v2
+         )
+        (:poached-egg
+         (setq *gray-bowl-stove-coords* (make-coords :pos (float-vector 780 -540 830) :rpy (float-vector 0 0 0))) ;; fix
+
+         ;; TODO Add spoon
+
+         (setq *pot-coords* (make-coords :pos (float-vector 880.0 -110.0 840.0) :rpy (float-vector 0.0 0.0 0.0))) ;; pot fix v2
          )
         (:curry
-         (setq *spatula-coords-1* (make-coords :pos (float-vector 570.0 -449.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix
+         ;; (setq *spatula-coords-1* (make-coords :pos (float-vector 570.0 -449.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix
+         (setq *spatula-coords-1* (make-coords :pos (float-vector 700.0 -579.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix v2
 
-         (setq *ladle-coords-1* (make-coords :pos (float-vector 570.0 -213.0 877.0) :rpy (float-vector -0.014 -0.098 1.514))) ;; おたま，平置き fix
+         ;; (setq *ladle-coords-1* (make-coords :pos (float-vector 570.0 -213.0 877.0) :rpy (float-vector -0.014 -0.098 1.514))) ;; おたま，平置き fix
+         (setq *ladle-coords-1* (make-coords :pos (float-vector 700.0 -343.0 877.0) :rpy (float-vector -0.014 -0.098 1.514))) ;; おたま，平置き fix v2
 
-         (setq *oil-dispenser-stove-coords* (make-coords :pos (float-vector 800.0 530.0 845.0) :rpy (float-vector -0.002 0.0 0.0))) ;; oil dispenser fix
+         (setq *oil-dispenser-stove-coords* (make-coords :pos (float-vector 880.0 400.0 830.0) :rpy (float-vector -0.002 0.0 0.0))) ;; oil dispenser fix
+
+         ;; (setq *bowl-1-stove-coords* (make-coords :pos (float-vector 870.0 -561.0 840.0) :rpy (float-vector 2.719 0.0 0.0))) ;; bowl1 fix
+         ;; (setq *gray-bowl-stove-coords* (make-coords :pos (float-vector 780 -540 830) :rpy (float-vector 0 0 0))) ;; fix for sunny
+         (setq *gray-bowl-stove-coords* (make-coords :pos (float-vector 1000 -690 830) :rpy (float-vector 0 0 0))) ;; fix v2
 
          (setq *green-bowl-stove-coords* (make-coords :pos (float-vector 732.733 394.164 831.797) :rpy (float-vector 0 0 0))) ;; fix
 
+         ;; (setq *pot-coords* (make-coords :pos (float-vector 750.0 20.0 850.0) :rpy (float-vector 0.0 0.0 0.0))) ;; pot fix
+         (setq *pot-coords* (make-coords :pos (float-vector 880.0 -110.0 840.0) :rpy (float-vector 0.0 0.0 0.0))) ;; pot fix v2
+
+         ;; (setq *mcup-coords* (make-coords :pos (float-vector 670.0 390.0 850.0) :rpy (float-vector 2.194 0.0 0.0))) ;; 計量カップ fix
+         (setq *mcup-coords* (make-coords :pos (float-vector 800.0 260.0 850.0) :rpy (float-vector 2.194 0.0 0.0))) ;; 計量カップ fix v2
+
+         ;; (setq *bowl-2-stove-coords* (make-coords :pos (float-vector 720.0 255.0 850.0) :rpy (float-vector 2.967 0.0 0.0))) ;; bowl-2 fix
+         (setq *bowl-2-stove-coords* (make-coords :pos (float-vector 850.0 125.0 850.0) :rpy (float-vector 2.967 0.0 0.0))) ;; bowl-2 fix v2
          )
         (:old-curry
          ;; (setq *spatula-coords-1* (make-coords :pos (float-vector 630 8549 30872) :rpy (float-vector 3.084 -0.042 1.542))) ;; ヘラ，平置き original
