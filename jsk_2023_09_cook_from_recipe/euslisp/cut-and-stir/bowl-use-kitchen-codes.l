@@ -28,12 +28,6 @@
     (setq *mcup* (measuring-cup-73b2))
     ))
 
-(unless (boundp '*rcup*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/red-cup.l")
-    (setq *rcup* (red-cup))
-    ))
-
 (unless (boundp '*bowl-1*)
   (progn
     (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/bowl-1.l")

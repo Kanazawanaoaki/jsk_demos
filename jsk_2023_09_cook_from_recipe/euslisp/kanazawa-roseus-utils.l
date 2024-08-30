@@ -17,7 +17,6 @@
       (set current-symbol (arrow)))
     ))
 
-
 ;; ros init
 (ros::roseus "kanazawa_roseus_utils" :anonymous t)
 (unless (boundp '*tfl*)
@@ -28,7 +27,40 @@
   )
 
 
+;; IRT viewer
+(defun reset-view-list ()
+  (setq *view-objects* (list *arrow*))
+  (format t "reset *view-objects* list !!~%")
+  )
+
+(unless (boundp '*view-objects*)
+  (progn
+    (reset-view-list)
+    ))
+
+
+
 ;; ;; defun util fuction
+
+;; set object
+(defun dissoc-object (object-instance)
+  (if (not (eql (send object-instance :parent) nil))
+      (send (send object-instance :parent) :dissoc object-instance))
+  )
+
+;; (defun set-object (object-symbol coords file-path object-func)
+;;   (unless (boundp '*arrow*)
+;;     (progn
+;;       (load file-path)
+;;       (setq object-symbol (arrow))
+;;       ))
+;;   )
+(defun set-object (object-symbol coords)
+  (dissoc-object object-symbol)
+  (send object-symbol :newcoords (send coords :copy-worldcoords))
+  (unless (member object-symbol *view-objects*)
+    (setq *view-objects* (append *view-objects* (list object-symbol))))
+  )
 
 ;; calc coords
 (defun calc-object-rel-coords (base-coords target-coords)
@@ -102,12 +134,6 @@
     (format t "y-list is ~A, y-max:~A, y-min:~A max-min-diff:~A ~%" y-list (apply #'max y-list) (apply #'min y-list) (- (apply #'max y-list) (apply #'min y-list)))
     (format t "z-list is ~A, z-max:~A, z-min:~A max-min-diff:~A ~%" z-list (apply #'max z-list) (apply #'min z-list) (- (apply #'max z-list) (apply #'min z-list)))
     ))
-
-;; dissoc object
-(defun dissoc-object (object-instance)
-  (if (not (eql (send object-instance :parent) nil))
-      (send (send object-instance :parent) :dissoc object-instance))
-  )
 
 ;; show cds
 (defun publish-cds-tf (cds &key (base-frame "/base_footprint"))

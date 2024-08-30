@@ -16,12 +16,6 @@
     (setq *pot* (cooking-pot))
     ))
 
-(unless (boundp '*pan*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cooking-pan-73b2.l")
-    (setq *pan* (cooking-pan))
-    ))
-
 (unless (boundp '*spatula*)
   (progn
     (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/spatula.l")
@@ -401,6 +395,129 @@
   (set-bowl-on-table :object-name "oil dispenser" :arm :larm :action-mode :put :spot-name "stove" :use-cds-offset nil)
   )
 
+;; TODO
+(defun grasp-pot-on-stove (&key (arm :larm) (object-name "pot") (action-mode :grasp) (spot-name "stove") (use-cds-offset nil))
+  (let ((pre-set-avs (list))
+        (pre-set-val (float-vector 0 0 0))
+        (set-target-coords (make-coords))
+        adj-target-cds
+        )
+    (cond
+     ((and (string= object-name "pot") (string= spot-name "stove") (equal arm :larm))
+      (setq pre-set-avs (list #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102)))
+      (setq pre-set-val #f(-100 0 0))
+
+      ;; calc from defined coords
+      (send set-target-coords :newcoords (make-coords :pos #f(699.076 178.059 947.711) :rpy #f(0.012 -0.62 3.14)));; TODO calc from object coords
+      )
+     ((and (string= object-name "frying pan") (string= spot-name "stove") (equal arm :larm))
+      (setq pre-set-avs (list #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102)))
+      (setq pre-set-val #f(-100 0 0))
+
+      ;; calc from defined coords
+      (send set-target-coords :newcoords (make-coords :pos #f(657.029 -101.483 899.763) :rpy #f(0.056 -0.405 3.04)));; TODO calc from object coords
+      )
+     )
+    (if use-cds-offset
+        (setq adj-target-cds (adjust-cds-with-spot set-target-coords spot-name))
+      (setq adj-target-cds (send set-target-coords :copy-worldcoords))
+      )
+    (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm arm :action-mode action-mode :object-name object-name)
+
+    ;; TODO add dissoc object and put object
+    ))
+
+(defun release-pot-on-stove (&key (arm :larm))
+  (if (equal arm :larm)
+      (progn
+        (send *ri* :stop-grasp :larm :wait t)
+
+        (send *pr2* :larm :move-end-pos #f(-100 0 0))
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+        (send *ri* :wait-interpolation)
+
+        (send *pr2* :larm :angle-vector #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102))
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+        (send *ri* :wait-interpolation)
+
+        (reset-manip-pose :arm :larm :time 2000)
+        )
+    )
+  )
+
+(defun set-pot-on-stove (&key (arm :larm) (object-name "pot"))
+  (grasp-pot-on-stove :arm arm :object-name object-name)
+
+  (send *ri* :speak-jp (format nil "~AをセットしてOKと言ってください" object-name))
+  (ok-wait)
+
+  (release-pot-on-stove :arm arm)
+  )
+
+;; old
+;; (defun hold-pot-on-stove (&key (arm :larm) (object-name "鍋") (grasp-flag t) (spot-name "stove"))
+;;   (if (equal arm :larm)
+;;       (progn
+;;         (reset-manip-pose :arm :larm :time 2000)
+
+;;         (cond
+;;          ((and (or (string= object-name "鍋") (string= object-name "フライパン")) (string= spot-name "stove"))
+;;           (send *pr2* :larm :angle-vector #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102))
+;;           )
+;;          ((and (string= object-name "ボウル1") (string= spot-name "kitchen"))
+;;           (send *pr2* :larm :angle-vector #f(21.2745 28.3257 29.2936 -100.141 82.9343 -86.2251 -68.1853))
+;;           )
+;;          (t
+;;           (format t "object-name ~A, spot-name ~A is not defined !!!~%" object-name spot-name)
+;;           (return-from hold-pot-on-stove nil)
+;;           )
+;;          )
+;;         (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+;;         (send *ri* :wait-interpolation)
+
+;;         (send *ri* :stop-grasp :larm :wait t)
+
+;;         (let (ik-target
+;;               ik-target-adj)
+;;           (cond
+;;            ((and (string= object-name "鍋") (string= spot-name "stove"))
+;;             ;; (send *pr2* :larm :angle-vector #f(15.0755 56.5882 65.6859 -96.6074 -98.943 -62.4489 -88.545))
+;;             ;; (setq ik-target (make-coords :pos #f(557.801 41.391 945.716) :rpy #f(0.185 -0.498 3.038)))
+;;             (setq ik-target (make-coords :pos #f(699.076 178.059 947.711) :rpy #f(0.012 -0.62 3.14)))
+;;             (setq ik-target-adj (adjust-cds-with-spot ik-target "stove"))
+;;             )
+;;            ((and (string= object-name "フライパン") (string= spot-name "stove"))
+;;             ;; (send *pr2* :larm :angle-vector #f(18.8234 64.1057 72.9717 -100.133 -92.8479 -64.159 -87.0742))
+;;             ;; (setq ik-target (make-coords :pos #f(502.073 32.755 904.802) :rpy #f(0.159 -0.479 3.088)))
+;;             (setq ik-target (make-coords :pos #f(657.029 -101.483 899.763) :rpy #f(0.056 -0.405 3.04)))
+;;             (setq ik-target-adj (adjust-cds-with-spot ik-target "stove"))
+;;             )
+;;            ((and (string= object-name "ボウル1") (string= spot-name "kitchen"))
+;;             (setq ik-target (make-coords :pos #f(709.04 108.836 886.591) :rpy #f(-1.331 1.235 1.725)))
+;;             (setq ik-target-adj (adjust-cds-with-spot ik-target "kitchen"))
+;;             )
+;;            (t
+;;             (format t "object-name ~A, spot-name ~A is not defined !!!~%" object-name spot-name)
+;;             (return-from hold-pot-on-stove nil)
+;;             )
+;;            )
+;;           (send *pr2* :larm :inverse-kinematics
+;;                 (send ik-target-adj :copy-worldcoords)
+;;                 :rotation-axis t
+;;                 :debug-view nil)
+;;           (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+;;           (send *ri* :wait-interpolation)
+
+;;           (if grasp-flag
+;;               (send *ri* :start-grasp :larm :wait t)
+;;             )
+;;           )
+;;         )
+;;     )
+;;   )
+
+
+
 ;; TODO fix
 (defun reset-rarm ()
 
@@ -703,9 +820,9 @@
 
 (defun grasp-bowl-rarm ()
   (before-recieve-rarm)
-  
+
   (send *ri* :stop-grasp :rarm :wait t)
-  
+
   ;; ボウルの位置
   (send *arrow* :newcoords (send *target* :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 200) :world)

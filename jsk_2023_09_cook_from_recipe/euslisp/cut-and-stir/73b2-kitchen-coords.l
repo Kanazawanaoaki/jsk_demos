@@ -1,5 +1,128 @@
-(load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/pr2_cut_food.l")
+;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/pr2_cut_food.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/kanazawa-roseus-utils.l")
 
+(unless (boundp '*knife*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/knife-new-attention.l")
+    (setq *knife* (knife))
+    ))
+
+(unless (boundp '*peeler*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/peeler.l")
+    (setq *peeler* (peeler))
+    ))
+
+(unless (boundp '*potato-peeler*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/potato-peeler.l")
+    (setq *potato-peeler* (peeler))
+    ))
+
+(unless (boundp '*spatula*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/spatula.l")
+    (setq *spatula* (spatula))
+    ))
+
+(unless (boundp '*ladle*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/ladle.l")
+    (setq *ladle* (ladle))
+    ))
+
+(unless (boundp '*shelf-door*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/shelf-door.l")
+    (setq *shelf-door* (shelf-door))
+    ))
+
+(unless (boundp '*cutting-board*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cutting-board.l")
+    (setq *cutting-board* (cutting-board))
+    ))
+
+(unless (boundp '*mcup*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/measuring-cup-73b2.l")
+    (setq *mcup* (measuring-cup-73b2))
+    ))
+
+(unless (boundp '*rcup*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/red-cup.l")
+    (setq *rcup* (red-cup))
+    ))
+
+(unless (boundp '*bowl-1*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/bowl-1.l")
+    (setq *bowl-1* (bowl-1))
+    ))
+
+(unless (boundp '*bowl-2*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/bowl-2.l")
+    (setq *bowl-2* (bowl-2))
+    ))
+
+(unless (boundp '*bowl-3*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/bowl-3.l")
+    (setq *bowl-3* (bowl-3))
+    ))
+
+(unless (boundp '*gray-bowl*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/gray-bowl.l")
+    (setq *gray-bowl* (gray-bowl))
+    ))
+
+(unless (boundp '*green-bowl*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/green-bowl.l")
+    (setq *green-bowl* (green-bowl))
+    ))
+
+(unless (boundp '*oil-dispenser*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/dispenser.l")
+    (setq *oil-dispenser* (dispenser))
+    ))
+
+(unless (boundp '*pot*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cooking-pot-73b2.l")
+    (setq *pot* (cooking-pot))
+    ))
+
+(unless (boundp '*pan*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cooking-pan-73b2.l")
+    (setq *pan* (cooking-pan))
+    ))
+
+(unless (boundp '*kitchen-plane*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/kitchen-plane.l")
+    (setq *kitchen-plane* (kitchen-plane :cube-x 570 :cube-y 690 :cube-z 10))
+    ))
+
+(unless (boundp '*stove-kitchen-plane*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/stove-kitchen-plane.l")
+    (setq *stove-kitchen-plane* (stove-kitchen-plane))
+    ))
+
+(unless (boundp '*arrow*)
+  (progn
+    (load "models/arrow-object.l")
+    (setq *arrow* (arrow))
+    ))
+
+
+;; define coords
 (defun 73b2-kitchen-coords-init (&key (type :curry))
   ;; set global coords
 
@@ -111,6 +234,9 @@
          (setq *gray-bowl-kitchen-coords* (make-coords :pos (float-vector 880.0 -160.0 840.0) :rpy (float-vector 0 0 0))) ;; fix
 
          )
+        (t
+         (format t "type ~A is not defined now !! ~%" type)
+         )
         )
 
   )
@@ -185,7 +311,7 @@
 
          ;; (setq *bowl-1-stove-coords* (make-coords :pos (float-vector 870.0 -561.0 840.0) :rpy (float-vector 2.719 0.0 0.0))) ;; bowl1 fix
          ;; (setq *gray-bowl-stove-coords* (make-coords :pos (float-vector 780 -540 830) :rpy (float-vector 0 0 0))) ;; fix for sunny
-         (setq *gray-bowl-stove-coords* (make-coords :pos (float-vector 1000 -690 830) :rpy (float-vector 0 0 0))) ;; fix v2
+         ;; (setq *gray-bowl-stove-coords* (make-coords :pos (float-vector 1000 -690 830) :rpy (float-vector 0 0 0))) ;; fix v2
 
          (setq *green-bowl-stove-coords* (make-coords :pos (float-vector 732.733 394.164 831.797) :rpy (float-vector 0 0 0))) ;; fix
 
@@ -224,117 +350,195 @@
          (setq *pot-coords* (make-coords :pos (float-vector 750.0 20.0 850.0) :rpy (float-vector 0.0 0.0 0.0))) ;; pot fix
 
          )
+        (t
+         (format t "type ~A is not defined now !! ~%" type)
+         )
         )
   )
 
-(warn "please run (curry-kitchen-view) ~%")
 
-(defun curry-kitchen-view ()
-  (73b2-kitchen-coords-init :type :curry)
+;; define set objects for dishes
+(defun 73b2-kitchen-obj-init (&key (type :curry) (kitchen-coords (make-coords)))
+  ;; (send *kitchen-plane* :newcoords  (send *kitchen-plane-coords* :copy-worldcoords))
+  (set-object *kitchen-plane* (calc-coords-from-rel kitchen-coords (send *kitchen-plane-coords* :copy-worldcoords)))
+  (case type
+        (:curry
+         ;; (dissoc-object *knife*)
+         ;; (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
+         (set-object *knife* (calc-coords-from-rel kitchen-coords (send *knife-coords* :copy-worldcoords)))
 
-  (unless (boundp '*knife*)
-    (progn
-      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/knife-new-attention.l")
-      (setq *knife* (knife))
-      ))
+         (set-object *peeler* (calc-coords-from-rel kitchen-coords (send *peeler-coords* :copy-worldcoords)))
 
-  (unless (boundp '*peeler*)
-    (progn
-      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/peeler.l")
-      (setq *peeler* (peeler))
-      ))
+         (set-object *potato-peeler* (calc-coords-from-rel kitchen-coords (send *potato-peeler-coords* :copy-worldcoords)))
 
-  (unless (boundp '*potato-peeler*)
-    (progn
-      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/potato-peeler.l")
-      (setq *potato-peeler* (peeler))
-      ))
+         (set-object *spatula* (calc-coords-from-rel kitchen-coords (send *spatula-coords-1* :copy-worldcoords))) ;; TODO
 
-  (unless (boundp '*spatula*)
-    (progn
-      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/spatula.l")
-      (setq *spatula* (spatula))
-      ))
+         (set-object *ladle* (calc-coords-from-rel kitchen-coords (send *ladle-coords-1* :copy-worldcoords))) ;; TODO
 
-  (unless (boundp '*ladle*)
-    (progn
-      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/ladle.l")
-      (setq *ladle* (ladle))
-      ))
+         (set-object *pot* (calc-coords-from-rel kitchen-coords (send *pot-coords* :copy-worldcoords)))
 
-  (unless (boundp '*shelf-door*)
-    (progn
-      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/shelf-door.l")
-      (setq *shelf-door* (shelf-door))
-      ))
+         (set-object *gray-bowl* (calc-coords-from-rel kitchen-coords (send *gray-bowl-kitchen-coords* :copy-worldcoords)))
 
-  (unless (boundp '*cutting-board*)
-    (progn
-      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cutting-board.l")
-      (setq *cutting-board* (cutting-board))
-      ))
+         ;; TODO add cutting-board
 
-  (unless (boundp '*gray-bowl*)
-    (progn
-      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/gray-bowl.l")
-      (setq *gray-bowl* (gray-bowl))
-      ))
 
-  (unless (boundp '*pot*)
-    (progn
-      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cooking-pot-73b2.l")
-      (setq *pot* (cooking-pot))
-      ))
+         ;; set equipment
+         (set-object *shelf-door* (calc-coords-from-rel kitchen-coords (send *shelf-door-coords* :copy-worldcoords)))
+         (setq *shelf-look-coords* (send (send *shelf-door* :handle-handle0) :copy-worldcoords))
 
-  (unless (boundp '*cutting-board*)
-    (progn
-      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cutting-board.l")
-      (setq *cutting-board* (cutting-board))
-      ))
+         ;; (objects (list *kitchen-plane* *peeler* *knife* *potato-peeler* *spatula* *ladle* *shelf-door*))
+         )
+        (:old-curry
+         ;; (dissoc-object *knife*)
+         ;; (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
+         (set-object *knife* (calc-coords-from-rel kitchen-coords (send *knife-coords* :copy-worldcoords)))
 
-  (unless (boundp '*kitchen-plane*)
-    (progn
-      (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/kitchen-plane.l")
-      (setq *kitchen-plane* (kitchen-plane :cube-x 570 :cube-y 690 :cube-z 10))
-      ))
+         (set-object *peeler* (calc-coords-from-rel kitchen-coords (send *peeler-coords* :copy-worldcoords)))
 
-  (unless (boundp '*arrow*)
-    (progn
-      (load "models/arrow-object.l")
-      (setq *arrow* (arrow))
-      ))
+         (set-object *potato-peeler* (calc-coords-from-rel kitchen-coords (send *potato-peeler-coords* :copy-worldcoords)))
 
-  (dissoc-object *knife*)
-  (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
+         (set-object *spatula* (calc-coords-from-rel kitchen-coords (send *spatula-coords-1* :copy-worldcoords)))
 
-  (dissoc-object *peeler*)
-  (send *peeler* :newcoords (send *peeler-coords* :copy-worldcoords))
+         (set-object *ladle* (calc-coords-from-rel kitchen-coords (send *ladle-coords-1* :copy-worldcoords)))
 
-  (dissoc-object *potato-peeler*)
-  (send *potato-peeler* :newcoords (send *potato-peeler-coords* :copy-worldcoords))
+         (set-object *pot* (calc-coords-from-rel kitchen-coords (send *pot-coords* :copy-worldcoords)))
 
-  (dissoc-object *spatula*)
-  (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords))
+         ;; set equipment
+         (set-object *shelf-door* (calc-coords-from-rel kitchen-coords (send *shelf-door-coords* :copy-worldcoords)))
+         (setq *shelf-look-coords* (send (send *shelf-door* :handle-handle0) :copy-worldcoords))
 
-  (dissoc-object *ladle*)
-  (send *ladle* :newcoords (send *ladle-coords-1* :copy-worldcoords))
+         ;; (objects (list *kitchen-plane* *peeler* *knife* *potato-peeler* *spatula* *ladle* *shelf-door*))
+         )
+        (t
+         (format t "type ~A is not defined now !! ~%" type)
+         )
+        )
+  )
 
-  (dissoc-object *pot*)
-  (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+(defun 73b2-stove-obj-init (&key (type :curry) (stove-coords (make-coords)))
 
-  (dissoc-object *gray-bowl*)
-  (send *gray-bowl* :newcoords (send *gray-bowl-kitchen-coords* :copy-worldcoords))
+  ;; (send *stove-kitchen-plane* :newcoords  (send *stove-kitchen-plane-coords* :copy-worldcoords))
+  (set-object *stove-kitchen-plane* (calc-coords-from-rel stove-coords (send *stove-kitchen-plane-coords* :copy-worldcoords)))
+  (case type
+        (:sunny-side-up
+         ;; (dissoc-object *pan*)
+         ;; (send *pan* :newcoords (send *pan-coords* :copy-worldcoords))
+         (set-object *pan* (calc-coords-from-rel stove-coords (send *pan-coords* :copy-worldcoords)))
 
-  (dissoc-object *cutting-board*)
-  (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
+         ;; (dissoc-object *oil-dispenser*)
+         ;; (send *oil-dispenser* :newcoords (send *oil-dispenser-stove-coords* :copy-worldcoords))
+         (set-object *oil-dispenser* (calc-coords-from-rel stove-coords (send *oil-dispenser-stove-coords* :copy-worldcoords)))
 
-  (send *kitchen-plane* :newcoords  (send *kitchen-plane-coords* :copy-worldcoords))
+         ;; (dissoc-object *gray-bowl*)
+         ;; (send *gray-bowl* :newcoords (send *gray-bowl-stove-coords* :copy-worldcoords))
+         (set-object *gray-bowl* (calc-coords-from-rel stove-coords (send *gray-bowl-stove-coords* :copy-worldcoords)))
 
-  ;; set equipment
-  (dissoc-object *shelf-door*)
-  (send *shelf-door* :newcoords (send *shelf-door-coords* :copy-worldcoords))
+         ;; (objects (list *pr2* *stove-kitchen-plane* *pan* *gray-bowl* *oil-dispenser*))
+         )
+        (:butter-sunny-side-up
+         (set-object *pan* (calc-coords-from-rel stove-coords (send *pan-coords* :copy-worldcoords)))
 
-  (setq *shelf-look-coords* (send (send *shelf-door* :handle-handle0) :copy-worldcoords))
+         (set-object *gray-bowl* (calc-coords-from-rel stove-coords (send *gray-bowl-stove-coords* :copy-worldcoords)))
 
-  (objects (list *pr2* *kitchen-plane* *peeler* *knife* *potato-peeler* *spatula* *ladle* *shelf-door* *gray-bowl* *cutting-board* *pot*))
+         (set-object *green-bowl* (calc-coords-from-rel stove-coords (send *green-bowl-stove-coords* :copy-worldcoords)))
+
+         ;; (objects (list *pr2* *stove-kitchen-plane* *pan* *gray-bowl* *green-bowl*))
+         )
+        (:scrambled-egg
+         (set-object *pan* (calc-coords-from-rel stove-coords (send *pan-coords* :copy-worldcoords)))
+
+         (set-object *green-bowl* (calc-coords-from-rel stove-coords (send *green-bowl-stove-coords* :copy-worldcoords)))
+
+         (set-object *spatula* (calc-coords-from-rel stove-coords (send *spatula-coords-1* :copy-worldcoords)))
+
+         ;; (objects (list *pr2* *stove-kitchen-plane* *pan* *green-bowl* *spatula*))
+         )
+        (:poached-egg
+         ;; (dissoc-object *pot*)
+         ;; (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
+         (set-object *pot* (calc-coords-from-rel stove-coords (send *pot-coords* :copy-worldcoords)))
+
+         (set-object *gray-bowl* (calc-coords-from-rel stove-coords (send *gray-bowl-stove-coords* :copy-worldcoords)))
+
+         ;; TODO Add spoon
+
+         ;; (objects (list *pr2* *stove-kitchen-plane* *pot* *gray-bowl*))
+         )
+        (:curry
+         (set-object *spatula* (calc-coords-from-rel stove-coords (send *spatula-coords-1* :copy-worldcoords))) ;; spatula on the cutting board
+
+         (set-object *ladle* (calc-coords-from-rel stove-coords (send *ladle-coords-1* :copy-worldcoords))) ;; ladle on the cutting board
+
+         (set-object *pot* (calc-coords-from-rel stove-coords (send *pot-coords* :copy-worldcoords)))
+
+         (set-object *mcup* (calc-coords-from-rel stove-coords (send *mcup-coords* :copy-worldcoords)))
+
+         (set-object *bowl-2* (calc-coords-from-rel stove-coords (send *bowl-2-stove-coords* :copy-worldcoords))) ;; TODO update
+
+         ;; (set-object *gray-bowl* (calc-coords-from-rel stove-coords (send *gray-bowl-stove-coords* :copy-worldcoords)))
+
+         (set-object *green-bowl* (calc-coords-from-rel stove-coords (send *green-bowl-stove-coords* :copy-worldcoords)))
+
+         (set-object *oil-dispenser* (calc-coords-from-rel stove-coords (send *oil-dispenser-stove-coords* :copy-worldcoords)))
+
+         ;; (objects (list *pr2* *stove-kitchen-plane* *spatula* *mcup* *ladle* *pot* *bowl-2* *gray-bowl* *green-bowl* *oil-dispenser*))
+         )
+        (:old-curry
+         ;; (dissoc-object *spatula*)
+         ;; (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; spatula on the cutting board
+         (set-object *spatula* (calc-coords-from-rel stove-coords (send *spatula-coords-1* :copy-worldcoords))) ;; spatula on the cutting board
+
+         ;; (dissoc-object *ladle*)
+         ;; (send *ladle* :newcoords (send *ladle-coords-1* :copy-worldcoords))
+         (set-object *ladle* (calc-coords-from-rel stove-coords (send *ladle-coords-1* :copy-worldcoords))) ;; ladle on the cutting board
+
+         (set-object *pot* (calc-coords-from-rel stove-coords (send *pot-coords* :copy-worldcoords)))
+
+         ;; (dissoc-object *mcup*)
+         ;; (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
+         (set-object *mcup* (calc-coords-from-rel stove-coords (send *mcup-coords* :copy-worldcoords)))
+
+         ;; (dissoc-object *bowl-1*)
+         ;; (send *bowl-1* :newcoords (send *bowl-1-stove-coords* :copy-worldcoords))
+         (set-object *bowl-1* (calc-coords-from-rel stove-coords (send *bowl-1-stove-coords* :copy-worldcoords)))
+
+         ;; (dissoc-object *bowl-2*)
+         ;; (send *bowl-2* :newcoords (send *bowl-2-stove-coords* :copy-worldcoords))
+         (set-object *bowl-2* (calc-coords-from-rel stove-coords (send *bowl-2-stove-coords* :copy-worldcoords)))
+
+         ;; (dissoc-object *bowl-3*)
+         ;; (send *bowl-3* :newcoords (send *bowl-3-stove-coords* :copy-worldcoords))
+         (set-object *bowl-3* (calc-coords-from-rel stove-coords (send *bowl-3-stove-coords* :copy-worldcoords)))
+
+         (set-object *oil-dispenser* (calc-coords-from-rel stove-coords (send *oil-dispenser-stove-coords* :copy-worldcoords)))
+
+         ;; (objects (list *pr2* *scene* *spatula* *mcup* *ladle* *pot* *bowl-1* *bowl-2* *bowl-3* *oil-dispenser*))
+         ;; (move-to-stove-irt)
+         ;; (update-view)
+         ;; (objects (list *pr2* *stove-kitchen-plane* *spatula* *mcup* *ladle* *pot* *bowl-1* *bowl-2* *bowl-3* *oil-dispenser*))
+         )
+        (t
+         (format t "type ~A is not defined now !! ~%" type)
+         )
+        )
+  )
+
+
+(warn "please run (curry-kitchen-view :type :curry) or (curry-stove-view :type :curry)~%")
+
+(defun curry-kitchen-view (&key (type :curry))
+  (73b2-kitchen-coords-init :type type)
+
+  (73b2-kitchen-obj-init :type type)
+
+  ;; (objects (list *kitchen-plane* *peeler* *knife* *potato-peeler* *spatula* *ladle* *shelf-door* *gray-bowl* *cutting-board* *pot*))
+  (objects *view-objects*)
+  )
+
+(defun curry-stove-view (&key (type :curry))
+  (73b2-stove-coords-init :type type)
+
+  (73b2-stove-obj-init :type type)
+
+  (objects *view-objects*)
   )

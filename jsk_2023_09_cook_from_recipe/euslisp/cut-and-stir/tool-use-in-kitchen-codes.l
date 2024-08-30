@@ -94,71 +94,13 @@
 
   ;; set tools
   (when reset-obj-cds
-    (case type
-          (:curry
-           (dissoc-object *knife*)
-           (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
-
-           (dissoc-object *peeler*)
-           (send *peeler* :newcoords (send *peeler-coords* :copy-worldcoords))
-
-           (dissoc-object *potato-peeler*)
-           (send *potato-peeler* :newcoords (send *potato-peeler-coords* :copy-worldcoords))
-
-           (dissoc-object *spatula*)
-           (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords))
-
-           (dissoc-object *ladle*)
-           (send *ladle* :newcoords (send *ladle-coords-1* :copy-worldcoords))
-
-           (dissoc-object *pot*)
-           (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
-
-           (send *kitchen-plane* :newcoords  (send *kitchen-plane-coords* :copy-worldcoords))
-
-           ;; set equipment
-           (dissoc-object *shelf-door*)
-           (send *shelf-door* :newcoords (send *shelf-door-coords* :copy-worldcoords))
-
-           (setq *shelf-look-coords* (send (send *shelf-door* :handle-handle0) :copy-worldcoords))
-
-           (objects (list *pr2* *kitchen-plane* *peeler* *knife* *potato-peeler* *spatula* *ladle* *shelf-door*))
-           )
-          (:old-curry
-           (dissoc-object *knife*)
-           (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
-
-           (dissoc-object *peeler*)
-           (send *peeler* :newcoords (send *peeler-coords* :copy-worldcoords))
-
-           (dissoc-object *potato-peeler*)
-           (send *potato-peeler* :newcoords (send *potato-peeler-coords* :copy-worldcoords))
-
-           (dissoc-object *spatula*)
-           (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords))
-
-           (dissoc-object *ladle*)
-           (send *ladle* :newcoords (send *ladle-coords-1* :copy-worldcoords))
-
-           (dissoc-object *pot*)
-           (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
-
-           (send *kitchen-plane* :newcoords  (send *kitchen-plane-coords* :copy-worldcoords))
-
-           ;; set equipment
-           (dissoc-object *shelf-door*)
-           (send *shelf-door* :newcoords (send *shelf-door-coords* :copy-worldcoords))
-
-           (setq *shelf-look-coords* (send (send *shelf-door* :handle-handle0) :copy-worldcoords))
-
-           (objects (list *pr2* *kitchen-plane* *peeler* *knife* *potato-peeler* *spatula* *ladle* *shelf-door*))
-           )
-          )
-    )
+    (73b2-kitchen-obj-init :type type))
 
   ;; (move-to-kitchen-irt)
   ;; (objects (list *pr2* *peeler* *knife* *potato-peeler* *scene* *spatula* *ladle* *shelf-door*))
   ;; (update-view)
+
+  ;; TODO add objects
 
   )
 
