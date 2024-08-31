@@ -10,55 +10,6 @@
 (setq *x-thre* -10)
 (setq *cb-flag* nil)
 
-(unless (boundp '*spatula*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/spatula.l")
-    (setq *spatula* (spatula))
-    ))
-
-(unless (boundp '*pot*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cooking-pot-73b2.l")
-    (setq *pot* (cooking-pot))
-    ))
-
-(unless (boundp '*mcup*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/measuring-cup-73b2.l")
-    (setq *mcup* (measuring-cup-73b2))
-    ))
-
-(unless (boundp '*bowl-1*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/bowl-1.l")
-    (setq *bowl-1* (bowl-1))
-    ))
-
-(unless (boundp '*gray-bowl*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/gray-bowl.l")
-    (setq *gray-bowl* (gray-bowl))
-    ))
-
-(unless (boundp '*oil-dispenser*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/dispenser.l")
-    (setq *oil-dispenser* (dispenser))
-    ))
-
-
-(unless (boundp '*kitchen-plane*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/kitchen-plane.l")
-    (setq *kitchen-plane* (kitchen-plane :cube-x 570 :cube-y 690 :cube-z 10))
-    ))
-
-(unless (boundp '*arrow*)
-  (progn
-    (load "models/arrow-object.l")
-    (setq *arrow* (arrow))
-    ))
-
 (defun bowl-init (&key (reset-obj-cds t) (init-cds t) (type :curry))
   ;; init
   ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
@@ -68,76 +19,9 @@
   (when init-cds
     (73b2-kitchen-coords-init :type type))
 
-  ;; set objects
-  (send *kitchen-plane* :newcoords  (send *kitchen-plane-coords* :copy-worldcoords))
+  ;; set tools
   (when reset-obj-cds
-    (case type
-          (:curry
-           (dissoc-object *spatula*)
-           (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; spatula on the cutting board
-
-           (dissoc-object *pot*)
-           (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
-
-           ;; (dissoc-object *mcup*)
-           ;; (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
-
-           ;; (dissoc-object *rcup*)
-           ;; (send *rcup* :newcoords (send *rcup-coords* :copy-worldcoords))
-
-           (dissoc-object *gray-bowl*)
-           (send *gray-bowl* :newcoords (send *gray-bowl-kitchen-coords* :copy-worldcoords))
-
-           (dissoc-object *oil-dispenser*)
-           (send *oil-dispenser* :newcoords (send *oil-dispenser-coords* :copy-worldcoords))
-
-           ;; (objects (list *pr2* *kitchen-plane* *spatula* *mcup* *rcup* *ladle* *pot* *bowl-1* *oil-dispenser* *arrow*))
-           (objects (list *pr2* *kitchen-plane* *spatula* *ladle* *pot* *gray-bowl* *oil-dispenser* *arrow*))
-           )
-          (:old-curry
-           (dissoc-object *spatula*)
-           (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; spatula on the cutting board
-
-           (dissoc-object *pot*)
-           (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
-
-           (dissoc-object *mcup*)
-           (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
-
-           (dissoc-object *rcup*)
-           (send *rcup* :newcoords (send *rcup-coords* :copy-worldcoords))
-
-           (dissoc-object *bowl-1*)
-           (send *bowl-1* :newcoords (send *bowl-1-kitchen-coords* :copy-worldcoords))
-
-           (dissoc-object *oil-dispenser*)
-           (send *oil-dispenser* :newcoords (send *oil-dispenser-coords* :copy-worldcoords))
-
-           (objects (list *pr2* *kitchen-plane* *spatula* *mcup* *rcup* *ladle* *pot* *bowl-1* *oil-dispenser* *arrow*))
-           )
-          )
-    )
-
-  ;; (unless (boundp '*bowl-2*)
-  ;;   (progn
-  ;;     (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-2.l")
-  ;;     (setq *bowl-2* (bowl-2))
-  ;;     ))
-  ;; (send *bowl-2* :newcoords (send *bowl-2-coords* :copy-worldcoords))
-
-  ;; (unless (boundp '*bowl-3*)
-  ;;   (progn
-  ;;     (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-3.l")
-  ;;     (setq *bowl-3* (bowl-3))
-  ;;     ))
-  ;; (send *bowl-3* :newcoords (send *bowl-3-coords* :copy-worldcoords))
-
-  ;; (unless (boundp '*bowl-4*)
-  ;;   (progn
-  ;;     (load "package://jsk_2020_04_pr2_curry/euslisp/model/bowl-4.l")
-  ;;     (setq *bowl-4* (bowl-4))
-  ;;     ))
-  ;; (send *bowl-4* :newcoords (send *bowl-4-coords* :copy-worldcoords))
+    (73b2-kitchen-obj-init :type type))
 
   ;; def bowl grasp coords
   ;; (setq *bowl-1-grasp-coords* (make-coords :pos (float-vector 383 8425 30889) :rpy (float-vector 2.892 1.01 1.404)))
@@ -156,15 +40,19 @@
   ;; (objects (list *pr2* *scene* *spatula* *mcup* *rcup* *ladle* *pot* *bowl-1* *oil-dispenser*))
   ;; (move-to-kitchen-irt)
   ;; (update-view)
+  (objects *view-objects*)
   )
 
 
-(bowl-init)
+;; (bowl-init)
 
+(warn "~%  Please run (bowl-init :type :curry) ~%")
 
 ;; kitchenの位置からbowl1を移すプログラムを用意する．
 
 
+;; (warn "If you use real robot, run (update-pos) ~%")
+;; (warn "please run (now-set-bowls) or (set-bowl-1) ~%")
 
 ;; TODO fix
 ;; add for rosservice
@@ -286,9 +174,6 @@
   (if (< gripper-len g-thre)
       (setq *fail-flag* t))
   )
-
-(warn "If you use real robot, run (update-pos) ~%")
-(warn "please run (now-set-bowls) or (set-bowl-1) ~%")
 
 ;; def util-funcs
 ;; update funcs

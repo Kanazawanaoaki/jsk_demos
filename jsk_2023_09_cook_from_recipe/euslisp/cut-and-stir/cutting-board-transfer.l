@@ -11,41 +11,6 @@
 (setq *z-thre* 15)
 
 ;; load objects
-(unless (boundp '*cutting-board*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cutting-board.l")
-    (setq *cutting-board* (cutting-board))
-    ))
-
-(unless (boundp '*bowl-1*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/bowl-1.l")
-    (setq *bowl-1* (bowl-1))
-    ))
-
-(unless (boundp '*knife*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/knife-new-attention.l")
-    (setq *knife* (knife))
-    ))
-
-(unless (boundp '*pot*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cooking-pot-73b2.l")
-    (setq *pot* (cooking-pot))
-    ))
-
-(unless (boundp '*kitchen-plane*)
-  (progn
-    (setq *kitchen-plane* (make-cube 570 700 10))
-    ))
-
-(unless (boundp '*arrow*)
-  (progn
-    (load "models/arrow-object.l")
-    (setq *arrow* (arrow))
-    ))
-
 (defun cutting-board-init (&key (reset-obj-cds t) (init-cds t) (type :curry))
   ;; init
   ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
@@ -56,41 +21,8 @@
     (73b2-kitchen-coords-init :type type))
 
   ;; set objects
-  (send *kitchen-plane* :newcoords  (send *kitchen-plane-coords* :copy-worldcoords))
   (when reset-obj-cds
-    (case type
-          (:curry
-           (dissoc-object *cutting-board*)
-           (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
-
-           (dissoc-object *gray-bowl*)
-           (send *gray-bowl* :newcoords (send *gray-bowl-kitchen-coords* :copy-worldcoords))
-
-           (dissoc-object *knife*)
-           (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
-
-           (dissoc-object *pot*)
-           (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
-
-           (objects (list *pr2* *kitchen-plane* *cutting-board* *knife* *pot* *gray-bowl* *arrow*))
-           )
-          (:old-curry
-           (dissoc-object *cutting-board*)
-           (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
-
-           (dissoc-object *bowl-1*)
-           (send *bowl-1* :newcoords (send *bowl-1-kitchen-coords* :copy-worldcoords))
-
-           (dissoc-object *knife*)
-           (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
-
-           (dissoc-object *pot*)
-           (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
-
-           (objects (list *pr2* *kitchen-plane* *cutting-board* *knife* *pot* *bowl-1* *arrow*))
-           )
-          )
-    )
+    (73b2-kitchen-obj-init :type type))
 
   ;; def global-coords
   ;; (setq *slide-rarm-coords* (make-coords :pos (float-vector 430.297 8421.198 30852.165) :rpy (float-vector -3.086 1.155 3.132))) ;; original
@@ -110,12 +42,17 @@
   ;; (update-view)
   ;; ;; for original coords
   ;; (send *pr2* :move-to (send *kitchen-spot* :copy-worldcoords) :world)
+
+  (objects *view-objects*)
   )
 
-(cutting-board-init)
+;; (cutting-board-init)
 
 (warn "If you use real robot, run (update-pos) ~%")
 (warn "please run (slide-board-set) ~%")
+
+
+(warn "~%  Please run (cutting-board-init :type :curry) ~%")
 
 ;; add for voice recognition
 

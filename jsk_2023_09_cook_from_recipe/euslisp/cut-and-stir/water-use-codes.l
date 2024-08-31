@@ -9,23 +9,11 @@
 
 (setq *cb-flag* nil)
 
-;; load objects
+;; set objects
 (unless (boundp '*veg*)
   (progn
     (setq *veg* (make-cube 100 50 40))
     (send *veg* :set-color :green)
-    ))
-
-(unless (boundp '*mcup*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/measuring-cup-73b2.l")
-    (setq *mcup* (measuring-cup-73b2))
-    ))
-
-(unless (boundp '*rcup*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/red-cup.l")
-    (setq *rcup* (red-cup))
     ))
 
 ;; offset cds for tmp

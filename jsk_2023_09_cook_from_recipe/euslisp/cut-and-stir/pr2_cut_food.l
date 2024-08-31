@@ -426,30 +426,35 @@
 ;; for rec
 (defun deva-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (rec-num 5) (fix-rot nil) (bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes"))
   ;; TODO Add let
+  (let ((msg nil)
+        (rec-cnt 0)
+        (rec-av-coords nil)
+        (rec-coords-list (list))
+        )
 
-  ;; set object rec
-  (if change-deva
-      (progn
-        (change-deva-param :object-name object-name)
-        (unix:sleep 3)
-        ))
+    ;; set object rec
+    (if change-deva
+        (progn
+          (change-deva-param :object-name object-name)
+          (unix:sleep 3)
+          ))
 
-  ;; object rec
-  (setq msg nil)
-  (setq *found-obj* nil)
-  (setq rec-cnt 0)
-  (setq rec-av-coords nil)
-  (setq rec-coords-list (list))
-  (ros::unsubscribe bbox-topic)
-  (until *found-obj*
-         (setq msg (one-shot-subscribe bbox-topic jsk_recognition_msgs::BoundingBoxArray :timeout 5000))
-
-         ;; grasp
-         (when msg
+    ;; object rec
+    ;; (setq msg nil)
+    (setq *found-obj* nil)
+    ;; (setq rec-cnt 0)
+    ;; (setq rec-av-coords nil)
+    ;; (setq rec-coords-list (list))
+    (ros::unsubscribe bbox-topic)
+    (until *found-obj*
            (setq *obj-coord* nil)
            (until *obj-coord*
-                  (object-pose-cb msg)
+                  (setq msg (one-shot-subscribe bbox-topic jsk_recognition_msgs::BoundingBoxArray :timeout 5000))
+                  (when msg
+                    (object-pose-cb msg)
+                    )
                   )
+           ;; grasp
            (when fix-rot
              (send *obj-coord* :newcoords (make-coords :pos (send (send *obj-coord* :copy-worldcoords) :worldpos)))
              )
@@ -475,125 +480,7 @@
                )
              )
            ))
-
   *obj-coord*)
-
-(defun place-objects-on-table (&key (object-name "ボウル1") (arm :rarm) (action-mode :put) (spot-name "stove") (use-cds-offset t))
-  (let ((pre-set-avs (list))
-        (pre-set-val (float-vector 0 0 0))
-        (set-target-coords (make-coords))
-        (adj-target-cds)
-        )
-    (cond
-     ((and (string= object-name "水カップ") (string= spot-name "stove") (equal arm :larm))
-      (setq pre-set-avs (list #f(70.9521 29.615 43.5896 -114.914 61.752 -62.5943 -235.149)
-                              #f(32.6227 35.6785 32.7297 -121.542 78.2412 -69.168 -246.245)
-                              ))
-      (setq pre-set-val #f(-100 100 100))
-      (setq set-target-coords (make-coords :pos #f(657.002 322.99 908.764) :rpy #f(-0.909 0.158 -1.428)))
-      )
-     ((and (string= object-name "ボウル1") (string= spot-name "stove") (equal arm :rarm))
-      ;; (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041) #f(-45.3343 3.47451 -56.4107 -109.672 -99.5375 -114.592 104.776)))
-      ;; (setq pre-set-val #f(-50 0 50))
-      ;; ;; (setq set-target-coords (make-coords :pos #f(600.991 -365.044 878.981) :rpy #f(-0.496 1.352 -2.114)))
-      ;; (setq set-target-coords (make-coords :pos #f(584.41 -365.828 878.981) :rpy #f(-0.491 1.352 -2.114)))
-      (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041)
-                              #f(-17.2701 6.61532 -15.8472 -46.5569 -153.821 -114.592 99.202)
-                              ))
-      (setq pre-set-val #f(-50 0 50))
-      ;; (setq set-target-coords (make-coords :pos #f(600.991 -365.044 878.981) :rpy #f(-0.496 1.352 -2.114)))
-      (setq set-target-coords (make-coords :pos #f(690.181 -527.149 870.629) :rpy #f(0.478 1.218 -0.929)))
-      )
-     ((and (string= object-name "ボウル1") (string= spot-name "kitchen") (equal arm :rarm))
-      (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041) #f(-45.3343 3.47451 -56.4107 -109.672 -99.5375 -114.592 104.776)))
-      (setq pre-set-val #f(-50 0 50))
-      (setq set-target-coords (make-coords :pos #f(617.685 -12.392 881.276) :rpy #f(-0.649 1.31 -2.337)))
-      )
-     ((and (string= object-name "ボウル0") (string= spot-name "stove") (equal arm :rarm))
-      ;; (setq pre-set-avs (list #f(-28.2146 0.07681 -56.1994 -95.3798 -127.421 -97.0024 137.794)
-      ;;                         #f(-21.4171 10.8467 -51.9823 -76.3682 -134.766 -103.742 117.398)))
-      ;; (setq pre-set-val #f(0 0 100))
-      ;; (setq set-target-coords (make-coords :pos #f(760.846 -230.582 846.976) :rpy #f(-0.353 1.158 -1.828)))
-      ;; (setq set-target-coords (make-coords :pos #f(743.532 -230.499 846.976) :rpy #f(-0.348 1.158 -1.828)))
-      (setq pre-set-avs (list #f(-28.2146 0.07681 -56.1994 -95.3798 -127.421 -97.0024 137.794)
-                              #f(-27.4926 -3.15125 -53.829 -47.5523 -117.203 -99.9358 106.977)))
-      (setq pre-set-val #f(-100 0 100))
-      (setq set-target-coords (make-coords :pos #f(682.232 -349.307 852.929) :rpy #f(0.115 1.25 -1.37)))
-      )
-     ((and (string= object-name "あぶら") (string= spot-name "stove") (equal arm :larm)) ;; larm
-      (setq pre-set-avs (list #f(52.4453 35.9984 40.0064 -117.485 -211.029 -72.009 -15.0076)))
-      (setq pre-set-val #f(0 0 100))
-      ;; (setq set-target-coords (make-coords :pos #f(737.741 557.918 924.705) :rpy #f(0.093 0.064 -3.107)))
-      (setq set-target-coords (make-coords :pos #f(716.145 557.863 924.705) :rpy #f(0.098 0.064 -3.107)))
-      )
-     ((and (string= object-name "ヘラ") (string= spot-name "stove") (equal arm :rarm))
-      ;; (setq pre-set-avs (list #f(-23.3076 50.4461 -21.9938 -121.268 -173.134 -64.7071 191.807)))
-      ;; (setq pre-set-val #f(0 0 100))
-      ;; ;; (setq set-target-coords (make-coords :pos #f(617.101 -150.106 835.171) :rpy #f(0.013 0.078 0.012)))
-      ;; (setq set-target-coords (make-coords :pos #f(599.352 -150.805 835.171) :rpy #f(0.018 0.078 0.012)))
-      (setq pre-set-avs (list #f(-23.3076 50.4461 -21.9938 -121.268 -173.134 -64.7071 191.807)
-                              #f(-28.4758 35.8375 -5.72244 -94.6913 -151.172 -58.3521 170.369)))
-      (setq pre-set-val #f(-50 0 100))
-      ;; (setq set-target-coords (make-coords :pos #f(717.808 -678.451 846.167) :rpy #f(0.028 -0.041 -0.026)))
-      (setq set-target-coords (make-coords :pos #f(717.808 -578.451 846.167) :rpy #f(0.028 -0.041 -0.026)))
-      )
-     ((and (string= object-name "牛乳") (string= spot-name "kitchen") (equal arm :rarm))
-      (setq pre-set-avs (list #f(-34.9504 28.0727 -59.2681 -115.345 -185.596 -76.2334 232.008)))
-      (setq pre-set-val #f(-50 0 50))
-      (setq set-target-coords (make-coords :pos #f(631.733 -223.286 848.024) :rpy #f(-0.003 0.101 0.016)))
-      )
-     ((and (string= object-name "泡立て器") (string= spot-name "kitchen") (equal arm :rarm))
-      (setq pre-set-avs (list #f(-34.9504 28.0727 -59.2681 -115.345 -185.596 -76.2334 232.008) #f(-13.7455 24.0885 -33.0006 -88.4288 -183.832 -57.8883 212.053)))
-      (setq pre-set-val #f(-50 0 50))
-      (setq set-target-coords (make-coords :pos #f(917.983 -199.795 1106.18) :rpy #f(-0.097 0.043 -0.007)))
-      )
-     ((and (string= object-name "水道") (string= spot-name "sink") (equal arm :rarm))
-      (setq pre-set-avs (list #f(-69.5413 40.539 -71.9287 -121.542 -117.442 -38.3354 119.76)
-                              #f(-23.4739 26.3763 -32.7985 -108.469 -160.605 -82.8258 124.035)))
-      (setq pre-set-val #f(-100 -100 100))
-      (setq set-target-coords (make-coords :pos #f(850 -28.163 1030) :rpy #f(0.608 0.062 -1.398))) ;; 909.733 -28.163 997.723
-      )
-     ((and (string= object-name "フライパン") (string= spot-name "stove") (equal arm :larm))
-      (setq pre-set-avs (list #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102)
-                              ))
-      (setq pre-set-val #f(-100 0 -100))
-      (setq set-target-coords (make-coords :pos #f(657.029 -101.483 899.763) :rpy #f(0.056 -0.405 3.04)))
-      )
-     ((and (string= object-name "鍋") (string= spot-name "stove") (equal arm :larm))
-      (setq pre-set-avs (list #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102)
-                              ))
-      (setq pre-set-val #f(-100 0 -100))
-      (setq set-target-coords (make-coords :pos #f(699.076 178.059 947.711) :rpy #f(0.012 -0.62 3.14)))
-      )
-     ((and (string= object-name "pot") (string= spot-name "stove") (equal arm :larm)) ;; larm ;; it is for broccoli in pot
-      (setq pre-set-avs (list #f(69.679 -8.03115 70.5921 -121.326 -3.71055 -32.8935 -5.88907)
-                              #f(45.532 15.6265 43.8688 -52.2305 36.9455 -101.153 -32.4685)
-                              ))
-      (setq pre-set-val #f(-50 50 50))
-      (setq set-target-coords (inv-offset-cds (make-coords :pos #f(730.575 185.784 978.508) :rpy #f(-1.478 -0.045 1.181)) *stove-offset-cds*))
-      )
-     ((and (string= object-name "ブロッコリー") (string= spot-name "stove") (equal arm :larm)) ;; larm
-      (setq pre-set-avs (list #f(69.679 -8.03115 70.5921 -121.326 -3.71055 -32.8935 -5.88907)
-                              #f(45.532 15.6265 43.8688 -52.2305 36.9455 -101.153 -32.4685)
-                              ))
-      (setq pre-set-val #f(-50 50 50))
-      ;; (setq set-target-coords (make-coords :pos #f(615.967 367.301 914.519) :rpy #f(-1.371 0.162 1.508)))
-      ;; (setq set-target-coords (make-coords :pos #f(660 367.301 914.519) :rpy #f(-1.371 0.162 1.508)))
-      (setq set-target-coords (make-coords :pos #f(700 367.301 914.519) :rpy #f(-1.371 0.162 1.508)))
-      )
-     (t
-      (format t "object-name ~A, spot-name ~A, arm ~A is not defined !!!~%" object-name spot-name arm)
-      (return-from place-objects-on-table nil)
-      )
-     )
-
-    (if use-cds-offset
-        (setq adj-target-cds (adjust-cds-with-spot set-target-coords spot-name))
-      (setq adj-target-cds (send set-target-coords :copy-worldcoords))
-      )
-    (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm arm :action-mode action-mode :object-name object-name)
-    ))
-
 
 (defun grasp-object-primitive (&key (pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041)
                                                        #f(-17.2701 6.61532 -15.8472 -46.5569 -153.821 -114.592 99.202)
@@ -601,7 +488,7 @@
                                     (grasp-coords (make-coords :pos #f(690.181 -527.149 870.629) :rpy #f(0.478 1.218 -0.929)))
                                     (pre-set-val #f(-50 0 50))
                                     (arm :rarm)
-                                    (action-mode :grasp) ;;current defined mode is :set :put :grasp :hold :reach :push
+                                    (action-mode :grasp) ;;current defined mode is :set :put :grasp :hold :reach :push :release
                                     (object-name "bowl1") ;; only use for speak in set mode
                                     (grasp-gain 0.01) ;; only for grasp or hold
                                     (wait-after-grasp nil) (wait-before-grasp nil) (reset-pose-end nil))
@@ -616,6 +503,9 @@
       (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
       (send *ri* :angle-vector (send *pr2* :angle-vector))
       (send *ri* :wait-interpolation)
+      )
+     ((equal action-mode :release)
+      (format t "action-mode is ~A, so don't move" action-mode)
       )
      (t
       (dolist (pre-set-av pre-set-avs)
@@ -634,8 +524,8 @@
       (ok-wait)
       (send *ri* :start-grasp arm :wait t)
       )
-     ((or (equal action-mode :grasp) (equal action-mode :hold))
-      ;; 物体を握る前に手を開く
+     ((or (equal action-mode :grasp) (equal action-mode :hold) (equal action-mode :release))
+      ;; 物体を握る前に手を開く or 物体を離すために手を開く
       (send *ri* :stop-grasp arm :wait t)
       )
      ((equal action-mode :push)
@@ -645,34 +535,43 @@
      )
     (send *viewer* :draw-objects)
 
-    ;; pre grasp
-    (setq set-coords (send grasp-coords :copy-worldcoords))
-    ;; (send set-coords :translate pre-set-val :world)
-    (send set-coords :translate pre-set-val :local)
-    (setq ik-result (send *pr2* arm :inverse-kinematics
-                          (send set-coords :copy-worldcoords)
-                          :rotation-axis t
-                          :debug-view nil))
-    (send *viewer* :draw-objects)
-    (when (equal ik-result nil)
-      (ik-fail-report :wait t)
+    ;; reaching to coords
+    (cond
+     ((equal action-mode :release)
+      (setq set-coords (send grasp-coords :copy-worldcoords))
+      (format t "action-mode is ~A, so don't move" action-mode)
       )
-    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-    (send *ri* :wait-interpolation)
+     (t
+      ;; pre grasp
+      (setq set-coords (send grasp-coords :copy-worldcoords))
+      ;; (send set-coords :translate pre-set-val :world)
+      (send set-coords :translate pre-set-val :local)
+      (setq ik-result (send *pr2* arm :inverse-kinematics
+                            (send set-coords :copy-worldcoords)
+                            :rotation-axis t
+                            :debug-view nil))
+      (send *viewer* :draw-objects)
+      (when (equal ik-result nil)
+        (ik-fail-report :wait t)
+        )
+      (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+      (send *ri* :wait-interpolation)
 
-    ;; reaching
-    ;; (send set-coords :translate (scale -1 pre-set-val) :world)
-    (send set-coords :translate (scale -1 pre-set-val) :local)
-    (setq ik-result (send *pr2* arm :inverse-kinematics
-                          (send set-coords :copy-worldcoords)
-                          :rotation-axis t
-                          :debug-view nil))
-    (send *viewer* :draw-objects)
-    (when (equal ik-result nil)
-      (ik-fail-report :wait t)
+      ;; reaching
+      ;; (send set-coords :translate (scale -1 pre-set-val) :world)
+      (send set-coords :translate (scale -1 pre-set-val) :local)
+      (setq ik-result (send *pr2* arm :inverse-kinematics
+                            (send set-coords :copy-worldcoords)
+                            :rotation-axis t
+                            :debug-view nil))
+      (send *viewer* :draw-objects)
+      (when (equal ik-result nil)
+        (ik-fail-report :wait t)
+        )
+      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+      (send *ri* :wait-interpolation)
       )
-    (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-    (send *ri* :wait-interpolation)
+     )
 
     (when (equal action-mode :reach)
       (format t "exit from grasp-object-primitive function because arg action-mode is ~A ~%" action-mode)
@@ -690,8 +589,7 @@
       (send *ri* :stop-grasp arm :wait t) ;; 物体を置く
       )
      ((or (equal action-mode :grasp) (equal action-mode :hold))
-      ;; 物体を握る
-      (send *ri* :start-grasp arm :gain grasp-gain :wait t)
+      (send *ri* :start-grasp arm :gain grasp-gain :wait t) ;; 物体を握る
       )
      )
 
@@ -706,6 +604,7 @@
        )
       )
 
+    ;; withdraw hand
     (send set-coords :translate pre-set-val :local)
     (setq ik-result (send *pr2* arm :inverse-kinematics
                           (send set-coords :copy-worldcoords)
@@ -719,22 +618,23 @@
     (send *ri* :wait-interpolation)
 
     (cond
-     ((or (equal action-mode :put) (equal action-mode :set))
-      (dolist (pre-set-av (reverse pre-set-avs))
-        (send *pr2* arm :angle-vector pre-set-av)
-        (send *ri* :angle-vector (send *pr2* :angle-vector))
-        (send *ri* :wait-interpolation)
-        )
-      )
-     (t
+     ((equal action-mode :hold)
       (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
       (send *ri* :angle-vector (send *pr2* :angle-vector))
       (send *ri* :wait-interpolation)
       )
+     (t
+      (dolist (pre-set-av (reverse pre-set-avs))
+        (send *pr2* arm :angle-vector pre-set-av)
+        (send *ri* :angle-vector (send *pr2* :angle-vector))
+        (send *ri* :wait-interpolation))
+      )
      )
     (send *viewer* :draw-objects)
     (when reset-pose-end
-      (reset-manip-pose :arm arm)) ;; TODO add args?
+      ;; (reset-manip-pose :arm arm)
+      (reset-cook-pose :arm arm) ;; TODO add args?
+      )
     (send *viewer* :draw-objects)
     ))
 
@@ -976,7 +876,124 @@
   )
 
 
-(defun test-make-model (&key (grasp-gain 0.01) (open-gripper t) (pose-init t) (service-call t) (step-deg 10) (arm :rarm))
+(defun place-objects-on-table (&key (object-name "ボウル1") (arm :rarm) (action-mode :put) (spot-name "stove") (use-cds-offset t));; old
+  (let ((pre-set-avs (list))
+        (pre-set-val (float-vector 0 0 0))
+        (set-target-coords (make-coords))
+        (adj-target-cds)
+        )
+    (cond
+     ((and (string= object-name "水カップ") (string= spot-name "stove") (equal arm :larm))
+      (setq pre-set-avs (list #f(70.9521 29.615 43.5896 -114.914 61.752 -62.5943 -235.149)
+                              #f(32.6227 35.6785 32.7297 -121.542 78.2412 -69.168 -246.245)
+                              ))
+      (setq pre-set-val #f(-100 100 100))
+      (setq set-target-coords (make-coords :pos #f(657.002 322.99 908.764) :rpy #f(-0.909 0.158 -1.428)))
+      )
+     ((and (string= object-name "ボウル1") (string= spot-name "stove") (equal arm :rarm))
+      ;; (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041) #f(-45.3343 3.47451 -56.4107 -109.672 -99.5375 -114.592 104.776)))
+      ;; (setq pre-set-val #f(-50 0 50))
+      ;; ;; (setq set-target-coords (make-coords :pos #f(600.991 -365.044 878.981) :rpy #f(-0.496 1.352 -2.114)))
+      ;; (setq set-target-coords (make-coords :pos #f(584.41 -365.828 878.981) :rpy #f(-0.491 1.352 -2.114)))
+      (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041)
+                              #f(-17.2701 6.61532 -15.8472 -46.5569 -153.821 -114.592 99.202)
+                              ))
+      (setq pre-set-val #f(-50 0 50))
+      ;; (setq set-target-coords (make-coords :pos #f(600.991 -365.044 878.981) :rpy #f(-0.496 1.352 -2.114)))
+      (setq set-target-coords (make-coords :pos #f(690.181 -527.149 870.629) :rpy #f(0.478 1.218 -0.929)))
+      )
+     ((and (string= object-name "ボウル1") (string= spot-name "kitchen") (equal arm :rarm))
+      (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041) #f(-45.3343 3.47451 -56.4107 -109.672 -99.5375 -114.592 104.776)))
+      (setq pre-set-val #f(-50 0 50))
+      (setq set-target-coords (make-coords :pos #f(617.685 -12.392 881.276) :rpy #f(-0.649 1.31 -2.337)))
+      )
+     ((and (string= object-name "ボウル0") (string= spot-name "stove") (equal arm :rarm))
+      ;; (setq pre-set-avs (list #f(-28.2146 0.07681 -56.1994 -95.3798 -127.421 -97.0024 137.794)
+      ;;                         #f(-21.4171 10.8467 -51.9823 -76.3682 -134.766 -103.742 117.398)))
+      ;; (setq pre-set-val #f(0 0 100))
+      ;; (setq set-target-coords (make-coords :pos #f(760.846 -230.582 846.976) :rpy #f(-0.353 1.158 -1.828)))
+      ;; (setq set-target-coords (make-coords :pos #f(743.532 -230.499 846.976) :rpy #f(-0.348 1.158 -1.828)))
+      (setq pre-set-avs (list #f(-28.2146 0.07681 -56.1994 -95.3798 -127.421 -97.0024 137.794)
+                              #f(-27.4926 -3.15125 -53.829 -47.5523 -117.203 -99.9358 106.977)))
+      (setq pre-set-val #f(-100 0 100))
+      (setq set-target-coords (make-coords :pos #f(682.232 -349.307 852.929) :rpy #f(0.115 1.25 -1.37)))
+      )
+     ((and (string= object-name "あぶら") (string= spot-name "stove") (equal arm :larm)) ;; larm
+      (setq pre-set-avs (list #f(52.4453 35.9984 40.0064 -117.485 -211.029 -72.009 -15.0076)))
+      (setq pre-set-val #f(0 0 100))
+      ;; (setq set-target-coords (make-coords :pos #f(737.741 557.918 924.705) :rpy #f(0.093 0.064 -3.107)))
+      (setq set-target-coords (make-coords :pos #f(716.145 557.863 924.705) :rpy #f(0.098 0.064 -3.107)))
+      )
+     ((and (string= object-name "ヘラ") (string= spot-name "stove") (equal arm :rarm))
+      ;; (setq pre-set-avs (list #f(-23.3076 50.4461 -21.9938 -121.268 -173.134 -64.7071 191.807)))
+      ;; (setq pre-set-val #f(0 0 100))
+      ;; ;; (setq set-target-coords (make-coords :pos #f(617.101 -150.106 835.171) :rpy #f(0.013 0.078 0.012)))
+      ;; (setq set-target-coords (make-coords :pos #f(599.352 -150.805 835.171) :rpy #f(0.018 0.078 0.012)))
+      (setq pre-set-avs (list #f(-23.3076 50.4461 -21.9938 -121.268 -173.134 -64.7071 191.807)
+                              #f(-28.4758 35.8375 -5.72244 -94.6913 -151.172 -58.3521 170.369)))
+      (setq pre-set-val #f(-50 0 100))
+      ;; (setq set-target-coords (make-coords :pos #f(717.808 -678.451 846.167) :rpy #f(0.028 -0.041 -0.026)))
+      (setq set-target-coords (make-coords :pos #f(717.808 -578.451 846.167) :rpy #f(0.028 -0.041 -0.026)))
+      )
+     ((and (string= object-name "牛乳") (string= spot-name "kitchen") (equal arm :rarm))
+      (setq pre-set-avs (list #f(-34.9504 28.0727 -59.2681 -115.345 -185.596 -76.2334 232.008)))
+      (setq pre-set-val #f(-50 0 50))
+      (setq set-target-coords (make-coords :pos #f(631.733 -223.286 848.024) :rpy #f(-0.003 0.101 0.016)))
+      )
+     ((and (string= object-name "泡立て器") (string= spot-name "kitchen") (equal arm :rarm))
+      (setq pre-set-avs (list #f(-34.9504 28.0727 -59.2681 -115.345 -185.596 -76.2334 232.008) #f(-13.7455 24.0885 -33.0006 -88.4288 -183.832 -57.8883 212.053)))
+      (setq pre-set-val #f(-50 0 50))
+      (setq set-target-coords (make-coords :pos #f(917.983 -199.795 1106.18) :rpy #f(-0.097 0.043 -0.007)))
+      )
+     ((and (string= object-name "水道") (string= spot-name "sink") (equal arm :rarm))
+      (setq pre-set-avs (list #f(-69.5413 40.539 -71.9287 -121.542 -117.442 -38.3354 119.76)
+                              #f(-23.4739 26.3763 -32.7985 -108.469 -160.605 -82.8258 124.035)))
+      (setq pre-set-val #f(-100 -100 100))
+      (setq set-target-coords (make-coords :pos #f(850 -28.163 1030) :rpy #f(0.608 0.062 -1.398))) ;; 909.733 -28.163 997.723
+      )
+     ((and (string= object-name "フライパン") (string= spot-name "stove") (equal arm :larm))
+      (setq pre-set-avs (list #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102)
+                              ))
+      (setq pre-set-val #f(-100 0 -100))
+      (setq set-target-coords (make-coords :pos #f(657.029 -101.483 899.763) :rpy #f(0.056 -0.405 3.04)))
+      )
+     ((and (string= object-name "鍋") (string= spot-name "stove") (equal arm :larm))
+      (setq pre-set-avs (list #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102)
+                              ))
+      (setq pre-set-val #f(-100 0 -100))
+      (setq set-target-coords (make-coords :pos #f(699.076 178.059 947.711) :rpy #f(0.012 -0.62 3.14)))
+      )
+     ((and (string= object-name "pot") (string= spot-name "stove") (equal arm :larm)) ;; larm ;; it is for broccoli in pot
+      (setq pre-set-avs (list #f(69.679 -8.03115 70.5921 -121.326 -3.71055 -32.8935 -5.88907)
+                              #f(45.532 15.6265 43.8688 -52.2305 36.9455 -101.153 -32.4685)
+                              ))
+      (setq pre-set-val #f(-50 50 50))
+      (setq set-target-coords (inv-offset-cds (make-coords :pos #f(730.575 185.784 978.508) :rpy #f(-1.478 -0.045 1.181)) *stove-offset-cds*))
+      )
+     ((and (string= object-name "ブロッコリー") (string= spot-name "stove") (equal arm :larm)) ;; larm
+      (setq pre-set-avs (list #f(69.679 -8.03115 70.5921 -121.326 -3.71055 -32.8935 -5.88907)
+                              #f(45.532 15.6265 43.8688 -52.2305 36.9455 -101.153 -32.4685)
+                              ))
+      (setq pre-set-val #f(-50 50 50))
+      ;; (setq set-target-coords (make-coords :pos #f(615.967 367.301 914.519) :rpy #f(-1.371 0.162 1.508)))
+      ;; (setq set-target-coords (make-coords :pos #f(660 367.301 914.519) :rpy #f(-1.371 0.162 1.508)))
+      (setq set-target-coords (make-coords :pos #f(700 367.301 914.519) :rpy #f(-1.371 0.162 1.508)))
+      )
+     (t
+      (format t "object-name ~A, spot-name ~A, arm ~A is not defined !!!~%" object-name spot-name arm)
+      (return-from place-objects-on-table nil)
+      )
+     )
+
+    (if use-cds-offset
+        (setq adj-target-cds (adjust-cds-with-spot set-target-coords spot-name))
+      (setq adj-target-cds (send set-target-coords :copy-worldcoords))
+      )
+    (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm arm :action-mode action-mode :object-name object-name)
+    ))
+
+
+(defun test-make-model (&key (grasp-gain 0.01) (open-gripper t) (pose-init t) (service-call t) (step-deg 10) (arm :rarm));; old
   (when pose-init
     (if (equal arm :rarm)
         (cut-wait-pose :larm nil)

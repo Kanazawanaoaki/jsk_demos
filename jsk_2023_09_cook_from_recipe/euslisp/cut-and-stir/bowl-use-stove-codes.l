@@ -10,79 +10,7 @@
 (setq *x-thre* -10)
 (setq *cb-flag* nil)
 
-(unless (boundp '*pot*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cooking-pot-73b2.l")
-    (setq *pot* (cooking-pot))
-    ))
-
-(unless (boundp '*spatula*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/spatula.l")
-    (setq *spatula* (spatula))
-    ))
-
-(unless (boundp '*ladle*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/ladle.l")
-    (setq *ladle* (ladle))
-    ))
-
-(unless (boundp '*mcup*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/measuring-cup-73b2.l")
-    (setq *mcup* (measuring-cup-73b2))
-    ))
-
-(unless (boundp '*bowl-1*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/bowl-1.l")
-    (setq *bowl-1* (bowl-1))
-    ))
-
-(unless (boundp '*bowl-2*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/bowl-2.l")
-    (setq *bowl-2* (bowl-2))
-    ))
-
-(unless (boundp '*bowl-3*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/bowl-3.l")
-    (setq *bowl-3* (bowl-3))
-    ))
-
-(unless (boundp '*gray-bowl*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/gray-bowl.l")
-    (setq *gray-bowl* (gray-bowl))
-    ))
-
-(unless (boundp '*green-bowl*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/green-bowl.l")
-    (setq *green-bowl* (green-bowl))
-    ))
-
-(unless (boundp '*oil-dispenser*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/dispenser.l")
-    (setq *oil-dispenser* (dispenser))
-    ))
-
-(unless (boundp '*stove-kitchen-plane*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/stove-kitchen-plane.l")
-    (setq *stove-kitchen-plane* (stove-kitchen-plane))
-    ))
-
-(unless (boundp '*arrow*)
-  (progn
-    (load "models/arrow-object.l")
-    (setq *arrow* (arrow))
-    ))
-
-(defun bowl-stove-init (&key (reset-obj-cds t) (init-cds t) (type :old-curry))
+(defun bowl-stove-init (&key (reset-obj-cds t) (init-cds t) (type :curry))
   ;; init
   ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/tool-use-codes.l")
   ;; (setq *stove-spot* (make-coords :pos (float-vector 1200 8100 30000) :rpy (float-vector pi 0 0))) ;; original
@@ -92,118 +20,8 @@
     (73b2-stove-coords-init :type type))
 
   ;; set objects
-  (send *stove-kitchen-plane* :newcoords  (send *stove-kitchen-plane-coords* :copy-worldcoords))
   (when reset-obj-cds
-    (case type
-          (:sunny-side-up
-           (dissoc-object *pan*)
-           (send *pan* :newcoords (send *pan-coords* :copy-worldcoords))
-
-           (dissoc-object *oil-dispenser*)
-           (send *oil-dispenser* :newcoords (send *oil-dispenser-stove-coords* :copy-worldcoords))
-
-           (dissoc-object *gray-bowl*)
-           (send *gray-bowl* :newcoords (send *gray-bowl-stove-coords* :copy-worldcoords))
-
-           (objects (list *pr2* *stove-kitchen-plane* *pan* *gray-bowl* *oil-dispenser*))
-           )
-          (:butter-sunny-side-up
-           (dissoc-object *pan*)
-           (send *pan* :newcoords (send *pan-coords* :copy-worldcoords))
-
-           (dissoc-object *gray-bowl*)
-           (send *gray-bowl* :newcoords (send *gray-bowl-stove-coords* :copy-worldcoords))
-
-           (dissoc-object *green-bowl*)
-           (send *green-bowl* :newcoords (send *green-bowl-stove-coords* :copy-worldcoords))
-
-           (objects (list *pr2* *stove-kitchen-plane* *pan* *gray-bowl* *green-bowl*))
-           )
-          (:scrambled-egg
-           (dissoc-object *pan*)
-           (send *pan* :newcoords (send *pan-coords* :copy-worldcoords))
-
-           (dissoc-object *green-bowl*)
-           (send *green-bowl* :newcoords (send *green-bowl-stove-coords* :copy-worldcoords))
-
-           (dissoc-object *spatula*)
-           (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords))
-
-           (objects (list *pr2* *stove-kitchen-plane* *pan* *green-bowl* *spatula*))
-           )
-          (:poached-egg
-           (dissoc-object *pot*)
-           (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
-
-           (dissoc-object *gray-bowl*)
-           (send *gray-bowl* :newcoords (send *gray-bowl-stove-coords* :copy-worldcoords))
-
-           ;; spoon
-
-           (objects (list *pr2* *stove-kitchen-plane* *pot* *gray-bowl*))
-           )
-          (:curry
-           (dissoc-object *spatula*)
-           (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; spatula on the cutting board
-
-           (dissoc-object *ladle*)
-           (send *ladle* :newcoords (send *ladle-coords-1* :copy-worldcoords))
-
-           (dissoc-object *pot*)
-           (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
-
-           (dissoc-object *mcup*)
-           (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
-
-           (dissoc-object *bowl-2*)
-           (send *bowl-2* :newcoords (send *bowl-2-stove-coords* :copy-worldcoords))
-
-           (dissoc-object *gray-bowl*)
-           (send *gray-bowl* :newcoords (send *gray-bowl-stove-coords* :copy-worldcoords))
-
-           (dissoc-object *green-bowl*)
-           (send *green-bowl* :newcoords (send *green-bowl-stove-coords* :copy-worldcoords))
-
-           (dissoc-object *oil-dispenser*)
-           (send *oil-dispenser* :newcoords (send *oil-dispenser-stove-coords* :copy-worldcoords))
-
-           ;; (objects (list *pr2* *scene* *spatula* *mcup* *ladle* *pot* *bowl-1* *bowl-2* *bowl-3* *oil-dispenser*))
-           ;; (move-to-stove-irt)
-           ;; (update-view)
-           (objects (list *pr2* *stove-kitchen-plane* *spatula* *mcup* *ladle* *pot* *bowl-2* *gray-bowl* *green-bowl* *oil-dispenser*))
-           )
-          (:old-curry
-           (dissoc-object *spatula*)
-           (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; spatula on the cutting board
-
-           (dissoc-object *ladle*)
-           (send *ladle* :newcoords (send *ladle-coords-1* :copy-worldcoords))
-
-           (dissoc-object *pot*)
-           (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
-
-           (dissoc-object *mcup*)
-           (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
-
-           (dissoc-object *bowl-1*)
-           (send *bowl-1* :newcoords (send *bowl-1-stove-coords* :copy-worldcoords))
-
-           (dissoc-object *bowl-2*)
-           (send *bowl-2* :newcoords (send *bowl-2-stove-coords* :copy-worldcoords))
-
-           (dissoc-object *bowl-3*)
-           (send *bowl-3* :newcoords (send *bowl-3-stove-coords* :copy-worldcoords))
-
-           (dissoc-object *oil-dispenser*)
-           (send *oil-dispenser* :newcoords (send *oil-dispenser-stove-coords* :copy-worldcoords))
-
-           ;; (objects (list *pr2* *scene* *spatula* *mcup* *ladle* *pot* *bowl-1* *bowl-2* *bowl-3* *oil-dispenser*))
-           ;; (move-to-stove-irt)
-           ;; (update-view)
-           (objects (list *pr2* *stove-kitchen-plane* *spatula* *mcup* *ladle* *pot* *bowl-1* *bowl-2* *bowl-3* *oil-dispenser*))
-           ))
-
-    )
+    (73b2-stove-obj-init :type type))
 
   ;; def bowl grasp coords
   (setq *bowl-1-grasp-coords* (make-coords :pos (float-vector 383 8425 30889) :rpy (float-vector 2.892 1.01 1.404)))
@@ -213,9 +31,16 @@
 
   (setq *bowl-3-grasp-coords* (make-coords :pos (float-vector 672 7632 30873) :rpy (float-vector -2.152 1.02 1.606)))
   (setq *bowl-4-grasp-coords* (make-coords :pos (float-vector 567 7824 30920) :rpy (float-vector -2.624 1.195 2.113)))
+
+  (objects *view-objects*)
   )
 
-(bowl-stove-init)
+;; (bowl-stove-init)
+
+(warn "If you use real robot, run (update-pos) ~%")
+(warn "please run (now-set-bowls) or (set-bowl-1) ~%")
+
+(warn "~%  Please run (bowl-stove-init :type :curry) ~%")
 
 ;; TODO fix
 ;; add for rosservice
@@ -308,8 +133,6 @@
 ;;       (setq *fail-flag* t))
 ;;   )
 
-(warn "If you use real robot, run (update-pos) ~%")
-(warn "please run (now-set-bowls) or (set-bowl-1) ~%")
 
 ;; def util-funcs
 ;; update funcs
@@ -408,14 +231,24 @@
       (setq pre-set-val #f(-100 0 0))
 
       ;; calc from defined coords
-      (send set-target-coords :newcoords (make-coords :pos #f(699.076 178.059 947.711) :rpy #f(0.012 -0.62 3.14)));; TODO calc from object coords
+      ;; (send set-target-coords :newcoords (make-coords :pos #f(699.076 178.059 947.711) :rpy #f(0.012 -0.62 3.14)))
+      (send *arrow* :newcoords (calc-coords-from-rel *pot-coords* (make-coords :pos #f(-180.924 8.059 107.711) :rpy (float-vector 0.012 -0.62 pi))))
+      (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *pot-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
+      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
       )
      ((and (string= object-name "frying pan") (string= spot-name "stove") (equal arm :larm))
       (setq pre-set-avs (list #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102)))
       (setq pre-set-val #f(-100 0 0))
 
       ;; calc from defined coords
-      (send set-target-coords :newcoords (make-coords :pos #f(657.029 -101.483 899.763) :rpy #f(0.056 -0.405 3.04)));; TODO calc from object coords
+      ;; (send set-target-coords :newcoords (make-coords :pos #f(657.029 -101.483 899.763) :rpy #f(0.056 -0.405 3.04)));; TODO calc from object coords
+      (send *arrow* :newcoords (calc-coords-from-rel *pan-coords* (make-coords :pos #f(-222.971 8.517 59.763) :rpy (float-vector 0.056 -0.405 3.04))))
+      (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *pan-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
+      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
+      )
+     (t
+      (format t "Sorry, object-name ~A, spot-name ~A, arm ~A is not defined now !!!~%" object-name spot-name arm)
+      (return-from grasp-pot-on-stove nil)
       )
      )
     (if use-cds-offset
@@ -423,27 +256,34 @@
       (setq adj-target-cds (send set-target-coords :copy-worldcoords))
       )
     (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm arm :action-mode action-mode :object-name object-name)
-
-    ;; TODO add dissoc object and put object
     ))
 
-(defun release-pot-on-stove (&key (arm :larm))
-  (if (equal arm :larm)
-      (progn
-        (send *ri* :stop-grasp :larm :wait t)
-
-        (send *pr2* :larm :move-end-pos #f(-100 0 0))
-        (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-        (send *ri* :wait-interpolation)
-
-        (send *pr2* :larm :angle-vector #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102))
-        (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-        (send *ri* :wait-interpolation)
-
-        (reset-manip-pose :arm :larm :time 2000)
+(defun release-pot-on-stove (&key (arm :larm) (use-cds-offset nil) (reset-pose-end t))
+  (let ((pre-set-avs (list))
+        (pre-set-val (float-vector 0 0 0))
+        (set-target-coords (make-coords))
+        adj-target-cds
         )
-    )
-  )
+    (cond
+     ((equal arm :larm)
+      (setq pre-set-avs (list #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102)))
+      (setq pre-set-val #f(-100 0 0))
+
+      (potentio-vector :head-p 50.0 :head-y 0.0)
+      (send set-target-coords :newcoords (send (send *pr2* arm :end-coords) :copy-worldcoords))
+      )
+     (t
+      (format t "Sorry, arm ~A is not defined now !!!~%" arm)
+      (return-from release-pot-on-stove nil)
+      )
+     )
+
+    (if use-cds-offset
+        (setq adj-target-cds (adjust-cds-with-spot set-target-coords "stove"))
+      (setq adj-target-cds (send set-target-coords :copy-worldcoords))
+      )
+    (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm arm :action-mode :release :object-name "pot" :reset-pose-end reset-pose-end)
+    ))
 
 (defun set-pot-on-stove (&key (arm :larm) (object-name "pot"))
   (grasp-pot-on-stove :arm arm :object-name object-name)
@@ -516,6 +356,23 @@
 ;;     )
 ;;   )
 
+;; (defun release-pot-on-stove (&key (arm :larm))
+;;   (if (equal arm :larm)
+;;       (progn
+;;         (send *ri* :stop-grasp :larm :wait t)
+
+;;         (send *pr2* :larm :move-end-pos #f(-100 0 0))
+;;         (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+;;         (send *ri* :wait-interpolation)
+
+;;         (send *pr2* :larm :angle-vector #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102))
+;;         (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+;;         (send *ri* :wait-interpolation)
+
+;;         (reset-manip-pose :arm :larm :time 2000)
+;;         )
+;;     )
+;;   )
 
 
 ;; TODO fix
@@ -597,7 +454,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (setq *lav3* (float-vector 75.8217 52.0712 108.49 -109.796 -2.86542 -9.47056 -0.0))
   (send *pr2* :larm :angle-vector *lav3*)
   ;; (send *arrow* :newcoords (make-coords :pos (float-vector 800.188 8310.893 30866.671) :rpy (float-vector 2.341 -0.222 0.589)))
@@ -607,13 +464,13 @@
   ;;       :debug-view *debug-flag*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 6000)
-  (send *ri* :wait-interpolation)  
-  
+  (send *ri* :wait-interpolation)
+
   (setq *lav4* (float-vector 75.0 50.0 110.0 -110.0 -20.0 -10.0 -10.0))
   (send *pr2* :larm :angle-vector *lav4*)
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)  
+  (send *ri* :wait-interpolation)
   )
 
 (defun before-recieve-larm ()
@@ -627,7 +484,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   ;;少し前に
   ;; (send *arrow* :newcoords (make-coords :pos (float-vector 600 8361 31167) :rpy (float-vector 1.571 1.047 1.571)))
   ;; (send *pr2* :larm :inverse-kinematics

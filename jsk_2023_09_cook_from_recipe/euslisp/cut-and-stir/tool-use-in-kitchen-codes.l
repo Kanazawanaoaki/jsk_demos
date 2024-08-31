@@ -10,79 +10,6 @@
 (setq *x-thre* -15)
 (setq *cb-flag* nil)
 
-;; load objects
-(unless (boundp '*knife*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/knife-new-attention.l")
-    (setq *knife* (knife))
-    ))
-
-(unless (boundp '*peeler*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/peeler.l")
-    (setq *peeler* (peeler))
-    ))
-
-(unless (boundp '*potato-peeler*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/potato-peeler.l")
-    (setq *potato-peeler* (peeler))
-    ))
-
-(unless (boundp '*spatula*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/spatula.l")
-    (setq *spatula* (spatula))
-    ))
-
-(unless (boundp '*ladle*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/ladle.l")
-    (setq *ladle* (ladle))
-    ))
-
-(unless (boundp '*shelf-door*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/shelf-door.l")
-    (setq *shelf-door* (shelf-door))
-    ))
-
-(unless (boundp '*cutting-board*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cutting-board.l")
-    (setq *cutting-board* (cutting-board))
-    ))
-
-(unless (boundp '*bowl-1*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/bowl-1.l")
-    (setq *bowl-1* (bowl-1))
-    ))
-
-(unless (boundp '*gray-bowl*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/gray-bowl.l")
-    (setq *gray-bowl* (gray-bowl))
-    ))
-
-(unless (boundp '*pot*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/cooking-pot-73b2.l")
-    (setq *pot* (cooking-pot))
-    ))
-
-(unless (boundp '*kitchen-plane*)
-  (progn
-    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/kitchen-plane.l")
-    (setq *kitchen-plane* (kitchen-plane :cube-x 570 :cube-y 690 :cube-z 10))
-    ))
-
-(unless (boundp '*arrow*)
-  (progn
-    (load "models/arrow-object.l")
-    (setq *arrow* (arrow))
-    ))
-
 (defun tool-init (&key (reset-obj-cds t) (init-cds t) (type :curry))
   ;; init
   ;; (load "package://jsk_2020_04_pr2_curry/euslisp/cook-with-pos-map/move-to-kitchen-with-map.l")
@@ -100,15 +27,16 @@
   ;; (objects (list *pr2* *peeler* *knife* *potato-peeler* *scene* *spatula* *ladle* *shelf-door*))
   ;; (update-view)
 
-  ;; TODO add objects
-
+  (objects *view-objects*)
   )
 
-(tool-init)
+;; (tool-init)
 
 ;; set codes
 (warn "~%  If you use real robot, run (update-pos) ~%")
 (warn "please run (now-set-tools) or (set-knife) ~%")
+
+(warn "~%  Please run (tool-init :type :curry) ~%")
 
 
 ;; TODO fix funcs
@@ -1654,6 +1582,8 @@
 (defun put-potato-peeler ()
   (set-tool-on-table :object-name "potato peeler" :arm :rarm :action-mode :put :spot-name "kitchen" :use-cds-offset nil)
   )
+
+;; TODO Add grasp without rec
 
 
 (defun rarm-middle-pose ()

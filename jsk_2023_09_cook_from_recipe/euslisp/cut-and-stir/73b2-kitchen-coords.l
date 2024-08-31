@@ -156,7 +156,8 @@
 
          ;; (setq *pot-coords* (make-coords :pos (float-vector 450 8080 30850) :rpy (float-vector 3.142 0 0))) ;; original
          ;; (setq *pot-coords* (make-coords :pos (float-vector 660.0 420.0 850.0) :rpy (float-vector 0 0 0))) ;; fix
-         (setq *pot-coords* (make-coords :pos (float-vector 780.0 420.0 850.0) :rpy (float-vector 0 0 0))) ;; pot fix v2
+         ;; (setq *pot-coords* (make-coords :pos (float-vector 780.0 420.0 850.0) :rpy (float-vector 0 0 0))) ;; pot fix v2
+         (setq *pot-coords* (make-coords :pos (float-vector 750.0 496.0 840.0) :rpy (float-vector 0 0 0))) ;; pot fix v3
 
          ;; (setq *shelf-door-coords* (make-coords :pos (float-vector 400 8840 31445) :rpy (float-vector 3.14 0 0))) ;; orginal
          ;; (setq *shelf-door-coords* (make-coords :pos (float-vector 710.0 -340.0 1445.0) :rpy (float-vector -0.002 0.0 0.0))) ;; fix
@@ -379,8 +380,7 @@
 
          (set-object *gray-bowl* (calc-coords-from-rel kitchen-coords (send *gray-bowl-kitchen-coords* :copy-worldcoords)))
 
-         ;; TODO add cutting-board
-
+         (set-object *cutting-board* (calc-coords-from-rel kitchen-coords (send *cutting-board-coords* :copy-worldcoords)))
 
          ;; set equipment
          (set-object *shelf-door* (calc-coords-from-rel kitchen-coords (send *shelf-door-coords* :copy-worldcoords)))
@@ -402,6 +402,13 @@
          (set-object *ladle* (calc-coords-from-rel kitchen-coords (send *ladle-coords-1* :copy-worldcoords)))
 
          (set-object *pot* (calc-coords-from-rel kitchen-coords (send *pot-coords* :copy-worldcoords)))
+
+         ;; (dissoc-object *bowl-1*)
+         ;; (send *bowl-1* :newcoords (send *bowl-1-kitchen-coords* :copy-worldcoords))
+
+         ;; (dissoc-object *cutting-board*)
+         ;; (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
+         (set-object *cutting-board* (calc-coords-from-rel kitchen-coords (send *cutting-board-coords* :copy-worldcoords)))
 
          ;; set equipment
          (set-object *shelf-door* (calc-coords-from-rel kitchen-coords (send *shelf-door-coords* :copy-worldcoords)))
