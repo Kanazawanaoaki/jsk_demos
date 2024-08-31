@@ -1,6 +1,6 @@
 #!/usr/bin/env roseus
 
-(load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_tmp.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_utils.l")
 
 
 (ros::load-ros-manifest "roseus")

@@ -2,11 +2,10 @@
 
 (ros::load-ros-manifest "roseus")
 (ros::load-ros-package "lc_state_recognition")
-(ros::load-ros-manifest "speech_recognition_msgs")
-(ros::roseus "pr2_cook_with_teaching_motion" :anonymous t)
+(ros::roseus "pr2_cook_util" :anonymous t)
 
 (format t "init ~%")
-(load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2-utils.l")
+(require :pr2-utils "package://jsk_2023_09_cook_from_recipe/euslisp/pr2-utils.l")
 (require :detection-interface "package://jsk_perception/euslisp/detection_interface.l")
 
 (setq *co* (make-coords))

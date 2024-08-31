@@ -162,4 +162,29 @@
   )
 
 
+;; add for yaml handling ;; old TODO update for use
+(defun load-yaml-config (config-file)
+  (let ((control_joints)
+        (dim_list)
+        (initial_joints))
+    (unix:system (format nil "rosparam load ~A yaml_load_eus" config-file))
+    (setq control_joints (ros::get-param "/yaml_load_eus/control_joints"))
+    (setq dim_list (ros::get-param "/yaml_load_eus/dim_list"))
+    (setq initial_joints (ros::get-param "/yaml_load_eus/initial_joints"))
+    (format t "~%load params from ~A ~%" config-file)
+    (format t " now control_joints is ~A ~%" control_joints)
+    (format t " now dim_list is ~A ~%" dim_list)
+    (format t " now initial_joints is ~A ~%" initial_joints)
+    (list control_joints dim_list initial_joints)))
+
+(defun load-config-from-name (config-name)
+  (let ((file-path nil))
+    (setq file-path (ros::resolve-ros-path (format nil "package://informatized_pr2_imitation/config/~A" config-name)))
+    (format t "now path is ~A ~%" file-path)
+    (load-yaml-config file-path)
+    ))
+
+(defun dump-eus-object (object)
+  (dump-loadable-structure *standard-output* object)
+  )
 

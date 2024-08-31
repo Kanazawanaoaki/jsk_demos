@@ -2,7 +2,7 @@
 (require :pr2-pose "package://jsk_demo_common/euslisp/pr2-pose.l")
 (require :pr2-speack "package://pr2eus/speak.l")
 (require :pr2-interface "package://pr2eus/pr2-interface.l")
-(require :pr2-cook-tmp "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_tmp.l")
+(require :pr2-cook-utils "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_utils.l")
 
 (defvar *use-voicetext* t)
 (defvar *use-english* nil)

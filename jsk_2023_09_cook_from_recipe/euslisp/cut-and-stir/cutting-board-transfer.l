@@ -1,11 +1,5 @@
 #!/usr/bin/env roseus
 
-;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_tmp.l")
-;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/wrench.l")
-;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/move-to-adjust.l")
-
-;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/pr2_cut_food.l")
-;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/73b2-kitchen-coords.l")
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/tool-use-in-kitchen-codes.l")
 
 ;; set global variables
