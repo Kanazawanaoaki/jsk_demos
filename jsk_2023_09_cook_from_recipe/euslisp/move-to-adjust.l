@@ -38,6 +38,26 @@
     (print ik-target-adj)
     ik-target-adj))
 
+(defun dump-spot-offset ()
+  (let ((dir_path)
+        (file_path))
+    (setq dir_path (ros::resolve-ros-path "package://jsk_2023_09_cook_from_recipe/datas/eus-spot-offset"))
+    (setq file_path (format nil "~A/eus-spot-offset.l" dir_path))
+    (dump-loadable-structure file_path *stove-offset-cds* *kitchen-offset-cds* *sink-offset-cds*)
+    (format t "adj coords is saved in ~A ~%" file_path)
+    ))
+
+(defun load-spot-offset ()
+  (let ((dir_path)
+        (file_path))
+    (setq dir_path (ros::resolve-ros-path "package://jsk_2023_09_cook_from_recipe/datas/eus-spot-offset"))
+    (setq file_path (format nil "~A/eus-spot-offset.l" dir_path))
+    (load file_path)
+    (format t "adj coords is load from ~A ~%" file_path)
+    ))
+
+
+;; tmp check
 (defun check-stove-spot ()
   (reset-manip-pose)
 
@@ -279,6 +299,7 @@
                  (< (abs (elt (car (rpy-angle (send diffcds :worldrot))) 0))
                     rotation-threshold)))
         (setq ret t)
+        (load-spot-offset) ;; load current offset setting
         (case move-spot
               (:stove
                (setq *stove-offset-cds* (make-coords :pos (float-vector (elt (send diffcds :worldpos) 0) (elt (send diffcds :worldpos) 1) 0)
@@ -294,7 +315,10 @@
                )
               )
         (if (not (send *ri* :simulation-modep)) ;; real mode
-            (speak-jp "到着しました")
+            (progn
+              (speak-jp "到着しました")
+              (dump-spot-offset)
+              )
           ))
        (t ;;  there is much difference
         (if move
