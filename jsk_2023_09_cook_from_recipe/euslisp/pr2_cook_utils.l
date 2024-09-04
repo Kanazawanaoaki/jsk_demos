@@ -66,7 +66,7 @@
   )
 
 (defun receive-with-dialogue (&rest args &key (gain 0.01) (arm :rarm) &allow-other-keys)
-  ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 喋らせている想定でスタート
+  ;; (send *ri* :speak-jp "包丁を渡す準備をして，合図をして下さい") ;; 等を喋らせている想定でスタート
   (setq *yes-flag* nil)
   (until *yes-flag*
          (send *ri* :stop-grasp arm :wait t)
@@ -167,7 +167,7 @@
         (setq *fail-flag* t))
     *fail-flag*))
 
-;; release gripper
+;; release object
 (defun release-object (&rest args &key (g-num 0.025) (arm :rarm) &allow-other-keys)
   (let ((curr-gripper))
     ;;グリッパを微妙に開く
@@ -175,6 +175,24 @@
     (send *ri* :move-gripper arm (+ g-num curr-gripper))
     ))
 
+
+;; assoc object
+(defun assoc-object-to-arm (object-instance object-handle-cds &key (arm :rarm))
+  (let (local-cds)
+    (dissoc-object object-instance)
+
+    (setq local-cds (make-cascoords))
+    (send local-cds :newcoords (send object-handle-cds :copy-worldcoords))
+    (send local-cds :assoc object-instance)
+    (send local-cds :newcoords (send (send *pr2* arm :end-coords) :copy-worldcoords))
+    (send local-cds :dissoc object-instance)
+
+    (send *viewer* :draw-objects)
+    (send (send *pr2* arm :end-coords) :assoc object-instance)
+    ))
+
+
+;; old
 ;; pose teaching
 (defun initial-pose-teaching () ;; 道具を握らせて貰って初期姿勢を教わる
   (manequine-end)
