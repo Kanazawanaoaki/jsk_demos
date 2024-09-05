@@ -9,7 +9,7 @@
 
 (defmethod cooking-pan-object
   (:init
-   (&rest args &key (name "cooking-pan") (bottom-thick 10) (bottom-radius 100) (pan-height 60) (pan-thick 5) (pan-radius 120) (handle-x 180) (handle-y 40) (handle-z 20) (pos (float-vector 0 0 0)) (rot (unit-matrix 3)) &allow-other-keys)
+   (&rest args &key (name "cooking-pan") (bottom-thick 5) (bottom-radius 85) (pan-height 50) (pan-thick 5) (pan-radius 105) (handle-x 200) (handle-y 40) (handle-z 20) (pos (float-vector 0 0 0)) (rot (unit-matrix 3)) &allow-other-keys)
    (let (link1 bc1 bc2 bc3 bc4)
      (send-super* :init :name name args)
 
@@ -31,7 +31,8 @@
      (setq bc4 (make-cube handle-x handle-y handle-z))
      ;; (send bc4 :locate #f(-140 0 90))
      (send bc4 :locate (float-vector (- (/ handle-x 2)) 0 (/ handle-z 2)))
-     (send bc4 :locate #f(-110 0 40))
+     ;; (send bc4 :locate #f(-110 0 40))
+     (send bc4 :locate #f(-100 0 45))
      ;; (send bc4 :set-color :black)
      (send bc1 :assoc bc4)
 
@@ -45,7 +46,7 @@
      ;; definition of joint
 
      ;; definition of :handle
-     (setq handle0 (make-cascoords :pos (float-vector -160 0 90) :rot #2f((0.642788 0.0 0.766044) (0.0 -1.0 0.0) (0.766044 0.0 -0.642788)) :name "handle0"))
+     (setq handle0 (make-cascoords :pos (float-vector -220 0 80) :rot #2f((0.642788 0.0 0.766044) (0.0 -1.0 0.0) (0.766044 0.0 -0.642788)) :name "handle0"))
      (send link1 :assoc handle0)
 
      ;; definition of :attention

@@ -14,3 +14,5 @@
   (send *water* :set-color :Blue)
   (objects *water*)
   )
+
+(warn "please run (view-pot-coords) or (view-water)~%")

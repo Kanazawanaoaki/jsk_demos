@@ -1,8 +1,7 @@
 (defclass wood-spatula-object
   :super cascaded-link
   :slots (
-          handle0
-          ))
+         ))
 
 (defmethod wood-spatula-object
   (:init
@@ -11,10 +10,10 @@
      (send-super* :init :name name args)
 
      ;; definition of link
-     (setq b1 (make-prism (list #f(125 33 0) #f(60 30 0) #f(0 10 0) #f(0 -10 0) #f(60 -30 0) #f(125 -33 0)) 8))
-     (setq b2 (make-cube 170 20 8))
-
-     (send b2 :locate #f(-85 0 0))
+     (setq b1 (make-prism (list #f(50 25 0) #f(50 -25 0) #f(0 -35 0) #f(-45 -12 0) #f(-45 12 0) #f(0 35 0)) 8))
+     (setq b2 (make-cube 235 24 8))
+     
+     (send b2 :locate #f(-162 0 0))
      (send b1 :locate #f(0 0 -4))
 
      (send b1 :set-color :BurlyWood)
@@ -32,19 +31,14 @@
 
      ;; definition of :handle
 
-     ;; definition of :attention
-     (setq attention0 (make-cascoords :pos (float-vector 125 0 0) :rot #2f((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0)) :name "attention0"))
-     (send link1 :assoc attention0)
-
-     ;; init-ending
+     ;; init-ending 
      (setq links (list link1))
      (send self :init-ending)
      (send self :move-to (make-coords :pos pos :rot rot))
      (send-all links :worldcoords)
 
      self))
-  (:attention (&rest args) (forward-message-to-all (list attention0) args))
-  (:attention-attention0 (&rest args) (forward-message-to-all attention0 args))
+
   )
 
 (defun wood-spatula (&rest args) (instance* wood-spatula-object :init args))

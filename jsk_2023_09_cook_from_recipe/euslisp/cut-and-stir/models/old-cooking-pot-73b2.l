@@ -9,7 +9,7 @@
 
 (defmethod cooking-pot-object
   (:init
-   (&rest args &key (name "cooking-pot") (bottom-thick 5) (bottom-radius 70) (pot-height 105) (pot-thick 5) (pot-radius 98) (handle-x 160) (handle-y 40) (handle-z 20) (pos (float-vector 0 0 0)) (rot (unit-matrix 3)) &allow-other-keys)
+   (&rest args &key (name "cooking-pot") (bottom-thick 10) (bottom-radius 70) (pot-height 100) (pot-thick 5) (handle-x 100) (handle-y 35) (handle-z 10) (pot-radius 100) (pos (float-vector 0 0 0)) (rot (unit-matrix 3)) &allow-other-keys)
    (let (link1 bc1 bc2 bc3 bc4)
      (send-super* :init :name name args)
 
@@ -32,7 +32,7 @@
      ;; (send bc4 :locate #f(-140 0 90))
      (send bc4 :locate (float-vector (- (/ handle-x 2)) 0 (/ handle-z 2)))
      (send bc4 :locate #f(-90 0 80))
-     ;; (send bc4 :set-color :black)
+     (send bc4 :set-color :black)
      (send bc1 :assoc bc4)
 
      (setq link1 (instance bodyset-link :init (make-cascoords) :bodies (list bc1 bc4) :weight 1 :centroid (float-vector 0.0 0.0 0.0) :inertia-tensor #2f((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0))))
@@ -45,7 +45,7 @@
      ;; definition of joint
 
      ;; definition of :handle
-     (setq handle0 (make-cascoords :pos (float-vector -200 0 120) :rot #2f((0.642788 0.0 0.766044) (0.0 -1.0 0.0) (0.766044 0.0 -0.642788)) :name "handle0"))
+     (setq handle0 (make-cascoords :pos (float-vector -160 0 90) :rot #2f((0.642788 0.0 0.766044) (0.0 -1.0 0.0) (0.766044 0.0 -0.642788)) :name "handle0"))
      (send link1 :assoc handle0)
 
      ;; definition of :attention
