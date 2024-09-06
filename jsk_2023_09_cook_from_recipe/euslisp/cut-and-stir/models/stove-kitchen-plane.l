@@ -1,16 +1,22 @@
 (defclass stove-kitchen-plane-object
   :super cascaded-link
   :slots (
-      attention0
-      attention1
-      attention2
-      attention3
-      ))
+          attention0
+          attention1
+          attention2
+          attention3
+          attention4
+          attention5
+          attention6
+          attention7
+          attention8
+          attention9
+          ))
 
 (defmethod stove-kitchen-plane-object
   (:init
    (&rest args &key (name "stove-kitchen-plane") (pos (float-vector 0 0 0)) (rot (unit-matrix 3)) (cube-x 605) (cube-y 1030) (cube-z 10) &allow-other-keys)
-   (let (link1 b1)
+   (let (link1 b1 b2)
      (send-super* :init :name name args)
 
      ;; definition of link

@@ -1,24 +1,23 @@
 (defun point-mul (point x y z)
   (float-vector (* (elt point 0) x) (* (elt point 1) y) (* (elt point 2) z)))
 
-(defun make-distorted-cylinder (width length height)
-  (let (b1 b2)
-    (setq x-scale (/ (float width) (float width)))
-    (setq y-scale (/ (float length) (float width)))
-    (setq b1 (make-cylinder width height))
-    (setq v-list (list (point-mul (car (send b1 :vertices)) x-scale y-scale 1)))
-    (dolist (x (cdr (send b1 :vertices))) (setq v-list (append v-list (list (point-mul x x-scale y-scale 1)))))
+(defun make-distorted-cylinder (x-radius y-radius height)
+  (let (b1 b2 x-scale y-scale v-list)
+    (setq x-scale (/ (float x-radius) (float x-radius)))
+    (setq y-scale (/ (float y-radius) (float x-radius)))
+    (setq b1 (make-cylinder x-radius height))
+    (setq v-list (list))
+    (dolist (point (send b1 :vertices)) (setq v-list (append v-list (list (point-mul point x-scale y-scale 1)))))
     (setq b2 (convex-hull-3d v-list))
-    )
-  )
+    b2))
 
 (defclass measuring-cup-73b2-object
   :super cascaded-link
   :slots (handle0
-      handle1
-      attention0
-      attention1
-      ))
+          handle1
+          attention0
+          attention1
+          ))
 
 (defmethod measuring-cup-73b2-object
   (:init
@@ -39,7 +38,7 @@
      (send b7 :locate #f(0 24 -15))
      (setq b5 (body- b5 b7))
      (send b5 :locate #f(0 -55 70))
-     
+
      (setq b3 (make-cube 23 35 10))
      (send b3 :locate #f(0 72 65))
      (setq b4 (make-cube 23 62 15))
@@ -62,7 +61,6 @@
 
      (setq link1 (instance bodyset-link :init (make-cascoords) :bodies (list b1 b5 b3 b4) :weight 1 :centroid (float-vector 0.0 0.0 0.0) :inertia-tensor #2f((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0))))
 
-
      ;; definition of assoc
      (send self :assoc link1)
 
@@ -75,13 +73,13 @@
      (send link1 :assoc handle0)
      (setq handle1 (make-cascoords :pos #f(0 100 40) :rpy #f(-1.571 0.751 0) :name "handle1"))
      (send link1 :assoc handle1)
-     
+
      ;; definition of :attention
      (setq attention0 (make-cascoords :pos #f(0 -62 70) :rpy #f(-1.571 0 0) :name "attention0"))
      (send link1 :assoc attention0)
      (setq attention1 (make-cascoords :pos #f(0 0 70) :rpy #f(-1.57 0 0) :name "attention1"))
      (send link1 :assoc attention1)
-     
+
      ;; init-ending 
      (setq links (list link1))
      (send self :init-ending)

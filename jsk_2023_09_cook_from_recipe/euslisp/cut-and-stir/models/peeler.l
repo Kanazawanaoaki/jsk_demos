@@ -11,7 +11,7 @@
    (&rest args &key (name "peeler") (pos (float-vector 0 0 0)) (rot (unit-matrix 3)) &allow-other-keys)
    (let (link1 b1 b2 b3 b4 b5)
      (send-super* :init :name name args)
-     
+
      ;; definition of link
      (setq b1 (make-cube 100 12 12))
 
@@ -32,7 +32,7 @@
      (send b1 :assoc b2)
      (send b2 :set-color :red)
      (send b1 :set-color :red)
-     
+
      (setq link1 (instance bodyset-link :init (make-cascoords) :bodies (list b1 b2 b5) :weight 1 :centroid (float-vector 0.0 0.0 0.0) :inertia-tensor #2f((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0))))
 
 
@@ -49,12 +49,12 @@
      (setq handle1 (make-cascoords :pos #f(0 0 0) :name "handle1"))
      (send handle1 :rotate (deg2rad 90) :x)
      (send link1 :assoc handle1)
-     
+
      ;; definition of :attention
      (setq attention0 (make-cascoords :pos #f(80 0 0) :name "attention0"))
      (send link1 :assoc attention0)
 
-     ;; init-ending 
+     ;; init-ending
      (setq links (list link1))
      (send self :init-ending)
      (send self :move-to (make-coords :pos pos :rot rot))

@@ -16,7 +16,7 @@
 (unless (boundp '*potato-peeler*)
   (progn
     (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/potato-peeler.l")
-    (setq *potato-peeler* (peeler))
+    (setq *potato-peeler* (potato-peeler))
     ))
 
 (unless (boundp '*spatula*)

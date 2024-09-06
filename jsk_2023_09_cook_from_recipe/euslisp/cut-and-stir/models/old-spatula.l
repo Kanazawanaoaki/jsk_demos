@@ -1,10 +1,10 @@
 (defclass spatula-object
   :super cascaded-link
   :slots (
-      handle0
-      attention0
-      attention1
-         ))
+          handle0
+          attention0
+          attention1
+          ))
 
 (defmethod spatula-object
   (:init

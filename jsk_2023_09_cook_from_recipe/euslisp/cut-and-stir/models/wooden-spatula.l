@@ -1,12 +1,12 @@
-(defclass wood-spatula-object
+(defclass wooden-spatula-object
   :super cascaded-link
   :slots (
-          handle0
+          attention0
           ))
 
-(defmethod wood-spatula-object
+(defmethod wooden-spatula-object
   (:init
-   (&rest args &key (name "wood-spatula") (pos (float-vector 0 0 0)) (rot (unit-matrix 3)) &allow-other-keys)
+   (&rest args &key (name "wooden-spatula") (pos (float-vector 0 0 0)) (rot (unit-matrix 3)) &allow-other-keys)
    (let (link1 b1 b2)
      (send-super* :init :name name args)
 
@@ -16,6 +16,8 @@
 
      (send b2 :locate #f(-85 0 0))
      (send b1 :locate #f(0 0 -4))
+
+     (send b1 :assoc b2)
 
      (send b1 :set-color :BurlyWood)
      (send b2 :set-color :BurlyWood)
@@ -43,8 +45,9 @@
      (send-all links :worldcoords)
 
      self))
+
   (:attention (&rest args) (forward-message-to-all (list attention0) args))
   (:attention-attention0 (&rest args) (forward-message-to-all attention0 args))
   )
 
-(defun wood-spatula (&rest args) (instance* wood-spatula-object :init args))
+(defun wooden-spatula (&rest args) (instance* wooden-spatula-object :init args))

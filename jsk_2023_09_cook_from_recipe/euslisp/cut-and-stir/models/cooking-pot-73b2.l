@@ -1,11 +1,11 @@
 (defclass cooking-pot-object
   :super cascaded-link
   :slots (
-      handle0
-      attention0
-      content
-      bottom
-      ))
+          handle0
+          attention0
+          content
+          bottom
+          ))
 
 (defmethod cooking-pot-object
   (:init
@@ -70,7 +70,7 @@
 
   (:water
    (&rest args &key (surface 70))
-   (let (b bc1 box)
+   (let (b bc1 box m)
      (setq bc1 content)
      (send bc1 :copy-worldcoords)
      (setq b (make-bounding-box (send bc1 :vertices)))

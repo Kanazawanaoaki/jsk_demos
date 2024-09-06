@@ -1,4 +1,4 @@
-(defclass potato-peeler-object
+(defclass peeler-object
   :super cascaded-link
   :slots (
           handle0
@@ -6,9 +6,10 @@
           attention0
           ))
 
-(defmethod potato-peeler-object
+(defmethod peeler-object
   (:init
    (&rest args &key (name "peeler") (pos (float-vector 0 0 0)) (rot (unit-matrix 3)) &allow-other-keys)
+   ;; (let (link1 b1 b2 b3 b4 b5)
    (let (link1 b1 b2)
      (send-super* :init :name name args)
 
@@ -19,10 +20,27 @@
      (setq b2 (make-cube 20 70 15))
      (send b2 :locate #f(110 0 -3.5))
 
+     ;; (setq b2 (make-cylinder 30 5))
+     ;; (setq b3 (make-cylinder 25 5))
+     ;; (setq b2 (body- b2 b3))
+     ;; (setq b4 (make-cube 100 100 20))
+     ;; (send b4 :locate #f(51 0 0))
+     ;; (setq b2 (body- b2 b4))
+
+     ;; (setq b5 (make-cube 5 50 2))
+     ;; (send b5 :locate #f(0 0 2))
+     ;; (send b5 :set-color :white)
+
+     ;; (send b2 :assoc b5)
+     ;; (send b2 :locate #f(80 0 0))
+
      (send b1 :assoc b2)
+     ;; (send b2 :set-color :red)
+     ;; (send b1 :set-color :red)
      (send b2 :set-color :yellow)
      (send b1 :set-color :yellow)
 
+     ;; (setq link1 (instance bodyset-link :init (make-cascoords) :bodies (list b1 b2 b5) :weight 1 :centroid (float-vector 0.0 0.0 0.0) :inertia-tensor #2f((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0))))
      (setq link1 (instance bodyset-link :init (make-cascoords) :bodies (list b1 b2) :weight 1 :centroid (float-vector 0.0 0.0 0.0) :inertia-tensor #2f((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0))))
 
      ;; definition of assoc
@@ -58,4 +76,4 @@
   (:attention-attention0 (&rest args) (forward-message-to attention0 args))
   )
 
-(defun potato-peeler (&rest args) (instance* potato-peeler-object :init args))
+(defun peeler (&rest args) (instance* peeler-object :init args))

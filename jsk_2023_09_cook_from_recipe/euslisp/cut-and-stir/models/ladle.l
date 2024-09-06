@@ -1,10 +1,10 @@
 (defclass ladle-object
   :super cascaded-link
   :slots (
-      handle0
-      attention0
-      attention1
-         ))
+          handle0
+          attention0
+          attention1
+          ))
 
 (defmethod ladle-object
   (:init
@@ -21,7 +21,7 @@
      (send b3 :locate #f(0 0 51))
 
      (setq b1 (body- b1 b3))
-     
+
      ;; (send b1 :locate #f(25 0 -200))
      ;; (send b1 :rotate (deg2rad 30) :y)
 
@@ -44,8 +44,8 @@
      (send b5 :rotate (deg2rad 15) :y)
 
      (send b1 :assoc b4)
-     (send b1 :assoc b5)     
-          
+     (send b1 :assoc b5)
+
      (setq link1 (instance bodyset-link :init (make-cascoords) :bodies (list b1 b4 b5) :weight 1 :centroid (float-vector 0.0 0.0 0.0) :inertia-tensor #2f((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0))))
 
 
@@ -59,13 +59,13 @@
      ;; definition of :handle
      (setq handle0 (make-cascoords :pos (float-vector 0.0 0.0 0.0) :rot #2f((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0)) :name "handle0"))
      (send link1 :assoc handle0)
-     
+
      ;; definition of :attention
      (setq attention0 (make-cascoords :pos (float-vector 220 0 60) :rot #2f((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0)) :name "attention0"))
      (send link1 :assoc attention0)
      (setq attention1 (make-cascoords :pos (float-vector 220 0 60) :rot #2f((0.5 0.0 -0.866025) (0.0 1.0 0.0) (0.866025 0.0 0.5)) :name "attention1"))
      (send link1 :assoc attention1)
-     
+
      ;; init-ending 
      (setq links (list link1))
      (send self :init-ending)

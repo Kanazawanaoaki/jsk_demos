@@ -1,11 +1,11 @@
 (defclass kitchen-plane-object
   :super cascaded-link
   :slots (
-      attention0
-      attention1
-      attention2
-      attention3
-      ))
+          attention0
+          attention1
+          attention2
+          attention3
+          ))
 
 (defmethod kitchen-plane-object
   (:init
