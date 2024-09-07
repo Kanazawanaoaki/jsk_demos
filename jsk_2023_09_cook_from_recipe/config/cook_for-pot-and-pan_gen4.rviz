@@ -3,8 +3,7 @@ Panels:
     Help Height: 78
     Name: Displays
     Property Tree Widget:
-      Expanded:
-        - /Degree of Change1
+      Expanded: ~
       Splitter Ratio: 0.4870370328426361
     Tree Height: 1239
   - Class: rviz/Selection
@@ -60,9 +59,9 @@ Visualization Manager:
       keep aspect ratio: true
       left: 0
       overwrite alpha value: true
-      top: 200
+      top: 300
       transport hint: raw
-      width: 1000
+      width: 1800
     - Align Bottom: false
       Background Alpha: 0.699999988079071
       Background Color: 0; 0; 0
@@ -96,17 +95,17 @@ Visualization Manager:
       border: true
       foreground alpha: 0.699999988079071
       foreground color: 25; 255; 240
-      height: 150
-      left: 130
+      height: 250
+      left: 200
       linewidth: 1
       max color: 255; 0; 0
       max value: 1
       min value: 0
       show caption: true
       text size: 12
-      top: 15
+      top: 20
       update interval: 0.10000000149011612
-      width: 150
+      width: 250
     - Background Alpha: 0.699999988079071
       Background Color: 0; 0; 0
       Class: jsk_rviz_plugin/OverlayMenu
@@ -119,8 +118,8 @@ Visualization Manager:
       Topic: /adjusted_clip_state_recognizer/overlay_menu
       Value: true
       keep centered: false
-      left: 400
-      top: 15
+      left: 500
+      top: 30
     - Align Bottom: true
       Background Alpha: 0.699999988079071
       Background Color: 0; 0; 0
@@ -136,12 +135,12 @@ Visualization Manager:
       Topic: /adjusted_clip_state_recognizer/time
       Value: true
       font: DejaVu Sans Mono
-      height: 80
+      height: 100
       left: 20
       line width: 1
-      text size: 24
-      top: 680
-      width: 100
+      text size: 30
+      top: 1210
+      width: 160
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48

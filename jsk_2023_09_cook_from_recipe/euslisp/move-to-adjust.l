@@ -52,7 +52,13 @@
         (file_path))
     (setq dir_path (ros::resolve-ros-path "package://jsk_2023_09_cook_from_recipe/datas/eus-spot-offset"))
     (setq file_path (format nil "~A/eus-spot-offset.l" dir_path))
-    (load file_path)
+    (if (probe-file file_path) ;; check file is exist
+        (load file_path)
+      (progn
+        (format t "file ~A is not exist! So return nil. ~%" file_path)
+        (return-from load-spot-offset nil)
+        )
+      )
     (format t "adj coords is load from ~A ~%" file_path)
     ))
 

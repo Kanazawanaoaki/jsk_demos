@@ -154,7 +154,7 @@
       )
      ((and (string= object-name "green bowl") (string= spot-name "stove") (equal arm :rarm))
       (setq pre-set-avs (list #f(-38.3278 -3.2288 -63.6414 -68.0071 -83.1809 -108.309 393.782))) ;; for green bowl, upper outside
-      (setq pre-set-val #f(-50 0 -100))
+      (setq pre-set-val #f(-100 0 0))
 
       ;; calc from defined coords
       (send *arrow* :newcoords (calc-coords-from-rel *green-bowl-stove-coords* (make-coords :pos #f(-57.768 20.693 22.929) :rpy #f(0.115 1.25 -1.37))))
@@ -163,7 +163,7 @@
       )
      ((and (string= object-name "green bowl") (string= spot-name "stove") (equal arm :larm))
       (setq pre-set-avs (list #f(48.7972 1.40098 47.7424 -89.0343 68.0991 -99.506 -53.0755))) ;; TODO
-      (setq pre-set-val #f(-50 0 -100)) ;; for upper #f(0 0 150) :world
+      (setq pre-set-val #f(-100 0 0)) ;; for upper #f(0 0 150) :world
 
       ;; calc from defined coords
       (send *arrow* :newcoords (calc-coords-from-rel *green-bowl-stove-coords* (make-coords :pos #f(-57.768 20.693 22.929) :rpy #f(0.115 1.25 -1.37))))
@@ -203,12 +203,22 @@
   (set-bowl-on-table :object-name "gray bowl" :arm :rarm :action-mode :put :spot-name "stove" :use-cds-offset nil)
   )
 
-(defun receive-and-set-green-bowl ()
-  (set-bowl-on-table :object-name "green bowl" :arm :larm :action-mode :set :spot-name "stove" :use-cds-offset nil)
+(defun hold-gray-bowl ()
+  (set-bowl-on-table :object-name "gray bowl" :arm :rarm :action-mode :hold :spot-name "stove" :use-cds-offset nil)
+  ;; (assoc-object-to-arm *oil-dispenser* (calc-coords-from-rel *oil-dispenser* (make-coords :pos #f(-9.925 5.389 113.022) :rpy #f(-0.023 0.057 3.124))) :arm :larm) ;; TODO
   )
 
-(defun put-green-bowl ()
-  (set-bowl-on-table :object-name "green bowl" :arm :larm :action-mode :put :spot-name "stove" :use-cds-offset nil)
+(defun receive-and-set-green-bowl (&key (arm :larm))
+  (set-bowl-on-table :object-name "green bowl" :arm arm :action-mode :set :spot-name "stove" :use-cds-offset nil)
+  )
+
+(defun put-green-bowl (&key (arm :larm))
+  (set-bowl-on-table :object-name "green bowl" :arm arm :action-mode :put :spot-name "stove" :use-cds-offset nil)
+  )
+
+(defun hold-green-bowl (&key (arm :larm))
+  (set-bowl-on-table :object-name "green bowl" :arm arm :action-mode :hold :spot-name "stove" :use-cds-offset nil)
+  ;; (assoc-object-to-arm *oil-dispenser* (calc-coords-from-rel *oil-dispenser* (make-coords :pos #f(-9.925 5.389 113.022) :rpy #f(-0.023 0.057 3.124))) :arm :larm) ;; TODO rarm and larm
   )
 
 (defun receive-and-set-oil-dispenser ()
@@ -236,7 +246,8 @@
         )
     (cond
      ((and (string= object-name "pot") (string= spot-name "stove") (equal arm :larm))
-      (setq pre-set-avs (list #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102)))
+      ;; (setq pre-set-avs (list #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102)))
+      (setq pre-set-avs (list #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142  265.39)))
       (setq pre-set-val #f(-100 0 0))
 
       ;; calc from defined coords
@@ -246,7 +257,8 @@
       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
       )
      ((and (string= object-name "frying pan") (string= spot-name "stove") (equal arm :larm))
-      (setq pre-set-avs (list #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102)))
+      ;; (setq pre-set-avs (list #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102)))
+      (setq pre-set-avs (list #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 265.39)))
       (setq pre-set-val #f(-100 0 0))
 
       ;; calc from defined coords
@@ -275,7 +287,8 @@
         )
     (cond
      ((equal arm :larm)
-      (setq pre-set-avs (list #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102)))
+      ;; (setq pre-set-avs (list #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 -94.6102)))
+      (setq pre-set-avs (list #f(26.9083 69.9996 85.5955 -101.551 -80.4156 -66.7142 265.39)))
       (setq pre-set-val #f(-100 0 0))
 
       (potentio-vector :head-p 50.0 :head-y 0.0)

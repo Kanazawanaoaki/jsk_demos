@@ -49,7 +49,8 @@ roseus exec-cook-from-planed-recipe.l
 ```
 
 ### バターありの目玉焼き
-位置に移動する．kitchen_template_matching_k4a.launch を立ち上げている状態で，
+位置に移動する．kitchen_template_matching_k4a.launch を立ち上げている状態で，以下を実行して準備をする．  
+ボウル0=small-bowl=緑のボウル，ボウル1=bowl=大中小のボウルセットの小．
 ```
 roscd jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/
 roseus exec-cook-from-planed-recipe.l
@@ -70,6 +71,7 @@ roslaunch jsk_2023_09_cook_from_recipe cook_rec_for_pot-and-pan.launch
 roslaunch jsk_2023_09_cook_from_recipe kitchen_template_matching_k4a.launch
 roslaunch jsk_2023_09_cook_from_recipe use_k4a_remote.launch
 roslaunch jsk_2023_09_cook_from_recipe pot-and-pan_rviz.launch
+# roslaunch jsk_2023_09_cook_from_recipe pot-and-pan_rviz_gen4.launch ## if you use P1 Gen4
 ```
 実行する
 ```

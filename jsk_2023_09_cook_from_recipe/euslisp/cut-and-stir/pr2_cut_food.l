@@ -135,13 +135,13 @@
                      (if (equal arm :larm)
                          (progn
                            (setq *ideal-lec* (send (send *pr2* :larm :end-coords) :copy-worldcoords))
-                           (setq *current-lec* (send ideal-lec :copy-worldcoords))
+                           (setq *current-lec* (send *ideal-lec* :copy-worldcoords))
                            (send *current-lec* :translate world-tape-diff-vec :world)
                            (format t "current-lec (larm end-coords) : ~A ~%" *current-lec*) ;;実際の左のend-coordsの座標
                            )
                        (progn
                          (setq *ideal-rec* (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-                         (setq *current-rec* (send ideal-rec :copy-worldcoords))
+                         (setq *current-rec* (send *ideal-rec* :copy-worldcoords))
                          (send *current-rec* :translate world-tape-diff-vec :world)
                          (format t "current-rec (rarm end-coords) : ~A ~%" *current-rec*) ;;実際の右のend-coordsの座標
                          ))
@@ -505,7 +505,7 @@
       (send *ri* :wait-interpolation)
       )
      ((equal action-mode :release)
-      (format t "action-mode is ~A, so don't move" action-mode)
+      (format t "action-mode is ~A, so don't move ~%" action-mode)
       )
      (t
       (dolist (pre-set-av pre-set-avs)
@@ -539,7 +539,7 @@
     (cond
      ((equal action-mode :release)
       (setq set-coords (send grasp-coords :copy-worldcoords))
-      (format t "action-mode is ~A, so don't move" action-mode)
+      (format t "action-mode is ~A, so don't move ~%" action-mode)
       )
      (t
       ;; pre grasp

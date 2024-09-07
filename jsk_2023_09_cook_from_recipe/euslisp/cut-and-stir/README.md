@@ -172,6 +172,13 @@ rosrun tf tf_echo base_footprint tf2
 ```
 等で座標を取得することも可能
 
+
+### gripperのキャリブを確認する
+```bash
+(reset-cook-pose)
+(kitchen-pose-calib-check)
+```
+
 ### Z800も使うバージョン
 
 Z800で立ち上げる

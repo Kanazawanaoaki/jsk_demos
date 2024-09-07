@@ -696,7 +696,8 @@
   (send *ri* :wait-interpolation)
 
 
-  (send *ri* :start-grasp :rarm :wait t :gain 100)
+  ;; (send *ri* :start-grasp :rarm :wait t :gain 100)
+  (send *ri* :start-grasp :rarm :wait t :gain 0.01)
   ;; rotate
   (rotate-knob :deg 30 :arm :rarm)
   (if max-power

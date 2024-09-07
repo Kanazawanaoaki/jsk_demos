@@ -46,7 +46,7 @@
 (defun rotate-knob (&rest args &key (deg 30) (arm :larm) &allow-other-keys)
   ;; rotate
   (potentio-vector)
-  (let (av avs tms (ik-target (send (send *pr2* arm :end-coords) :copy-worldcoords)))
+  (let (av (avs (list)) (tms (list)) (ik-target (send (send *pr2* arm :end-coords) :copy-worldcoords)))
     (if (> deg 0)
       (progn
         (dotimes (i (/ deg 10))
@@ -70,8 +70,10 @@
         (setq tms (append tms (list 200)))
         )
       )
-    (send *ri* :angle-vector-sequence avs tms)
-    (send *ri* :wait-interpolation)
+    (unless (equal avs (list))
+      (send *ri* :angle-vector-sequence avs tms)
+      (send *ri* :wait-interpolation)
+      )
     )
   )
 
@@ -88,12 +90,15 @@
     (if left
         (progn
           (setq pre-set-avs (list #f(-14.727 68.7101 -60.2136 -76.3185 109.312 -48.51 -7.17108)))
-          (setq pre-set-val #f(-100 0 0))
+          ;; (setq pre-set-val #f(-100 0 0))
+          (setq pre-set-val #f(-30 0 0))
           (setq set-target-coords (make-coords :pos #f(645 -55 696.789) :rpy #f(-0.089 0.092 1.448)))
           )
       (progn
-        (setq pre-set-avs (list #f(-14.727 68.7101 -60.2136 -76.3185 109.312 -48.51 -7.17108)))
-        (setq pre-set-val #f(-100 0 0))
+        ;; (setq pre-set-avs (list #f(-14.727 68.7101 -60.2136 -76.3185 109.312 -48.51 -7.17108)))
+        (setq pre-set-avs (list #f(-37.9792 67.891 -75.6121 -80.9552 114.675 -44.3419 -2.95313))) ;; #f(-37.49 74.2613 -98.4166 -92.2371 105.499 -61.216 -179.863) for old
+        ;; (setq pre-set-val #f(-100 0 0))
+        (setq pre-set-val #f(-30 0 0))
         (setq set-target-coords (make-coords :pos #f(645.029 -178.873 696.789) :rpy #f(-0.089 0.092 1.448)))
         ))
     (if use-cds-offset
@@ -118,6 +123,7 @@
                 (rotate-knob :deg 30 :arm :rarm)
                 ))
           (rotate-knob :deg rotate-deg :arm :rarm)
+          (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm :rarm :action-mode :release :object-name "ih stove")
           ))
     (reset-cook-pose :arm :rarm)
     )
@@ -729,66 +735,66 @@
   (send *ri* :start-grasp :larm :wait t :gain 100)
   )
 
-(defun rotate-knob (&rest args &key (deg 30) &allow-other-keys)
-  ;; rotate
-  (setq avs (list))
-  (setq tms (list))
+;; (defun rotate-knob (&rest args &key (deg 30) &allow-other-keys)
+;;   ;; rotate
+;;   (setq avs (list))
+;;   (setq tms (list))
 
-  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+;;   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+;;   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   
-  (if (> deg 0)
-      (progn 
-        (dotimes (i (/ deg 10))
-          (send *arrow* :rotate (deg2rad 10) :x)
-          (send *pr2* :larm :inverse-kinematics
-                (send *arrow* :copy-worldcoords)
-                :rotation-axis t
-                :debug-view nil)
-          (setq av (send *pr2* :angle-vector))
-          (setq avs (append avs (list av)))
-          (setq tms (append tms (list 200)))
-          ))
-    (dotimes (i (/ (* deg -1) 10))
-      (send *arrow* :rotate (deg2rad -10) :x)
-      (send *pr2* :larm :inverse-kinematics
-            (send *arrow* :copy-worldcoords)
-            :rotation-axis t
-            :debug-view nil)
-      (setq av (send *pr2* :angle-vector))
-      (setq avs (append avs (list av)))
-      (setq tms (append tms (list 200)))
-      )
-    )
+;;   (if (> deg 0)
+;;       (progn 
+;;         (dotimes (i (/ deg 10))
+;;           (send *arrow* :rotate (deg2rad 10) :x)
+;;           (send *pr2* :larm :inverse-kinematics
+;;                 (send *arrow* :copy-worldcoords)
+;;                 :rotation-axis t
+;;                 :debug-view nil)
+;;           (setq av (send *pr2* :angle-vector))
+;;           (setq avs (append avs (list av)))
+;;           (setq tms (append tms (list 200)))
+;;           ))
+;;     (dotimes (i (/ (* deg -1) 10))
+;;       (send *arrow* :rotate (deg2rad -10) :x)
+;;       (send *pr2* :larm :inverse-kinematics
+;;             (send *arrow* :copy-worldcoords)
+;;             :rotation-axis t
+;;             :debug-view nil)
+;;       (setq av (send *pr2* :angle-vector))
+;;       (setq avs (append avs (list av)))
+;;       (setq tms (append tms (list 200)))
+;;       )
+;;     )
   
-  (send *ri* :angle-vector-sequence avs tms)
-  (send *ri* :wait-interpolation)
+;;   (send *ri* :angle-vector-sequence avs tms)
+;;   (send *ri* :wait-interpolation)
   
-  )
+;;   )
 
 
-(defun rotate-knob-with-rec (&rest args &key (target "/7p") &allow-other-keys)
-  (setq *target-flag* nil)
-  (until *target-flag*
-         (read-panel)
-         (setq *read-data* (read-data))
-         (cond           
-          ;; TODO TODO
-          ;; もし読めていなかったら
-          ((equal *read-data* "")
-           (send *ri* :speak-jp "パネルの認識に失敗しました，もう一度認識します") ;; fail countを入れても良いかも．
-           )
-          ;; もしtargetと一致していたら
-          ((equal *read-data* target)
-           (setq *target-flag* t))
-          ;; もしtargetよりも小さかったら
-          ((< *read-data* target)
-           )
-          ;; もしtargetよりも大きかったら
-          ((> *read-data* target)
-           )
-          )
-         ))
+;; (defun rotate-knob-with-rec (&rest args &key (target "/7p") &allow-other-keys)
+;;   (setq *target-flag* nil)
+;;   (until *target-flag*
+;;          (read-panel)
+;;          (setq *read-data* (read-data))
+;;          (cond           
+;;           ;; TODO TODO
+;;           ;; もし読めていなかったら
+;;           ((equal *read-data* "")
+;;            (send *ri* :speak-jp "パネルの認識に失敗しました，もう一度認識します") ;; fail countを入れても良いかも．
+;;            )
+;;           ;; もしtargetと一致していたら
+;;           ((equal *read-data* target)
+;;            (setq *target-flag* t))
+;;           ;; もしtargetよりも小さかったら
+;;           ((< *read-data* target)
+;;            )
+;;           ;; もしtargetよりも大きかったら
+;;           ((> *read-data* target)
+;;            )
+;;           )
+;;          ))
 
 
 (defun release-knob ()
