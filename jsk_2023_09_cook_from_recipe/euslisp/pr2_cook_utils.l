@@ -514,6 +514,7 @@
     (when each-step
       (format t "current av cnt is ~A, av is ~A ~%" cnt av)
       (send *ri* :angle-vector-sequence avs tms)
+      (send *viewer* :draw-objects)
       (send *ri* :wait-interpolation)
       (setq avs (list))
       (setq tms (list))
@@ -582,6 +583,7 @@
     (when each-step
       (format t "current av cnt is ~A, rec is ~A ~%" cnt rec)
       (send *ri* :angle-vector-sequence avs tms)
+      (send *viewer* :draw-objects)
       (send *ri* :wait-interpolation)
       (setq avs (list))
       (setq tms (list))
