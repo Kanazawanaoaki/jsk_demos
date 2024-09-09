@@ -484,7 +484,7 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun replay-rav-list (rav-list &key (time 200) (reverse nil) (larm nil))
+(defun replay-rav-list (rav-list &key (time 200) (reverse nil) (larm nil) (each-step nil))
   (if reverse
       (setq rav-list (reverse rav-list))
     )
@@ -496,6 +496,7 @@
 
   (setq avs (list))
   (setq tms (list))
+  (setq cnt 0)
   (dolist (av rav-list)
     ;; (send *robot* :head-neck-y :joint-angle now-head-y)
     ;; (send *robot* :head-neck-p :joint-angle now-head-p)
@@ -510,12 +511,24 @@
       (send *robot* :rarm :angle-vector av))
     (setq avs (append avs (list (send *robot* :angle-vector))))
     (setq tms (append tms (list time)))
+    (when each-step
+      (format t "current av cnt is ~A, av is ~A ~%" cnt av)
+      (send *ri* :angle-vector-sequence avs tms)
+      (send *ri* :wait-interpolation)
+      (setq avs (list))
+      (setq tms (list))
+      (do-until-key
+       (print "wait for key pressed (replay each step)")
+       (unix:usleep 100000)
+       )
+      )
+    (setq cnt (+ 0 1))
     )
   (send *ri* :angle-vector-sequence avs tms)
   (send *ri* :wait-interpolation)
   )
 
-(defun replay-short-rav-list (rav-list &key (time 150) (larm nil)) ;; time 200
+(defun replay-short-rav-list (rav-list &key (time 150) (larm nil) (each-step nil)) ;; time 200
   ;; (send *robot* :head-neck-y :joint-angle 0.0)
   ;; (send *robot* :head-neck-p :joint-angle 60.0)
   (send *robot* :head-neck-y :joint-angle *initial-head-neck-y*)
@@ -526,10 +539,10 @@
   (send *ri* :angle-vector (send *robot* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
-  (replay-rav-list rav-list :time time :larm larm)
+  (replay-rav-list rav-list :time time :larm larm :each-step each-step)
   )
 
-(defun replay-rec-list (rec-list &key (time 200) (reverse nil) (larm nil))
+(defun replay-rec-list (rec-list &key (time 200) (reverse nil) (larm nil) (each-step nil))
   (if reverse
       (setq rec-list (reverse rec-list))
     )
@@ -541,6 +554,7 @@
 
   (setq avs (list))
   (setq tms (list))
+  (setq cnt 0)
   (dolist (rec rec-list)
     ;; (send *robot* :head-neck-y :joint-angle now-head-y)
     ;; (send *robot* :head-neck-p :joint-angle now-head-p)
@@ -558,19 +572,31 @@
                          rec
                          )))
     (if (equal ik-res nil)
-	(progn
-	  (setq *ik-fail-flag* t)
-	  (return-from replay-rec-list)
-	  )
-	)
+        (progn
+          (setq *ik-fail-flag* t)
+          (return-from replay-rec-list)
+          )
+      )
     (setq avs (append avs (list (send *robot* :angle-vector))))
     (setq tms (append tms (list time)))
+    (when each-step
+      (format t "current av cnt is ~A, rec is ~A ~%" cnt rec)
+      (send *ri* :angle-vector-sequence avs tms)
+      (send *ri* :wait-interpolation)
+      (setq avs (list))
+      (setq tms (list))
+      (do-until-key
+       (print "wait for key pressed (replay each step)")
+       (unix:usleep 100000)
+       )
+      )
+    (setq cnt (+ cnt 1))
     )
   (send *ri* :angle-vector-sequence avs tms)
   (send *ri* :wait-interpolation)
   )
 
-(defun replay-short-rec-list (rec-list &key (time 150) (larm nil) (trans-vec #f(0 0 0 )))
+(defun replay-short-rec-list (rec-list &key (time 150) (larm nil) (trans-vec #f(0 0 0 )) (each-step nil))
   ;; (send *robot* :head-neck-y :joint-angle 0.0)
   ;; (send *robot* :head-neck-p :joint-angle 60.0)
   (send *robot* :head-neck-y :joint-angle *initial-head-neck-y*)
@@ -599,7 +625,7 @@
   ;; (send *ri* :wait-interpolation)
   ;; (unix:usleep 3500000)
 
-  (replay-rec-list assoced-rec-list :time time :larm larm)
+  (replay-rec-list assoced-rec-list :time time :larm larm :each-step each-step)
   )
 
 (defun record-rav-key ()
@@ -1976,7 +2002,7 @@
   ;; (format t "cook-short-rav-list size : ~A ~%" (length *cook-short-rav-list*))
   )
 
-(defun cook-from-now-replay-once (&key (larm nil) (initial-av t) (reverse nil))
+(defun cook-from-now-replay-once (&key (larm nil) (initial-av t) (reverse nil) (each-step nil))
   (if initial-av
       (set-cook-from-now-initial-arm-av :larm larm)
     )
@@ -1985,21 +2011,21 @@
   (if larm
       (progn
         (if reverse
-            (replay-short-rav-list (reverse *cook-short-lav-list*) :larm t)
-          (replay-short-rav-list *cook-short-lav-list* :larm t))
+            (replay-short-rav-list (reverse *cook-short-lav-list*) :larm t :each-step each-step)
+          (replay-short-rav-list *cook-short-lav-list* :larm t :each-step each-step))
         )
     (progn
       (if reverse
-          (replay-short-rav-list (reverse *cook-short-rav-list*))
-        (replay-short-rav-list *cook-short-rav-list*)
-      )))
+          (replay-short-rav-list (reverse *cook-short-rav-list*) :each-step each-step)
+        (replay-short-rav-list *cook-short-rav-list* :each-step each-step)
+        )))
 
   (if initial-av
       (set-cook-from-now-initial-arm-av :larm larm)
     )
   )
 
-(defun cook-from-now-replay-rec-once (&key (larm nil) (initial-av t) (trans-vec #f(0 0 0)))
+(defun cook-from-now-replay-rec-once (&key (larm nil) (initial-av t) (trans-vec #f(0 0 0)) (each-step nil))
   (if initial-av
       (set-cook-from-now-initial-arm-av :larm larm))
 
@@ -2007,11 +2033,11 @@
   (if larm
       (progn
         (setq *cook-short-lec-list* (rav2rec *cook-short-lav-list* :arm :larm))
-        (replay-short-rec-list *cook-short-lec-list* :larm t :trans-vec trans-vec)
+        (replay-short-rec-list *cook-short-lec-list* :larm t :trans-vec trans-vec :each-step each-step)
         )
     (progn
       (setq *cook-short-rec-list* (rav2rec *cook-short-rav-list*))
-      (replay-short-rec-list *cook-short-rec-list* :trans-vec trans-vec)
+      (replay-short-rec-list *cook-short-rec-list* :trans-vec trans-vec :each-step each-step)
       ))
 
   (if initial-av
