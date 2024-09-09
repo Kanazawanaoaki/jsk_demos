@@ -538,7 +538,7 @@
        (unix:usleep 100000)
        )
       )
-    (setq cnt (+ 0 1))
+    (setq cnt (+ cnt 1))
     )
   (send *ri* :angle-vector-sequence avs tms)
   (send *ri* :wait-interpolation)

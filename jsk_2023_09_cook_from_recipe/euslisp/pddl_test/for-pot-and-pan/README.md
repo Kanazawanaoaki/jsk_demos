@@ -79,6 +79,23 @@ roscd jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/
 roseus exec-cook-from-planed-recipe.l
 (exec-cook-from-recipe "egg-recipes-prompt_butter-sunny_converted_conv_planned.l")
 ```
+盛り付けまで
+```
+(load "after-sunny-side.l")
+(now-finish-sunny-all)
+```
+
+盛り付けまで含めた全体を行う
+```bash
+roscd jsk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/
+rlwrap roseus after-sunny-side.l
+(load-spot-offset)
+## 準備
+(prepare-sunny)
+## 実行
+(exec-sunny-all)
+```
+
 
 ### ブロッコリーゆでいため
 位置に移動する．kitchen_template_matching_k4a.launch を立ち上げている状態で，
@@ -111,3 +128,11 @@ roseus exec-cook-from-planed-recipe.l
 (exec-cook-from-recipe "egg-recipes-prompt_sauteed-broccoli_converted_conv_planned.l")
 ```
 
+### 動作を教示する
+```bash
+(cook-from-now-teach) #で教示できる
+
+(dump-cook-from-now-file :file_name "cook-from-now-transfer-sunny-from-pan-20240909-data.l")
+(load-cook-from-now-file :file_name "cook-from-now-transfer-sunny-from-pan-20240909-data.l")
+(cook-from-now-replay-once)
+```
