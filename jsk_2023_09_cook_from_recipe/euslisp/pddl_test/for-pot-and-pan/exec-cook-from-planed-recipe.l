@@ -10,7 +10,12 @@
 
 ;; defun action codes
 (defun hold (object arm spot)
-  (format t "(hold ~A ~A ~A) ~%" object arm spot)
+  (let (cmd-str)
+    (setq cmd-str (format nil "(hold ~A ~A ~A)" object arm spot))
+    (format t "~A ~%" cmd-str)
+    (speak-with-log (format nil "I do ~A" cmd-str) :lang "en")
+    (pr2_cook_action_msg_pub :now-str cmd-str)
+    )
   ;; (hold milk arm2 kitchen) (hold whisk arm1 kitchen) (hold bowl arm2 kitchen) (hold measuring-cup arm2 kitchen)
   ;; (hold small-bowl arm2 stove) (hold spatula arm2 stove) (hold salad-oil arm2 stove) (hold bowl arm2 stove) (hold spoon arm2 stove) (hold bowl arm2 stove)
 
@@ -42,7 +47,13 @@
   )
 
 (defun place (object arm spot)
-  (format t "(place ~A ~A ~A) ~%" object arm spot)
+  (let (cmd-str)
+    (setq cmd-str (format nil "(place ~A ~A ~A) ~%" object arm spot))
+    (format t "~A ~%" cmd-str)
+    (speak-with-log (format nil "I do ~A" cmd-str) :lang "en")
+    (pr2_cook_action_msg_pub :now-str cmd-str)
+    )
+
   ;; (place milk arm2 kitchen) (place whisk arm1 kitchen)
   ;; (place small-bowl arm2 stove) (place bowl arm2 stove) (place spatula arm2 stove) (place salad-oil arm2 stove) (place measuring-cup arm2 stove) (place spoon arm2 stove)
 
@@ -74,7 +85,13 @@
   )
 
 (defun move-to (from to)
-  (format t "(move-to ~A ~A) ~%" from to)
+  (let (cmd-str)
+    (setq cmd-str (format nil "(move-to ~A ~A) ~%" from to))
+    (format t "~A ~%" cmd-str)
+    (speak-with-log (format nil "I do ~A" cmd-str) :lang "en")
+    (pr2_cook_action_msg_pub :now-str cmd-str)
+    )
+
   ;; (move-to stove kitchen) (move-to kitchen stove) (move-to kitchen sink) (move-to sink stove)
   (let ((move-suc-flag nil))
     (setq move-suc-flag (move-to-spot to))
@@ -93,7 +110,12 @@
   )
 
 (defun turn-on-stove (vessel arm)
-  (format t "(turn-on-stove ~A ~A) ~%" vessel arm)
+  (let (cmd-str)
+    (setq cmd-str (format nil "(turn-on-stove ~A ~A) ~%" vessel arm))
+    (format t "~A ~%" cmd-str)
+    (speak-with-log (format nil "I do ~A" cmd-str) :lang "en")
+    (pr2_cook_action_msg_pub :now-str cmd-str)
+    )
 
   (cond
    ((or (string= vessel "frying-pan") (string= vessel "pan"))
@@ -110,7 +132,13 @@
   )
 
 (defun set-stove (before after vessel arm)
-  (format t "(set-stove ~A ~A ~A ~A) ~%" before after vessel arm)
+  (let (cmd-str)
+    (setq cmd-str (format nil "(set-stove ~A ~A ~A ~A) ~%" before after vessel arm))
+    (format t "~A ~%" cmd-str)
+    (speak-with-log (format nil "I do ~A" cmd-str) :lang "en")
+    (pr2_cook_action_msg_pub :now-str cmd-str)
+    )
+
   ;; TODO only rotate
 
   (cond ;; TODO Add for before and after state
@@ -128,7 +156,12 @@
   )
 
 (defun turn-off-stove (before vessel arm)
-  (format t "(turn-off-stove ~A ~A ~A) ~%" before vessel arm)
+  (let (cmd-str)
+    (setq cmd-str (format nil "(turn-off-stove ~A ~A ~A) ~%" before vessel arm))
+    (format t "~A ~%" cmd-str)
+    (speak-with-log (format nil "I do ~A" cmd-str) :lang "en")
+    (pr2_cook_action_msg_pub :now-str cmd-str)
+    )
 
   (cond
    ((or (string= vessel "frying-pan") (string= vessel "pan"))
@@ -145,11 +178,23 @@
   )
 
 (defun wash (object arm)
-  (format t "(wash ~A ~A) ~%" object arm)
+  (let (cmd-str)
+    (setq cmd-str (format nil "(wash ~A ~A) ~%" object arm))
+    (format t "~A ~%" cmd-str)
+    (speak-with-log (format nil "I do ~A" cmd-str) :lang "en")
+    (pr2_cook_action_msg_pub :now-str cmd-str)
+    )
+  ;; TODO
   )
 
 (defun pour (object vessel arm spot)
-  (format t "(pour ~A ~A ~A ~A) ~%" object vessel arm spot)
+  (let (cmd-str)
+    (setq cmd-str (format nil "(pour ~A ~A ~A ~A) ~%" object vessel arm spot))
+    (format t "~A ~%" cmd-str)
+    (speak-with-log (format nil "I do ~A" cmd-str) :lang "en")
+    (pr2_cook_action_msg_pub :now-str cmd-str)
+    )
+
   ;; (pour milk bowl arm2 kitchen) (pour salad-oil frying-pan arm2 stove)
 
   ;; todo pour todo
@@ -172,7 +217,12 @@
   )
 
 (defun transfer (content from to arm spot)
-  (format t "(transfer ~A ~A ~A ~A ~A) ~%" content from to arm spot)
+  (let (cmd-str)
+    (setq cmd-str (format nil "(transfer ~A ~A ~A ~A ~A) ~%" content from to arm spot))
+    (format t "~A ~%" cmd-str)
+    (speak-with-log (format nil "I do ~A" cmd-str) :lang "en")
+    (pr2_cook_action_msg_pub :now-str cmd-str)
+    )
 
   ;; todo transfer todo
   (cond
@@ -200,7 +250,13 @@
   )
 
 (defun heat (object vessel state)
-  (format t "(heat ~A ~A ~A) ~%" object vessel state)
+  (let (cmd-str)
+    (setq cmd-str (format nil "(heat ~A ~A ~A) ~%" object vessel state))
+    (format t "~A ~%" cmd-str)
+    (speak-with-log (format nil "I do ~A" cmd-str) :lang "en")
+    (pr2_cook_action_msg_pub :now-str cmd-str)
+    )
+
   ;; (heat butter frying-pan melted-butter) (heat salad-oil frying-pan thirty-seconds) (heat water pot boiling)
 
   ;; look frying-pan or pot
@@ -220,7 +276,13 @@
   )
 
 (defun cook (object state)
-  (format t "(cook ~A ~A) ~%" object state)
+  (let (cmd-str)
+    (setq cmd-str (format nil "(cook ~A ~A) ~%" object state))
+    (format t "~A ~%" cmd-str)
+    (speak-with-log (format nil "I do ~A" cmd-str) :lang "en")
+    (pr2_cook_action_msg_pub :now-str cmd-str)
+    )
+
   ;; (cook egg-mixture half-cooked-egg) (cook egg heat-through)
 
   ;; look frying-pan
@@ -228,7 +290,13 @@
   )
 
 (defun boil (object state)
-  (format t "(boil ~A ~A) ~%" object state)
+  (let (cmd-str)
+    (setq cmd-str (format nil "(boil ~A ~A) ~%" object state))
+    (format t "~A ~%" cmd-str)
+    (speak-with-log (format nil "I do ~A" cmd-str) :lang "en")
+    (pr2_cook_action_msg_pub :now-str cmd-str)
+    )
+
   ;; (boil egg three-minutes)
   (wait-cook-stove :object-name object :state state :vessel "鍋")
   )

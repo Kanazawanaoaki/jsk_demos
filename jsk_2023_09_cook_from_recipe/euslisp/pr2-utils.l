@@ -62,7 +62,14 @@
 (defun speak-with-log (speak-word &key (lang "jp") (wait t))
   (if (send *ri* :simulation-modep) ;; kinematic simulatorでは喋れない
       (unix:usleep 500000)
-    (send *ri* :speak-jp speak-word :wait wait)
+    (cond
+     ((equal lang "jp")
+      (send *ri* :speak-jp speak-word :wait wait)
+      )
+     ((equal lang "en")
+      (send *ri* :speak-en speak-word :wait wait)
+      )
+     )
     )
   (format t "[PR2 speak] ~A ~%" speak-word)
   )

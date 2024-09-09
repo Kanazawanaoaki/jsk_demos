@@ -2,7 +2,10 @@
 
 (ros::load-ros-manifest "roseus")
 (ros::load-ros-package "lc_state_recognition")
+(ros::load-ros-package "jsk_rviz_plugins")
 (ros::roseus "pr2_cook_util" :anonymous t)
+
+(ros::advertise "pr2_cooking_current_action" jsk_rviz_plugins::OverlayText 1)
 
 (format t "init ~%")
 (require :pr2-utils "package://jsk_2023_09_cook_from_recipe/euslisp/pr2-utils.l")
@@ -136,6 +139,18 @@
          )
   ;; (send *ri* :speak-jp "ありがとうございました" :wait t)
   )
+
+(defun pr2_cook_action_msg_pub (&key (now-str "(hold small-bowl arm2 stove)"))
+  (let ((msg))
+    (setq msg (instance jsk_rviz_plugins::OverlayText :init))
+    (send msg :width 80)
+    (send msg :height 200)
+    (send msg :line_width 2)
+    (send msg :text_size 24)
+    (send msg :text now-str)
+    (ros::ros-info "msg [~A]" (send msg :text))
+    (ros::publish "pr2_cooking_current_action" msg)
+    ))
 
 
 ;; add for grasp detection
