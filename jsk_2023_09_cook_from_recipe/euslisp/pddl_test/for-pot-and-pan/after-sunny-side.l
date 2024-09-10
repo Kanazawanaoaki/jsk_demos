@@ -20,6 +20,8 @@
   (speak-with-log "目玉焼きの調理を開始します")
   (exec-cook-from-recipe "egg-recipes-prompt_butter-sunny_converted_conv_planned.l")
   ;; (speak-with-log "目玉焼きの調理を行いました")
+
+  ;; (setq *plan-list* '((hold small-bowl arm2 stove) (transfer butter small-bowl frying-pan arm2 stove) (place small-bowl arm2 stove) (turn-on-stove frying-pan arm1) (heat butter frying-pan melt) (hold bowl arm2 stove) (transfer egg bowl frying-pan arm2 stove) (place bowl arm2 stove) (cook egg cooked-egg) (turn-off-stove middle frying-pan arm1)))
   )
 
 (defun receive-spatula-for-sunny ()
@@ -49,9 +51,15 @@
 
 (defun trasnfer-sunny-from-pan ()
   ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-transfer-sunny-from-pan-20240909-data.l")
+
+  ;; 20240909 chapmpion
+  ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-transfer-sunny-from-pan-20240909-data-02.l")
+  ;; (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
+  ;; (cook-from-now-replay-once :larm nil :initial-av t)
+
   (setq cook-from-now-file-name "../../av-files/cook-from-now-transfer-sunny-from-pan-20240909-data-02.l")
   (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
-  (cook-from-now-replay-once :larm nil :initial-av t)
+  (cook-from-now-replay-once :larm nil :initial-av nil :time 100) ;; default time is 150
   )
 
 (defun now-finish-sunny-all ()

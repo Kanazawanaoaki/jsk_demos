@@ -301,12 +301,14 @@
      ((equal arm :rarm)
       (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
       ;; (cook-from-now-replay-once :larm nil :initial-av t)
-      (cook-from-now-replay-once :larm nil :initial-av nil)
+      ;; (cook-from-now-replay-once :larm nil :initial-av nil) ;;20240909 champ?
+      (cook-from-now-replay-once :larm nil :initial-av nil :tile 100)
       )
      ((equal arm :larm)
       (load-cook-from-now-file :file_name cook-from-now-file-name :larm t)
       ;; (cook-from-now-replay-once :larm t :initial-av t)
-      (cook-from-now-replay-once :larm t :initial-av nil)
+      (cook-from-now-replay-once :larm t :initial-av nil) ;;20240909 champ?
+      (cook-from-now-replay-once :larm t :initial-av nil :tile 100)
       )
      )
     )

@@ -505,9 +505,9 @@
     )
   (setq rav-length (length rav-list))
   (format t "length of rav-list : ~A ~%" rav-length)
-  (send *robot* :angle-vector (send *ri* :state :potentio-vector))
-  (setq now-head-y (send *robot* :head-neck-y :joint-angle))
-  (setq now-head-p (send *robot* :head-neck-p :joint-angle))
+  ;; (send *robot* :angle-vector (send *ri* :state :potentio-vector))
+  ;; (setq now-head-y (send *robot* :head-neck-y :joint-angle))
+  ;; (setq now-head-p (send *robot* :head-neck-p :joint-angle))
 
   (setq avs (list))
   (setq tms (list))
@@ -564,9 +564,9 @@
     )
   (setq rec-length (length rec-list))
   (format t "length of rec-list : ~A ~%" rec-length)
-  (send *robot* :angle-vector (send *ri* :state :potentio-vector))
-  (setq now-head-y (send *robot* :head-neck-y :joint-angle))
-  (setq now-head-p (send *robot* :head-neck-p :joint-angle))
+  ;; (send *robot* :angle-vector (send *ri* :state :potentio-vector))
+  ;; (setq now-head-y (send *robot* :head-neck-y :joint-angle))
+  ;; (setq now-head-p (send *robot* :head-neck-p :joint-angle))
 
   (setq avs (list))
   (setq tms (list))
@@ -2019,7 +2019,7 @@
   ;; (format t "cook-short-rav-list size : ~A ~%" (length *cook-short-rav-list*))
   )
 
-(defun cook-from-now-replay-once (&key (larm nil) (initial-av t) (reverse nil) (each-step nil))
+(defun cook-from-now-replay-once (&key (larm nil) (initial-av t) (reverse nil) (each-step nil) (time 150))
   (if initial-av
       (set-cook-from-now-initial-arm-av :larm larm)
     )
@@ -2028,13 +2028,13 @@
   (if larm
       (progn
         (if reverse
-            (replay-short-rav-list (reverse *cook-short-lav-list*) :larm t :each-step each-step)
-          (replay-short-rav-list *cook-short-lav-list* :larm t :each-step each-step))
+            (replay-short-rav-list (reverse *cook-short-lav-list*) :larm t :each-step each-step :time time)
+          (replay-short-rav-list *cook-short-lav-list* :larm t :each-step each-step :time time))
         )
     (progn
       (if reverse
-          (replay-short-rav-list (reverse *cook-short-rav-list*) :each-step each-step)
-        (replay-short-rav-list *cook-short-rav-list* :each-step each-step)
+          (replay-short-rav-list (reverse *cook-short-rav-list*) :each-step each-step :time time)
+        (replay-short-rav-list *cook-short-rav-list* :each-step each-step :time time)
         )))
 
   (if initial-av
