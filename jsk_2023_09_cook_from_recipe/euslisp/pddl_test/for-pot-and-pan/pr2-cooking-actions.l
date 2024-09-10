@@ -302,13 +302,13 @@
       (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
       ;; (cook-from-now-replay-once :larm nil :initial-av t)
       ;; (cook-from-now-replay-once :larm nil :initial-av nil) ;;20240909 champ?
-      (cook-from-now-replay-once :larm nil :initial-av nil :tile 100)
+      (cook-from-now-replay-once :larm nil :initial-av nil :time 100)
       )
      ((equal arm :larm)
       (load-cook-from-now-file :file_name cook-from-now-file-name :larm t)
       ;; (cook-from-now-replay-once :larm t :initial-av t)
       (cook-from-now-replay-once :larm t :initial-av nil) ;;20240909 champ?
-      (cook-from-now-replay-once :larm t :initial-av nil :tile 100)
+      (cook-from-now-replay-once :larm t :initial-av nil :time 100)
       )
      )
     )
@@ -507,7 +507,7 @@
         (progn
           (dolist (pre-set-av (reverse pre-set-avs))
             (send *pr2* arm :angle-vector pre-set-av)
-            (send *ri* :angle-vector (send *pr2* :angle-vector))
+            (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
             (send *ri* :wait-interpolation)
             )
           (reset-manip-pose :arm arm))
