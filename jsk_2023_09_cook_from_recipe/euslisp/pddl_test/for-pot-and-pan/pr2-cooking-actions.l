@@ -199,6 +199,12 @@
              )
       (ros::unsubscribe "/adjusted_clip_state_recognizer/state")
       (ros::unsubscribe "/speech_to_text")
+
+      ;; do not use rec ver
+      ;; (do-until-key
+      ;;  (print "wait for key pressed (wait cook state change)")
+      ;;  (unix:usleep 100000)
+      ;;  )
       )
     )
    ))
