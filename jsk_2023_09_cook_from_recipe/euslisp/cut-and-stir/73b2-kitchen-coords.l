@@ -147,7 +147,8 @@
          ;; (setq *spatula-coords-1* (make-coords :pos (float-vector 630 8549 30872) :rpy (float-vector 3.084 -0.042 1.542))) ;; ヘラ，平置き original
          ;; (setq *spatula-coords-1* (make-coords :pos (float-vector 480.0 -49.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix
          ;; (setq *spatula-coords-1* (make-coords :pos (float-vector 600.0 -49.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix v2
-         (setq *spatula-coords-1* (make-coords :pos (float-vector 600.0 51.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix v2 upper
+         ;; (setq *spatula-coords-1* (make-coords :pos (float-vector 600.0 51.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix v2 upper
+         (setq *spatula-coords-1* (make-coords :pos (float-vector 760.0 51.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix v2 upper update model
 
          ;; (setq *ladle-coords-1* (make-coords :pos (float-vector 630 8313 30877) :rpy (float-vector 3.128 -0.098 1.514))) ;; おたま，平置き original
          ;; (setq *ladle-coords-1* (make-coords :pos (float-vector 480.0 187.0 877.0) :rpy (float-vector -0.014 -0.098 1.514))) ;; おたま，平置き fix
@@ -200,7 +201,8 @@
          ;; (setq *spatula-coords-1* (make-coords :pos (float-vector 630 8549 30872) :rpy (float-vector 3.084 -0.042 1.542))) ;; ヘラ，平置き original
          ;; (setq *spatula-coords-1* (make-coords :pos (float-vector 480.0 -49.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix
          ;; (setq *spatula-coords-1* (make-coords :pos (float-vector 600.0 -49.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix v2
-         (setq *spatula-coords-1* (make-coords :pos (float-vector 600.0 51.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix v2 upper
+         ;; (setq *spatula-coords-1* (make-coords :pos (float-vector 600.0 51.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix v2 upper
+         (setq *spatula-coords-1* (make-coords :pos (float-vector 760.0 51.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix v2 upper update model
 
          ;; (setq *ladle-coords-1* (make-coords :pos (float-vector 630 8313 30877) :rpy (float-vector 3.128 -0.098 1.514))) ;; おたま，平置き original
          ;; (setq *ladle-coords-1* (make-coords :pos (float-vector 480.0 187.0 877.0) :rpy (float-vector -0.014 -0.098 1.514))) ;; おたま，平置き fix
@@ -286,13 +288,14 @@
 
          (setq *pan-coords* (make-coords :pos (float-vector 880.0 -110.0 840.0) :rpy (float-vector 0.0 0.0 0.0))) ;; pot fix v2
 
-         (setq *spatula-coords-1* (make-coords :pos (float-vector 879 -318 833) :rpy (float-vector 0.012 0.028 -3.129))) ;; ヘラ，平置き tmp for moritsuke ;; 878.781 -317.629 833.461 / 0.012 0.028 -3.129
+         (setq *spatula-stove-coords* (make-coords :pos (float-vector 879 -318 833) :rpy (float-vector 0.012 0.028 -1.558))) ;; ヘラ，平置き tmp for moritsuke ;; 878.781 -317.629 833.461 / 0.012 0.028 -3.129
          )
         (:scrambled-egg
          (setq *green-bowl-stove-coords* (make-coords :pos (float-vector 732.733 394.164 831.797) :rpy (float-vector 0 0 0))) ;; fix
 
          ;; (setq *spatula-coords-1* (make-coords :pos (float-vector 700.0 -579.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix v2
-         (setq *spatula-coords-1* (make-coords :pos (float-vector 730.0 -300.0 852.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix v3
+         ;; (setq *spatula-coords-stove* (make-coords :pos (float-vector 730.0 -300.0 852.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix v3
+         (setq *wood-spatula-stove-coords* (make-coords :pos (float-vector 879 -318 833) :rpy (float-vector 0.012 0.028 -3.129))) ;; 木ヘラ，平置き tmp for moritsuke ;; 878.781 -317.629 833.461 / 0.012 0.028 -3.129
 
          (setq *pan-coords* (make-coords :pos (float-vector 880.0 -110.0 840.0) :rpy (float-vector 0.0 0.0 0.0))) ;; pot fix v2
          )
@@ -451,7 +454,7 @@
 
          (set-object *green-bowl* (calc-coords-from-rel stove-coords (send *green-bowl-stove-coords* :copy-worldcoords)))
 
-         (set-object *spatula* (calc-coords-from-rel stove-coords (send *spatula-coords-1* :copy-worldcoords)))
+         (set-object *spatula* (calc-coords-from-rel stove-coords (send *spatula-stove-coords* :copy-worldcoords)))
          ;; (objects (list *pr2* *stove-kitchen-plane* *pan* *gray-bowl* *green-bowl*))
          )
         (:scrambled-egg
@@ -459,7 +462,7 @@
 
          (set-object *green-bowl* (calc-coords-from-rel stove-coords (send *green-bowl-stove-coords* :copy-worldcoords)))
 
-         (set-object *spatula* (calc-coords-from-rel stove-coords (send *spatula-coords-1* :copy-worldcoords)))
+         (set-object *wood-spatula* (calc-coords-from-rel stove-coords (send *wood-spatula-stove-coords* :copy-worldcoords)))
 
          ;; (objects (list *pr2* *stove-kitchen-plane* *pan* *green-bowl* *spatula*))
          )

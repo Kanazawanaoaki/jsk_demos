@@ -1,7 +1,9 @@
 #!/usr/bin/env roseus
 
-(load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/pr2_cut_food.l")
-(load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/73b2-kitchen-coords.l")
+;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/pr2_cut_food.l")
+;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/73b2-kitchen-coords.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/pr2-cooking-actions-funcs.l")
+
 
 ;; set global variable
 (setq *debug-flag* t)
@@ -18,10 +20,10 @@
   ;; set global coords
   (when init-cds
     (73b2-kitchen-coords-init :type type))
-
   ;; set tools
   (when reset-obj-cds
     (73b2-kitchen-obj-init :type type))
+  ;; (pr2-cook-init :type type :spot "kitchen")
 
   ;; (move-to-kitchen-irt)
   ;; (objects (list *pr2* *peeler* *knife* *potato-peeler* *scene* *spatula* *ladle* *shelf-door*))
@@ -1506,85 +1508,87 @@
 
 
 ;; update funcs
-(defun set-tool-on-table (&key (object-name "knife") (arm :rarm) (action-mode :set) (spot-name "kitchen") (use-cds-offset nil))
-  (let ((pre-set-avs (list))
-        (pre-set-val (float-vector 0 0 0))
-        (set-target-coords (make-coords))
-        adj-target-cds
-        )
-    (cond
-     ((and (string= object-name "knife") (string= spot-name "kitchen") (equal arm :rarm))
-      (setq pre-set-avs (list #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)))
-      (setq pre-set-val #f(-50 0 -100))
+;; set-tool-on-table
+;; (defun set-tool-on-table (&key (object-name "knife") (arm :rarm) (action-mode :set) (spot-name "kitchen") (use-cds-offset nil))
+;;   (let ((pre-set-avs (list))
+;;         (pre-set-val (float-vector 0 0 0))
+;;         (set-target-coords (make-coords))
+;;         adj-target-cds
+;;         )
+;;     (cond
+;;      ((and (string= object-name "knife") (string= spot-name "kitchen") (equal arm :rarm))
+;;       (setq pre-set-avs (list #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)))
+;;       (setq pre-set-val #f(-50 0 -100))
 
-      ;; calc from defined coords
-      (send *arrow* :newcoords (send *knife-coords* :copy-worldcoords))
-      (send *arrow* :translate #f(-12 0 0))
-      (send *arrow* :rotate (deg2rad -90) :x)
-      (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *knife-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
-      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
-      )
-     ((and (string= object-name "potato peeler") (string= spot-name "kitchen") (equal arm :rarm))
-      (setq pre-set-avs (list #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)))
-      (setq pre-set-val #f(-50 0 -100))
+;;       ;; calc from defined coords
+;;       (send *arrow* :newcoords (send *knife-coords* :copy-worldcoords))
+;;       (send *arrow* :translate #f(-12 0 0))
+;;       (send *arrow* :rotate (deg2rad -90) :x)
+;;       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *knife-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
+;;       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
+;;       )
+;;      ((and (string= object-name "potato peeler") (string= spot-name "kitchen") (equal arm :rarm))
+;;       (setq pre-set-avs (list #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)))
+;;       (setq pre-set-val #f(-50 0 -100))
 
-      ;; calc from defined coords
-      (send *arrow* :newcoords (send *potato-peeler-coords* :copy-worldcoords))
-      (send *arrow* :rotate (deg2rad -90) :x)
-      (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *potato-peeler-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
-      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
-      )
-     ((and (string= object-name "peeler") (string= spot-name "kitchen") (equal arm :rarm))
-      (setq pre-set-avs (list #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)))
-      (setq pre-set-val #f(-50 0 -100))
+;;       ;; calc from defined coords
+;;       (send *arrow* :newcoords (send *potato-peeler-coords* :copy-worldcoords))
+;;       (send *arrow* :rotate (deg2rad -90) :x)
+;;       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *potato-peeler-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
+;;       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
+;;       )
+;;      ((and (string= object-name "peeler") (string= spot-name "kitchen") (equal arm :rarm))
+;;       (setq pre-set-avs (list #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)))
+;;       (setq pre-set-val #f(-50 0 -100))
 
-      ;; calc from defined coords
-      (send *arrow* :newcoords (send *peeler-coords* :copy-worldcoords))
-      (send *arrow* :rotate (deg2rad -90) :x)
-      (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *peeler-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
-      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
-      )
-     (t
-      (format t "Sorry, object-name ~A, spot-name ~A, arm ~A is not defined now !!!~%" object-name spot-name arm)
-      (return-from set-tool-on-table nil)
-      )
-     )
+;;       ;; calc from defined coords
+;;       (send *arrow* :newcoords (send *peeler-coords* :copy-worldcoords))
+;;       (send *arrow* :rotate (deg2rad -90) :x)
+;;       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *peeler-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
+;;       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
+;;       )
+;;      (t
+;;       (format t "Sorry, object-name ~A, spot-name ~A, arm ~A is not defined now !!!~%" object-name spot-name arm)
+;;       (return-from set-tool-on-table nil)
+;;       )
+;;      )
 
-    (if use-cds-offset
-        (setq adj-target-cds (adjust-cds-with-spot set-target-coords spot-name))
-      (setq adj-target-cds (send set-target-coords :copy-worldcoords))
-      )
-    (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm arm :action-mode action-mode :object-name object-name)
+;;     (if use-cds-offset
+;;         (setq adj-target-cds (adjust-cds-with-spot set-target-coords spot-name))
+;;       (setq adj-target-cds (send set-target-coords :copy-worldcoords))
+;;       )
+;;     (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm arm :action-mode action-mode :object-name object-name)
 
-    ;; TODO add dissoc object
-    ))
+;;     ;; TODO add dissoc object
+;;     ))
 
-(defun receive-and-set-knife ()
-  (set-tool-on-table :object-name "knife" :arm :rarm :action-mode :set :spot-name "kitchen" :use-cds-offset nil)
-  )
+;; (defun receive-and-set-knife ()
+;;   (set-tool-on-table :object-name "knife" :arm :rarm :action-mode :set :spot-name "kitchen" :use-cds-offset nil)
+;;   )
 
-(defun put-knife ()
-  (set-tool-on-table :object-name "knife" :arm :rarm :action-mode :put :spot-name "kitchen" :use-cds-offset nil)
-  )
+;; (defun put-knife ()
+;;   (set-tool-on-table :object-name "knife" :arm :rarm :action-mode :put :spot-name "kitchen" :use-cds-offset nil)
+;;   )
 
-(defun receive-and-set-peeler ()
-  (set-tool-on-table :object-name "peeler" :arm :rarm :action-mode :set :spot-name "kitchen" :use-cds-offset nil)
-  )
+;; (defun receive-and-set-peeler ()
+;;   (set-tool-on-table :object-name "peeler" :arm :rarm :action-mode :set :spot-name "kitchen" :use-cds-offset nil)
+;;   )
 
-(defun put-peeler ()
-  (set-tool-on-table :object-name "peeler" :arm :rarm :action-mode :put :spot-name "kitchen" :use-cds-offset nil)
-  )
+;; (defun put-peeler ()
+;;   (set-tool-on-table :object-name "peeler" :arm :rarm :action-mode :put :spot-name "kitchen" :use-cds-offset nil)
+;;   )
 
-(defun receive-and-set-potato-peeler ()
-  (set-tool-on-table :object-name "potato peeler" :arm :rarm :action-mode :set :spot-name "kitchen" :use-cds-offset nil)
-  )
+;; (defun receive-and-set-potato-peeler ()
+;;   (set-tool-on-table :object-name "potato peeler" :arm :rarm :action-mode :set :spot-name "kitchen" :use-cds-offset nil)
+;;   )
 
-(defun put-potato-peeler ()
-  (set-tool-on-table :object-name "potato peeler" :arm :rarm :action-mode :put :spot-name "kitchen" :use-cds-offset nil)
-  )
+;; (defun put-potato-peeler ()
+;;   (set-tool-on-table :object-name "potato peeler" :arm :rarm :action-mode :put :spot-name "kitchen" :use-cds-offset nil)
+;;   )
+
+
 
 ;; TODO Add grasp without rec
-
 
 (defun rarm-middle-pose ()
   ;; 中間姿勢になる
@@ -1602,6 +1606,7 @@
 
 
 ;; old funcs
+
 ;; (defun receive-knife (&key (with-dialogue t))
 ;;   ;; knifeの位置
 ;;   (send *arrow* :newcoords (send *knife-coords* :copy-worldcoords))

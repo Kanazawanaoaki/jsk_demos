@@ -18,7 +18,6 @@
   ;; set global coords
   (when init-cds
     (73b2-kitchen-coords-init :type type))
-
   ;; set tools
   (when reset-obj-cds
     (73b2-kitchen-obj-init :type type))
@@ -177,44 +176,45 @@
 
 ;; def util-funcs
 ;; update funcs
-(defun set-bowl-on-table (&key (object-name "gray bowl") (arm :rarm) (action-mode :set) (spot-name "kitchen") (use-cds-offset nil))
-  (let ((pre-set-avs (list))
-        (pre-set-val (float-vector 0 0 0))
-        (set-target-coords (make-coords))
-        adj-target-cds
-        )
-    (cond
-     ((and (string= object-name "gray bowl") (string= spot-name "kitchen") (equal arm :rarm))
-      (setq pre-set-avs (list #f(-39.4916 -5.60379 -51.4586 -70.0476 -75.5379 -114.544 397.394)))
-      (setq pre-set-val #f(-147 -23 7)) ;; for upper #f(0 0 150) :world
+;; set-tool-on-tabel
+;; (defun set-bowl-on-table (&key (object-name "gray bowl") (arm :rarm) (action-mode :set) (spot-name "kitchen") (use-cds-offset nil))
+;;   (let ((pre-set-avs (list))
+;;         (pre-set-val (float-vector 0 0 0))
+;;         (set-target-coords (make-coords))
+;;         adj-target-cds
+;;         )
+;;     (cond
+;;      ((and (string= object-name "gray bowl") (string= spot-name "kitchen") (equal arm :rarm))
+;;       (setq pre-set-avs (list #f(-39.4916 -5.60379 -51.4586 -70.0476 -75.5379 -114.544 397.394)))
+;;       (setq pre-set-val #f(-147 -23 7)) ;; for upper #f(0 0 150) :world
 
-      ;; calc from defined coords
-      (send *arrow* :newcoords (calc-coords-from-rel *gray-bowl-kitchen-coords* (make-coords :pos #f(-101.233 0.0 53.999) :rpy #f(0.265 1.405 -1.282))))
-      (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *gray-bowl-kitchen-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
-      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
-      )
-     (t
-      (format t "Sorry, object-name ~A, spot-name ~A, arm ~A is not defined now !!!~%" object-name spot-name arm)
-      (return-from set-bowl-on-table nil)
-      )
-     )
+;;       ;; calc from defined coords
+;;       (send *arrow* :newcoords (calc-coords-from-rel *gray-bowl-kitchen-coords* (make-coords :pos #f(-101.233 0.0 53.999) :rpy #f(0.265 1.405 -1.282))))
+;;       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *gray-bowl-kitchen-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
+;;       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
+;;       )
+;;      (t
+;;       (format t "Sorry, object-name ~A, spot-name ~A, arm ~A is not defined now !!!~%" object-name spot-name arm)
+;;       (return-from set-bowl-on-table nil)
+;;       )
+;;      )
 
-    (if use-cds-offset
-        (setq adj-target-cds (adjust-cds-with-spot set-target-coords spot-name))
-      (setq adj-target-cds (send set-target-coords :copy-worldcoords))
-      )
-    (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm arm :action-mode action-mode :object-name object-name)
+;;     (if use-cds-offset
+;;         (setq adj-target-cds (adjust-cds-with-spot set-target-coords spot-name))
+;;       (setq adj-target-cds (send set-target-coords :copy-worldcoords))
+;;       )
+;;     (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm arm :action-mode action-mode :object-name object-name)
 
-    ;; TODO add dissoc object and put object
-    ))
+;;     ;; TODO add dissoc object and put object
+;;     ))
 
-(defun receive-and-set-gray-bowl ()
-  (set-bowl-on-table :object-name "gray bowl" :arm :rarm :action-mode :set :spot-name "kitchen" :use-cds-offset nil)
-  )
+;; (defun receive-and-set-gray-bowl ()
+;;   (set-bowl-on-table :object-name "gray bowl" :arm :rarm :action-mode :set :spot-name "kitchen" :use-cds-offset nil)
+;;   )
 
-(defun put-gray-bowl ()
-  (set-bowl-on-table :object-name "gray bowl" :arm :rarm :action-mode :put :spot-name "kitchen" :use-cds-offset nil)
-  )
+;; (defun put-gray-bowl ()
+;;   (set-bowl-on-table :object-name "gray bowl" :arm :rarm :action-mode :put :spot-name "kitchen" :use-cds-offset nil)
+;;   )
 
 (defun look-at-pot ()
   (look-at-cds (send (send *pot* :attention-attention0) :copy-worldcoords))
@@ -1066,7 +1066,7 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (warn "please run (squeeze-test) ~%")
   )
 
@@ -1082,10 +1082,10 @@
   (send *viewer* :draw-objects)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   (setq avs (list))
   (setq tms (list))
-  
+
   (dotimes (i 15)
     (send *arrow* :translate (float-vector 0 -10 0) :world)
     (send *pr2* :rarm :inverse-kinematics
@@ -1098,12 +1098,12 @@
     (setq tms (append tms (list 600)))
     )
   (send *ri* :angle-vector-sequence avs tms)
-  
+
   (ros::unsubscribe "/right_endeffector/wrench")
   (setq *topic-name* "/right_endeffector/wrench")
   (setq *cb-flag* nil)
   (ros::subscribe "/right_endeffector/wrench" geometry_msgs::WrenchStamped #'wrench-x-cb)
-  
+
   (while (some #'identity (send *ri* :wait-interpolation nil 0.1))
     (when (progn
             (ros::spin-once)
@@ -1114,17 +1114,17 @@
       (warn "cancel!!! ~%")
       )
     )
-  
+
   (ros::unsubscribe "/right_endeffector/wrench")
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
   (send *arrow* :newcoords (send (elt (send *spatula* :attention) 1) :copy-worldcoords))
-  
+
   (setq avs (list))
   (setq tms (list))
 
-  ;; tmp 
+  ;; tmp
   (setq height (- (elt (send (send *arrow* :copy-worldcoords) :worldpos) 2) 30960))
-  
+
   (send *arrow* :translate (float-vector 0 0 (* height -0.5)) :world)
   (send *arrow* :rotate (deg2rad 10) :y)
   (send *pr2* :rarm :inverse-kinematics
@@ -1135,7 +1135,7 @@
   (setq av (send *pr2* :angle-vector))
   (setq avs (append avs (list av)))
   (setq tms (append tms (list 800)))
-  
+
   (send *arrow* :translate (float-vector 0 40 (* height -0.3)) :world)
   (send *arrow* :rotate (deg2rad 10) :y)
   (send *pr2* :rarm :inverse-kinematics

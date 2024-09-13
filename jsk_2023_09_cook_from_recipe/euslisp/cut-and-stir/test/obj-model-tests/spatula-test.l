@@ -1,7 +1,7 @@
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/spatula.l")
 (setq *spatula* (spatula))
 
-(setq *spatula-handle-cds* (make-cascoords :pos #f(-160 0 0)))
+(setq *spatula-handle-cds* (make-cascoords :pos #f(-160 0 0) :rpy #f(0 0 -1.5171)))
 (send *spatula* :assoc *spatula-handle-cds*)
 
 (send *spatula* :translate #f(0 0 100) :world)
