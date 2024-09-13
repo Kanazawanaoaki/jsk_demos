@@ -180,6 +180,16 @@
       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *oil-dispenser-stove-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
       )
+     ((and (string= object-name "spatula") (string= spot-name "stove") (equal arm :rarm))
+      (setq pre-set-avs (list #f(-41.0354 31.325 -34.2869 -99.4442 -158.179 -54.5975 103.313)))
+      ;; (setq pre-set-val #f(-50 0 -100))
+      (setq pre-set-val #f(-100 0 -100)) ;; for upper
+
+      ;; calc from defined coords
+      (send *arrow* :newcoords (calc-coords-from-rel *spatula-coords-1* (make-coords :pos #f(-160 0 0) :rpy #f(0 0 0))))
+      (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *spatula-coords-1* :copy-worldcoords) (send *arrow* :copy-worldcoords))
+      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
+      )
      (t
       (format t "Sorry, object-name ~A, spot-name ~A, arm ~A is not defined now !!!~%" object-name spot-name arm)
       (return-from set-bowl-on-table nil)

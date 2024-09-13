@@ -285,6 +285,8 @@
          (setq *green-bowl-stove-coords* (make-coords :pos (float-vector 740 -370 830) :rpy (float-vector 0 0 0))) ;; fix
 
          (setq *pan-coords* (make-coords :pos (float-vector 880.0 -110.0 840.0) :rpy (float-vector 0.0 0.0 0.0))) ;; pot fix v2
+
+         (setq *spatula-coords-1* (make-coords :pos (float-vector 879 -318 833) :rpy (float-vector 0.012 0.028 -3.129))) ;; ヘラ，平置き tmp for moritsuke ;; 878.781 -317.629 833.461 / 0.012 0.028 -3.129
          )
         (:scrambled-egg
          (setq *green-bowl-stove-coords* (make-coords :pos (float-vector 732.733 394.164 831.797) :rpy (float-vector 0 0 0))) ;; fix
@@ -449,6 +451,7 @@
 
          (set-object *green-bowl* (calc-coords-from-rel stove-coords (send *green-bowl-stove-coords* :copy-worldcoords)))
 
+         (set-object *spatula* (calc-coords-from-rel stove-coords (send *spatula-coords-1* :copy-worldcoords)))
          ;; (objects (list *pr2* *stove-kitchen-plane* *pan* *gray-bowl* *green-bowl*))
          )
         (:scrambled-egg
