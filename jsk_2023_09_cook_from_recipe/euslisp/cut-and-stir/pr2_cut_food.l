@@ -488,9 +488,10 @@
                                     (grasp-coords (make-coords :pos #f(690.181 -527.149 870.629) :rpy #f(0.478 1.218 -0.929)))
                                     (pre-set-val #f(-50 0 50))
                                     (arm :rarm)
-                                    (action-mode :grasp) ;;current defined mode is :set :put :grasp :hold :reach :push :release
+                                    ;; (action-mode :grasp) ;;current defined mode is :set :put :grasp :hold :reach :push :release
+                                    (action-mode :pick-up) ;;current defined mode is :set :place :hold :pick-up :reach :push :release
                                     (object-name "bowl1") ;; only use for speak in set mode
-                                    (grasp-gain 0.01) ;; only for grasp or hold
+                                    (grasp-gain 0.01) ;; only for hold or pick-up
                                     (wait-after-grasp nil) (wait-before-grasp nil) (reset-pose-end nil))
 
   (let ((set-coords)
@@ -499,9 +500,10 @@
 
     ;; before pose
     (cond
-     ((or (equal action-mode :put) (equal action-mode :set))
+     ((or (equal action-mode :place) (equal action-mode :set))
       (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
       (send *ri* :angle-vector (send *pr2* :angle-vector))
+      (send *viewer* :draw-objects)
       (send *ri* :wait-interpolation)
       )
      ((equal action-mode :release)
@@ -511,6 +513,7 @@
       (dolist (pre-set-av pre-set-avs)
         (send *pr2* arm :angle-vector pre-set-av)
         (send *ri* :angle-vector (send *pr2* :angle-vector))
+        (send *viewer* :draw-objects)
         (send *ri* :wait-interpolation)
         ))
      )
@@ -524,7 +527,7 @@
       (ok-wait)
       (send *ri* :start-grasp arm :wait t)
       )
-     ((or (equal action-mode :grasp) (equal action-mode :hold) (equal action-mode :release))
+     ((or (equal action-mode :hold) (equal action-mode :pick-up) (equal action-mode :release))
       ;; 物体を握る前に手を開く or 物体を離すために手を開く
       (send *ri* :stop-grasp arm :wait t)
       )
@@ -585,15 +588,15 @@
       )
 
     (cond
-     ((or (equal action-mode :put) (equal action-mode :set))
+     ((or (equal action-mode :place) (equal action-mode :set))
       (send *ri* :stop-grasp arm :wait t) ;; 物体を置く
       )
-     ((or (equal action-mode :grasp) (equal action-mode :hold))
+     ((or (equal action-mode :hold) (equal action-mode :pick-up))
       (send *ri* :start-grasp arm :gain grasp-gain :wait t) ;; 物体を握る
       )
      )
 
-    (when (equal action-mode :grasp)
+    (when (equal action-mode :hold)
       (format t "exit from grasp-object-primitive function because arg action-mode is ~A ~%" action-mode)
       (return-from grasp-object-primitive)
       )
@@ -618,19 +621,20 @@
     (send *ri* :wait-interpolation)
 
     (cond
-     ((equal action-mode :hold)
+     ((equal action-mode :pick-up)
       (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
       (send *ri* :angle-vector (send *pr2* :angle-vector))
+      (send *viewer* :draw-objects)
       (send *ri* :wait-interpolation)
       )
      (t
       (dolist (pre-set-av (reverse pre-set-avs))
         (send *pr2* arm :angle-vector pre-set-av)
         (send *ri* :angle-vector (send *pr2* :angle-vector))
+        (send *viewer* :draw-objects)
         (send *ri* :wait-interpolation))
       )
      )
-    (send *viewer* :draw-objects)
     (when reset-pose-end
       ;; (reset-manip-pose :arm arm)
       (reset-cook-pose :arm arm) ;; TODO add args?
@@ -640,7 +644,7 @@
 
 
 
-(defun hold-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm) (is-grasp t) (action-mode :hold) (use-calib-offset nil) (wait-after-grasp nil) (exit-after-grasp nil) (wait-before-grasp nil) (exit-before-grasp nil))
+(defun grasp-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm) (is-grasp t) (action-mode :pick-up) (use-calib-offset nil) (wait-after-grasp nil) (exit-after-grasp nil) (wait-before-grasp nil) (exit-before-grasp nil))
   (cond
    ((and (string= object-name "knife") (equal arm :rarm))
     (if use-calib-offset
@@ -811,7 +815,7 @@
     )
    (t
     (format t "this setting is not implemented yet! ~%")
-    (return-from hold-rec-object)
+    (return-from grasp-rec-object)
     )
    )
 
@@ -833,12 +837,12 @@
       ))
 
   (unless is-grasp
-    (format t "exit from hold-rec-object function because arg is-grasp is nil ! ~%")
-    (return-from hold-rec-object)
+    (format t "exit from grasp-rec-object function because arg is-grasp is nil ! ~%")
+    (return-from grasp-rec-object)
     )
 
   (grasp-object-primitive :pre-set-avs (list wait-av) :grasp-coords *grasp-coords-exec* :pre-set-val pre-set-val :arm arm
-                          :object-name object-name :action-mode :hold :wait-after-grasp wait-after-grasp :exit-after-grasp exit-after-grasp :wait-before-grasp wait-before-grasp :exit-before-grasp exit-before-grasp)
+                          :object-name object-name :action-mode action-mode :wait-after-grasp wait-after-grasp :exit-after-grasp exit-after-grasp :wait-before-grasp wait-before-grasp :exit-before-grasp exit-before-grasp)
 
   ;; TODO rec fail pattern
   )
@@ -875,7 +879,7 @@
   (send *ri* :wait-interpolation)
   )
 
-
+;; old
 (defun place-objects-on-table (&key (object-name "ボウル1") (arm :rarm) (action-mode :put) (spot-name "stove") (use-cds-offset t));; old
   (let ((pre-set-avs (list))
         (pre-set-val (float-vector 0 0 0))

@@ -3,7 +3,7 @@
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_utils.l")
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/wrench.l")
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/move-to-adjust.l")
-(load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2-cooking-actions.l")
+(load "package://jsk_2023_09_cook_from_recipe/euslisp/old-pr2-cooking-actions.l")
 (load "package://jsk_2023_09_cook_from_recipe/euslisp/pddl_test/cooking-exec-pddl-utils.l")
 
 ;; global variables

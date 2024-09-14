@@ -43,91 +43,93 @@
 (warn "~%  Please run (ih-init :type :curry) ~%")
 
 ;; update funcs
-(defun rotate-knob (&rest args &key (deg 30) (arm :larm) &allow-other-keys)
-  ;; rotate
-  (potentio-vector)
-  (let (av (avs (list)) (tms (list)) (ik-target (send (send *pr2* arm :end-coords) :copy-worldcoords)))
-    (if (> deg 0)
-      (progn
-        (dotimes (i (/ deg 10))
-          (send ik-target :rotate (deg2rad 10) :x)
-          (send *pr2* arm :inverse-kinematics
-                (send ik-target :copy-worldcoords)
-                :rotation-axis t
-                :debug-view nil)
-          (setq av (send *pr2* :angle-vector))
-          (setq avs (append avs (list av)))
-          (setq tms (append tms (list 200)))
-          ))
-      (dotimes (i (/ (* deg -1) 10))
-        (send ik-target :rotate (deg2rad -10) :x)
-        (send *pr2* arm :inverse-kinematics
-              (send ik-target :copy-worldcoords)
-              :rotation-axis t
-              :debug-view nil)
-        (setq av (send *pr2* :angle-vector))
-        (setq avs (append avs (list av)))
-        (setq tms (append tms (list 200)))
-        )
-      )
-    (unless (equal avs (list))
-      (send *ri* :angle-vector-sequence avs tms)
-      (send *ri* :wait-interpolation)
-      )
-    )
-  )
+;; trasnfered to actions
+;; (defun rotate-knob (&rest args &key (deg 30) (arm :larm) &allow-other-keys)
+;;   ;; rotate
+;;   (potentio-vector)
+;;   (let (av (avs (list)) (tms (list)) (ik-target (send (send *pr2* arm :end-coords) :copy-worldcoords)))
+;;     (if (> deg 0)
+;;       (progn
+;;         (dotimes (i (/ deg 10))
+;;           (send ik-target :rotate (deg2rad 10) :x)
+;;           (send *pr2* arm :inverse-kinematics
+;;                 (send ik-target :copy-worldcoords)
+;;                 :rotation-axis t
+;;                 :debug-view nil)
+;;           (setq av (send *pr2* :angle-vector))
+;;           (setq avs (append avs (list av)))
+;;           (setq tms (append tms (list 200)))
+;;           ))
+;;       (dotimes (i (/ (* deg -1) 10))
+;;         (send ik-target :rotate (deg2rad -10) :x)
+;;         (send *pr2* arm :inverse-kinematics
+;;               (send ik-target :copy-worldcoords)
+;;               :rotation-axis t
+;;               :debug-view nil)
+;;         (setq av (send *pr2* :angle-vector))
+;;         (setq avs (append avs (list av)))
+;;         (setq tms (append tms (list 200)))
+;;         )
+;;       )
+;;     (unless (equal avs (list))
+;;       (send *ri* :angle-vector-sequence avs tms)
+;;       (send *ri* :wait-interpolation)
+;;       )
+;;     )
+;;   )
 
-(defun ih-stove-action (&key (left nil)
-                             (ih-action :start) ;; :start :stop :rotate
-                             (with-rec nil) (use-cds-offset t)
-                             (rotate-deg 0))
-  (let ((pre-set-avs (list))
-        (pre-set-val (float-vector 0 0 0))
-        (set-target-coords (make-coords))
-        adj-target-cds
-        (push-length 10)
-        )
-    (if left
-        (progn
-          (setq pre-set-avs (list #f(-14.727 68.7101 -60.2136 -76.3185 109.312 -48.51 -7.17108)))
-          ;; (setq pre-set-val #f(-100 0 0))
-          (setq pre-set-val #f(-30 0 0))
-          (setq set-target-coords (make-coords :pos #f(645 -55 696.789) :rpy #f(-0.089 0.092 1.448)))
-          )
-      (progn
-        ;; (setq pre-set-avs (list #f(-14.727 68.7101 -60.2136 -76.3185 109.312 -48.51 -7.17108)))
-        (setq pre-set-avs (list #f(-37.9792 67.891 -75.6121 -80.9552 114.675 -44.3419 -2.95313))) ;; #f(-37.49 74.2613 -98.4166 -92.2371 105.499 -61.216 -179.863) for old
-        ;; (setq pre-set-val #f(-100 0 0))
-        (setq pre-set-val #f(-30 0 0))
-        (setq set-target-coords (make-coords :pos #f(645.029 -178.873 696.789) :rpy #f(-0.089 0.092 1.448)))
-        ))
-    (if use-cds-offset
-        (setq adj-target-cds (adjust-cds-with-spot set-target-coords "stove"))
-      (setq adj-target-cds (send set-target-coords :copy-worldcoords))
-      )
+;; (defun ih-stove-action (&key (left nil)
+;;                              (ih-action :start) ;; :start :stop :rotate
+;;                              (with-rec nil) (use-cds-offset t)
+;;                              (rotate-deg 0))
+;;   (let ((pre-set-avs (list))
+;;         (pre-set-val (float-vector 0 0 0))
+;;         (set-target-coords (make-coords))
+;;         adj-target-cds
+;;         (push-length 10)
+;;         )
+;;     (if left
+;;         (progn
+;;           (setq pre-set-avs (list #f(-14.727 68.7101 -60.2136 -76.3185 109.312 -48.51 -7.17108)))
+;;           ;; (setq pre-set-val #f(-100 0 0))
+;;           (setq pre-set-val #f(-30 0 0))
+;;           (setq set-target-coords (make-coords :pos #f(645 -55 696.789) :rpy #f(-0.089 0.092 1.448)))
+;;           )
+;;       (progn
+;;         ;; (setq pre-set-avs (list #f(-14.727 68.7101 -60.2136 -76.3185 109.312 -48.51 -7.17108)))
+;;         (setq pre-set-avs (list #f(-37.9792 67.891 -75.6121 -80.9552 114.675 -44.3419 -2.95313))) ;; #f(-37.49 74.2613 -98.4166 -92.2371 105.499 -61.216 -179.863) for old
+;;         ;; (setq pre-set-val #f(-100 0 0))
+;;         (setq pre-set-val #f(-30 0 0))
+;;         (setq set-target-coords (make-coords :pos #f(645.029 -178.873 696.789) :rpy #f(-0.089 0.092 1.448)))
+;;         ))
+;;     (if use-cds-offset
+;;         (setq adj-target-cds (adjust-cds-with-spot set-target-coords "stove"))
+;;       (setq adj-target-cds (send set-target-coords :copy-worldcoords))
+;;       )
 
-    (if (or (equal ih-action :stop) (equal ih-action :start))
-        (progn
-          (send adj-target-cds :translate (float-vector push-length 0 0) :local)
-          (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm :rarm :action-mode :push :object-name "ih stove")
-          (send adj-target-cds :translate (float-vector (- push-length) 0 0) :local)
-          )
-      )
+;;     (if (or (equal ih-action :stop) (equal ih-action :start))
+;;         (progn
+;;           (send adj-target-cds :translate (float-vector push-length 0 0) :local)
+;;           (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm :rarm :action-mode :push :object-name "ih stove")
+;;           (send adj-target-cds :translate (float-vector (- push-length) 0 0) :local)
+;;           )
+;;       )
 
-    (if (or (equal ih-action :start) (equal ih-action :rotate))
-        (progn
-          (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm :rarm :action-mode :grasp :object-name "ih stove")
-          (if (equal ih-action :start)
-              (progn
-                ;; rotate
-                (rotate-knob :deg 30 :arm :rarm)
-                ))
-          (rotate-knob :deg rotate-deg :arm :rarm)
-          (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm :rarm :action-mode :release :object-name "ih stove")
-          ))
-    (reset-cook-pose :arm :rarm)
-    )
-  )
+;;     (if (or (equal ih-action :start) (equal ih-action :rotate))
+;;         (progn
+;;           (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm :rarm :action-mode :grasp :object-name "ih stove")
+;;           (if (equal ih-action :start)
+;;               (progn
+;;                 ;; rotate
+;;                 (rotate-knob :deg 30 :arm :rarm)
+;;                 ))
+;;           (rotate-knob :deg rotate-deg :arm :rarm)
+;;           (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm :rarm :action-mode :release :object-name "ih stove")
+;;           ))
+;;     (reset-cook-pose :arm :rarm)
+;;     )
+;;   )
+
 
 
 ;; old
@@ -704,12 +706,12 @@
         :debug-view *debug-flag*)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)
-  
+
   )
 
 (defun grasp-knob ()
   (send *ri* :move-gripper :larm 0.08)
-  
+
   (send *arrow* :newcoords (send *ih-knob-coords* :copy-worldcoords))
   (send *arrow* :rotate (deg2rad 90) :x)
   (send *arrow* :translate #f(100 0 0) :world)
@@ -719,9 +721,9 @@
         :debug-view *debug-flag*)
   (send *ri* :angle-vector (send *pr2* :angle-vector))
   (send *ri* :wait-interpolation)
-  
+
   (push-stove-button)
-  
+
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(10 0 0) :world)
@@ -731,7 +733,7 @@
         :debug-view *debug-flag*)
   (send *ri* :angle-vector (send *pr2* :angle-vector))
   (send *ri* :wait-interpolation)
-  
+
   (send *ri* :start-grasp :larm :wait t :gain 100)
   )
 
