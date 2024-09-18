@@ -10,7 +10,7 @@
 ;; global variables
 
 ;; defun action codes
-(defun hold (object arm spot)
+(defun hold (object arm spot) ;; pick-up
   (let (cmd-str)
     (setq cmd-str (format nil "(hold ~A ~A ~A)" object arm spot))
     (format t "~A ~%" cmd-str)
@@ -23,10 +23,12 @@
   ;; todo
   (cond
    ((or (string= object "salad-oil") (string= object "oil"))
-    (place-objects-on-table :object-name "あぶら" :arm :larm :spot-name spot :grasp-flag t)
+    ;; (place-objects-on-table :object-name "あぶら" :arm :larm :spot-name spot :grasp-flag t)
+    (pick-up-oil-dispenser)
     )
    ((string= object "bowl")
-    (place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name spot :grasp-flag t)
+    ;; (place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name spot :grasp-flag t)
+    (pick-up-gray-bowl :spot spot)
     )
    ((string= object "small-bowl")
     (place-objects-on-table :object-name "ボウル0" :arm :rarm :spot-name spot :grasp-flag t)

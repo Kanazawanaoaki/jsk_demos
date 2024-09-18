@@ -657,12 +657,24 @@
   (set-tool-on-table :object-name "knife" :arm :rarm :action-mode :place :spot-name "kitchen" :use-cds-offset nil)
   )
 
+(defun pick-up-knife ()
+  (set-tool-on-table :object-name "knife" :arm :rarm :action-mode :pick-up :spot-name "kitchen" :use-cds-offset nil)
+
+  (assoc-object-to-arm *knife* (calc-coords-from-rel *knife* (make-coords :pos #f(0 0 0) :rpy #f(0.0 0.0 -1.571))) :arm :rarm)
+  )
+
 (defun receive-and-set-peeler ()
   (set-tool-on-table :object-name "peeler" :arm :rarm :action-mode :set :spot-name "kitchen" :use-cds-offset nil)
   )
 
 (defun place-peeler ()
   (set-tool-on-table :object-name "peeler" :arm :rarm :action-mode :place :spot-name "kitchen" :use-cds-offset nil)
+  )
+
+(defun pick-up-peeler ()
+  (set-tool-on-table :object-name "peeler" :arm :rarm :action-mode :pick-up :spot-name "kitchen" :use-cds-offset nil)
+
+  (assoc-object-to-arm *peeler* (calc-coords-from-rel *peeler* (make-coords :pos #f(0 0 0) :rpy #f(0.0 0.0 -1.571))) :arm :rarm)
   )
 
 (defun receive-and-set-potato-peeler ()
@@ -678,7 +690,7 @@
 (defun pick-up-potato-peeler ()
   (set-tool-on-table :object-name "potato peeler" :arm :rarm :action-mode :pick-up :spot-name "kitchen" :use-cds-offset nil)
 
-  (assoc-object-to-arm *potato-peeler* (calc-coords-from-rel *potato-peeler* (make-coords :pos #f(-57.768 20.693 22.929) :rpy #f(0.115 1.25 -1.37))) :arm arm) ;; TODO change coords
+  (assoc-object-to-arm *potato-peeler* (calc-coords-from-rel *potato-peeler* (make-coords :pos #f(0 0 0) :rpy #f(0.0 0.0 -1.571))) :arm :rarm)
   )
 
 (defun receive-and-set-gray-bowl (&key (spot "kitchen")) ;; TODO add head
