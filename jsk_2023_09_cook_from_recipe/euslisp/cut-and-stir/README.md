@@ -163,9 +163,9 @@ roslaunch jsk_2023_09_cook_from_recipe save_ptcloud_in_pcd.launch INPUT:=/tf_tra
 ```
 
 ### 匂いセンサを使う
-https://github.com/708yamaguchi/jsk_3rdparty/tree/m5stack-ros-/m5stack_ros を使う
+https://github.com/708yamaguchi/jsk_3rdparty/tree/m5stack-ros-/m5stack_ros でセットアップをする
 
-### Unique device file name by udev rules
+#### Unique device file name by udev rules
 
 When multiple M5 devices are used with USB connections to the same PC, their device files must be distinguished.
 With the following steps, different symbolic links are created for each M5 device. You can use [udev file example](https://github.com/708yamaguchi/jsk_3rdparty/blob/m5stack-ros-/m5stack_ros/config/99-m5stack-ros.rules).
@@ -194,6 +194,66 @@ With the following steps, different symbolic links are created for each M5 devic
 
   - Reconnect your M5 device and check if symbolic link (/dev/[Device name]) is created.
 
+#### 匂いセンサの利用
+センサセットをUSB接続して，m5stack_rosのWSをsourceしている状況で以下を実行してrostopicを出力
+```bash
+roslaunch gas_sensers.launch
+```
+このリポジトリでのセンサ利用のためのutilsを立ち上げる
+```bash
+roslaunch jsk_2023_09_cook_from_recipe utils_for_gas_sensers.launch
+```
+データの取得を開始する
+```bash
+rosservice call /sensers_data_saver/start_saving "{}"
+```
+データの取得を終了する
+```bash
+rosservice call /sensers_data_saver/stop_saving "{}"
+```
+
+#### カメラセンサも利用
+```bash
+roslaunch jsk_2023_09_cook_from_recipe d435_camera_with_decomp.launch
+```
+
+データの保存（このlaunchはutils_for_gas_sensers.launchに含まれている）
+```bash
+roslaunch jsk_2023_09_cook_from_recipe periodic_image_saver.launch
+```
+
+データの取得を開始する
+```bash
+rosservice call /periodic_image_saver/start_saving "{}"
+```
+データの取得を終了する
+```bash
+rosservice call /periodic_image_saver/stop_saving "{}"
+```
+
+
+
+
+### BundleSDF and FoundationPose
+#### Data Collection
+Launch the D435 camera launch file.
+```bash
+roslaunch jsk_2023_09_cook_from_recipe d435_camera_with_decomp.launch
+```
+Launching a data collection node.
+```bash
+roscd jsk_2023_09_cook_from_recipe/scripts/for-cut/
+python rgb_and_depth_image_saver.py
+```
+
+Start collecting data.
+```bash
+rosservice call /rgb_and_depth_saver/start_sync "{}"
+```
+Stop collecting data.
+```bash
+rosservice call /rgb_and_depth_saver/stop_sync "{}"
+```
 
 ### Rvizでインタラクティブに座標指定
 ```

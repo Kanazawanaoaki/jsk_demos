@@ -1,0 +1,11 @@
+<launch>
+    <!-- ノードの起動 -->
+    <node name="periodic_image_saver" pkg="jsk_2023_09_cook_from_recipe" type="periodic_image_saver.py" output="screen"
+          clear_params="true">
+        <!-- rosparamで保存先ディレクトリを設定 -->
+        <param name="save_path" value="$(find jsk_2023_09_cook_from_recipe)/datas/senser_data_images/" />
+
+        <!-- トピックのリマップ -->
+        <param name="input" value="/camera_remote/rgb/image_raw"/>
+    </node>
+</launch>

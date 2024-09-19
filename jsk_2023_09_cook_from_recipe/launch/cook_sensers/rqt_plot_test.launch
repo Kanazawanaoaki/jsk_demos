@@ -1,0 +1,6 @@
+<launch>
+  <node name="gas_sensers_plot"
+        pkg="rqt_plot"
+        type="rqt_plot"
+        args="/cal_gas /gas_v2_102b /gas_v2_302b /gas_v2_502b /gas_v2_702b /tgs_2600_analog /tgs_2602_analog /tgs_2603_analog" />
+</launch>

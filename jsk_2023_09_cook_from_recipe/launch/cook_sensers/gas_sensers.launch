@@ -1,0 +1,39 @@
+<launch>
+
+  <!-- Device file name depends on /etc/udev/rules.d/99-kanazawa.rules -->
+
+  <!-- gray01 : cal gas -->
+  <include file="$(find m5stack_ros)/launch/m5stack_ros.launch">
+    <arg name="port" value="/dev/gray01" />
+    <arg name="baud" value="57600" />
+    <arg name="rosserial_name" value="rosserial_gray01" />
+  </include>
+
+  <!-- fire01 : gas v2 -->
+  <include file="$(find m5stack_ros)/launch/m5stack_ros.launch">
+    <arg name="port" value="/dev/fire01" />
+    <arg name="baud" value="57600" />
+    <arg name="rosserial_name" value="rosserial_fire01" />
+  </include>
+
+  <!-- fire02 : tgs 2600 -->
+  <include file="$(find m5stack_ros)/launch/m5stack_ros.launch">
+    <arg name="port" value="/dev/fire02" />
+    <arg name="baud" value="57600" />
+    <arg name="rosserial_name" value="rosserial_fire02" />
+  </include>
+
+  <!-- fire03 : tgs 2602 -->
+  <include file="$(find m5stack_ros)/launch/m5stack_ros.launch">
+    <arg name="port" value="/dev/fire03" />
+    <arg name="baud" value="57600" />
+    <arg name="rosserial_name" value="rosserial_fire03" />
+  </include>
+
+  <!-- fire04 : tgs 2603 -->
+  <include file="$(find m5stack_ros)/launch/m5stack_ros.launch">
+    <arg name="port" value="/dev/fire04" />
+    <arg name="baud" value="57600" />
+    <arg name="rosserial_name" value="rosserial_fire04" />
+  </include>
+</launch>

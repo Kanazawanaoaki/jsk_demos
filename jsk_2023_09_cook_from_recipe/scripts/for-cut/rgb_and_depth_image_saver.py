@@ -60,7 +60,7 @@ def stop_service(req):
     return EmptyResponse()
 
 def main():
-    rospy.init_node('image_synchronizer', anonymous=True)
+    rospy.init_node('rgb_and_depth_saver', anonymous=True)
 
     # Define the topics to subscribe to
     rgb_topic = '/camera_remote/rgb/image_raw'
@@ -75,8 +75,8 @@ def main():
     ts.registerCallback(callback)
 
     # Define the start and stop services
-    start_srv = rospy.Service('start_sync', Empty, start_service)
-    stop_srv = rospy.Service('stop_sync', Empty, stop_service)
+    start_srv = rospy.Service('~start_sync', Empty, start_service)
+    stop_srv = rospy.Service('~stop_sync', Empty, stop_service)
 
     rospy.loginfo("Ready to start and stop image synchronization.")
     rospy.spin()

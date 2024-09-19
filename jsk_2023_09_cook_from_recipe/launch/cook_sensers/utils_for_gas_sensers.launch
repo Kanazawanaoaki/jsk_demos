@@ -1,0 +1,60 @@
+<launch>
+  <arg name="gui" default="True" />
+  <arg name="save_img" default="True" />
+
+  <group if="$(arg gui)">
+    <!-- plot -->
+    <include file="$(find jsk_2023_09_cook_from_recipe)/launch/cook_sensers/rqt_plot_test.launch">
+    </include>
+  </group>
+
+  <!-- data saver -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/cook_sensers/sensers_data_save.launch">
+    <arg name="config_name" value="timestamped_gas_sensers.yaml" />
+  </include>
+  <group if="$(arg save_img)">
+    <include file="$(find jsk_2023_09_cook_from_recipe)/launch/cook_sensers/periodic_image_saver.launch">
+    </include>
+  </group>
+
+  <!-- relay -->
+  <!-- cal_gas -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/cook_sensers/timestamped_relay_publish.launch">
+    <arg name="senser_topic" value="cal_gas" />
+  </include>
+
+  <!-- gas_v2_102b -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/cook_sensers/timestamped_relay_publish.launch">
+    <arg name="senser_topic" value="gas_v2_102b" />
+  </include>
+
+  <!-- gas_v2_302b -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/cook_sensers/timestamped_relay_publish.launch">
+    <arg name="senser_topic" value="gas_v2_302b" />
+  </include>
+
+  <!-- gas_v2_502b -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/cook_sensers/timestamped_relay_publish.launch">
+    <arg name="senser_topic" value="gas_v2_502b" />
+  </include>
+
+  <!-- gas_v2_702b -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/cook_sensers/timestamped_relay_publish.launch">
+    <arg name="senser_topic" value="gas_v2_702b" />
+  </include>
+
+  <!-- tgs_2600_analog -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/cook_sensers/timestamped_relay_publish.launch">
+    <arg name="senser_topic" value="tgs_2600_analog" />
+  </include>
+
+  <!-- tgs_2602_analog -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/cook_sensers/timestamped_relay_publish.launch">
+    <arg name="senser_topic" value="tgs_2602_analog" />
+  </include>
+
+  <!-- tgs_2603_analog -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/cook_sensers/timestamped_relay_publish.launch">
+    <arg name="senser_topic" value="tgs_2603_analog" />
+  </include>
+</launch>
