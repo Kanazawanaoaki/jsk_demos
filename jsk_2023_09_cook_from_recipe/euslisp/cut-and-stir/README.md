@@ -162,6 +162,39 @@ roslaunch jsk_2023_09_cook_from_recipe service_save_ptcloud_in_pcd.launch object
 roslaunch jsk_2023_09_cook_from_recipe save_ptcloud_in_pcd.launch INPUT:=/tf_transform_cloud/output
 ```
 
+### 匂いセンサを使う
+https://github.com/708yamaguchi/jsk_3rdparty/tree/m5stack-ros-/m5stack_ros を使う
+
+### Unique device file name by udev rules
+
+When multiple M5 devices are used with USB connections to the same PC, their device files must be distinguished.
+With the following steps, different symbolic links are created for each M5 device. You can use [udev file example](https://github.com/708yamaguchi/jsk_3rdparty/blob/m5stack-ros-/m5stack_ros/config/99-m5stack-ros.rules).
+
+  - Check ATTRS{idVendor} and ATTRS{idProduct} by the following command
+    ```
+    lsusb
+    ```
+
+  - Check ATTRS{serial} by
+    ```
+    M5_DEVICE_FILE=/dev/ttyUSB0
+    sudo udevadm info -a -p $(sudo udevadm info -q path -n $M5_DEVICE_FILE) | grep ATTRS{serial}
+    ```
+
+  - Place your udev files file under `/etc/udev/rules.d/`
+    ```
+    sudo cp $(rospack find jsk_2023_09_cook_from_recipe)/config/udev/99-kanazawa-cook-sensers.rules /etc/udev/rules.d/
+    ```
+
+  - Restart udev
+    ```
+    sudo udevadm control --reload-rules
+    sudo udevadm trigger
+    ```
+
+  - Reconnect your M5 device and check if symbolic link (/dev/[Device name]) is created.
+
+
 ### Rvizでインタラクティブに座標指定
 ```
 roslaunch jsk_2023_09_cook_from_recipe interactive_tf_pr2.launch

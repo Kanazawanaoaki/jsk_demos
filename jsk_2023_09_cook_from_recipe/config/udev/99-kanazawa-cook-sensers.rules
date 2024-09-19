@@ -1,0 +1,17 @@
+# For detail, see https://github.com/jsk-ros-pkg/jsk_3rdparty/tree/master/m5stack_ros/README.md#unique-device-file-name-by-udev-rules
+# You can access your device via /dev/[Device name] file
+
+# M5Stack Gray01
+KERNEL=="ttyUSB*",  ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{serial}=="02404019" SYMLINK+="gray01"
+
+# M5Stack Fire01
+KERNEL=="ttyACM*",  ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="55d4", ATTRS{serial}=="52D4002860" SYMLINK+="fire01"
+
+# M5Stack Fire02
+KERNEL=="ttyUSB*",  ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{serial}=="01D295D1" SYMLINK+="fire02"
+
+# M5Stack Fire03
+KERNEL=="ttyUSB*",  ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{serial}=="02041BD1" SYMLINK+="fire03"
+
+# M5Stack Fire04
+KERNEL=="ttyUSB*",  ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{serial}=="021612FC" SYMLINK+="fire04"
