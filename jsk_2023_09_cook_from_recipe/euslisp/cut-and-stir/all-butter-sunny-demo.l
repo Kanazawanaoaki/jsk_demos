@@ -14,18 +14,25 @@
 ;; global variables
 
 (defun prepare-sunny ()
-  (place-objects-on-table :object-name "ボウル0" :arm :rarm :spot-name "stove" :set-flag t) ;; small-bowl
-  (place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name "stove" :set-flag t) ;; bowl
-  (set-pot-on-stove :object-name "フライパン") ;; frying-pan
+  (reset-view-list)
+  (init-pr2)
+  (pr2-cook-init :spot "kitchen" :type :butter-sunny-side-up)
+
+  ;; (place-objects-on-table :object-name "ボウル0" :arm :rarm :spot-name "stove" :set-flag t) ;; small-bowl
+  ;; (place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name "stove" :set-flag t) ;; bowl
+  ;; (set-pot-on-stove :object-name "フライパン") ;; frying-pan
 
   )
 
 (defun do-sunny ()
   (speak-with-log "目玉焼きの調理を開始します")
+  (reset-view-list)
+  (init-pr2)
+  (pr2-cook-init :spot "kitchen" :type :butter-sunny-side-up)
   (exec-cook-from-recipe "egg-recipes-prompt_butter-sunny_converted_conv_planned.l")
-  ;; (speak-with-log "目玉焼きの調理を行いました")
-
   ;; (setq *plan-list* '((hold small-bowl arm2 stove) (transfer butter small-bowl frying-pan arm2 stove) (place small-bowl arm2 stove) (turn-on-stove frying-pan arm1) (heat butter frying-pan melt) (hold bowl arm2 stove) (transfer egg bowl frying-pan arm2 stove) (place bowl arm2 stove) (cook egg cooked-egg) (turn-off-stove middle frying-pan arm1)))
+
+  ;; (speak-with-log "目玉焼きの調理を行いました")
   )
 
 (defun receive-spatula-for-sunny ()

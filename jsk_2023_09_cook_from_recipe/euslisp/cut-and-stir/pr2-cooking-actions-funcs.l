@@ -789,6 +789,7 @@
   (set-object *pan* (send *pan-coords* :copy-worldcoords))
   )
 
+;; TODO add spatula
 
 
 
