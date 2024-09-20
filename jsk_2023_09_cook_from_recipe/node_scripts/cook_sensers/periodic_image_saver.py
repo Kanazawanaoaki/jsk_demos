@@ -4,7 +4,7 @@ import rospy
 import cv2
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import os
 import pytz
 from std_srvs.srv import Empty, EmptyResponse
@@ -48,9 +48,10 @@ class PeriodicImageSaver:
             unix_timestamp = int(datetime.utcnow().timestamp())
 
             # UNIXタイムスタンプを日本時間に変換
-            japan_tz = pytz.timezone('Asia/Tokyo')
-            japan_now = datetime.fromtimestamp(unix_timestamp, tz=japan_tz)
-            japan_time_str = japan_now.strftime('%Y%m%d_%H%M%S')
+            # japan_tz = pytz.timezone('Asia/Tokyo')
+            # japan_now = datetime.fromtimestamp(unix_timestamp, tz=japan_tz)
+            # japan_time_str = japan_now.strftime('%Y%m%d_%H%M%S')
+            japan_time_str = self.convert_timestamp_to_japan_time(unix_timestamp)
 
             # ファイル名にタイムスタンプと日本時間を含める
             filename = os.path.join(self.current_save_path, f'image_{unix_timestamp}_{japan_time_str}.png')
@@ -80,6 +81,12 @@ class PeriodicImageSaver:
         else:
             rospy.logwarn('Saving is already disabled')
         return EmptyResponse()
+
+
+    def convert_timestamp_to_japan_time(self, timestamp):
+        utc_dt = datetime.fromtimestamp(timestamp, tz=timezone.utc)
+        japan_time = utc_dt + timedelta(hours=9)
+        return japan_time
 
 if __name__ == '__main__':
     try:
