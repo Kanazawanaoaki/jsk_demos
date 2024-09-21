@@ -18,6 +18,9 @@
   (init-pr2)
   (pr2-cook-init :spot "kitchen" :type :butter-sunny-side-up)
 
+  (receive-and-set-green-bowl :arm :rarm)
+  (receive-and-set-gray-bowl :spot "stove")
+  (receive-and-set-frying-pan)
   ;; (place-objects-on-table :object-name "ボウル0" :arm :rarm :spot-name "stove" :set-flag t) ;; small-bowl
   ;; (place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name "stove" :set-flag t) ;; bowl
   ;; (set-pot-on-stove :object-name "フライパン") ;; frying-pan
@@ -48,15 +51,18 @@
   )
 
 (defun grasp-frying-pan ()
-  (place-objects-on-table :object-name "フライパン" :arm :larm :spot-name "stove" :grasp-flag t :grasp-gain 0.1)
+  ;; (place-objects-on-table :object-name "フライパン" :arm :larm :spot-name "stove" :grasp-flag t :grasp-gain 0.1)
+  (pick-up-frying-pan)
   )
 
 (defun put-frying-pan ()
-  (place-objects-on-table :object-name "フライパン" :arm :larm :spot-name "stove")
+  ;; (place-objects-on-table :object-name "フライパン" :arm :larm :spot-name "stove")
+  (place-frying-pan)
   )
 
 (defun put-spatula-on-table ()
-  (place-objects-on-table :object-name "ヘラ" :arm :rarm :spot-name "stove")
+  ;; (place-objects-on-table :object-name "ヘラ" :arm :rarm :spot-name "stove")
+  (place-spatula)
   )
 
 
