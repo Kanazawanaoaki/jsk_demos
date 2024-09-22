@@ -146,10 +146,12 @@
 
   (cond
    ((or (string= vessel "frying-pan") (string= vessel "pan"))
-    (start-ih :with-rec nil :left nil)
+    ;; (start-ih :with-rec nil :left nil)
+    (ih-stove-action :ih-action :start :left nil)
     )
    ((string= vessel "pot")
-    (start-ih :with-rec nil :left t :max-power t)
+    ;; (start-ih :with-rec nil :left t :max-power t)
+    (ih-stove-action :ih-action :start :left t) ;; set deg?
     )
    (t
     (format t "vessel ~A and arm ~A is not defined !!!~%" vessel arm)
@@ -170,10 +172,12 @@
 
   (cond ;; TODO Add for before and after state
    ((or (string= vessel "frying-pan") (string= vessel "pan"))
-    (start-ih :with-rec nil :left nil :only-rotate t)
+    ;; (start-ih :with-rec nil :left nil :only-rotate t)
+    (ih-stove-action :ih-action :rotate :left nil :rotate-deg 30);; set deg
     )
    ((string= vessel "pot")
-    (start-ih :with-rec nil :left t :only-rotate t)
+    ;; (start-ih :with-rec nil :left t :only-rotate t)
+    (ih-stove-action :ih-action :rotate :left t :rotate-deg 30);; set deg
     )
    (t
     (format t "vessel ~A and arm ~A is not defined !!!~%" vessel arm)
@@ -192,10 +196,12 @@
 
   (cond
    ((or (string= vessel "frying-pan") (string= vessel "pan"))
-    (stop-ih :with-rec nil :left nil)
+    ;; (stop-ih :with-rec nil :left nil)
+    (ih-stove-action :ih-action :stop :left nil)
     )
    ((string= vessel "pot")
-    (stop-ih :with-rec nil :left t)
+    ;; (stop-ih :with-rec nil :left t)
+    (ih-stove-action :ih-action :stop :left t)
     )
    (t
     (format t "vessel ~A and arm ~A is not defined !!!~%" vessel arm)
@@ -256,18 +262,20 @@
    ((and
      (string= from "bowl")
      (string= to "frying-pan"))
-    (pour-object-to-pan :from-object "ボウル1" :to-object "フライパン" :arm :rarm :spot-name spot)
+    ;; (pour-object-to-pan :from-object "ボウル1" :to-object "フライパン" :arm :rarm :spot-name spot)
+    (pour-object-to-pan :from-object "gray bowl" :to-object "frying pan" :arm :rarm :spot-name spot)
     )
    ((and
      (string= from "small-bowl") ;; green bowl
      (string= to "frying-pan")) ;; pan
-    (pour-object-to-pan :from-object "ボウル0" :to-object "フライパン" :arm :rarm :spot-name spot)
+    ;; (pour-object-to-pan :from-object "ボウル0" :to-object "フライパン" :arm :rarm :spot-name spot)
+    (pour-object-to-pan :from-object "green bowl" :to-object "frying pan" :arm :rarm :spot-name spot)
     )
    ((and
      (string= content "broccoli")
      (string= from "pot")
      (string= to "frying-pan"))
-    (pour-object-to-pan :from-object "pot" :to-object "frying-pan" :spot-name spot :arm :larm)
+    (pour-object-to-pan :from-object "pot" :to-object "frying pan" :spot-name spot :arm :larm)
     )
    (t
     (format t "from ~A, to ~A, arm ~A, spot ~A is not defined !!!~%" from to arm spot)

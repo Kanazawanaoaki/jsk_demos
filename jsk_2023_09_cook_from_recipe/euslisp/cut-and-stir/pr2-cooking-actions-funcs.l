@@ -134,8 +134,8 @@
       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
       )
      ((and (string= object-name "frying pan") (string= spot-name "stove") (equal arm :larm))
-      (setq pre-set-avs (list #f(25.83 -4.49773 82.9127 -114.765 -190.225 -92.4874 -86.8266)
-                              #f(20.277 8.77317 68.6259 -48.2159 -262.701 -99.5498 53.6745)
+      (setq pre-set-avs (list #f(25.83 -4.49773 82.9127 -114.765 -190.225 -92.4874 273.1734)
+                              #f(20.277 8.77317 68.6259 -48.2159 -262.701 -99.5498 413.6745)
                               ))
       (setq pre-set-val #f(-150 0 0)) ;; for upper
 
@@ -145,15 +145,15 @@
       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send obj-coords :copy-worldcoords) (send *arrow* :copy-worldcoords))
       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
       )
-     ((and (string= object-name "pot") (string= spot-name "stove") (equal arm :larm));; TODO
-      (setq pre-set-avs (list #f(25.83 -4.49773 82.9127 -114.765 -190.225 -92.4874 -86.8266)
-                              #f(20.277 8.77317 68.6259 -48.2159 -262.701 -99.5498 53.6745)
+     ((and (string= object-name "pot") (string= spot-name "stove") (equal arm :larm))
+      (setq pre-set-avs (list #f(25.83 -4.49773 82.9127 -114.765 -190.225 -92.4874 273.1734)
+                              #f(19.8257 1.49792 64.5742 -49.8167 -263.987 -103.603 413.445)
                               ))
       (setq pre-set-val #f(-150 0 0)) ;; for upper
 
       ;; calc from defined coords
       (setq obj-coords (send *pan-coords* :copy-worldcoords))
-      (send *arrow* :newcoords (calc-coords-from-rel obj-coords (make-coords :pos #f(-184.952 13.937 20.367) :rpy #f(-0.361 1.264 2.752)))) ;; TODO Fix
+      (send *arrow* :newcoords (calc-coords-from-rel obj-coords (make-coords :pos #f(-165.555 14.465 67.958) :rpy #f(0.375 1.316 -2.806)))) ;; TODO Fix
       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send obj-coords :copy-worldcoords) (send *arrow* :copy-worldcoords))
       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
       )
@@ -252,6 +252,237 @@
 
 
 ;; pour
+;; add-oil とかはいい感じなので，これもうまく利用したさがある．
+
+(defun pour-object-to-pan (&key (from-object "ボウル1") (to-object "フライパン") (arm :rarm) (spot-name "stove"))
+  (let ((pre-set-avs (list))
+        cook-from-now-file-name
+        )
+    (cond
+     ((and (string= from-object "gray bowl") (string= to-object "frying pan") (string= spot-name "stove") (equal arm :rarm)) ;; egg
+      ;; ((and (string= from-object "ボウル1") (string= to-object "フライパン") (string= spot-name "stove") (equal arm :rarm)) ;; egg
+      ;; (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041) #f(-45.3343 3.47451 -56.4107 -109.672 -99.5375 -114.592 104.776)))
+      ;; (setq cook-from-now-file-name "av-files/cook-from-now-pour-bowl1-to-pan-20231212-data.l")
+
+      (setq pre-set-avs (list #f(-17.2701 6.61532 -15.8472 -46.5569 -153.821 -114.592 99.202)))
+      ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl1-to-pan-20240221-data.l")
+      ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl1-to-pan-20240310-data.l")
+      (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl1-to-pan-20240310-data_edit.l")
+      (send *ri* :start-grasp :rarm :gain 100 :wait t)
+      )
+     ((and (string= from-object "green bowl") (string= to-object "frying pan") (string= spot-name "stove") (equal arm :rarm)) ;; butter
+     ;; ((and (string= from-object "ボウル0") (string= to-object "フライパン") (string= spot-name "stove") (equal arm :rarm)) ;; butter
+      ;; (setq pre-set-avs (list #f(-28.2146 0.07681 -56.1994 -95.3798 -127.421 -97.0024 137.794)
+      ;;                         #f(-21.4171 10.8467 -51.9823 -76.3682 -134.766 -103.742 117.398)))
+      ;; (setq cook-from-now-file-name "av-files/cook-from-now-pour-bowl0-to-pan-20231212-data.l")
+      (setq pre-set-avs (list #f(-27.4926 -3.15125 -53.829 -47.5523 -117.203 -99.9358 106.977)
+                              ))
+      ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl0-to-pan-20240221-data.l")
+      (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl0-to-pan-20240221-data_edit.l")
+      )
+     ((and (string= from-object "あぶら") (string= to-object "フライパン") (string= spot-name "stove")) ;; larmだったが結局両腕使うので
+      (setq pre-set-avs (list #f(52.4453 35.9984 40.0064 -117.485 -211.029 -72.009 -15.0076)))
+
+      ;; 物体把持初期姿勢
+      (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
+      (send *ri* :angle-vector (send *pr2* :angle-vector))
+      (send *ri* :wait-interpolation)
+
+      (load-cook-from-now-file :file_name "av-files/cook-from-now-pour-oil-to-pan-larm-20231212-data.l" :larm t)
+      (cook-from-now-replay-once :larm t :initial-av nil)
+
+      (send *ri* :stop-grasp :rarm :wait t)
+      (load-cook-from-now-file :file_name "av-files/cook-from-now-pour-oil-to-pan-rarm-20231212-data.l" :larm t)
+      (cook-from-now-replay-once :larm nil :initial-av nil)
+
+      (send *ri* :start-grasp :rarm :wait t)
+
+      (send *ri* :start-grasp :larm :wait t :gain 1.0)
+      (unix:sleep 2)
+      (send *ri* :stop-grasp :larm :wait t)
+      (unix:sleep 2)
+      (send *ri* :start-grasp :larm :wait t)
+
+      (send *ri* :stop-grasp :rarm :wait t)
+
+      (load-cook-from-now-file :file_name "av-files/cook-from-now-pour-oil-to-pan-rarm-20231212-data.l" :larm t)
+      (cook-from-now-replay-once :larm nil :initial-av nil :reverse t)
+
+      (load-cook-from-now-file :file_name "av-files/cook-from-now-pour-oil-to-pan-larm-20231212-data.l" :larm t)
+      (cook-from-now-replay-once :larm t :initial-av nil :reverse t)
+
+      (reset-manip-pose :arm :rarm)
+      (return-from pour-object-to-pan nil)
+      )
+     ((and (string= from-object "ブロッコリー") (string= to-object "鍋") (string= spot-name "stove") (equal arm :larm))
+      (send *pr2* :larm :angle-vector #f(27.5715 22.0148 51.6599 -44.6906 40.8698 -83.3365 -15.6292))
+      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+      (send *ri* :wait-interpolation)
+
+      (send *pr2* :larm :angle-vector #f(22.3415 18.6413 51.3751 -30.3821 39.7562 -83.6954 -23.382))
+      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+      (send *ri* :wait-interpolation)
+
+      (send *ri* :stop-grasp :larm :wait t)
+
+      (return-from pour-object-to-pan nil)
+      )
+     ((and (string= from-object "pot") (string= to-object "frying pan") (string= spot-name "stove") (equal arm :larm)) ;; for broccoli
+      ;; (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041) #f(-45.3343 3.47451 -56.4107 -109.672 -99.5375 -114.592 104.776)))
+      ;; (setq cook-from-now-file-name "av-files/cook-from-now-pour-bowl1-to-pan-20240221-data.l")
+      ;; (load-cook-file :file_name "av-files/cook_larm-data_transfer-broccoli_20231119_01.l" :larm t)
+      (send *ri* :start-grasp :larm :wait t :gain 100)
+
+      (load-cook-file :file_name "../../av-files/cook_larm-data_transfer-broccoli_20231119_01.l" :larm t)
+      ;; (cook-replay-once :larm t)
+      (cook-from-now-replay-once :larm t :initial-av nil)
+      (return-from pour-object-to-pan nil)
+      )
+     (t
+      (format t "from-object ~A, to-object ~A, spot-name ~A, arm ~A is not defined !!!~%" from-object to-object spot-name arm)
+      (return-from pour-object-to-pan nil)
+      )
+     )
+
+    ;; 物体把持初期姿勢
+    (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
+    (send *ri* :angle-vector (send *pr2* :angle-vector))
+    (send *ri* :wait-interpolation)
+
+    (cond
+     ((equal arm :rarm)
+      (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
+      ;; (cook-from-now-replay-once :larm nil :initial-av t)
+      ;; (cook-from-now-replay-once :larm nil :initial-av nil) ;;20240909 champ?
+      (cook-from-now-replay-once :larm nil :initial-av nil :time 100)
+      )
+     ((equal arm :larm)
+      (load-cook-from-now-file :file_name cook-from-now-file-name :larm t)
+      ;; (cook-from-now-replay-once :larm t :initial-av t)
+      (cook-from-now-replay-once :larm t :initial-av nil) ;;20240909 champ?
+      (cook-from-now-replay-once :larm t :initial-av nil :time 100)
+      )
+     )
+    )
+  )
+
+;; old
+;; (defun pour-object-to-pan (&key (from-object "ボウル1") (to-object "フライパン") (arm :rarm) (spot-name "stove"))
+;;   (let ((pre-set-avs (list))
+;;         cook-from-now-file-name
+;;         )
+;;     (cond
+;;      ((and (string= from-object "ボウル1") (string= to-object "フライパン") (string= spot-name "stove") (equal arm :rarm)) ;; egg
+;;       ;; (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041) #f(-45.3343 3.47451 -56.4107 -109.672 -99.5375 -114.592 104.776)))
+;;       ;; (setq cook-from-now-file-name "av-files/cook-from-now-pour-bowl1-to-pan-20231212-data.l")
+
+;;       (setq pre-set-avs (list #f(-17.2701 6.61532 -15.8472 -46.5569 -153.821 -114.592 99.202)))
+;;       ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl1-to-pan-20240221-data.l")
+;;       ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl1-to-pan-20240310-data.l")
+;;       (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl1-to-pan-20240310-data_edit.l")
+;;       (send *ri* :start-grasp :rarm :gain 100 :wait t)
+;;       )
+;;      ((and (string= from-object "ボウル0") (string= to-object "フライパン") (string= spot-name "stove") (equal arm :rarm)) ;; butter
+;;       ;; (setq pre-set-avs (list #f(-28.2146 0.07681 -56.1994 -95.3798 -127.421 -97.0024 137.794)
+;;       ;;                         #f(-21.4171 10.8467 -51.9823 -76.3682 -134.766 -103.742 117.398)))
+;;       ;; (setq cook-from-now-file-name "av-files/cook-from-now-pour-bowl0-to-pan-20231212-data.l")
+;;       (setq pre-set-avs (list #f(-27.4926 -3.15125 -53.829 -47.5523 -117.203 -99.9358 106.977)
+;;                               ))
+;;       ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl0-to-pan-20240221-data.l")
+;;       (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl0-to-pan-20240221-data_edit.l")
+;;       )
+;;      ((and (string= from-object "あぶら") (string= to-object "フライパン") (string= spot-name "stove")) ;; larmだったが結局両腕使うので
+;;       (setq pre-set-avs (list #f(52.4453 35.9984 40.0064 -117.485 -211.029 -72.009 -15.0076)))
+
+;;       ;; 物体把持初期姿勢
+;;       (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
+;;       (send *ri* :angle-vector (send *pr2* :angle-vector))
+;;       (send *ri* :wait-interpolation)
+
+;;       (load-cook-from-now-file :file_name "av-files/cook-from-now-pour-oil-to-pan-larm-20231212-data.l" :larm t)
+;;       (cook-from-now-replay-once :larm t :initial-av nil)
+
+;;       (send *ri* :stop-grasp :rarm :wait t)
+;;       (load-cook-from-now-file :file_name "av-files/cook-from-now-pour-oil-to-pan-rarm-20231212-data.l" :larm t)
+;;       (cook-from-now-replay-once :larm nil :initial-av nil)
+
+;;       (send *ri* :start-grasp :rarm :wait t)
+
+;;       (send *ri* :start-grasp :larm :wait t :gain 1.0)
+;;       (unix:sleep 2)
+;;       (send *ri* :stop-grasp :larm :wait t)
+;;       (unix:sleep 2)
+;;       (send *ri* :start-grasp :larm :wait t)
+
+;;       (send *ri* :stop-grasp :rarm :wait t)
+
+;;       (load-cook-from-now-file :file_name "av-files/cook-from-now-pour-oil-to-pan-rarm-20231212-data.l" :larm t)
+;;       (cook-from-now-replay-once :larm nil :initial-av nil :reverse t)
+
+;;       (load-cook-from-now-file :file_name "av-files/cook-from-now-pour-oil-to-pan-larm-20231212-data.l" :larm t)
+;;       (cook-from-now-replay-once :larm t :initial-av nil :reverse t)
+
+;;       (reset-manip-pose :arm :rarm)
+;;       (return-from pour-object-to-pan nil)
+;;       )
+;;      ((and (string= from-object "ブロッコリー") (string= to-object "鍋") (string= spot-name "stove") (equal arm :larm))
+;;       (send *pr2* :larm :angle-vector #f(27.5715 22.0148 51.6599 -44.6906 40.8698 -83.3365 -15.6292))
+;;       (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+;;       (send *ri* :wait-interpolation)
+
+;;       (send *pr2* :larm :angle-vector #f(22.3415 18.6413 51.3751 -30.3821 39.7562 -83.6954 -23.382))
+;;       (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+;;       (send *ri* :wait-interpolation)
+
+;;       (send *ri* :stop-grasp :larm :wait t)
+
+;;       (return-from pour-object-to-pan nil)
+;;       )
+;;      ((and (string= from-object "pot") (string= to-object "frying-pan") (string= spot-name "stove") (equal arm :larm)) ;; for broccoli
+;;       ;; (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041) #f(-45.3343 3.47451 -56.4107 -109.672 -99.5375 -114.592 104.776)))
+;;       ;; (setq cook-from-now-file-name "av-files/cook-from-now-pour-bowl1-to-pan-20240221-data.l")
+;;       ;; (load-cook-file :file_name "av-files/cook_larm-data_transfer-broccoli_20231119_01.l" :larm t)
+;;       (send *ri* :start-grasp :larm :wait t :gain 100)
+
+;;       (load-cook-file :file_name "../../av-files/cook_larm-data_transfer-broccoli_20231119_01.l" :larm t)
+;;       ;; (cook-replay-once :larm t)
+;;       (cook-from-now-replay-once :larm t :initial-av nil)
+;;       (return-from pour-object-to-pan nil)
+;;       )
+;;      (t
+;;       (format t "from-object ~A, to-object ~A, spot-name ~A, arm ~A is not defined !!!~%" from-object to-object spot-name arm)
+;;       (return-from pour-object-to-pan nil)
+;;       )
+;;      )
+
+;;     ;; 物体把持初期姿勢
+;;     (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
+;;     (send *ri* :angle-vector (send *pr2* :angle-vector))
+;;     (send *ri* :wait-interpolation)
+
+;;     (cond
+;;      ((equal arm :rarm)
+;;       (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
+;;       ;; (cook-from-now-replay-once :larm nil :initial-av t)
+;;       ;; (cook-from-now-replay-once :larm nil :initial-av nil) ;;20240909 champ?
+;;       (cook-from-now-replay-once :larm nil :initial-av nil :time 100)
+;;       )
+;;      ((equal arm :larm)
+;;       (load-cook-from-now-file :file_name cook-from-now-file-name :larm t)
+;;       ;; (cook-from-now-replay-once :larm t :initial-av t)
+;;       (cook-from-now-replay-once :larm t :initial-av nil) ;;20240909 champ?
+;;       (cook-from-now-replay-once :larm t :initial-av nil :time 100)
+;;       )
+;;      )
+;;     )
+;;   )
+
+
+
+
+
+
+
 (defun add-oil-pre ()
   ;; この辺りはreachに置き換えられるか？
 

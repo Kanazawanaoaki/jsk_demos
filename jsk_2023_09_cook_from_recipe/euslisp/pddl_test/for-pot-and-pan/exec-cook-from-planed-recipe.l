@@ -202,7 +202,8 @@
    ((and
      (or (string= object "salad-oil") (string= object "oil"))
      (string= vessel "frying-pan"))
-    (pour-object-to-pan :from-object "あぶら" :to-object "フライパン" :arm :larm :spot-name spot)
+    (pour-object-to-pan :from-object "oil" :to-object "frying-pan" :arm :larm :spot-name spot)
+    ;; (pour-object-to-pan :from-object "あぶら" :to-object "フライパン" :arm :larm :spot-name spot)
     )
    ((and
      (string= object "broccoli")
