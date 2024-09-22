@@ -29,6 +29,7 @@
   ;; (place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name "stove" :set-flag t) ;; bowl
   ;; (set-pot-on-stove :object-name "フライパン") ;; frying-pan
 
+  (reset-cook-pose)
   )
 
 (defun do-sunny ()

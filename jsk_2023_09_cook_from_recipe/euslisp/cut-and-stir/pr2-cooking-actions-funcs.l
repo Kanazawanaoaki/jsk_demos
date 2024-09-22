@@ -1073,6 +1073,11 @@
         (return-from wait-cook-stove nil)
         )
        )
+      ;; ;; 鍋やフライパンの領域を注視
+      ;; (described_gazing_area_detector-command :query-list (list "the content of the pot" "the content of the frying pan"))
+
+      ;; 状態認識器をセット
+      (lc_adjusted_clip_state_recognition-command :model_file model_file :target_state target_state)
 
       (if do-not-use-rec
           (progn
@@ -1083,11 +1088,6 @@
              )
             )
         (progn
-          ;; ;; 鍋やフライパンの領域を注視
-          ;; (described_gazing_area_detector-command :query-list (list "the content of the pot" "the content of the frying pan"))
-
-          ;; 状態認識器をセット
-          (lc_adjusted_clip_state_recognition-command :model_file model_file :target_state target_state)
 
           (setq *yes-query* "Yes")
           ;; subscribeして状態が変化していたらorOKと言われたら終了
@@ -1103,9 +1103,9 @@
                  )
           (ros::unsubscribe "/adjusted_clip_state_recognizer/state")
           (ros::unsubscribe "/speech_to_text")
-          (lc_adjusted_clip_stop-command)
           )
         )
+      (lc_adjusted_clip_stop-command)
       )
     )
    ))
