@@ -38,7 +38,7 @@
 (warn "~%  Please run (pr2-cook-init :type :curry :spot kitchen) ~%")
 
 ;; update funcs
-(defun set-tool-on-table (&key (object-name "knife") (arm :rarm) (action-mode :set) (spot-name "kitchen") (use-cds-offset nil))
+(defun set-tool-on-table (&key (object-name "knife") (arm :rarm) (action-mode :set) (spot-name "kitchen") (use-cds-offset t))
   (let ((pre-set-avs (list))
         (pre-set-val (float-vector 0 0 0))
         (set-target-coords (make-coords))
@@ -140,10 +140,31 @@
       (setq pre-set-val #f(-150 0 0)) ;; for upper
 
       ;; calc from defined coords
-      (setq obj-coords (send *pan-coords* :copy-worldcoords))
+      (setq obj-coords (send *pot-coords* :copy-worldcoords))
       (send *arrow* :newcoords (calc-coords-from-rel obj-coords (make-coords :pos #f(-184.952 13.937 20.367) :rpy #f(-0.361 1.264 2.752))))
       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send obj-coords :copy-worldcoords) (send *arrow* :copy-worldcoords))
       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
+      )
+     ((and (string= object-name "pot") (string= spot-name "stove") (equal arm :larm));; TODO
+      (setq pre-set-avs (list #f(25.83 -4.49773 82.9127 -114.765 -190.225 -92.4874 -86.8266)
+                              #f(20.277 8.77317 68.6259 -48.2159 -262.701 -99.5498 53.6745)
+                              ))
+      (setq pre-set-val #f(-150 0 0)) ;; for upper
+
+      ;; calc from defined coords
+      (setq obj-coords (send *pan-coords* :copy-worldcoords))
+      (send *arrow* :newcoords (calc-coords-from-rel obj-coords (make-coords :pos #f(-184.952 13.937 20.367) :rpy #f(-0.361 1.264 2.752)))) ;; TODO Fix
+      (format t "~A coords ~A , set target coords is ~A ~%" object-name (send obj-coords :copy-worldcoords) (send *arrow* :copy-worldcoords))
+      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
+      )
+     ((and (string= object-name "broccoli") (string= spot-name "stove") (equal arm :larm));; TODO zaru?
+      (setq pre-set-avs (list #f(69.679 -8.03115 70.5921 -121.326 -3.71055 -32.8935 -5.88907)
+                              #f(45.532 15.6265 43.8688 -52.2305 36.9455 -101.153 -32.4685)
+                              ))
+      (setq pre-set-val #f(-100 0 -100)) ;; for upper ;;TODO
+
+      ;; calc from defined coords
+      (setq set-target-coords (make-coords :pos #f(700 367.301 914.519) :rpy #f(-1.371 0.162 1.508))) ;; TODO Add model?
       )
      (t
       (format t "Sorry, object-name ~A, spot-name ~A, arm ~A is not defined now !!!~%" object-name spot-name arm)
@@ -160,7 +181,7 @@
     ;; TODO add dissoc object
     ))
 
-(defun hold-pot-on-stove (&key (arm :larm) (object-name "pot") (action-mode :hold) (spot-name "stove") (use-cds-offset nil))
+(defun hold-pot-on-stove (&key (arm :larm) (object-name "pot") (action-mode :hold) (spot-name "stove") (use-cds-offset t))
   (let ((pre-set-avs (list))
         (pre-set-val (float-vector 0 0 0))
         (set-target-coords (make-coords))
@@ -201,7 +222,7 @@
     (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm arm :action-mode action-mode :object-name object-name)
     ))
 
-(defun release-pot-on-stove (&key (arm :larm) (use-cds-offset nil) (reset-pose-end t))
+(defun release-pot-on-stove (&key (arm :larm) (use-cds-offset t) (reset-pose-end t))
   (let ((pre-set-avs (list))
         (pre-set-val (float-vector 0 0 0))
         (set-target-coords (make-coords))
@@ -555,7 +576,7 @@
 
     grasp-cds))
 
-(defun sink-lever-test (&key (use-cds-offset nil) (with-rec t))
+(defun sink-lever-test (&key (use-cds-offset t) (with-rec nil))
   (let (
         ;; (wait-rav-1 #f(-41.4059 32.4107 -50.5582 -112.849 -176.587 -63.8396 38.962)) ;; 手前の姿勢
         ;; (wait-rav-2 #f(-24.8704 3.91558 -78.0752 -40.0538 -31.1184 -40.1947 20.8712)) ;; 奥の姿勢
@@ -650,45 +671,45 @@
 
 ;; wrapper funcs
 (defun receive-and-set-knife ()
-  (set-tool-on-table :object-name "knife" :arm :rarm :action-mode :set :spot-name "kitchen" :use-cds-offset nil)
+  (set-tool-on-table :object-name "knife" :arm :rarm :action-mode :set :spot-name "kitchen" :use-cds-offset t)
   )
 
 (defun place-knife ()
-  (set-tool-on-table :object-name "knife" :arm :rarm :action-mode :place :spot-name "kitchen" :use-cds-offset nil)
+  (set-tool-on-table :object-name "knife" :arm :rarm :action-mode :place :spot-name "kitchen" :use-cds-offset t)
   )
 
 (defun pick-up-knife ()
-  (set-tool-on-table :object-name "knife" :arm :rarm :action-mode :pick-up :spot-name "kitchen" :use-cds-offset nil)
+  (set-tool-on-table :object-name "knife" :arm :rarm :action-mode :pick-up :spot-name "kitchen" :use-cds-offset t)
 
   (assoc-object-to-arm *knife* (calc-coords-from-rel *knife* (make-coords :pos #f(0 0 0) :rpy #f(0.0 0.0 -1.571))) :arm :rarm)
   )
 
 (defun receive-and-set-peeler ()
-  (set-tool-on-table :object-name "peeler" :arm :rarm :action-mode :set :spot-name "kitchen" :use-cds-offset nil)
+  (set-tool-on-table :object-name "peeler" :arm :rarm :action-mode :set :spot-name "kitchen" :use-cds-offset t)
   )
 
 (defun place-peeler ()
-  (set-tool-on-table :object-name "peeler" :arm :rarm :action-mode :place :spot-name "kitchen" :use-cds-offset nil)
+  (set-tool-on-table :object-name "peeler" :arm :rarm :action-mode :place :spot-name "kitchen" :use-cds-offset t)
   )
 
 (defun pick-up-peeler ()
-  (set-tool-on-table :object-name "peeler" :arm :rarm :action-mode :pick-up :spot-name "kitchen" :use-cds-offset nil)
+  (set-tool-on-table :object-name "peeler" :arm :rarm :action-mode :pick-up :spot-name "kitchen" :use-cds-offset t)
 
   (assoc-object-to-arm *peeler* (calc-coords-from-rel *peeler* (make-coords :pos #f(0 0 0) :rpy #f(0.0 0.0 -1.571))) :arm :rarm)
   )
 
 (defun receive-and-set-potato-peeler ()
-  (set-tool-on-table :object-name "potato peeler" :arm :rarm :action-mode :set :spot-name "kitchen" :use-cds-offset nil)
+  (set-tool-on-table :object-name "potato peeler" :arm :rarm :action-mode :set :spot-name "kitchen" :use-cds-offset t)
   (set-object *potato-peeler* (send *potato-peeler-coords* :copy-worldcoords))
   )
 
 (defun place-potato-peeler ()
-  (set-tool-on-table :object-name "potato peeler" :arm :rarm :action-mode :place :spot-name "kitchen" :use-cds-offset nil)
+  (set-tool-on-table :object-name "potato peeler" :arm :rarm :action-mode :place :spot-name "kitchen" :use-cds-offset t)
   (set-object *potato-peeler* (send *potato-peeler-coords* :copy-worldcoords))
   )
 
 (defun pick-up-potato-peeler ()
-  (set-tool-on-table :object-name "potato peeler" :arm :rarm :action-mode :pick-up :spot-name "kitchen" :use-cds-offset nil)
+  (set-tool-on-table :object-name "potato peeler" :arm :rarm :action-mode :pick-up :spot-name "kitchen" :use-cds-offset t)
 
   (assoc-object-to-arm *potato-peeler* (calc-coords-from-rel *potato-peeler* (make-coords :pos #f(0 0 0) :rpy #f(0.0 0.0 -1.571))) :arm :rarm)
   )
@@ -696,11 +717,11 @@
 (defun receive-and-set-gray-bowl (&key (spot "kitchen")) ;; TODO add head
   (cond
    ((equal spot "kitchen")
-    (set-tool-on-table :object-name "gray bowl" :arm :rarm :action-mode :set :spot-name spot :use-cds-offset nil)
+    (set-tool-on-table :object-name "gray bowl" :arm :rarm :action-mode :set :spot-name spot :use-cds-offset t)
     (set-object *gray-bowl* (send *gray-bowl-kitchen-coords* :copy-worldcoords))
     )
    ((equal spot "stove")
-    (set-tool-on-table :object-name "gray bowl" :arm :rarm :action-mode :set :spot-name spot :use-cds-offset nil)
+    (set-tool-on-table :object-name "gray bowl" :arm :rarm :action-mode :set :spot-name spot :use-cds-offset t)
     (set-object *gray-bowl* (send *gray-bowl-stove-coords* :copy-worldcoords))
     )
    ))
@@ -708,11 +729,11 @@
 (defun place-gray-bowl (&key (spot "kitchen"))
   (cond
    ((equal spot "kitchen")
-    (set-tool-on-table :object-name "gray bowl" :arm :rarm :action-mode :place :spot-name spot :use-cds-offset nil)
+    (set-tool-on-table :object-name "gray bowl" :arm :rarm :action-mode :place :spot-name spot :use-cds-offset t)
     (set-object *gray-bowl* (send *gray-bowl-kitchen-coords* :copy-worldcoords))
     )
    ((equal spot "stove")
-    (set-tool-on-table :object-name "gray bowl" :arm :rarm :action-mode :place :spot-name spot :use-cds-offset nil)
+    (set-tool-on-table :object-name "gray bowl" :arm :rarm :action-mode :place :spot-name spot :use-cds-offset t)
     (set-object *gray-bowl* (send *gray-bowl-stove-coords* :copy-worldcoords))
     )
    ))
@@ -720,44 +741,44 @@
 (defun pick-up-gray-bowl (&key (spot "kitchen"))
   (cond
    ((equal spot "kitchen")
-    (set-tool-on-table :object-name "gray bowl" :arm :rarm :action-mode :pick-up :spot-name "kitchen" :use-cds-offset nil)
+    (set-tool-on-table :object-name "gray bowl" :arm :rarm :action-mode :pick-up :spot-name "kitchen" :use-cds-offset t)
     (assoc-object-to-arm *gray-bowl* (calc-coords-from-rel *gray-bowl* (make-coords :pos #f(-101.233 0.0 53.999) :rpy #f(0.265 1.405 -1.282))) :arm :rarm)
     )
    ((equal spot "stove")
-    (set-tool-on-table :object-name "gray bowl" :arm :rarm :action-mode :pick-up :spot-name "stove" :use-cds-offset nil)
+    (set-tool-on-table :object-name "gray bowl" :arm :rarm :action-mode :pick-up :spot-name "stove" :use-cds-offset t)
     (assoc-object-to-arm *gray-bowl* (calc-coords-from-rel *gray-bowl* (make-coords :pos #f(-89.819 12.851 40.629) :rpy #f(0.478 1.218 -0.929))) :arm :rarm)
     )
    ))
 
 
 (defun receive-and-set-green-bowl (&key (arm :larm))
-  (set-tool-on-table :object-name "green bowl" :arm arm :action-mode :set :spot-name "stove" :use-cds-offset nil)
+  (set-tool-on-table :object-name "green bowl" :arm arm :action-mode :set :spot-name "stove" :use-cds-offset t)
   (set-object *green-bowl* (send *gray-bowl-stove-coords* :copy-worldcoords))
   )
 
 (defun place-green-bowl (&key (arm :larm))
-  (set-tool-on-table :object-name "green bowl" :arm arm :action-mode :place :spot-name "stove" :use-cds-offset nil)
+  (set-tool-on-table :object-name "green bowl" :arm arm :action-mode :place :spot-name "stove" :use-cds-offset t)
   (set-object *green-bowl* (send *gray-bowl-stove-coords* :copy-worldcoords))
   )
 
 (defun pick-up-green-bowl (&key (arm :larm))
-  (set-tool-on-table :object-name "green bowl" :arm arm :action-mode :pick-up :spot-name "stove" :use-cds-offset nil)
+  (set-tool-on-table :object-name "green bowl" :arm arm :action-mode :pick-up :spot-name "stove" :use-cds-offset t)
 
   (assoc-object-to-arm *green-bowl* (calc-coords-from-rel *green-bowl* (make-coords :pos #f(-57.768 20.693 22.929) :rpy #f(0.115 1.25 -1.37))) :arm arm)
   )
 
 (defun receive-and-set-oil-dispenser ()
-  (set-tool-on-table :object-name "oil dispenser" :arm :larm :action-mode :set :spot-name "stove" :use-cds-offset nil)
+  (set-tool-on-table :object-name "oil dispenser" :arm :larm :action-mode :set :spot-name "stove" :use-cds-offset t)
   (set-object *oil-dispenser* (send *oil-dispenser-stove-coords* :copy-worldcoords))
   )
 
 (defun place-oil-dispenser ()
-  (set-tool-on-table :object-name "oil dispenser" :arm :larm :action-mode :place :spot-name "stove" :use-cds-offset nil)
+  (set-tool-on-table :object-name "oil dispenser" :arm :larm :action-mode :place :spot-name "stove" :use-cds-offset t)
   (set-object *oil-dispenser* (send *oil-dispenser-stove-coords* :copy-worldcoords))
   )
 
 (defun pick-up-oil-dispenser ()
-  (set-tool-on-table :object-name "oil dispenser" :arm :larm :action-mode :pick-up :spot-name "stove" :use-cds-offset nil)
+  (set-tool-on-table :object-name "oil dispenser" :arm :larm :action-mode :pick-up :spot-name "stove" :use-cds-offset t)
 
   ;; (assoc-object-to-arm *oil-dispenser* (send *oil-dispenser* :handle-handle1) :arm :larm)
   (assoc-object-to-arm *oil-dispenser* (calc-coords-from-rel *oil-dispenser* (make-coords :pos #f(-9.925 5.389 113.022) :rpy #f(-0.023 0.057 3.124))) :arm :larm)
@@ -774,19 +795,71 @@
 
 
 (defun pick-up-frying-pan ()
-  (set-tool-on-table :object-name "frying pan" :arm :larm :action-mode :pick-up :spot-name "stove" :use-cds-offset nil)
+  (set-tool-on-table :object-name "frying pan" :arm :larm :action-mode :pick-up :spot-name "stove" :use-cds-offset t)
 
   (assoc-object-to-arm *pan* (calc-coords-from-rel *pan* (make-coords :pos #f(-184.952 13.937 20.367) :rpy #f(-0.361 1.264 2.752))) :arm :larm)
   )
 
 (defun place-frying-pan ()
-  (set-tool-on-table :object-name "frying pan" :arm :larm :action-mode :place :spot-name "stove" :use-cds-offset nil)
+  (set-tool-on-table :object-name "frying pan" :arm :larm :action-mode :place :spot-name "stove" :use-cds-offset t)
   (set-object *pan* (send *pan-coords* :copy-worldcoords))
   )
 
 (defun receive-and-set-frying-pan ()
-  (set-tool-on-table :object-name "frying pan" :arm :larm :action-mode :set :spot-name "stove" :use-cds-offset nil)
+  (set-tool-on-table :object-name "frying pan" :arm :larm :action-mode :set :spot-name "stove" :use-cds-offset t)
   (set-object *pan* (send *pan-coords* :copy-worldcoords))
+  )
+
+
+(defun pick-up-spatula ()
+  (set-tool-on-table :object-name "spatula" :arm :rarm :action-mode :pick-up :spot-name "stove" :use-cds-offset t)
+
+  (assoc-object-to-arm *spatula* (calc-coords-from-rel *spatula* (make-coords :pos #f(-160 0 0) :rpy #f(0 0 -1.571))) :arm :rarm)
+  )
+
+(defun place-spatula ()
+  (set-tool-on-table :object-name "spatula" :arm :rarm :action-mode :place :spot-name "stove" :use-cds-offset t)
+  (set-object *spatula* (send *spatula-stove-coords* :copy-worldcoords))
+  )
+
+(defun receive-and-set-spatula ()
+  (set-tool-on-table :object-name "spatula" :arm :rarm :action-mode :set :spot-name "stove" :use-cds-offset t)
+  (set-object *spatula* (send *spatula-stove-coords* :copy-worldcoords))
+  )
+
+
+(defun pick-up-broccoli ()
+  (set-tool-on-table :object-name "broccoli" :arm :larm :action-mode :pick-up :spot-name "stove" :use-cds-offset t)
+
+  ;; (assoc-object-to-arm *broccoli* (calc-coords-from-rel *broccoli* (make-coords :pos #f(-160 0 0) :rpy #f(0 0 -1.571))) :arm :rarm)
+  )
+
+(defun place-broccoli ()
+  (set-tool-on-table :object-name "broccoli" :arm :larm :action-mode :place :spot-name "stove" :use-cds-offset t)
+  ;; (set-object *broccoli* (send *broccoli-stove-coords* :copy-worldcoords))
+  )
+
+(defun receive-and-set-broccoli ()
+  (set-tool-on-table :object-name "broccoli" :arm :larm :action-mode :set :spot-name "stove" :use-cds-offset t)
+  ;; (set-object *broccoli* (send *broccoli-stove-coords* :copy-worldcoords))
+  )
+
+
+;; TODO add pot
+(defun pick-up-pot ()
+  (set-tool-on-table :object-name "pot" :arm :larm :action-mode :pick-up :spot-name "stove" :use-cds-offset t)
+
+  (assoc-object-to-arm *pot* (calc-coords-from-rel *pot* (make-coords :pos #f(-160 0 0) :rpy #f(0 0 -1.571))) :arm :rarm)
+  )
+
+(defun place-pot ()
+  (set-tool-on-table :object-name "pot" :arm :larm :action-mode :place :spot-name "stove" :use-cds-offset t)
+  (set-object *pot* (send *pot-coords* :copy-worldcoords))
+  )
+
+(defun receive-and-set-pot ()
+  (set-tool-on-table :object-name "pot" :arm :larm :action-mode :set :spot-name "stove" :use-cds-offset t)
+  (set-object *pot* (send *pot-coords* :copy-worldcoords))
   )
 
 

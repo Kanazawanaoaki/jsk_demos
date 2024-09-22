@@ -14,18 +14,54 @@
 ;; global variables
 
 (defun prepare-sunny ()
-  (place-objects-on-table :object-name "ボウル0" :arm :rarm :spot-name "stove" :set-flag t) ;; small-bowl
-  (place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name "stove" :set-flag t) ;; bowl
-  (set-pot-on-stove :object-name "フライパン") ;; frying-pan
+  (reset-view-list)
+  (init-pr2)
+  (pr2-cook-init :spot "stove" :type :butter-sunny-side-up)
+
+  (receive-and-set-green-bowl :arm :rarm)
+  (receive-and-set-gray-bowl :spot "stove")
+  (receive-and-set-frying-pan)
+  ;; (place-objects-on-table :object-name "ボウル0" :arm :rarm :spot-name "stove" :set-flag t) ;; small-bowl
+  ;; (place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name "stove" :set-flag t) ;; bowl
+  ;; (set-pot-on-stove :object-name "フライパン") ;; frying-pan
 
   )
 
 (defun do-sunny ()
   (speak-with-log "目玉焼きの調理を開始します")
+  (reset-view-list)
+  (init-pr2)
+  (pr2-cook-init :spot "stove" :type :butter-sunny-side-up)
   (exec-cook-from-recipe "egg-recipes-prompt_butter-sunny_converted_conv_planned.l")
-  ;; (speak-with-log "目玉焼きの調理を行いました")
-
   ;; (setq *plan-list* '((hold small-bowl arm2 stove) (transfer butter small-bowl frying-pan arm2 stove) (place small-bowl arm2 stove) (turn-on-stove frying-pan arm1) (heat butter frying-pan melt) (hold bowl arm2 stove) (transfer egg bowl frying-pan arm2 stove) (place bowl arm2 stove) (cook egg cooked-egg) (turn-off-stove middle frying-pan arm1)))
+
+  ;; (speak-with-log "目玉焼きの調理を行いました")
+  )
+
+(defun do-sunny-step ()
+  (speak-with-log "目玉焼きの調理を開始します")
+  (reset-view-list)
+  (init-pr2)
+  (pr2-cook-init :spot "stove" :type :butter-sunny-side-up)
+  ;; (exec-cook-from-recipe "egg-recipes-prompt_butter-sunny_converted_conv_planned.l")
+
+  (setq *plan-list* '((hold small-bowl arm2 stove) (transfer butter small-bowl frying-pan arm2 stove) (place small-bowl arm2 stove) (turn-on-stove frying-pan arm1) (heat butter frying-pan melt) (hold bowl arm2 stove) (transfer egg bowl frying-pan arm2 stove) (place bowl arm2 stove) (cook egg cooked-egg) (turn-off-stove middle frying-pan arm1)))
+
+  (if (null *plan-list*)
+      (format t "now plan-list is nill please exec (load-planned-file)!! ~%")
+    (progn
+      (dolist (plan *plan-list*)
+        (format t "now action is ~A ~%" plan)
+        (eval plan)
+        (do-until-key
+         (format t "wait for key pressed, after exec ~A ~%" plan)
+         (unix:usleep 100000)
+         )
+        )
+      ))
+
+
+  ;; (speak-with-log "目玉焼きの調理を行いました")
   )
 
 (defun receive-spatula-for-sunny ()
@@ -41,19 +77,22 @@
   )
 
 (defun grasp-frying-pan ()
-  (place-objects-on-table :object-name "フライパン" :arm :larm :spot-name "stove" :grasp-flag t :grasp-gain 0.1)
+  ;; (place-objects-on-table :object-name "フライパン" :arm :larm :spot-name "stove" :grasp-flag t :grasp-gain 0.1)
+  (pick-up-frying-pan)
   )
 
 (defun put-frying-pan ()
-  (place-objects-on-table :object-name "フライパン" :arm :larm :spot-name "stove")
+  ;; (place-objects-on-table :object-name "フライパン" :arm :larm :spot-name "stove")
+  (place-frying-pan)
   )
 
 (defun put-spatula-on-table ()
-  (place-objects-on-table :object-name "ヘラ" :arm :rarm :spot-name "stove")
+  ;; (place-objects-on-table :object-name "ヘラ" :arm :rarm :spot-name "stove")
+  (place-spatula)
   )
 
 
-(defun trasnfer-sunny-from-pan ()
+(defun transfer-sunny-from-pan () ;; TODO update
   ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-transfer-sunny-from-pan-20240909-data.l")
 
   ;; 20240909 chapmpion
@@ -71,7 +110,7 @@
 
   (grasp-frying-pan)
   (receive-spatula-for-sunny)
-  (trasnfer-sunny-from-pan)
+  (transfer-sunny-from-pan)
   (put-frying-pan)
   (put-spatula-on-table)
 
