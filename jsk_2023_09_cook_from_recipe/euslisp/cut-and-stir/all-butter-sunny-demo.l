@@ -16,7 +16,7 @@
 (defun prepare-sunny ()
   (reset-view-list)
   (init-pr2)
-  (pr2-cook-init :spot "kitchen" :type :butter-sunny-side-up)
+  (pr2-cook-init :spot "stove" :type :butter-sunny-side-up)
 
   (receive-and-set-green-bowl :arm :rarm)
   (receive-and-set-gray-bowl :spot "stove")
@@ -31,7 +31,7 @@
   (speak-with-log "目玉焼きの調理を開始します")
   (reset-view-list)
   (init-pr2)
-  (pr2-cook-init :spot "kitchen" :type :butter-sunny-side-up)
+  (pr2-cook-init :spot "stove" :type :butter-sunny-side-up)
   (exec-cook-from-recipe "egg-recipes-prompt_butter-sunny_converted_conv_planned.l")
   ;; (setq *plan-list* '((hold small-bowl arm2 stove) (transfer butter small-bowl frying-pan arm2 stove) (place small-bowl arm2 stove) (turn-on-stove frying-pan arm1) (heat butter frying-pan melt) (hold bowl arm2 stove) (transfer egg bowl frying-pan arm2 stove) (place bowl arm2 stove) (cook egg cooked-egg) (turn-off-stove middle frying-pan arm1)))
 
@@ -66,7 +66,7 @@
   )
 
 
-(defun trasnfer-sunny-from-pan ()
+(defun transfer-sunny-from-pan () ;; TODO update
   ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-transfer-sunny-from-pan-20240909-data.l")
 
   ;; 20240909 chapmpion
@@ -84,7 +84,7 @@
 
   (grasp-frying-pan)
   (receive-spatula-for-sunny)
-  (trasnfer-sunny-from-pan)
+  (transfer-sunny-from-pan)
   (put-frying-pan)
   (put-spatula-on-table)
 
