@@ -20,7 +20,11 @@
 
   (receive-and-set-green-bowl :arm :rarm)
   (receive-and-set-gray-bowl :spot "stove")
-  (receive-and-set-frying-pan)
+  ;; (receive-and-set-frying-pan)
+  (set-pot-on-stove :object-name "frying pan")
+
+  ;; TODO add spatula?
+
   ;; (place-objects-on-table :object-name "ボウル0" :arm :rarm :spot-name "stove" :set-flag t) ;; small-bowl
   ;; (place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name "stove" :set-flag t) ;; bowl
   ;; (set-pot-on-stove :object-name "フライパン") ;; frying-pan
@@ -100,7 +104,7 @@
   ;; (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
   ;; (cook-from-now-replay-once :larm nil :initial-av t)
 
-  (setq cook-from-now-file-name "../../av-files/cook-from-now-transfer-sunny-from-pan-20240909-data-02.l")
+  (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20240909-data-02.l")
   (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
   (cook-from-now-replay-once :larm nil :initial-av nil :time 100) ;; default time is 150
   )

@@ -162,6 +162,12 @@ roslaunch jsk_2023_09_cook_from_recipe service_save_ptcloud_in_pcd.launch object
 roslaunch jsk_2023_09_cook_from_recipe save_ptcloud_in_pcd.launch INPUT:=/tf_transform_cloud/output
 ```
 
+### 動作の教示
+```bash
+(cook-teach)
+(dump-cook-from-now-file :file_name "[Your File Name]")
+```
+
 ### 匂いセンサを使う
 https://github.com/708yamaguchi/jsk_3rdparty/tree/m5stack-ros-/m5stack_ros でセットアップをする
 

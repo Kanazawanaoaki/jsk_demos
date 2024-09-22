@@ -1,6 +1,7 @@
 #!/usr/bin/env roseus
 
 (ros::load-ros-manifest "roseus")
+(ros::load-ros-manifest "std_srvs")
 (ros::load-ros-package "lc_state_recognition")
 (ros::load-ros-package "jsk_rviz_plugins")
 (ros::roseus "pr2_cook_util" :anonymous t)
@@ -2029,6 +2030,29 @@
   ;; (format t "cook-short-rav-list size : ~A ~%" (length *cook-short-rav-list*))
   )
 
+(defun rotate-gripper-av (arm-av rotate-deg)
+  (let (ans-av)
+    (setq ans-av (float-vector (elt arm-av 0) (elt arm-av 1) (elt arm-av 2) (elt arm-av 3) (elt arm-av 4) (elt arm-av 5) (+ (elt arm-av 6) rotate-deg)))
+    ans-av))
+
+(defun rotate-cook-from-now (&key (larm nil) (rotate-deg 360))
+  (let (current-ans-list (list))
+    (setq *cook-from-now-initial-arm-av* (rotate-gripper-av *cook-from-now-initial-arm-av* rotate-deg))
+    (if larm
+        (progn
+          (dolist (current-arm-av *cook-short-lav-list*)
+            (setq current-ans-list (append current-ans-list (list (rotate-gripper-av current-arm-av rotate-deg))))
+            )
+          (setq *cook-short-lav-list* current-ans-list))
+      (progn
+        (dolist (current-arm-av *cook-short-rav-list*)
+          (setq current-ans-list (append current-ans-list (list (rotate-gripper-av current-arm-av rotate-deg))))
+          )
+        (setq *cook-short-rav-list* current-ans-list))
+      )
+    ))
+
+
 (defun cook-from-now-replay-once (&key (larm nil) (initial-av t) (reverse nil) (each-step nil) (time 150))
   (if initial-av
       (set-cook-from-now-initial-arm-av :larm larm)
@@ -2233,6 +2257,14 @@
     (setq res (ros::service-call "/adjusted_clip_state_recognizer/start_request" req t))
     (format t "lc_adjusted_clip_state_recognition command is sent! ~%")
     (format t "result : ~A ~%" res)
+    )
+  )
+
+(defun lc_adjusted_clip_stop-command ()
+  (let (res)
+    (setq req (instance std_srvs::TriggerRequest :init))
+    (setq res (ros::service-call "/adjusted_clip_state_recognizer/stop_request" req t))
+    (format t "lc_adjusted_clip_stop command is sent! ~%")
     )
   )
 

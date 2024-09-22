@@ -500,7 +500,8 @@
 
     ;; before pose
     (cond
-     ((or (equal action-mode :place) (equal action-mode :set))
+     ((equal action-mode :place)
+      ;; ((or (equal action-mode :place) (equal action-mode :set))
       (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
       (send *ri* :angle-vector (send *pr2* :angle-vector))
       (send *viewer* :draw-objects)
