@@ -1,0 +1,25 @@
+<launch>
+  <arg name="rosbag" doc="rosbag file path" />
+  <arg name="compress" default="false" doc="whether compress rosbag or not." />
+
+  <arg if="$(arg compress)" name="compress_flag" value="--bz2" />
+  <arg unless="$(arg compress)" name="compress_flag" value="" />
+
+  <node name="rosbag_record" pkg="rosbag" type="record"
+      args="-q $(arg compress_flag) -O $(arg rosbag) -b 0 
+          /rosout
+          /camera/color/camera_info
+          /camera/color/image_raw/compressed
+          /camera/aligned_depth_to_color/camera_info
+          /camera/aligned_depth_to_color/image_raw/compressedDepth
+          /timstamped_cal_gas
+          /timstamped_gas_v2_102b
+          /timstamped_gas_v2_302b
+          /timstamped_gas_v2_502b
+          /timstamped_gas_v2_702b
+          /timstamped_tgs_2600_analog
+          /timstamped_tgs_2602_analog
+          /timstamped_tgs_2603_analog"
+      output="screen" />
+
+</launch>
