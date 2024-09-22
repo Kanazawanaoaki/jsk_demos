@@ -3,6 +3,8 @@
 
   <include file="$(find realsense2_camera)/launch/rs_camera.launch">
     <arg name="align_depth" value="true"/>
+    <!-- <arg name="camera" value="kanazawa_d435"/> -->
+    <!-- <arg name="initial_reset" value="true"/> -->
   </include>
 
   <!-- decompress -->
