@@ -44,6 +44,7 @@ class PeriodicImageSaver:
     def save_image_periodically(self, event):
         if self.saving_enabled and self.latest_image is not None and self.current_save_path:
             # 現在のUNIXタイムスタンプを取得
+            unix_timestamp = int(datetime.utcnow().timestamp())
             japan_time_str = datetime.now().strftime('%Y%m%d_%H%M%S')
 
             # ファイル名にタイムスタンプと日本時間を含める
