@@ -36,7 +36,9 @@
           /k4a/rgb/camera_info
           /k4a/rgb/image_rect_color/compressed
           /audio
-          /audio_info"
+          /audio_info
+          /pr2_cooking_current_action
+          /pr2_current_cmd_memo"
       output="screen" />
 
 </launch>

@@ -6,6 +6,7 @@
 (ros::roseus "pr2_cook_util" :anonymous t)
 
 (ros::advertise "pr2_cooking_current_action" jsk_rviz_plugins::OverlayText 1)
+(ros::advertise "pr2_current_cmd_memo" std_msgs::string 1)
 
 (format t "init ~%")
 (require :pr2-utils "package://jsk_2023_09_cook_from_recipe/euslisp/pr2-utils.l")
@@ -150,6 +151,15 @@
     (send msg :text now-str)
     (ros::ros-info "msg [~A]" (send msg :text))
     (ros::publish "pr2_cooking_current_action" msg)
+    (pr2_action_cmd_memo_pub :now-str (format nil "[pr2_cooking_current_action] ~A" now-str))
+    ))
+
+(defun pr2_action_cmd_memo_pub (&key (now-str "(hold small-bowl arm2 stove)"))
+  (let ((msg))
+    (setq msg (instance std_msgs::string :init))
+    (send msg :data now-str)
+    (ros::ros-info "msg [~A]" (send msg :data))
+    (ros::publish "pr2_current_cmd_memo" msg)
     ))
 
 

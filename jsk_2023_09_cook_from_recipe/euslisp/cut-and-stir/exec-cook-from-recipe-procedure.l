@@ -80,15 +80,15 @@
     )
    ((string= object "spatula")
     ;; (place-objects-on-table :object-name "ヘラ" :arm :rarm :spot-name spot)
-    (pick-up-spatula)
+    (place-spatula)
     )
    ((string= object "broccoli")
     ;; (place-objects-on-table :object-name "ブロッコリー" :arm :larm :spot-name spot)
-    (pick-up-broccoli)
+    (place-broccoli)
     )
    ((string= object "pot")
     ;; (place-objects-on-table :object-name "pot" :arm :larm :spot-name spot)
-    (pick-up-pot)
+    (place-pot)
     )
    (t
     (format t "object ~A, arm ~A, spot ~A is not defined !!!~%" object arm spot)
@@ -259,8 +259,8 @@
     (pour-object-to-pan :from-object "ボウル1" :to-object "フライパン" :arm :rarm :spot-name spot)
     )
    ((and
-     (string= from "small-bowl")
-     (string= to "frying-pan"))
+     (string= from "small-bowl") ;; green bowl
+     (string= to "frying-pan")) ;; pan
     (pour-object-to-pan :from-object "ボウル0" :to-object "フライパン" :arm :rarm :spot-name spot)
     )
    ((and

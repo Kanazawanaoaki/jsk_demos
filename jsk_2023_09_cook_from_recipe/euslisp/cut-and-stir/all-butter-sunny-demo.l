@@ -38,6 +38,32 @@
   ;; (speak-with-log "目玉焼きの調理を行いました")
   )
 
+(defun do-sunny-step ()
+  (speak-with-log "目玉焼きの調理を開始します")
+  (reset-view-list)
+  (init-pr2)
+  (pr2-cook-init :spot "stove" :type :butter-sunny-side-up)
+  ;; (exec-cook-from-recipe "egg-recipes-prompt_butter-sunny_converted_conv_planned.l")
+
+  (setq *plan-list* '((hold small-bowl arm2 stove) (transfer butter small-bowl frying-pan arm2 stove) (place small-bowl arm2 stove) (turn-on-stove frying-pan arm1) (heat butter frying-pan melt) (hold bowl arm2 stove) (transfer egg bowl frying-pan arm2 stove) (place bowl arm2 stove) (cook egg cooked-egg) (turn-off-stove middle frying-pan arm1)))
+
+  (if (null *plan-list*)
+      (format t "now plan-list is nill please exec (load-planned-file)!! ~%")
+    (progn
+      (dolist (plan *plan-list*)
+        (format t "now action is ~A ~%" plan)
+        (eval plan)
+        (do-until-key
+         (format t "wait for key pressed, after exec ~A ~%" plan)
+         (unix:usleep 100000)
+         )
+        )
+      ))
+
+
+  ;; (speak-with-log "目玉焼きの調理を行いました")
+  )
+
 (defun receive-spatula-for-sunny ()
   (send *pr2* :rarm :angle-vector #f(-41.0354 31.325 -34.2869 -99.4442 -158.179 -54.5975 103.313))
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
