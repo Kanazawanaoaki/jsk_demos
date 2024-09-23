@@ -19,11 +19,11 @@
         machine="$(arg machine)" if="$(arg launch_manager)"
         output="screen" />
 
-  <node name="rgb_decompress" pkg="image_transport" type="republish"
+  <node name="pr2_rgb_decompress" pkg="image_transport" type="republish"
         args="compressed in:=$(arg RGB_IMAGE) out:=$(arg RGB_REMOTE_IMAGE)" />
-  <node name="depth_decompress" pkg="image_transport" type="republish"
+  <node name="pr2_depth_decompress" pkg="image_transport" type="republish"
         args="compressedDepth in:=$(arg DEPTH_IMAGE) out:=$(arg DEPTH_REMOTE_IMAGE)" />
-  <node pkg="nodelet" type="nodelet" name="point_cloud_xyzrgb"
+  <node pkg="nodelet" type="nodelet" name="pr2_point_cloud_xyzrgb"
         args="load depth_image_proc/point_cloud_xyzrgb $(arg manager)" output="screen" >
     <remap from="rgb/camera_info" to="$(arg RGB_CAMERA_INFO)" />
     <remap from="rgb/image_rect_color" to="$(arg RGB_REMOTE_IMAGE)" />
