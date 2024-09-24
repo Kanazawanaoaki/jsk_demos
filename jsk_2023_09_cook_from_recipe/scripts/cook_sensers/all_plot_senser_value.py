@@ -11,7 +11,8 @@ def convert_timestamp_to_japan_time(timestamp):
 
 def plot_all_sensor_data(input_dir, output_dir, japan_time):
     # ディレクトリ内のCSVファイルをすべて取得
-    csv_files = [f for f in os.listdir(input_dir) if f.endswith('.csv')]
+    # csv_files = [f for f in os.listdir(input_dir) if f.endswith('.csv')]
+    csv_files = sorted([f for f in os.listdir(input_dir) if f.endswith('.csv')])
 
     if not csv_files:
         print(f"No CSV files found in {input_dir}")
