@@ -29,6 +29,10 @@
   <node name="depth_raw_decompress" pkg="image_transport" type="republish"
         args="compressedDepth in:=$(arg DEPTH_RAW_IMAGE) out:=$(arg DEPTH_RAW_IMAGE)" />
 
+  <!-- cook sensers reconvert -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/cook_sensers/sensers_reconvert_from_timestamped.launch">
+  </include>
+
   <!-- rviz -->
   <group if="$(arg gui)">
     <node name="rviz"
