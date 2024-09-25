@@ -237,6 +237,26 @@ rosservice call /periodic_image_saver/start_saving "{}"
 rosservice call /periodic_image_saver/stop_saving "{}"
 ```
 
+#### plotする
+rosbagのファイルをcsvに変換する
+```bash
+python rosbag_to_csv.py -b /home/kanazawa/Desktop/data/rosbags/20240922_hp_bags/20240922_hp_bag_cook_sunny_03_cook_sensers_01.bag
+```
+
+ディレクトリ毎にすべてのセンサ値をplotする
+```bash
+roscd jsk_2023_09_cook_from_recipe/scripts/cook_sensers
+python all_plot_senser_value.py /home/kanazawa/ros/cooking_ws/src/jsk_demos/jsk_2023_09_cook_from_recipe/datas/senser_datas/20240922_hp_bag_cook_sunny_03_cook_sensers_01 -j
+```
+個別のセンサの値のcsvをplotする
+```bash
+roscd jsk_2023_09_cook_from_recipe/scripts/cook_sensers
+python plot_senser_value.py /home/kanazawa/ros/cooking_ws/src/jsk_demos/jsk_2023_09_cook_from_recipe/datas/senser_datas/20240922_hp_bag_cook_sunny_03/timstamped_tgs_2603_analog.csv -j
+```
+上の2つのplotを一度に行える便利実行スクリプトも用意した
+```bash
+python exec_gas_sensers_plot.py /home/kanazawa/ros/cooking_ws/src/jsk_demos/jsk_2023_09_cook_from_recipe/datas/senser_datas/20240922_hp_bag_cook_sunny_01_cook_sensers_02
+```
 
 
 
