@@ -7,6 +7,9 @@ KERNEL=="ttyUSB*",  ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{ser
 # M5Stack Gray02
 KERNEL=="ttyUSB*",  ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{serial}=="023FF36D" SYMLINK+="gray02"
 
+# M5Stack Gray03
+KERNEL=="ttyUSB*",  ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{serial}=="01CDDADA" SYMLINK+="gray03"
+
 # M5Stack Fire01
 KERNEL=="ttyACM*",  ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="55d4", ATTRS{serial}=="52D4002860" SYMLINK+="fire01"
 
@@ -18,3 +21,12 @@ KERNEL=="ttyUSB*",  ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{ser
 
 # M5Stack Fire04
 KERNEL=="ttyUSB*",  ATTRS{idVendor}=="10c4", ATTRS{idProduct}=="ea60", ATTRS{serial}=="021612FC" SYMLINK+="fire04"
+
+# M5Stack Fire05
+KERNEL=="ttyACM*",  ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="55d4", ATTRS{serial}=="52D2051998" SYMLINK+="fire05"
+
+# M5Stack Fire06
+KERNEL=="ttyACM*",  ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="55d4", ATTRS{serial}=="52D4002907" SYMLINK+="fire06"
+
+# M5Stack Fire07
+KERNEL=="ttyACM*",  ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="55d4", ATTRS{serial}=="52D4002993" SYMLINK+="fire07"
