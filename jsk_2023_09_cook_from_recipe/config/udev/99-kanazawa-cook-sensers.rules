@@ -27,3 +27,6 @@ KERNEL=="ttyACM*",  ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="55d4", ATTRS{ser
 
 # M5Stack Fire06
 KERNEL=="ttyACM*",  ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="55d4", ATTRS{serial}=="52D4002907" SYMLINK+="fire06"
+
+# M5Stack Fire07
+KERNEL=="ttyACM*",  ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="55d4", ATTRS{serial}=="52D4002993" SYMLINK+="fire07"
