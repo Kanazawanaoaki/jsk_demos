@@ -15,7 +15,7 @@ def main():
     # オプション（-jを追加）
     option = "-j"
     # ファイルのリスト
-    file_list = ["timstamped_cal_gas.csv", "timstamped_gas_v2_102b.csv", "timstamped_gas_v2_302b.csv", "timstamped_gas_v2_502b.csv", "timstamped_gas_v2_702b.csv", "timstamped_tgs_2600_analog.csv", "timstamped_tgs_2602_analog.csv", "timstamped_tgs_2603_analog.csv"]
+    file_list = ["timstamped_cal_gas_data.csv", "timstamped_gas_v2_102b_data.csv", "timstamped_gas_v2_302b_data.csv", "timstamped_gas_v2_502b_data.csv", "timstamped_gas_v2_702b_data.csv", "timstamped_tgs_2600_analog_data.csv", "timstamped_tgs_2602_analog_data.csv", "timstamped_tgs_2603_analog_data.csv"]
 
     ## exec all_plot_senser_value.py
     python_script = "all_plot_senser_value.py"

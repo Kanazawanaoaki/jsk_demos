@@ -18,7 +18,7 @@ def read_rosbag(bag_path, topics, output_dir):
     with rosbag.Bag(bag_path, 'r') as bag:
         for topic in topics:
             # output_file = os.path.join(bag_output_dir, topic.replace('/', '_') + '.csv')
-            output_file = os.path.join(bag_output_dir, topic.replace('/', '') + '.csv')
+            output_file = os.path.join(bag_output_dir, topic.replace('/', '') + '_data.csv')
 
             # CSVファイルを書き込みモードで開く
             with open(output_file, mode='w', newline='') as csvfile:
