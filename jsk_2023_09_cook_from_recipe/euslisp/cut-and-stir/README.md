@@ -135,6 +135,8 @@ rlwrap roseus pr2_cut_food.l
 ### 物体点群をrosbagから取り出す
 rosbagを再生
 ```
+rossetlocal
+rossetip
 roslaunch jsk_2023_09_cook_from_recipe pr2_rosbag_play.launch rosbag:=/media/almagest/73B2/kanazawa/videos/PR2-experiment/20240706/20240706_kitchen_bags/20240706_kitchen_bag_01.bag
 ```
 サーバPCで

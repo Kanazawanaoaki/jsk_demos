@@ -15,8 +15,10 @@ def read_rosbag(bag_path, image_topic, output_dir):
 
     # 出力ディレクトリを作成 (rosbagファイル名のフォルダ)
     bag_output_dir = output_dir
-    os.makedirs(bag_output_dir, exist_ok=True)
-    print("made directory in {}".format(bag_output_dir))
+    if not os.path.exists(bag_output_dir):
+        os.makedirs(bag_output_dir)
+        print("made directory in {}".format(bag_output_dir))
+    # os.makedirs(bag_output_dir, exist_ok=True)
     output_file = os.path.join(bag_output_dir, bag_name + '_video.mp4')
 
     print(output_file)

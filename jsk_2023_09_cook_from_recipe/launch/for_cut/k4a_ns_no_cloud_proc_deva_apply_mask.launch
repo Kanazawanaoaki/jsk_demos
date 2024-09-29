@@ -1,0 +1,54 @@
+<launch>
+  <arg name="input_image" default="/k4a_remote/rgb_half/image_rect_color" />
+  <!-- <arg name="input_cloud" default="/kinect_head_remote/depth_registered/points" /> -->
+
+  <arg name="target_frame_id" default="base_footprint" />
+  <arg name="mask_image" default="/deva_node/output/segmentation" />
+
+  <arg name="run_rviz" default="false"/>
+  <!-- <arg name="run_collection" default="false"/> -->
+  <arg name="run_decomp" default="false" />
+
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/use_k4a_remote.launch" if="$(arg run_decomp)" />
+
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/ns_apply_track_object_mask.launch">
+    <arg name="namespace" value="k4a_deva_apply" />
+    <arg name="INPUT_IMAGE" value="$(arg input_image)" />
+    <!-- <arg name="INPUT_CLOUD" value="/plane_extraction/output" /> -->
+    <arg name="MASK_IMAGE" value="$(arg mask_image)" />
+    <arg name="run_rviz" value="false" />
+    <arg name="run_collection" value="false" />
+    <arg name="run_cloud_proc" value="false" />
+    <!-- <arg name="publish_rec_tf" value="false" /> -->
+    <!-- <arg name="target_frame_id" value="$(arg target_frame_id)" /> -->
+  </include>
+
+  <node name="deva_to_adjusted_rect_mask" pkg="jsk_2023_09_cook_from_recipe"
+        type="deva_to_adjusted_rect_mask.py" output="screen"
+        clear_params="true">
+    <!-- <rosparam subst_value="true"> -->
+    <!--   config_file: $(arg config_file) -->
+    <!--   parent_frame: map -->
+    <!--   child_frame: target_object -->
+    <!-- </rosparam> -->
+  </node>
+
+  <node name="k4a_deva_apply_mask_image" pkg="jsk_perception" type="apply_mask_image" clear_params="true">
+    <remap from="~input" to="$(arg input_image)" />
+    <remap from="~input/mask" to="/deva_to_adjusted_rect_mask/mask_image" />
+    <!-- <rosparam> -->
+    <!--   approximate_sync: true -->
+    <!-- </rosparam> -->
+  </node>
+
+  <!-- <include file="$(find jsk_2023_09_cook_from_recipe)/launch/pr2_tracking_data_collection.launch" if="$(arg run_collection)" /> -->
+
+  <!-- rviz -->
+  <group if="$(arg run_rviz)">
+    <node name="k4a_no_cloud_proc_deva_rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/k4a_ns_no_cloud_proc_deva_apply.rviz">
+    </node>
+  </group>
+
+</launch>
