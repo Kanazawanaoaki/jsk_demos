@@ -12,6 +12,10 @@
     local-name: jsk-ros-pkg/jsk_planning
     uri: git@github.com:jsk-ros-pkg/jsk_planning.git
 - git:
+    local-name: jsk-ros-pkg/jsk_3rdparty
+    uri: git@github.com:Kanazawanaoaki/jsk_3rdparty.git
+    version: kanazawa-devel-m5stack-ros-
+- git:
     local-name: moveit_pr2
     uri: https://github.com/ros-planning/moveit_pr2.git
     version: melodic-devel
