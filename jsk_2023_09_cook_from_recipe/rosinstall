@@ -16,6 +16,10 @@
     uri: git@github.com:Kanazawanaoaki/jsk_3rdparty.git
     version: kanazawa-devel-m5stack-ros-
 - git:
+    local-name: ros-drivers/rosserial
+    uri: https://github.com/ros-drivers/rosserial.git
+    version: noetic-devel
+- git:
     local-name: moveit_pr2
     uri: https://github.com/ros-planning/moveit_pr2.git
     version: melodic-devel
