@@ -50,7 +50,7 @@ def plot_sensor_data(file_path, output_dir, japan_time):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Plot sensor data from a CSV file.')
     parser.add_argument('input_file', type=str, help='Path to the CSV file with sensor data')
-    parser.add_argument('--output_dir', '-o', default="../../datas/senser_data_plots/", type=str, help='Path to the directory where the plot will be saved')
+    parser.add_argument('--output_dir', '-o', default="../../datas/sensor_data_plots/", type=str, help='Path to the directory where the plot will be saved')
     parser.add_argument('--japan_time', '-j', action='store_true', help='Convert timestamps to Japan time (UTC+9)')
 
     args = parser.parse_args()

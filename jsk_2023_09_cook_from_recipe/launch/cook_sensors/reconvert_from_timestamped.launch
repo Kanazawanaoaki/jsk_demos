@@ -1,0 +1,12 @@
+<launch>
+  <arg name="sensor_topic" default="cal_gas" />
+
+  <!-- timestamped relay publisher -->
+  <node name="$(arg sensor_topic)_reconvert_relay_publisher" pkg="jsk_2023_09_cook_from_recipe"
+        type="reconvert_from_timestamped_relay.py" output="screen" respawn="true"
+        clear_params="true">
+    <remap from="~input_topic" to="timestamped_$(arg sensor_topic)" />
+    <remap from="~output_topic" to="$(arg sensor_topic)" />
+  </node>
+
+</launch>

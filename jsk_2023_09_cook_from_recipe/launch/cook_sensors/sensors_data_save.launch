@@ -1,0 +1,15 @@
+<launch>
+  <!-- <arg name="config_name" default="gas_sensors.yaml" /> -->
+  <arg name="config_name" default="timestamped_gas_sensors.yaml" />
+
+  <!-- data saver -->
+  <node name="sensors_data_saver" pkg="jsk_2023_09_cook_from_recipe" type="sensors_data_saver.py" output="screen">
+    <param name="config_file" value="$(find jsk_2023_09_cook_from_recipe)/config/sensor_config/$(arg config_name)" />
+    <param name="save_path" value="$(find jsk_2023_09_cook_from_recipe)/datas/sensor_datas/" />
+  </node>
+  <!-- <!-\- data saver -\-> -->
+  <!-- <node name="sensors_data_saver" pkg="jsk_2023_09_cook_from_recipe" type="unit16_sensors_data_saver.py" output="screen"> -->
+  <!--   <param name="config_file" value="$(find jsk_2023_09_cook_from_recipe)/config/sensor_config/$(arg config_name)" /> -->
+  <!--   <param name="save_path" value="$(find jsk_2023_09_cook_from_recipe)/datas/sensor_datas/" /> -->
+  <!-- </node> -->
+</launch>

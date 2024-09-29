@@ -189,7 +189,7 @@ With the following steps, different symbolic links are created for each M5 devic
 
   - Place your udev files file under `/etc/udev/rules.d/`
     ```
-    sudo cp $(rospack find jsk_2023_09_cook_from_recipe)/config/udev/99-kanazawa-cook-sensers.rules /etc/udev/rules.d/
+    sudo cp $(rospack find jsk_2023_09_cook_from_recipe)/config/udev/99-kanazawa-cook-sensors.rules /etc/udev/rules.d/
     ```
 
   - Restart udev
@@ -203,19 +203,19 @@ With the following steps, different symbolic links are created for each M5 devic
 #### 匂いセンサの利用
 センサセットをUSB接続して，m5stack_rosのWSをsourceしている状況で以下を実行してrostopicを出力
 ```bash
-roslaunch gas_sensers.launch
+roslaunch gas_sensors.launch
 ```
 このリポジトリでのセンサ利用のためのutilsを立ち上げる
 ```bash
-roslaunch jsk_2023_09_cook_from_recipe utils_for_gas_sensers.launch
+roslaunch jsk_2023_09_cook_from_recipe utils_for_gas_sensors.launch
 ```
 データの取得を開始する
 ```bash
-rosservice call /sensers_data_saver/start_saving "{}"
+rosservice call /sensors_data_saver/start_saving "{}"
 ```
 データの取得を終了する
 ```bash
-rosservice call /sensers_data_saver/stop_saving "{}"
+rosservice call /sensors_data_saver/stop_saving "{}"
 ```
 
 #### カメラセンサも利用
@@ -223,7 +223,7 @@ rosservice call /sensers_data_saver/stop_saving "{}"
 roslaunch jsk_2023_09_cook_from_recipe d435_camera_with_decomp.launch
 ```
 
-データの保存（このlaunchはutils_for_gas_sensers.launchに含まれている）
+データの保存（このlaunchはutils_for_gas_sensors.launchに含まれている）
 ```bash
 roslaunch jsk_2023_09_cook_from_recipe periodic_image_saver.launch
 ```
@@ -240,22 +240,22 @@ rosservice call /periodic_image_saver/stop_saving "{}"
 #### plotする
 rosbagのファイルをcsvに変換する
 ```bash
-python rosbag_to_csv.py -b /home/kanazawa/Desktop/data/rosbags/20240922_hp_bags/20240922_hp_bag_cook_sunny_03_cook_sensers_01.bag
+python rosbag_to_csv.py -b /home/kanazawa/Desktop/data/rosbags/20240922_hp_bags/20240922_hp_bag_cook_sunny_03_cook_sensors_01.bag
 ```
 
 ディレクトリ毎にすべてのセンサ値をplotする
 ```bash
-roscd jsk_2023_09_cook_from_recipe/scripts/cook_sensers
-python all_plot_senser_value.py /home/kanazawa/ros/cooking_ws/src/jsk_demos/jsk_2023_09_cook_from_recipe/datas/senser_datas/20240922_hp_bag_cook_sunny_03_cook_sensers_01 -j
+roscd jsk_2023_09_cook_from_recipe/scripts/cook_sensors
+python all_plot_sensor_value.py /home/kanazawa/ros/cooking_ws/src/jsk_demos/jsk_2023_09_cook_from_recipe/datas/sensor_datas/20240922_hp_bag_cook_sunny_03_cook_sensors_01 -j
 ```
 個別のセンサの値のcsvをplotする
 ```bash
-roscd jsk_2023_09_cook_from_recipe/scripts/cook_sensers
-python plot_senser_value.py /home/kanazawa/ros/cooking_ws/src/jsk_demos/jsk_2023_09_cook_from_recipe/datas/senser_datas/20240922_hp_bag_cook_sunny_03/timstamped_tgs_2603_analog.csv -j
+roscd jsk_2023_09_cook_from_recipe/scripts/cook_sensors
+python plot_sensor_value.py /home/kanazawa/ros/cooking_ws/src/jsk_demos/jsk_2023_09_cook_from_recipe/datas/sensor_datas/20240922_hp_bag_cook_sunny_03/timestamped_tgs_2603_analog.csv -j
 ```
 上の2つのplotを一度に行える便利実行スクリプトも用意した
 ```bash
-python exec_gas_sensers_plot.py /home/kanazawa/ros/cooking_ws/src/jsk_demos/jsk_2023_09_cook_from_recipe/datas/senser_datas/20240922_hp_bag_cook_sunny_01_cook_sensers_02
+python exec_gas_sensors_plot.py /home/kanazawa/ros/cooking_ws/src/jsk_demos/jsk_2023_09_cook_from_recipe/datas/sensor_datas/20240922_hp_bag_cook_sunny_01_cook_sensors_02
 ```
 
 

@@ -37,14 +37,14 @@
           /k4a/rgb/image_rect_color/compressed
           /audio
           /audio_info
-          /timstamped_cal_gas
-          /timstamped_gas_v2_102b
-          /timstamped_gas_v2_302b
-          /timstamped_gas_v2_502b
-          /timstamped_gas_v2_702b
-          /timstamped_tgs_2600_analog
-          /timstamped_tgs_2602_analog
-          /timstamped_tgs_2603_analog
+          /timestamped_cal_gas
+          /timestamped_gas_v2_102b
+          /timestamped_gas_v2_302b
+          /timestamped_gas_v2_502b
+          /timestamped_gas_v2_702b
+          /timestamped_tgs_2600_analog
+          /timestamped_tgs_2602_analog
+          /timestamped_tgs_2603_analog
           /pr2_cooking_current_action
           /pr2_current_cmd_memo"
       output="screen" />

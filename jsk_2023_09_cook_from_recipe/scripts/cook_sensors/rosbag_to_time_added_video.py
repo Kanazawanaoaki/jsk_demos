@@ -48,7 +48,7 @@ def main():
     # argparseの設定
     parser = argparse.ArgumentParser(description='Extract topics from rosbag and save as CSV files.')
     parser.add_argument('-b', '--bag', required=True, help='Path to the input rosbag file.')
-    parser.add_argument('-o', '--output', default="../../datas/senser_data_images/" , help='Directory to save the output CSV files.')
+    parser.add_argument('-o', '--output', default="../../datas/sensor_data_images/" , help='Directory to save the output CSV files.')
     parser.add_argument('-i', '--image', default="/camera/color/image_raw/compressed", help='Name of image topic.')
 
     args = parser.parse_args()

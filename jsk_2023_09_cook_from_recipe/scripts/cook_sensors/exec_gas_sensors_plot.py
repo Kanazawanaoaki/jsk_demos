@@ -4,7 +4,7 @@ import argparse
 
 # 引数の設定
 def parse_args():
-    parser = argparse.ArgumentParser(description="Run plot_senser_value.py on specified files.")
+    parser = argparse.ArgumentParser(description="Run plot_sensor_value.py on specified files.")
     parser.add_argument("directory", help="The directory containing the sensor data files.")
     return parser.parse_args()
 
@@ -15,10 +15,10 @@ def main():
     # オプション（-jを追加）
     option = "-j"
     # ファイルのリスト
-    file_list = ["timstamped_cal_gas_data.csv", "timstamped_gas_v2_102b_data.csv", "timstamped_gas_v2_302b_data.csv", "timstamped_gas_v2_502b_data.csv", "timstamped_gas_v2_702b_data.csv", "timstamped_tgs_2600_analog_data.csv", "timstamped_tgs_2602_analog_data.csv", "timstamped_tgs_2603_analog_data.csv"]
+    file_list = ["timestamped_cal_gas_data.csv", "timestamped_gas_v2_102b_data.csv", "timestamped_gas_v2_302b_data.csv", "timestamped_gas_v2_502b_data.csv", "timestamped_gas_v2_702b_data.csv", "timestamped_tgs_2600_analog_data.csv", "timestamped_tgs_2602_analog_data.csv", "timestamped_tgs_2603_analog_data.csv"]
 
-    ## exec all_plot_senser_value.py
-    python_script = "all_plot_senser_value.py"
+    ## exec all_plot_sensor_value.py
+    python_script = "all_plot_sensor_value.py"
     # コマンドを構築
     command = ["python", python_script, args.directory, option]
     try:
@@ -28,8 +28,8 @@ def main():
         print(f"Error occurred: {e}")
 
 
-    ## exec plot_senser_value.py
-    python_script = "plot_senser_value.py"
+    ## exec plot_sensor_value.py
+    python_script = "plot_sensor_value.py"
 
     # ファイルリストに従ってコマンドを実行
     for file_name in file_list:

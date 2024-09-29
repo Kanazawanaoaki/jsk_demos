@@ -44,12 +44,12 @@ def main():
     # argparseの設定
     parser = argparse.ArgumentParser(description='Extract topics from rosbag and save as CSV files.')
     parser.add_argument('-b', '--bag', required=True, help='Path to the input rosbag file.')
-    parser.add_argument('-o', '--output', default="../../datas/senser_datas/" , help='Directory to save the output CSV files.')
+    parser.add_argument('-o', '--output', default="../../datas/sensor_datas/" , help='Directory to save the output CSV files.')
     # parser.add_argument('-t', '--topics', nargs='+', required=True, help='List of topics to extract.')
 
     args = parser.parse_args()
 
-    topics = ["/timstamped_cal_gas", "/timstamped_gas_v2_102b", "/timstamped_gas_v2_302b", "/timstamped_gas_v2_502b", "/timstamped_gas_v2_702b", "/timstamped_tgs_2600_analog", "/timstamped_tgs_2602_analog", "/timstamped_tgs_2603_analog"]
+    topics = ["/timestamped_cal_gas", "/timestamped_gas_v2_102b", "/timestamped_gas_v2_302b", "/timestamped_gas_v2_502b", "/timestamped_gas_v2_702b", "/timestamped_tgs_2600_analog", "/timestamped_tgs_2602_analog", "/timestamped_tgs_2603_analog"]
 
     # rosbagを読み込んでトピックを抽出しCSVとして保存
     read_rosbag(args.bag, topics, args.output)
