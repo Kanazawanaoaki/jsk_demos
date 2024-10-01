@@ -120,6 +120,8 @@
   (put-spatula-on-table)
 
   (speak-with-log "目玉焼きの調理を行いました")
+  (speak-with-log "どうぞめしあがってください")
+  (reset-cook-pose)
   )
 
 (defun exec-sunny-all ()
