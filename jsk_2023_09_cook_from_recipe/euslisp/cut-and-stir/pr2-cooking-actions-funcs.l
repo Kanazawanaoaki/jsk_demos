@@ -275,7 +275,7 @@
       ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl1-to-pan-20240310-data.l")
       ;; (setq cook-from-now-file-name "../av-files/cook-from-now-pour-bowl1-to-pan-20240310-data_edit.l")
       (setq cook-from-now-file-name "../av-files/cook-from-now-pour-gray-bowl-to-pan-20240922-data-01.l")
-      (send *ri* :start-grasp :rarm :gain 100 :wait t)
+      (send *ri* :start-grasp :rarm :gain 1.0 :wait t)
       )
      ((and (string= from-object "green bowl") (string= to-object "frying pan") (string= spot-name "stove") (equal arm :rarm)) ;; butter
      ;; ((and (string= from-object "ボウル0") (string= to-object "フライパン") (string= spot-name "stove") (equal arm :rarm)) ;; butter
@@ -287,6 +287,7 @@
       ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl0-to-pan-20240221-data.l")
       ;; (setq cook-from-now-file-name "../av-files/cook-from-now-pour-bowl0-to-pan-20240221-data_edit.l")
       (setq cook-from-now-file-name "../av-files/cook-from-now-pour-bowl0-to-pan-20240221-data_edit_for-upper.l")
+      (send *ri* :start-grasp :rarm :gain 1.0 :wait t)
       )
      ((and (string= from-object "あぶら") (string= to-object "フライパン") (string= spot-name "stove")) ;; larmだったが結局両腕使うので
       (setq pre-set-avs (list #f(52.4453 35.9984 40.0064 -117.485 -211.029 -72.009 -15.0076)))
