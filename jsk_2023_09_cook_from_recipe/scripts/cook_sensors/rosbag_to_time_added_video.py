@@ -3,7 +3,54 @@ import argparse
 import rosbag
 import csv
 from pathlib import Path
+
+import cv2
+from cv_bridge import CvBridge
+from datetime import datetime
+
 from tqdm import tqdm
+
+# ROSからのメッセージを画像に変換するためのブリッジ
+bridge = CvBridge()
+
+
+def process_image(msg):
+    # CompressedImageをOpenCVの画像に変換
+    cv_img = bridge.compressed_imgmsg_to_cv2(msg, "bgr8")
+
+    # タイムスタンプの取得
+    timestamp_ros = msg.header.stamp
+    timestamp_unix = timestamp_ros.to_sec()
+
+    # タイムスタンプを日本時間に変換
+    timestamp_jst = datetime.fromtimestamp(timestamp_unix).strftime('%Y-%m-%d %H:%M:%S')
+
+    # タイムスタンプを画像に描画（左上に描画）
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    text = f"ROS Time: {timestamp_ros}, JST: {timestamp_jst}"
+    cv2.putText(cv_img, text, (10, 30), font, 0.5, (255, 255, 255), 2, cv2.LINE_AA) ## 白
+    # cv2.putText(cv_img, text, (10, 30), font, 0.5, (0, 0, 0), 1, cv2.LINE_AA) ## 黒
+
+    return cv_img
+
+def save_video(output_filename, image_list, fps=30):
+    if not image_list:
+        print("No images to save.")
+        return
+
+    # 動画の幅と高さを取得
+    height, width, layers = image_list[0].shape
+    size = (width, height)
+
+    # 動画ファイルの準備
+    out = cv2.VideoWriter(output_filename, cv2.VideoWriter_fourcc(*'mp4v'), fps, size)
+
+    # 画像を1フレームずつ動画に書き込む
+    for img in image_list:
+        out.write(img)
+
+    # 動画ファイルを閉じる
+    out.release()
 
 def read_rosbag(bag_path, image_topic, output_dir):
     # rosbagファイルの名前を抽出
@@ -23,28 +70,18 @@ def read_rosbag(bag_path, image_topic, output_dir):
 
     print(output_file)
 
-    # # rosbagを開く
-    # with rosbag.Bag(bag_path, 'r') as bag:
+    # 画像のリストを初期化
+    image_list = []
 
-    #         # CSVファイルを書き込みモードで開く
-    #         with open(output_file, mode='w', newline='') as csvfile:
-    #             csv_writer = csv.writer(csvfile)
-    #             # ヘッダーを書き込む
-    #             csv_writer.writerow(['Timestamp', 'Value'])
+    # rosbagを開く
+    with rosbag.Bag(bag_path, 'r') as bag:
+        # トピックのメッセージを全て取得
+        for topic, msg, t in tqdm(bag.read_messages(topics=[image_topic]), desc=f'Processing {image_topic}'):
+            img = process_image(msg)
+            image_list.append(img)
 
-    #             # # トピックのメッセージを全て取得
-    #             # messages = bag.read_messages(topics=[topic])
-    #             # messages = list(messages)  # メッセージ数を取得するために一度リスト化
-    #             # for topic, msg, t in tqdm(messages, desc=f'Processing {topic}'):
-
-    #             # トピックのメッセージを全て取得
-    #             for topic, msg, t in tqdm(bag.read_messages(topics=[topic]), desc=f'Processing {topic}'):
-    #             # for topic, msg, t in bag.read_messages(topics=[topic]):
-    #                 # 必要に応じてmsgのデータを修正
-    #                 # 例えば、msg.dataが使える場合は以下のように
-    #                 csv_writer.writerow([t.to_sec(), msg.data.data])
-
-    #         print("data is saved in {}".format(output_file))
+        save_video(output_file, image_list, fps=30)
+        print("data is saved in {}".format(output_file))
 
 def main():
     # argparseの設定

@@ -260,6 +260,11 @@ python plot_sensor_value.py /home/kanazawa/ros/cooking_ws/src/jsk_demos/jsk_2023
 python exec_gas_sensors_plot.py /home/kanazawa/ros/cooking_ws/src/jsk_demos/jsk_2023_09_cook_from_recipe/datas/sensor_datas/20240922_hp_bag_cook_sunny_01_cook_sensors_02
 ```
 
+#### rosbagから時刻入りの動画を作成
+```bash
+roscd jsk_2023_09_cook_from_recipe/scripts/cook_sensors
+python rosbag_to_time_added_video.py -b /home/kanazawa/Desktop/data/rosbags/20240922_hp_bags/20240922_cook_sensers_trash_test_01.bag -i /camera/color/image_raw/compressed
+```
 
 
 ### BundleSDF and FoundationPose
