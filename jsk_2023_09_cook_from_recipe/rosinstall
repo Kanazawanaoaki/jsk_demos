@@ -4,16 +4,16 @@
     version: cut-and-stir
 - git:
     local-name: jsk-ros-pkg/jsk_common
-    uri: git@github.com:jsk-ros-pkg/jsk_common.git
+    uri: https://github.com:jsk-ros-pkg/jsk_common.git
 - git:
     local-name: jsk-ros-pkg/jsk_robot
-    uri: git@github.com:jsk-ros-pkg/jsk_robot.git
+    uri: https://github.com:jsk-ros-pkg/jsk_robot.git
 - git:
     local-name: jsk-ros-pkg/jsk_planning
-    uri: git@github.com:jsk-ros-pkg/jsk_planning.git
+    uri: https://github.com:jsk-ros-pkg/jsk_planning.git
 - git:
     local-name: jsk-ros-pkg/jsk_3rdparty
-    uri: git@github.com:Kanazawanaoaki/jsk_3rdparty.git
+    uri: https://github.com:Kanazawanaoaki/jsk_3rdparty.git
     version: kanazawa-devel-m5stack-ros-
 - git:
     local-name: ros-drivers/rosserial
