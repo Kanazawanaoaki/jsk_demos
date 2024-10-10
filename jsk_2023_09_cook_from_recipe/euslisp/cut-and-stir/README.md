@@ -202,6 +202,18 @@ With the following steps, different symbolic links are created for each M5 devic
 
   - Reconnect your M5 device and check if symbolic link (/dev/[Device name]) is created.
 
+#### burn firmware
+Add dependent libraries to arduino library. This script installs libraries that cannot be installed from the Arduino IDE GUI.
+```bash
+source ~/ros/cooking_ws/devel/setup.bash
+rosrun m5stack_ros add_libraries.sh $ARDUINO_VERSION
+```
+Open Arduino
+```bash
+ARDUINO_VERSION=1.8.16 # Set your Arduino version to environment variable
+~/arduino-$ARDUINO_VERSION/arduino
+```
+
 #### 匂いセンサの利用
 センサセットをUSB接続して，m5stack_rosのWSをsourceしている状況で以下を実行してrostopicを出力
 ```bash
