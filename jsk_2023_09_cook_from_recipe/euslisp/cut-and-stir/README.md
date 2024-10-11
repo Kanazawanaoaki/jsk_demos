@@ -214,6 +214,7 @@ ARDUINO_VERSION=1.8.16 # Set your Arduino version to environment variable
 ~/arduino-$ARDUINO_VERSION/arduino
 ```
 
+
 #### 匂いセンサの利用
 センサセットをUSB接続して，m5stack_rosのWSをsourceしている状況で以下を実行してrostopicを出力
 ```bash
@@ -251,7 +252,25 @@ rosservice call /periodic_image_saver/start_saving "{}"
 rosservice call /periodic_image_saver/stop_saving "{}"
 ```
 
-#### plotする
+#### audioを使う
+https://github.com/708yamaguchi/jsk_3rdparty/tree/m5stack-ros-/m5stack_ros/sketches/PDM_SPM1423
+に従ってBluetoothを設定して
+```bash
+roslaunch m5stack_ros pdm_spm1423.launch
+```
+`/m5stack/audio`のトピックに`audio_common_msgs/AudioData`の型のメッセージが来る．
+Audio stream. The format is wave, 2048 chunk size, 44100hz and 16bit depth.
+音を（ほぼ）リアルタイムに聞く
+```bash
+roslaunch audio_play play.launch audio_topic:=/m5stack/audio format:=wave sample_rate:=44100
+```
+rosbagの音を聞く
+https://github.com/jsk-ros-pkg/jsk_common/tree/master/jsk_rosbag_tools#bag_to_audiopy
+```bash
+rosrun jsk_rosbag_tools bag_to_audio.py 20241011_audio_test.bag --samplerate 44100 --channels 1 -audio-topic /m5stack/audio -o /tmp/20241011_audio_test_rosbag.wav
+```
+
+#### 匂いセンサのplotする
 rosbagのファイルをcsvに変換する
 ```bash
 python rosbag_to_csv.py -b /home/kanazawa/Desktop/data/rosbags/20240922_hp_bags/20240922_hp_bag_cook_sunny_03_cook_sensors_01.bag
