@@ -44,7 +44,7 @@ void header(const char *string, uint16_t color)
 
 void setupTVOCSGP30_GasV2_ENV() {
   // SPG
-  header("SGP30 TEST",TFT_BLACK);
+  header("SGP30 INIT",TFT_BLACK);
   PRINTLN("SGP30 test");
   if (! sgp.begin()){
     PRINTLN("Sensor not found :(");
@@ -67,10 +67,10 @@ void setupTVOCSGP30_GasV2_ENV() {
   //gas.setAddress(0x64); change thee I2C address
 
   // ENV
-  M5.lcd.setTextSize(2);  // Set the text size to 2.  设置文字大小为2
+  /* M5.lcd.setTextSize(2);  // Set the text size to 2.  设置文字大小为2 */
   Wire.begin();  // Wire init, adding the I2C bus.  Wire初始化, 加入i2c总线
   qmp6988.init();
-  M5.lcd.println(F("ENV Unit III test"));
+  /* M5.lcd.println(F("ENV Unit III test")); */
 }
 
 void measureTVOCSGP30_GasV2_ENV() {
@@ -90,15 +90,6 @@ void measureTVOCSGP30_GasV2_ENV() {
   } else {
     tmp = 0, hum = 0;
   }
-  M5.lcd.fillRect(0, 20, 100, 60,
-                  BLACK);  // Fill the screen with black (to clear the
-                             // screen).  将屏幕填充黑色(用来清屏)
-  M5.lcd.setCursor(0, 20);
-  char buffer[100];
-  sprintf(buffer, "Temp: %2.1f  \r\nHumi: %2.0f%%  \r\nPressure:%2.0fPa\r\n",
-          tmp, hum, pressure);
-  M5.Lcd.printf(buffer);
-  PRINTLN(buffer);
 
   // SGP
   while(i > 0) {
@@ -109,26 +100,46 @@ void measureTVOCSGP30_GasV2_ENV() {
       M5.Lcd.drawNumber(i, 20, 120, 4);
     }
   }
-  M5.Lcd.fillRect(0, 120, 300, 30, TFT_BLACK);
+  /* M5.Lcd.fillRect(0, 120, 300, 30, TFT_BLACK); */
+  M5.Lcd.fillScreen(TFT_BLACK);
 
   if (! sgp.IAQmeasure()) {
     PRINTLN("Measurement failed");
     return;
   }
-  M5.Lcd.fillRect(100, 40, 220, 90, TFT_BLACK);
-  M5.Lcd.drawNumber(sgp.TVOC, 120, 40 , 4);
-  M5.Lcd.drawString("ppb", 200, 40, 4);
-  M5.Lcd.drawNumber(sgp.eCO2, 120, 80, 4);
-  M5.Lcd.drawString("ppm", 200, 80, 4);
+  /* M5.Lcd.fillRect(100, 40, 220, 90, TFT_BLACK); */
+  /* M5.Lcd.drawNumber(sgp.TVOC, 120, 40 , 4); */
+  /* M5.Lcd.drawString("ppb", 200, 40, 4); */
+  /* M5.Lcd.drawNumber(sgp.eCO2, 120, 80, 4); */
+  /* M5.Lcd.drawString("ppm", 200, 80, 4); */
+  /* M5.Lcd.fillRect(0, 20, 320, 100, TFT_BLACK);  // 上部にある全体のエリアをクリア（ディスプレイ全幅に合わせる） */
+  /* M5.Lcd.fillRect(0, 0, 320, 100, TFT_BLACK);  // 上部にある全体のエリアをクリア（ディスプレイ全幅に合わせる） */
+  /* M5.Lcd.fillScreen(TFT_BLACK); */
+  M5.Lcd.setTextSize(2);  // 少し大きめのフォントサイズで表示
+  M5.Lcd.setCursor(20, 20);  // TVOCの表示位置を調整
+  M5.Lcd.printf("TVOC: %4d ppb", sgp.TVOC);    // TVOCの値と単位を表示
+  M5.Lcd.setCursor(20, 40);  // eCO2の表示位置を調整
+  M5.Lcd.printf("eCO2: %4d ppm", sgp.eCO2);    // eCO2の値と単位を表示
   PRINT("TVOC "); PRINT(sgp.TVOC); PRINTLN(" ppb");
   PRINT("eCO2 "); PRINT(sgp.eCO2); PRINTLN(" ppm");
   PRINTLN("");
 
   // GasV2
   M5.Lcd.setTextSize(2);
-  M5.Lcd.setCursor(10, 10);
+  M5.Lcd.setCursor(10, 70);
   M5.Lcd.printf("GM102B: %4u = %.2f V\n", val_102B, gas.calcVol(val_102B));
   M5.Lcd.printf(" GM302B: %4u = %.2f V\n", val_302B, gas.calcVol(val_302B));
   M5.Lcd.printf(" GM502B: %4u = %.2f V\n", val_502B, gas.calcVol(val_502B));
   M5.Lcd.printf(" GM702B: %4u = %.2f V\n", val_702B, gas.calcVol(val_702B));
+
+  // ENV
+  /* M5.lcd.fillRect(0, 20, 100, 60, */
+  /*                 BLACK);  // Fill the screen with black (to clear the */
+  /*                            // screen).  将屏幕填充黑色(用来清屏) */
+  M5.lcd.setCursor(0, 140);
+  char buffer[100];
+  sprintf(buffer, "Temp: %2.1f  \r\nHumi: %2.0f%%  \r\nPressure:%2.0fPa\r\n",
+          tmp, hum, pressure);
+  M5.Lcd.printf(buffer);
+  PRINTLN(buffer);
 }

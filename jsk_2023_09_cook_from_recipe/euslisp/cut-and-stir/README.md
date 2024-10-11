@@ -206,7 +206,7 @@ With the following steps, different symbolic links are created for each M5 devic
 Add dependent libraries to arduino library. This script installs libraries that cannot be installed from the Arduino IDE GUI.
 ```bash
 source ~/ros/cooking_ws/devel/setup.bash
-rosrun m5stack_ros add_libraries.sh $ARDUINO_VERSION
+rosrun jsk_2023_09_cook_from_recipe cook_demo_add_libraries.sh $ARDUINO_VERSION
 ```
 Open Arduino
 ```bash

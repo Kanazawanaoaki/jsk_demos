@@ -10,6 +10,7 @@ std_msgs::UInt16 eco2_msg;
 ros::Publisher eco2_pub("eco2", &eco2_msg);
 sound_play::SoundRequestActionGoal sound_msg;
 ros::Publisher sound_pub("sound_play/goal", &sound_msg);
+long last_sound_play = 0;
 
 std_msgs::UInt16 gas_v2_102b_msg;
 std_msgs::UInt16 gas_v2_302b_msg;
@@ -19,7 +20,6 @@ ros::Publisher gas_v2_102b_pub("gas_v2_102b", &gas_v2_102b_msg);
 ros::Publisher gas_v2_302b_pub("gas_v2_302b", &gas_v2_302b_msg);
 ros::Publisher gas_v2_502b_pub("gas_v2_502b", &gas_v2_502b_msg);
 ros::Publisher gas_v2_702b_pub("gas_v2_702b", &gas_v2_702b_msg);
-long last_sound_play = 0;
 
 std_msgs::Float32 tmp_msg;
 ros::Publisher tmp_pub("temperature", &tmp_msg);
@@ -39,7 +39,7 @@ void publishENV() {
 
 void setup() {
   setupM5stackROS("M5Stack ROS TVOC SGP30 and Gas V2 and ENV3");
-  setupTVOCSGP30_GasV2_ENV;
+  setupTVOCSGP30_GasV2_ENV();
 
   nh.advertise(tvoc_pub);
   nh.advertise(eco2_pub);
