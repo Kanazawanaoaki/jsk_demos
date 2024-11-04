@@ -38,7 +38,7 @@
   <group if="$(arg gui)">
     <node name="femto_mega_decomp_rviz"
           pkg="rviz" type="rviz"
-          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/pr2_pointcloud_decomp.rviz">
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/femto_mega_pointcloud_decomp.rviz">
     </node>
   </group>
 </launch>
