@@ -30,3 +30,18 @@ KERNEL=="ttyACM*",  ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="55d4", ATTRS{ser
 
 # M5Stack Fire07
 KERNEL=="ttyACM*",  ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="55d4", ATTRS{serial}=="52D4002993" SYMLINK+="fire07"
+
+# M5AtomS3 atom01
+KERNEL=="ttyACM*",  ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", ATTRS{serial}=="24:58:7C:5C:86:E4" SYMLINK+="atom01"
+
+# M5AtomS3 atom02
+KERNEL=="ttyACM*",  ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", ATTRS{serial}=="24:58:7C:5C:7C:28" SYMLINK+="atom02"
+
+# M5AtomS3 atom03
+KERNEL=="ttyACM*",  ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", ATTRS{serial}=="24:58:7C:5C:85:BC" SYMLINK+="atom03"
+
+# M5AtomS3 atom04
+KERNEL=="ttyACM*",  ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", ATTRS{serial}=="24:58:7C:5C:8B:38" SYMLINK+="atom04"
+
+# M5AtomS3 atom05
+KERNEL=="ttyACM*",  ATTRS{idVendor}=="303a", ATTRS{idProduct}=="1001", ATTRS{serial}=="24:58:7C:5C:57:C0" SYMLINK+="atom05"
