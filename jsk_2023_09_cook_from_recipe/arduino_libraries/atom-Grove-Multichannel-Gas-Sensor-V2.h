@@ -47,7 +47,7 @@ uint32_t val_702B = 0;
 
 void setupGasV2()
 {
-  M5.Lcd.setRotation(3); // 画面向き設定（USB位置基準 0：下/ 1：右/ 2：上/ 3：左）
+  M5.Lcd.setRotation(2); // 画面向き設定（USB位置基準 0：下/ 1：右/ 2：上/ 3：左）
 
   // If you have changed the I2C address of gas sensor, you must to be specify the address of I2C.
   //The default addrss is 0x08;
