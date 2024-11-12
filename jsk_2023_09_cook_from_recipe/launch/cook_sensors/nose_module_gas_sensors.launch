@@ -1,0 +1,32 @@
+<launch>
+
+  <!-- Device file name depends on /etc/udev/rules.d/99-kanazawa.rules -->
+
+  <!-- atom01 : tgs2600 -->
+  <include file="$(find m5stack_ros)/launch/m5stack_ros.launch">
+    <arg name="port" value="/dev/atom01" />
+    <arg name="baud" value="57600" />
+    <arg name="rosserial_name" value="rosserial_atom01" />
+  </include>
+
+  <!-- atom02 : tgs2602 -->
+  <include file="$(find m5stack_ros)/launch/m5stack_ros.launch">
+    <arg name="port" value="/dev/atom02" />
+    <arg name="baud" value="57600" />
+    <arg name="rosserial_name" value="rosserial_atom02" />
+  </include>
+
+  <!-- atom03 : tgs2603 -->
+  <include file="$(find m5stack_ros)/launch/m5stack_ros.launch">
+    <arg name="port" value="/dev/atom03" />
+    <arg name="baud" value="57600" />
+    <arg name="rosserial_name" value="rosserial_atom03" />
+  </include>
+
+  <!-- atom04 : multi v2 -->
+  <include file="$(find m5stack_ros)/launch/m5stack_ros.launch">
+    <arg name="port" value="/dev/atom04" />
+    <arg name="baud" value="57600" />
+    <arg name="rosserial_name" value="rosserial_atom04" />
+  </include>
+</launch>

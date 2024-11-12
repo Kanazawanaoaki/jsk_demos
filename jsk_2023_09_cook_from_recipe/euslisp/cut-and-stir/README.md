@@ -216,7 +216,7 @@ ARDUINO_VERSION=1.8.16 # Set your Arduino version to environment variable
 
 
 #### 匂いセンサの利用
-センサセットをUSB接続して，m5stack_rosのWSをsourceしている状況で以下を実行してrostopicを出力
+センサセットをUSB接続して，以下を実行してrostopicを出力
 ```bash
 roslaunch gas_sensors.launch
 ```
@@ -224,6 +224,7 @@ roslaunch gas_sensors.launch
 ```bash
 roslaunch jsk_2023_09_cook_from_recipe utils_for_gas_sensors.launch
 ```
+
 データの取得を開始する
 ```bash
 rosservice call /sensors_data_saver/start_saving "{}"
@@ -231,6 +232,16 @@ rosservice call /sensors_data_saver/start_saving "{}"
 データの取得を終了する
 ```bash
 rosservice call /sensors_data_saver/stop_saving "{}"
+```
+
+##### 鼻モジュールバージョン
+rostopicを出力
+```bash
+roslaunch jsk_2023_09_cook_from_recipe nose_module_gas_sensors.launch
+```
+センサ利用のためのutilsを立ち上げる
+```bash
+roslaunch jsk_2023_09_cook_from_recipe nose_module_utils_for_gas_sensors.launch
 ```
 
 #### カメラセンサも利用
