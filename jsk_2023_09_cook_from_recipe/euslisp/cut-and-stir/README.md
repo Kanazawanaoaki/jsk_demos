@@ -380,15 +380,15 @@ roslaunch jsk_2023_09_cook_from_recipe interactive_tf_pr2.launch
 z800で
 ```bash
 roslaunch jsk_2023_09_cook_from_recipe pr2_decompress.launch
-roslaunch jsk_2023_09_cook_from_recipe use_k4a_remote.launch
+roslaunch jsk_2023_09_cook_from_recipe use_femto_mega_remote.launch
 ```
 TRで立ち上げる
 ```bash
-roslaunch jsk_2023_09_cook_from_recipe cook_rec_for_pot-and-pan.launch
+roslaunch jsk_2023_09_cook_from_recipe cook_rec_for_pot-and-pan_femto_mega.launch
 ```
 手元のPCで立ち上げる
 ```bash
-roslaunch jsk_2023_09_cook_from_recipe kitchen_template_matching_k4a.launch
+roslaunch jsk_2023_09_cook_from_recipe kitchen_template_matching_femto_mega.launch
 roslaunch jsk_2023_09_cook_from_recipe pot-and-pan_rviz.launch
 # roslaunch jsk_2023_09_cook_from_recipe pot-and-pan_rviz_gen4.launch ## if you use P1 Gen4
 ```
