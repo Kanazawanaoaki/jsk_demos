@@ -15,7 +15,7 @@ def broadcast_tf():
     while not rospy.is_shutdown():
         # head_mount_linkからcamera_baseへの座標変換を指定
         # translation = (0.175, 0, 0.025)  # 例えば、x、y、zは適切な値に置き換える必要があります
-        translation = (0.170, -0.04, -0.010)  # 例えば、x、y、zは適切な値に置き換える必要があります
+        translation = (0.160, -0.04, -0.010)  # 例えば、x、y、zは適切な値に置き換える必要があります
         rotation = (0, 0, 0, 1)  # 回転の場合も同様です
 
         broadcaster.sendTransform(
