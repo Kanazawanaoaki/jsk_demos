@@ -1,11 +1,12 @@
 <launch>
 
-  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/femto_mega/femto_mega_decomp.launch">
-  </include>
+  <!-- <include file="$(find jsk_2023_09_cook_from_recipe)/launch/femto_mega/femto_mega_decomp.launch"> -->
+  <!-- </include> -->
 
   <!-- mask -->
   <include file="$(find jsk_2023_09_cook_from_recipe)/launch/femto_mega/femto_mega_image_crop.launch">
-    <arg name="INPUT_IMAGE" value="/femto_mega_remote/color/image_raw"/>
+    <!-- <arg name="INPUT_IMAGE" value="/femto_mega_remote/color/image_raw"/> -->
+    <arg name="INPUT_IMAGE" value="/femto_mega/color/image_raw"/>
     <arg name="gui" value="false"/>
   </include>
 
