@@ -13,9 +13,6 @@ class ImageSubscriber:
         self.no_topic_flag = False ## topicが来ていない状況ならTrue
         self.once_topic_flag = False ## topicが一度でも来ていたらTrue
 
-        # イメージメッセージをサブスクライブ
-        self.image_sub = rospy.Subscriber('/femto_mega/color/image_raw/compressed', CompressedImage, self.image_callback)
-
         # Create an Action client for the sound_play node
         self.sound_client = actionlib.SimpleActionClient('/robotsound', SoundRequestAction)
         self.sound_client.wait_for_server()
@@ -23,10 +20,12 @@ class ImageSubscriber:
         # トピックが一定時間更新されなかった場合の閾値（秒）
         self.timeout_threshold = 5.0
 
+        self.say_something("femto_mega image check start")
+        # イメージメッセージをサブスクライブ
+        self.image_sub = rospy.Subscriber('/femto_mega/color/image_raw/compressed', CompressedImage, self.image_callback)
         # 最後にトピックが更新された時間
         self.last_image_time = time.time()
 
-        self.say_something("femto_mega image check start")
 
     def image_callback(self, msg):
         # トピックが更新されたら呼び出されるコールバック
