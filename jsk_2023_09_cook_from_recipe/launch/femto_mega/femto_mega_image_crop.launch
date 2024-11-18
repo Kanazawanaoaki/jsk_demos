@@ -1,0 +1,60 @@
+<launch>
+
+  <arg name="INPUT_IMAGE" default="/femto_mega/color/image_raw" />
+  <arg name="INPUT_CAM_INFO" default="/femto_mega/color/camera_info" />
+  <arg name="MASK_IMAGE" default="/femto_meag_mask_image_generator/output" />
+
+  <arg name="gui" default="false" />
+  <arg name="launch_manager" default="true" />
+
+  <arg name="offset_x" default="320" />
+  <arg name="offset_y" default="180" />
+  <arg name="width" default="640" />
+  <arg name="height" default="360" />
+
+  <arg name="MANAGER" default="femto_mega_image_crop" />
+
+  <node name="$(arg MANAGER)"
+        pkg="nodelet" type="nodelet" args="manager"
+        if="$(arg launch_manager)"
+        output="screen" />
+
+  <node name="femto_mega_mask_image_generator"
+        pkg="jsk_perception" type="mask_image_generator">
+    <remap from="~input" to="$(arg INPUT_IMAGE)" />
+    <rosparam subst_value="true">
+      offset_x: $(arg offset_x)
+      offset_y: $(arg offset_y)
+      width: $(arg width)
+      height: $(arg height)
+    </rosparam>
+  </node>
+
+  <node name="femto_mega_apply_mask_image"
+        pkg="nodelet" type="nodelet"
+        args="load jsk_perception/ApplyMaskImage $(arg MANAGER)"
+        respawn="true" >
+    <remap from="~input" to="$(arg INPUT_IMAGE)" />
+    <remap from="~input/mask" to="$(arg MASK_IMAGE)" />
+    <remap from="~input/camera_info" to="$(arg INPUT_CAM_INFO)" />
+    <rosparam>
+      approximate_sync: true
+    </rosparam>
+  </node>
+
+  <group if="$(arg gui)">
+    <node name="image_view0"
+          pkg="image_view" type="image_view">
+      <remap from="image" to="$(arg INPUT_IMAGE)" />
+    </node>
+    <node name="image_view1"
+          pkg="image_view" type="image_view">
+      <remap from="image" to="$(arg MASK_IMAGE)" />
+    </node>
+    <node name="image_view2"
+          pkg="image_view" type="image_view">
+      <remap from="image" to="apply_mask_image/output" />
+    </node>
+  </group>
+
+</launch>
