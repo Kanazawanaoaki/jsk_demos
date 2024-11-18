@@ -219,9 +219,14 @@
            (setq speak-name "IHコンロ")
            (setq detecion-topic "/point_pose_stove/ObjectDetection")
            (if use-k4a
-               (setq idealcds ;; for k4a
-                     (make-coords :pos (float-vector 1288.043 106.543 1481.986)
-                                  :rpy (float-vector 2.873 1.538 -0.192)))
+               (progn
+                 ;; (setq idealcds ;; for k4a
+                 ;;       (make-coords :pos (float-vector 1288.043 106.543 1481.986)
+                 ;;                    :rpy (float-vector 2.873 1.538 -0.192)))
+                 (setq idealcds ;; for femto mega
+                       (make-coords :pos (float-vector 1261.166 167.382 1381.361)
+                                    :rpy (float-vector -0.041 1.547 3.118)))
+                 )
              (setq idealcds ;; for kinect
                    (make-coords :pos (float-vector 1145.287 325.273 1420.734)
                                 :rpy (float-vector 0.248 1.435 -2.965)))

@@ -1,0 +1,21 @@
+<launch>
+
+  <arg name="run_rviz" default="false" />
+
+  <arg name="input_image" default="/femto_mega/color/image_raw"/>
+
+  <node name="rect_added_image_publisher" pkg="jsk_2023_09_cook_from_recipe"
+        type="femto_mega_rect_added_image_publisher.py" output="screen" clear_params="true">
+    <param name="input" value="$(arg input_image)"/>
+  </node>
+
+  <node name="adjusted_clip_state_recognizer" pkg="lc_state_recognition"
+        type="adjusted_clip_state_recognizer.py" output="screen" clear_params="true">
+    <remap from="~input_image" to="/rect_added_image_publisher/crop_image" />
+  </node>
+
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/rviz.launch" if="$(arg run_rviz)">
+    <arg name="config_name" value="cook_broccolil.rviz" />
+  </include>
+
+</launch>
