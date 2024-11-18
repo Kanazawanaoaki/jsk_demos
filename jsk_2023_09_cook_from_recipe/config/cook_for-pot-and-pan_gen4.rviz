@@ -3,7 +3,9 @@ Panels:
     Help Height: 70
     Name: Displays
     Property Tree Widget:
-      Expanded: ~
+      Expanded:
+        - /CLIP/Image1
+        - /OverlayText1
       Splitter Ratio: 0.4870370328426361
     Tree Height: 693
   - Class: rviz/Selection
@@ -57,7 +59,7 @@ Visualization Manager:
       alpha: 0.800000011920929
       height: 128
       keep aspect ratio: true
-      left: 0
+      left: 20
       overwrite alpha value: true
       top: 300
       transport hint: raw
@@ -139,7 +141,7 @@ Visualization Manager:
       left: 20
       line width: 1
       text size: 30
-      top: 1210
+      top: 1215
       width: 160
     - Class: rviz/Image
       Enabled: true
@@ -220,7 +222,7 @@ Visualization Manager:
       Near Clip Distance: 0.009999999776482582
       Pitch: 0.785398006439209
       Target Frame: <Fixed Frame>
-      Yaw: 0.785398006439209
+      Yaw: 0.7803980112075806
     Saved: ~
 Window Geometry:
   Displays:

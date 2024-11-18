@@ -985,13 +985,13 @@
 ;; cook
 (defun gaze-left-pot ()
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "offset_x" :int 895) ;; 905
+   "/rect_added_image_publisher" "offset_x" :int 448) ;; 895 ;; 905
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "offset_y" :int 325) ;; 320
+   "/rect_added_image_publisher" "offset_y" :int 163) ;; 325 ;; 320
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "width" :int 270)
+   "/rect_added_image_publisher" "width" :int 135) ;; 270
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "height" :int 180)
+   "/rect_added_image_publisher" "height" :int 90) ;; 180
   ;; (ros::set-dynamic-reconfigure-param
   ;;  "/rect_added_image_publisher" "offset_x" :int 900) ;; 855
   ;; (ros::set-dynamic-reconfigure-param
@@ -1004,13 +1004,13 @@
 
 (defun gaze-right-pan ()
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "offset_x" :int 1285) ;; 1280
+   "/rect_added_image_publisher" "offset_x" :int 643) ;; 1285 ;; 1280
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "offset_y" :int 375) ;; 390
+   "/rect_added_image_publisher" "offset_y" :int 188) ;; 375 ;; 390
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "width" :int 270)
+   "/rect_added_image_publisher" "width" :int 135) ;; 270
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "height" :int 190)
+   "/rect_added_image_publisher" "height" :int 95) ;; 190
   ;; (ros::set-dynamic-reconfigure-param
   ;;  "/rect_added_image_publisher" "offset_x" :int 1287) ;; 1240
   ;; (ros::set-dynamic-reconfigure-param
