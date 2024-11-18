@@ -376,6 +376,14 @@ roslaunch jsk_2023_09_cook_from_recipe interactive_tf_pr2.launch
 
 
 ## 見学のデモ
+### 前提
+Femto Megaがc2で立ち上がっている
+```bash
+rosparam set /femto_mega/depth/image_raw/compressedDepth/png_level 4
+## が適応されている状態で
+roslaunch orbbec_camera femto_mega.launch color_fps:=15 depth_fps:=15 enable_colored_point_cloud:=true depth_registration:=true camera_name:=femto_mega
+```
+
 ### セットアップ
 z800で
 ```bash
