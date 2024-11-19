@@ -1004,7 +1004,7 @@
 
 (defun gaze-right-pan ()
   (ros::set-dynamic-reconfigure-param
-   "/rect_added_image_publisher" "offset_x" :int 643) ;; 1285 ;; 1280
+   "/rect_added_image_publisher" "offset_x" :int 643) ;;643 ;; 1285 ;; 1280
   (ros::set-dynamic-reconfigure-param
    "/rect_added_image_publisher" "offset_y" :int 188) ;; 375 ;; 390
   (ros::set-dynamic-reconfigure-param
