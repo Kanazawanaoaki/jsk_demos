@@ -6,12 +6,12 @@
     <arg name="gui" value="false"/>
   </include>
 
-  <!-- <!-\- mask -\-> -->
-  <!-- <include file="$(find jsk_2023_09_cook_from_recipe)/launch/femto_mega/femto_mega_image_crop.launch"> -->
-  <!--   <!-\- <arg name="INPUT_IMAGE" value="/femto_mega_remote/color/image_raw"/> -\-> -->
-  <!--   <arg name="INPUT_IMAGE" value="/femto_mega/color/image_raw"/> -->
-  <!--   <arg name="gui" value="false"/> -->
-  <!-- </include> -->
+  <!-- mask -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/femto_mega/femto_mega_image_crop.launch">
+    <arg name="INPUT_IMAGE" value="/femto_mega_remote/color/image_raw"/>
+    <!-- <arg name="INPUT_IMAGE" value="/femto_mega/color/image_raw"/> -->
+    <arg name="gui" value="false"/>
+  </include>
 
   <!-- nodes -->
   <node name="femto_mega_image_checker" pkg="jsk_2023_09_cook_from_recipe" type="femto_mega_image_checker.py" output="screen"/>
