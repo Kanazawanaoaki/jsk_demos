@@ -12,6 +12,8 @@
 
 
 ;; global variables
+(setq *use-english* nil)
+
 
 (defun prepare-sunny ()
   (reset-view-list)
@@ -33,7 +35,9 @@
   )
 
 (defun do-sunny ()
-  (speak-with-log "目玉焼きの調理を開始します")
+  (if *use-english*
+      (speak-with-log "I start cooking sunny-side-up" :lang "en")
+    (speak-with-log "目玉焼きの調理を開始します"))
   (reset-view-list)
   (init-pr2)
   (pr2-cook-init :spot "stove" :type :butter-sunny-side-up)
@@ -44,7 +48,9 @@
   )
 
 (defun do-sunny-step ()
-  (speak-with-log "目玉焼きの調理を開始します")
+  (if *use-english*
+      (speak-with-log "I start cooking sunny-side-up" :lang "en")
+    (speak-with-log "目玉焼きの調理を開始します"))
   (reset-view-list)
   (init-pr2)
   (pr2-cook-init :spot "stove" :type :butter-sunny-side-up)
@@ -75,7 +81,10 @@
   (send *ri* :wait-interpolation)
 
   (send *ri* :stop-grasp :rarm :wait t)
-  (send *ri* :speak-jp (format nil "~AをセットしてOKと言ってください" "spatula"))
+  (if *use-english*
+      (send *ri* :speak-en (format nil "Please set ~A and say OK." "spatula"))
+    (send *ri* :speak-jp (format nil "~AをセットしてOKと言ってください" "spatula"))
+    )
   (ok-wait)
   (send *ri* :start-grasp :rarm :wait t)
 
@@ -111,7 +120,9 @@
   )
 
 (defun now-finish-sunny-all ()
-  (speak-with-log "目玉焼きの盛り付けに挑戦します")
+  (if *use-english*
+      (speak-with-log "I start cooking sunny-side-up" :lang "en")
+    (speak-with-log "目玉焼きの盛り付けに挑戦します"))
 
   (grasp-frying-pan)
   (receive-spatula-for-sunny)
@@ -119,8 +130,12 @@
   (put-frying-pan)
   (put-spatula-on-table)
 
-  (speak-with-log "目玉焼きの調理を行いました")
-  (speak-with-log "どうぞめしあがってください")
+  (if *use-english*
+      (speak-with-log "I cooked sunny-side up!" :lang "en")
+    (speak-with-log "目玉焼きの盛り付けに挑戦します"))
+  (if *use-english*
+      (speak-with-log "Please enjoy the meal." :lang "en")
+    (speak-with-log "どうぞめしあがってください"))
   (reset-cook-pose)
   )
 

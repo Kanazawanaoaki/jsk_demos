@@ -411,6 +411,10 @@ rlwrap roseus all-butter-sunny-demo.l
 
 (prepare-sunny) ;; 物体を設置
 ```
+英語バージョンで実行する
+```
+(setq *use-english* t)
+```
 
 実行する
 ```bash
