@@ -763,7 +763,8 @@
         (setq pre-set-avs (list #f(-51.7423 64.9578 -95.8258 -91.4896 117.771 -46.7522 -2.78394))) ;; #f(-37.9792 67.891 -75.6121 -80.9552 114.675 -44.3419 -2.95313))) ;; #f(-37.49 74.2613 -98.4166 -92.2371 105.499 -61.216 -179.863) for old
         ;; (setq pre-set-val #f(-100 0 0))
         (setq pre-set-val #f(-30 0 0))
-        (setq set-target-coords (make-coords :pos #f(645.029 -178.873 696.789) :rpy #f(-0.089 0.092 1.448)))
+        ;; (setq set-target-coords (make-coords :pos #f(645.029 -178.873 696.789) :rpy #f(-0.089 0.092 1.448)))
+        (setq set-target-coords (make-coords :pos #f(645.029 -178.873 696.789) :rpy #f(-0.089 0.092 3.019)))
         ))
     (if use-cds-offset
         (setq adj-target-cds (adjust-cds-with-spot set-target-coords "stove"))

@@ -60,6 +60,10 @@
         )
       )
     (format t "adj coords is load from ~A ~%" file_path)
+    (format t "*stove-offset-cds* : ~A ~%" *stove-offset-cds*)
+    (format t "*kitchen-offset-cds* : ~A ~%" *kitchen-offset-cds*)
+    (format t "*sink-offset-cds* : ~A ~%" *sink-offset-cds*)
+    ;; original (setq *stove-offset-cds* '#s(coordinates plist nil rot #2f((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0)) pos #f(0.0 0.0 0.0)))
     ))
 
 
