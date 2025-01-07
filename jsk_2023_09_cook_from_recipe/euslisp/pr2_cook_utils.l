@@ -16,24 +16,48 @@
 (setq *co* (make-coords))
 
 ;; object detection with k4a
-(defun k4a-check-detection (detecion-topic) ;; TODO 10回くらいsubscribeしてその平均か，外れ値ではないものを使いたいなど
+(defun k4a-check-detection (detecion-topic &key (rec-num 1)) ;; TODO 10回くらいsubscribeしてその平均か，外れ値ではないものを使いたいなど
   (let (cds
         trans
         pp_msg
+        rec_coords
         (start_time (ros::time-now))
+        (rec-cnt 0)
+        (rec-coords-list (list))
+        (rec-av-coords nil)
         )
     (unless (boundp '*tfl*)
       (setq *tfl* (instance ros::transform-listener :init)))
     (setq trans nil)
-    (until trans
+    (setq rec_coords nil)
+    (until rec_coords
            (setq pp_msg (one-shot-subscribe detecion-topic posedetection_msgs::ObjectDetection))
+           (setq rec_coords (ros::tf-pose->coords (send (car (send pp_msg :objects)) :pose)))
            (if (ros::time>= (send pp_msg :header :stamp) start_time)
                (setq trans (send *tfl* :lookup-transform *base-frame-id* (send pp_msg :header :frame_id) (send pp_msg :header :stamp)))
              )
+           (when (> rec-num 1)
+             (setq rec-cnt (+ rec-cnt 1))
+             (setq rec-coords-list (append rec-coords-list (list rec_coords)))
+             (if (null rec-av-coords)
+                 (progn
+                   (setq *hoge* rec_coords)
+                   (setq rec-av-coords (send rec_coords :copy-worldcoords))
+                   )
+               (setq rec-av-coords (calc-average-two-coords rec-av-coords (send rec_coords :copy-worldcoords)))
+               )
+             (setq rec_coords nil)
+             (when (>= rec-cnt rec-num)
+               (setq rec_coords rec-av-coords)
+               (format t "average coords is ~A ~%" rec_coords)
+               (analysis-cds-list rec-coords-list)
+               )
+             )
            )
+
     (setq cds (make-coords))
-    (send cds :move-to trans :local)
-    (send cds :move-to (ros::tf-pose->coords (send (car (send pp_msg :objects)) :pose)) :local)
+    (send cds :move-to trans :local) ;; base-frame-id -> header frame_id
+    (send cds :move-to rec_coords :local)
     cds))
 
 ;; daialogue

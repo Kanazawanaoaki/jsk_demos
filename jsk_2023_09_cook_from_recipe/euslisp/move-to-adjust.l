@@ -47,6 +47,18 @@
     (format t "adj coords is saved in ~A ~%" file_path)
     ))
 
+(defun reset-spot-offset-file ()
+  (let ((dir_path)
+        (file_path))
+    (setq dir_path (ros::resolve-ros-path "package://jsk_2023_09_cook_from_recipe/datas/eus-spot-offset"))
+    (setq file_path (format nil "~A/eus-spot-offset.l" dir_path))
+    (setq *stove-offset-cds* (make-coords))
+    (setq *kitchen-offset-cds* (make-coords))
+    (setq *sink-offset-cds* (make-coords))
+    (dump-loadable-structure file_path *stove-offset-cds* *kitchen-offset-cds* *sink-offset-cds*)
+    (format t "adj coords is saved in ~A ~%" file_path)
+    ))
+
 (defun load-spot-offset ()
   (let ((dir_path)
         (file_path))
@@ -204,16 +216,16 @@
 
 ;; c.f. https://github.com/jsk-ros-pkg/jsk_demos/blob/088b186ea8d02ebda8fee2dc411135f8fd813be1/jsk_demo_common/euslisp/pr2-action.l#L708-L856
 (defparameter *adjust-spot-object-cds* nil)
-(defun move-with-adjust (&key (move-spot :stove) (ratio 1) (look-around nil) (head-pitch 14) (torso-lift 130) (move t) (wait t) (use-base nil) (use-k4a t))
+(defun move-with-adjust (&key (move-spot :stove) (ratio 1) (look-around nil) (head-pitch 14) (torso-lift 130) (move t) (wait t) (use-base nil) (use-k4a t) (rec-num 5))
   (let ((ret nil)
-        ;; (diffcds (make-coords :pos (float-vector 10000 10000 10000)))
         (distance-threshold 20.0) ;;25.0
         (rotation-threshold 0.09) ;;0.09
-        ;; idealcds
-        ;; spot-name
-        ;; speak-name
-        ;; detecion-topic
-        ;; cds
+        idealcds
+        diffcds
+        spot-name
+        speak-name
+        detecion-topic
+        cds
         )
     (setq diffcds (make-coords :pos (float-vector 10000 10000 10000)))
     ;; finding adjust spot object
@@ -227,9 +239,12 @@
                  ;; (setq idealcds ;; for k4a
                  ;;       (make-coords :pos (float-vector 1288.043 106.543 1481.986)
                  ;;                    :rpy (float-vector 2.873 1.538 -0.192)))
-                 (setq idealcds ;; for femto mega
-                       (make-coords :pos (float-vector 1261.166 167.382 1381.361)
-                                    :rpy (float-vector -0.041 1.547 3.118)))
+                 ;; (setq idealcds ;; for femto mega v1
+                 ;;       (make-coords :pos (float-vector 1261.166 167.382 1381.361)
+                 ;;                    :rpy (float-vector -0.041 1.547 3.118)))
+                 (setq idealcds ;; for femto mega v2
+                       (make-coords :pos (float-vector 1298.364 111.351 1386.061)
+                                    :rpy (float-vector -3.085 1.508 0.21)))
                  )
              (setq idealcds ;; for kinect
                    (make-coords :pos (float-vector 1145.287 325.273 1420.734)
@@ -277,7 +292,7 @@
             ;; (setq cds (make-coords))
             ;; (send cds :move-to trans :local)
             ;; (send cds :move-to (ros::tf-pose->coords (send (car (send pp_msg :objects)) :pose)) :local)
-            (setq cds (k4a-check-detection detecion-topic))
+            (setq cds (k4a-check-detection detecion-topic :rec-num rec-num))
             )
         (setq cds (check-detection :type spot-name :speak-name speak-name
                                    :detection-topic detecion-topic
