@@ -16,7 +16,7 @@
 (setq *co* (make-coords))
 
 ;; object detection with k4a
-(defun k4a-check-detection (detecion-topic &key (rec-num 1)) ;; TODO 10回くらいsubscribeしてその平均か，外れ値ではないものを使いたいなど
+(defun k4a-check-detection (detecion-topic &key (rec-num 1) (use-out-filter nil) (filter-thre 50))
   (let (cds
         trans
         pp_msg
@@ -41,14 +41,21 @@
              (setq rec-coords-list (append rec-coords-list (list rec_coords)))
              (if (null rec-av-coords)
                  (progn
-                   (setq *hoge* rec_coords)
                    (setq rec-av-coords (send rec_coords :copy-worldcoords))
                    )
                (setq rec-av-coords (calc-average-two-coords rec-av-coords (send rec_coords :copy-worldcoords)))
                )
              (setq rec_coords nil)
              (when (>= rec-cnt rec-num)
-               (setq rec_coords rec-av-coords)
+               (if use-out-filter
+                   (progn
+                     (setq rec-coords-list (exclude-outliers-coords rec-coords-list filter-thre))
+                     (setq rec_coords (calculate-mean-pos rec-coords-list))
+                     )
+                 (progn
+                   (setq rec_coords rec-av-coords)
+                   ))
+
                (format t "average coords is ~A ~%" rec_coords)
                (analysis-cds-list rec-coords-list)
                )

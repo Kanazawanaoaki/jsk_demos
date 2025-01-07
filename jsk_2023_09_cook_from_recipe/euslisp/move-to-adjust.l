@@ -292,7 +292,7 @@
             ;; (setq cds (make-coords))
             ;; (send cds :move-to trans :local)
             ;; (send cds :move-to (ros::tf-pose->coords (send (car (send pp_msg :objects)) :pose)) :local)
-            (setq cds (k4a-check-detection detecion-topic :rec-num rec-num))
+            (setq cds (k4a-check-detection detecion-topic :rec-num rec-num :use-out-filter t :filter-thre 50))
             )
         (setq cds (check-detection :type spot-name :speak-name speak-name
                                    :detection-topic detecion-topic

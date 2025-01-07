@@ -3,7 +3,7 @@
 
 ### 実行
 launchを立ち上げる
-```
+```bash
 roslaunch jsk_pr2_startup rviz.launch
 roslaunch jsk_2023_09_cook_from_recipe use_k4a_remote.launch
 roslaunch jsk_2023_09_cook_from_recipe kitchen_template_matching_k4a.launch
@@ -11,7 +11,7 @@ roslaunch jsk_2023_09_cook_from_recipe pr2_decompress.launch gui:=true
 ```
 
 位置に移動
-```
+```bash
 roscd jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir
 rlwrap roseus pr2_cut_food.l
 (reset-move-pose)
@@ -19,7 +19,7 @@ rlwrap roseus pr2_cut_food.l
 ```
 
 位置のチェック
-```
+```bash
 roslaunch icp_registration_test.launch pcd_name:=kitchen_look
 ```
 この状態で何かをsubscribeしてチェックをしたいような気もするけどねなど．
@@ -30,6 +30,15 @@ roslaunch icp_registration_test.launch pcd_name:=kitchen_look
 #### rosbagをとるなど
 ```bash
 roslaunch jsk_2023_09_cook_from_recipe pr2_rosbag_record.launch rosbag:=/home/kanazawa/Desktop/data/rosbags/20240531_kitchen_bags/20240531_kitchen_bag_00
+```
+
+femto mega等有りでrosbagを保存
+```bash
+roslaunch jsk_2023_09_cook_from_recipe pr2_femto_mega_rosbag_record.launch rosbag:=/home/kanazawa/Desktop/data/rosbags/20241221_kitchen_bags/20241221_kitchen_02
+```
+そのrosbagの再生方法．
+```bash
+roslaunch jsk_2023_09_cook_from_recipe pr2_femto_mega_rosbag_play.launch rosbag:=/media/almagest/73B2/kanazawa/videos/PR2-experiment/20250107/20250107_kitchen_bags/20250107_kitchen_02.bag gui:=true
 ```
 
 #### 物体認識

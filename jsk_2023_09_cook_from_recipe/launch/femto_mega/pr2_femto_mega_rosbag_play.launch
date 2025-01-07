@@ -23,11 +23,11 @@
   <!-- <node pkg="rosbag" type="play" name="rosbag_play" -->
   <!--       args="$(arg rosbag) $(arg loop_flag) -r 5 -\-clock" output="screen" /> -->
 
-  <!-- addtional decomp -->
-  <node name="rgb_color_decompress" pkg="image_transport" type="republish"
-        args="compressed in:=$(arg RGB_COLOR_IMAGE) out:=$(arg RGB_COLOR_IMAGE)" />
-  <node name="depth_raw_decompress" pkg="image_transport" type="republish"
-        args="compressedDepth in:=$(arg DEPTH_RAW_IMAGE) out:=$(arg DEPTH_RAW_IMAGE)" />
+  <!-- <!-\- addtional decomp -\-> -->
+  <!-- <node name="rgb_color_decompress" pkg="image_transport" type="republish" -->
+  <!--       args="compressed in:=$(arg RGB_COLOR_IMAGE) out:=$(arg RGB_COLOR_IMAGE)" /> -->
+  <!-- <node name="depth_raw_decompress" pkg="image_transport" type="republish" -->
+  <!--       args="compressedDepth in:=$(arg DEPTH_RAW_IMAGE) out:=$(arg DEPTH_RAW_IMAGE)" /> -->
 
   <!-- femto mega -->
   <include file="$(find jsk_2023_09_cook_from_recipe)/launch/femto_mega/femto_mega_decomp.launch">
