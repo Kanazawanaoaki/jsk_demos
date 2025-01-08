@@ -1,5 +1,4 @@
 <launch>
-  <arg name="node_name" default="ih_hough_lines" />
 
   <arg name="image" default="/kinect_head_remote/rgb/image_rect_color" />
 
@@ -7,6 +6,15 @@
   <arg name="debug_view" default="true" doc="Specify whether the node displays a window to show edge image" />
   <arg name="queue_size" default="3" doc="Specigy queue_size of input image subscribers" />
 
+  <!-- color_filter -->
+  <arg name="h_limit_max" default="360" doc="The maximum allowed field value Hue" /> <!-- 250 -->
+  <arg name="h_limit_min" default="0" doc="The minimum allowed field value Hue" /> <!-- 0 -->
+  <arg name="s_limit_max" default="90" doc="The maximum allowed field value Saturation" /> <!-- 255 -->
+  <arg name="s_limit_min" default="0" doc="The minimum allowed field value Saturation" /> <!-- 150 -->
+  <arg name="l_limit_max" default="80" doc="The maximum allowed field value Luminance" /> <!-- 255 -->
+  <arg name="l_limit_min" default="0" doc="The minimum allowed field value Luminance" /> <!-- 50 -->
+
+  <!-- hough_lines -->
   <arg name="hough_type" default="1" doc="Apecify Hough transform type, 0 for Standard Hough Detection and 1 for Probabilistic Hough Detection" />
   <arg name="threshold" default="150" doc="Threshould value for hough line detection" />
   <arg name="rho" default="1.0" doc="The resolution of the parameter r in pixels." />
@@ -14,9 +22,24 @@
   <arg name="minLineLength" default="30" doc="The minimum number of points that can form a line." />
   <arg name="maxLineGrap" default="10" doc="The maximum gap between two points to be considered in the same line." />
 
-  <!-- hough_lines.cpp -->
-  <node name="$(arg node_name)" pkg="opencv_apps" type="hough_lines" >
+  <!-- color_filter.cpp  -->
+  <node name="ih_hls_color_filter" pkg="opencv_apps" type="hls_color_filter" output="screen">
     <remap from="image" to="$(arg image)" />
+    <param name="use_camera_info" value="$(arg use_camera_info)" />
+    <param name="debug_view" value="$(arg debug_view)" />
+    <param name="queue_size" value="$(arg queue_size)" />
+    <param name="h_limit_max" value="$(arg h_limit_max)" />
+    <param name="h_limit_min" value="$(arg h_limit_min)" />
+    <param name="s_limit_max" value="$(arg s_limit_max)" />
+    <param name="s_limit_min" value="$(arg s_limit_min)" />
+    <param name="l_limit_max" value="$(arg l_limit_max)" />
+    <param name="l_limit_min" value="$(arg l_limit_min)" />
+  </node>
+
+  <!-- hough_lines.cpp -->
+  <node name="ih_hough_lines" pkg="opencv_apps" type="hough_lines" >
+    <remap from="image" to="$(arg image)" />
+    <!-- <remap from="image" to="/ih_hls_color_filter/image" /> -->
     <param name="use_camera_info" value="$(arg use_camera_info)" />
     <param name="debug_view" value="$(arg debug_view)" />
     <param name="queue_size" value="$(arg queue_size)" />
