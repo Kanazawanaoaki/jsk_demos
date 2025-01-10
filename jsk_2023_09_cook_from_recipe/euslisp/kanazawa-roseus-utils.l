@@ -62,19 +62,27 @@
     (setq *view-objects* (append *view-objects* (list object-symbol))))
   )
 
-;; calc coords
-(defun calc-object-rel-coords (base-coords target-coords)
+;; calc
+(defun range (n)
+  "Generate a list of integers from 0 to n-1 using list and append."
+  (let ((result '()))
+    (dotimes (i n)
+      (setq result (append result (list i))))
+    result))
+
+;; calc coords  base-coords - rel-coords -> target-coords
+(defun calc-object-rel-coords (base-coords target-coords) ;; base-coords, target-coords -> rel-coords
   (let ((rel-coords))
     (setq rel-coords (send (send base-coords :copy-worldcoords) :transformation (send target-coords :copy-worldcoords)))
     ;; (setq rel-coords (send (send (send base-coords :copy-worldcoords) :inverse-transformation) :transform (send target-coords :copy-worldcoords))) ;; これも同じ
     rel-coords))
 
-(defun calc-coords-from-rel (base-coords rel-coords)
+(defun calc-coords-from-rel (base-coords rel-coords) ;; base-coords, rel-coords -> target-coords
   (let ((target-coords))
     (setq target-coords (send (send base-coords :copy-worldcoords) :transform (send rel-coords :copy-worldcoords)))
     target-coords))
 
-(defun calc-object-base-coords (target-coords rel-coords)
+(defun calc-object-base-coords (target-coords rel-coords) ;; target-coords, rel-coords -> base-coords
   (let ((base-coords))
     (setq base-coords (send (send (send target-coords :copy-worldcoords) :transformation (send rel-coords :copy-worldcoords) :world) :inverse-transformation))
     ;; (setq base-coords (send (send rel-coords :copy-worldcoords) :transformation (send target-coords :copy-worldcoords) :world)) ;; これも同じ
@@ -83,7 +91,7 @@
     base-coords))
 
 
-(defun calc-rel-only-pos (ideal-coords rec-coords)
+(defun calc-rel-only-pos (ideal-coords rec-coords) ;; calc rel-coords (ideal-coords -> rec-coords) 
   (setq current-target-coords (make-coords :pos (send rec-coords :worldpos) :rot (send ideal-coords :worldrot))) ;; only use rec pos
   (setq ans (calc-object-rel-coords ideal-coords current-target-coords))
   ans)
@@ -109,18 +117,33 @@
     (setq offset-coords (send (send rec-coords :copy-worldcoords) :transformation (send grasp-coords :copy-worldcoords)))
     offset-coords))
 
-(defun calc-average-two-coords (first-coords second-coords)
+
+;; calc coords av and distance
+(defun calc-average-two-coords (first-coords second-coords) ;; calc average coords of two coords (only pos, rot = frist-coords's rot)
   (let (ans-coords)
     (setq ans-coords (make-coords :pos (scale 0.5 (v+ (send first-coords :worldpos) (send second-coords :worldpos)))
                                   :rot (send first-coords :worldrot)))
     ans-coords))
+
+(defun calculate-mean-pos (points) ;; 平均座標を返す
+  "Calculate the mean coordinates for a list of points."
+  (let* ((dims (length (send (car points) :pos)))
+         (mean-pos (make-list dims :initial-element 0.0))
+         (ans))
+    ;; 各次元ごとに平均を計算
+    (dotimes (i dims)
+      (setf (nth i mean-pos)
+            (/ (reduce #'+ (mapcar #'(lambda (p) (elt (send p :pos) i)) points))
+               (length points))))
+    (setq ans (make-coords :pos (apply #'vector mean-pos) :rot (send (elt points 0) :worldrot)))
+    (send ans :copy-worldcoords)))
 
 (defun calc-dis-two-coords (first-coords second-coords)
   (let (ans-dis)
     (setq ans-dis (norm (v- (send first-coords :worldpos) (send second-coords :worldpos))))
     ans-dis))
 
-(defun analysis-cds-list (cds-list)
+(defun analysis-cds-list (cds-list) ;; 座標列の分析
   (let ((x-list (list))
         (y-list (list))
         (z-list (list))
@@ -134,6 +157,31 @@
     (format t "y-list is ~A, y-max:~A, y-min:~A max-min-diff:~A ~%" y-list (apply #'max y-list) (apply #'min y-list) (- (apply #'max y-list) (apply #'min y-list)))
     (format t "z-list is ~A, z-max:~A, z-min:~A max-min-diff:~A ~%" z-list (apply #'max z-list) (apply #'min z-list) (- (apply #'max z-list) (apply #'min z-list)))
     ))
+
+(defun exclude-outliers-coords (points threshold);; 外れ値検出と除外
+  "Print outliers and return a list of points without outliers."
+  (let ((mean-point (calculate-mean-pos points))
+        (dims (length (send (car points) :pos)))
+        (outliers '())
+        (filtered-points '()))
+    ;; 各座標を処理
+    (dolist (p points)
+      (let ((distance
+             (sqrt (reduce #'+ (mapcar #'(lambda (i)
+                                           (expt (- (elt (send p :pos) i)
+                                                    (elt (send mean-point :pos) i)) 2))
+                                      (range dims))))))
+        (if (> distance threshold)
+            ;; 外れ値に追加
+            (setq outliers (append outliers (list p)))
+          ;; 外れ値でなければフィルタ済みリストに追加
+          (setq filtered-points (append filtered-points (list p))))))
+    (format t "mean-point: ~a~%" mean-point)
+    ;; 外れ値を出力
+    (format t "Outliers: ~a~%" (mapcar #'(lambda (p) (send p :pos)) outliers))
+    ;; 外れ値を除いたリストを返す
+    filtered-points))
+
 
 ;; show cds
 (defun publish-cds-tf (cds &key (base-frame "/base_footprint"))

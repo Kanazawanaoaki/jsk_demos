@@ -1,8 +1,8 @@
 <launch>
   <arg name="gui" default="true" />
 
-  <!-- <arg name="input_image" default="/femto_mega_remote/color/image_raw"/> -->
-  <arg name="input_image" default="/femto_mega/color/image_raw"/>
+  <arg name="input_image" default="/femto_mega_remote/color/image_raw"/>
+  <!-- <arg name="input_image" default="/femto_mega/color/image_raw"/> -->
   <arg name="input_camera_info" default="/femto_mega/color/camera_info"/>
 
   <!-- <arg name="input_image" default="/kinect_head/rgb/image_rect_color"/> -->
@@ -22,7 +22,7 @@
     </node>
     <node name="stove_detector" pkg="jsk_perception" type="point_pose_extractor" clear_params="true">
       <rosparam subst_value="true">
-        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/femto_mega_raw_stove.jpg
+        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/femto_mega_stove_v2.jpg
         window_name: stove_detector
         object_width: 0.297
         object_height: 0.210
@@ -70,11 +70,30 @@
     </node>
     <node name="ih_detector" pkg="jsk_perception" type="point_pose_extractor" clear_params="true">
       <rosparam subst_value="true">
-        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/k4a-ih-panel-cropped.jpg
+        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/femto_mega_ih_panel_panel.jpg
         window_name: ih_detector
-        object_width: 0.277
-        object_height: 0.144
+        object_width: 0.28
+        object_height: 0.142
       </rosparam>
+      <!-- <rosparam subst_value="true"> -->
+      <!--   template_filename: $(find jsk_2023_09_cook_from_recipe)/image/femto_mega_ih_panel.jpg -->
+      <!--   window_name: ih_detector -->
+      <!--   object_width: 0.13 -->
+      <!--   object_height: 0.12 -->
+      <!-- </rosparam> -->
+      <!-- <rosparam subst_value="true"> -->
+      <!--   template_filename: $(find jsk_2023_09_cook_from_recipe)/image/femto_mega_ih_panel_mark.jpg -->
+      <!--   window_name: ih_detector -->
+      <!--   object_width: 0.16 -->
+      <!--   object_height: 0.05 -->
+      <!-- </rosparam> -->
+
+      <!-- <rosparam subst_value="true"> -->
+      <!--   template_filename: $(find jsk_2023_09_cook_from_recipe)/image/k4a-ih-panel-cropped.jpg -->
+      <!--   window_name: ih_detector -->
+      <!--   object_width: 0.277 -->
+      <!--   object_height: 0.144 -->
+      <!-- </rosparam> -->
       <!-- <rosparam subst_value="true"> -->
       <!--   template_filename: $(find jsk_2023_09_cook_from_recipe)/image/k4a-ih-panel-2-cropped.jpg -->
       <!--   window_name: ih_detector -->

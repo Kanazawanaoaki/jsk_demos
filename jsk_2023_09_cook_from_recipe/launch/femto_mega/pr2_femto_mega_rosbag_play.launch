@@ -1,0 +1,57 @@
+<launch>
+  <arg name="rosbag" />
+  <arg name="manager" default="rosbag_play_nodelet_manager" />
+  <arg name="launch_nodelet_manager" default="true" />
+  <arg name="loop" default="true" />
+  <arg name="gui" default="false" />
+  <arg name="loop_flag" value="--loop" if="$(arg loop)" />
+  <arg name="loop_flag" value="" unless="$(arg loop)" />
+
+  <arg name="RGB_COLOR_IMAGE" default="/kinect_head/rgb/image_color" />
+  <arg name="DEPTH_RAW_IMAGE" default="/kinect_head/depth_registered/image_raw"  />
+
+  <param name="use_sim_time" value="true" />
+
+  <!-- decompress -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/pr2_decompress.launch">
+    <arg name="gui" value="false" />
+  </include>
+
+  <!-- rosbag player -->
+  <node pkg="rosbag" type="play" name="rosbag_play"
+        args="$(arg rosbag) $(arg loop_flag) --clock" output="screen" />
+  <!-- <node pkg="rosbag" type="play" name="rosbag_play" -->
+  <!--       args="$(arg rosbag) $(arg loop_flag) -r 5 -\-clock" output="screen" /> -->
+
+  <!-- <!-\- addtional decomp -\-> -->
+  <!-- <node name="rgb_color_decompress" pkg="image_transport" type="republish" -->
+  <!--       args="compressed in:=$(arg RGB_COLOR_IMAGE) out:=$(arg RGB_COLOR_IMAGE)" /> -->
+  <!-- <node name="depth_raw_decompress" pkg="image_transport" type="republish" -->
+  <!--       args="compressedDepth in:=$(arg DEPTH_RAW_IMAGE) out:=$(arg DEPTH_RAW_IMAGE)" /> -->
+
+  <!-- femto mega -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/femto_mega/femto_mega_decomp.launch">
+    <arg name="gui" value="false"/>
+  </include>
+  <!-- or -->
+  <!-- <node name="$(arg manager)" pkg="nodelet" type="nodelet" args="manager" -->
+  <!--       machine="$(arg machine)" if="$(arg launch_manager)" -->
+  <!--       output="screen" /> -->
+  <!-- <arg name="MEGA_RGB_IMAGE" default="/femto_mega/color/image_raw" /> -->
+  <!-- <arg name="MEGA_RGB_REMOTE_IMAGE" default="/femto_mega_remote/color/image_raw" /> -->
+  <!-- <node name="femto_mega_rgb_decompress" pkg="image_transport" type="republish" -->
+  <!--       args="compressed in:=$(arg MEGA_RGB_IMAGE) out:=$(arg MEGA_RGB_REMOTE_IMAGE)" /> -->
+
+  <!-- cook sensors reconvert -->
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/cook_sensors/sensors_reconvert_from_timestamped.launch">
+  </include>
+
+  <!-- rviz -->
+  <group if="$(arg gui)">
+    <node name="rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/pr2_pointcloud_decomp.rviz">
+    </node>
+  </group>
+
+</launch>

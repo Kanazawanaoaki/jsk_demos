@@ -1,0 +1,52 @@
+<launch>
+  <arg name="rosbag" doc="rosbag file path" />
+  <arg name="compress" default="false" doc="whether compress rosbag or not." />
+
+  <arg if="$(arg compress)" name="compress_flag" value="--bz2" />
+  <arg unless="$(arg compress)" name="compress_flag" value="" />
+
+  <node name="pr2_kanazawa_rosbag_record" pkg="rosbag" type="record"
+      args="-q $(arg compress_flag) -O $(arg rosbag) -b 0 
+          /rosout
+          /tf
+          /tf_static
+          /joint_states
+          /map
+          /base_odometry/odom
+          /robot_pose_ekf/odom_combined
+          /base_controller/command
+          /navigation/cmd_vel
+          /move_base_node/NavFnROS/plan
+          /move_base_node/DWAPlannerROS/global_plan
+          /move_base_node/DWAPlannerROS/local_plan
+          /move_base_node/local_costmap/costmap
+          /move_base_node/global_costmap/costmap
+          /move_base_node/global_costmap/footprint
+          /safe_teleop_base/local_costmap/costmap
+          /spots_marker_array
+          /particlecloud
+          /base_scan_throttled
+          /tilt_scan_throttled
+          /kinect_head/rgb/camera_info
+          /kinect_head/rgb/image_rect_color/compressed
+          /kinect_head/depth_registered/camera_info
+          /kinect_head/depth_registered/image_rect/compressedDepth
+          /kinect_head/rgb/image_color/compressed
+          /kinect_head/depth_registered/image_raw/compressedDepth
+          /femto_mega/color/camera_info
+          /femto_mega/color/image_raw/compressed
+          /audio
+          /audio_info
+          /timestamped_cal_gas
+          /timestamped_gas_v2_102b
+          /timestamped_gas_v2_302b
+          /timestamped_gas_v2_502b
+          /timestamped_gas_v2_702b
+          /timestamped_tgs_2600_analog
+          /timestamped_tgs_2602_analog
+          /timestamped_tgs_2603_analog
+          /pr2_cooking_current_action
+          /pr2_current_cmd_memo"
+      output="screen" />
+
+</launch>
