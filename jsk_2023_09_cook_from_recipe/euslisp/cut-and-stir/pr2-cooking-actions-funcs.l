@@ -749,6 +749,8 @@
         (pre-set-val (float-vector 0 0 0))
         (set-target-coords (make-coords))
         adj-target-cds
+        rec-ih-cds
+        ih-to-target-rel
         (push-length 10)
         )
     (if left
@@ -765,12 +767,22 @@
         (setq pre-set-val #f(-30 0 0))
         ;; (setq set-target-coords (make-coords :pos #f(645.029 -178.873 696.789) :rpy #f(-0.089 0.092 1.448)))
         (setq set-target-coords (make-coords :pos #f(645.029 -178.873 696.789) :rpy #f(-0.089 0.092 3.019)))
+        ;; (setq ih-to-target-rel (make-coords :pos #f(-111.388 160.174 159.358) :rpy #f(2.849 1.384 2.788)))
+        (setq ih-to-target-rel (make-coords :pos #f(-114.246 169.792 147.386) :rpy #f(2.849 1.384 2.788))) ;; with adj
         ))
     (if use-cds-offset
         (setq adj-target-cds (adjust-cds-with-spot set-target-coords "stove"))
       (setq adj-target-cds (send set-target-coords :copy-worldcoords))
       )
 
+    ;; rec
+    (when with-rec
+      (setq rec-ih-cds (setq res-coords (k4a-check-detection "/point_pose_ih/ObjectDetection" :rec-num 10 :use-out-filter t :filter-thre 50)))
+      (format t "rec cds is ~A~%" rec-ih-cds)
+      (setq adj-target-cds (calc-coords-from-rel rec-ih-cds ih-to-target-rel))
+      (format t "target cds is ~A~%" adj-target-cds)
+      )
+    ;; pre motion
     (if (or (equal ih-action :stop) (equal ih-action :start))
         (progn
           (send adj-target-cds :translate (float-vector push-length 0 0) :local)
@@ -779,6 +791,7 @@
           )
       )
 
+    ;; push button
     (if (or (equal ih-action :start) (equal ih-action :rotate))
         (progn
           (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm :rarm :action-mode :hold :object-name "ih stove")
