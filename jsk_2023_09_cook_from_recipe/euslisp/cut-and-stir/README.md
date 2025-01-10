@@ -392,6 +392,11 @@ rosparam set /femto_mega/depth/image_raw/compressedDepth/png_level 4
 ## が適応されている状態で
 roslaunch orbbec_camera femto_mega.launch color_fps:=15 depth_fps:=15 enable_colored_point_cloud:=true depth_registration:=true camera_name:=femto_mega
 ```
+https://github.com/Kanazawanaoaki/OrbbecSDK_ROS1/tree/for-pr1040 のブランチを使っている時には  
+```bash
+roslaunch orbbec_camera femto_mega.launch color_fps:=15 depth_fps:=15 enable_colored_point_cloud:=true depth_registration:=true camera_name:=femto_mega
+```
+のみで良い
 
 ### セットアップ
 z800で
