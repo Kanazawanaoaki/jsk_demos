@@ -21,7 +21,7 @@ class PeriodicImageSaver:
         self.bridge = CvBridge()
 
         # 画像トピックのサブスクライバの設定
-        image_topic = rospy.get_param('~input', '/camera_remote/rgb/image_raw')
+        image_topic = rospy.get_param('~input', '/camera_remote/color/image_raw')
         self.image_sub = rospy.Subscriber(image_topic, Image, self.callback)
 
         # 定期的に保存するためのタイマーの設定

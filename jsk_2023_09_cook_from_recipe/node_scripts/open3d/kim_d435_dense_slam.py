@@ -20,7 +20,7 @@ class Open3DSlamNode:
 
         # 깊이와 컬러 이미지를 위한 ROS 구독자 설정
         self.depth_sub = message_filters.Subscriber('/camera_remote/aligned_depth_to_color/image_raw', Image)
-        self.color_sub = message_filters.Subscriber('/camera_remote/rgb/image_raw', Image)
+        self.color_sub = message_filters.Subscriber('/camera_remote/color/image_raw', Image)
 
         # self.depth_sub = message_filters.Subscriber('/masked_human_depth_image/camera', Image)
         # self.color_sub = message_filters.Subscriber('/segmented_human_image/camera', Image)

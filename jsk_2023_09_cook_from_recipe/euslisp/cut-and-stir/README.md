@@ -326,7 +326,7 @@ roslaunch jsk_2023_09_cook_from_recipe d435_camera_with_decomp.launch
 ```
 Launching a data collection launch file.
 ```bash
-roslaunch jsk_2023_09_cook_from_recipe rgb_and_depth_data_collection.launch rgb_image:=/camera_remote/rgb/image_raw depth_image:=/camera/aligned_depth_to_color/image_raw specified_dir_name:=sample_images
+roslaunch jsk_2023_09_cook_from_recipe rgb_and_depth_data_collection.launch rgb_image:=/camera_remote/color/image_raw depth_image:=/camera/aligned_depth_to_color/image_raw specified_dir_name:=sample_images
 ```
 
 Start collecting data.

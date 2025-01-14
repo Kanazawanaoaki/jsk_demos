@@ -17,7 +17,7 @@ roslaunch jsk_2023_09_cook_from_recipe realsense_rgbd_rviz.launch
 
 データ保存のlaunch
 ```bash
-roslaunch jsk_2023_09_cook_from_recipe rgb_and_depth_data_collection.launch rgb_image:=/camera_remote/rgb/image_raw depth_image:=/camera/aligned_depth_to_color/image_raw specified_dir_name:=sample_images
+roslaunch jsk_2023_09_cook_from_recipe rgb_and_depth_data_collection.launch rgb_image:=/camera/color/image_raw depth_image:=/camera/aligned_depth_to_color/image_raw specified_dir_name:=sample_images
 ```
 
 データの取得を開始する

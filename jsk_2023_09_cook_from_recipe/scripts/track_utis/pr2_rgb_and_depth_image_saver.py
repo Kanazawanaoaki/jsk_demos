@@ -67,15 +67,15 @@ def main():
 
     parser.add_argument('--data_save_path', '-d', default='../../datas/object_datas/images',type=str, help='Path to save image dir.')
     parser.add_argument('--approximate', '-a', action='store_true', help='use approixmate.')
-    parser.add_argument('--pr2', action='store_true', help='use with pr2.')
+    parser.add_argument('--not_pr2', action='store_true', help='not use with pr2.')
 
     args = parser.parse_args()
 
     rospy.init_node('image_synchronizer', anonymous=True)
 
     # Define the topics to subscribe to
-    if args.pr2:
-        rgb_topic = '/camera_remote/rgb/image_raw'
+    if args.not_pr2:
+        rgb_topic = '/camera_remote/color/image_raw'
         depth_topic = '/camera_remote/aligned_depth_to_color/image_raw'
     else:
         rgb_topic = '/kinect_head_remote/rgb/image_rect_color'

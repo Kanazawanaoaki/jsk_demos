@@ -67,7 +67,7 @@ def main():
     rospy.init_node('rgb_and_depth_saver', anonymous=True)
 
     # Define the topics to subscribe to
-    rgb_topic = rospy.get_param('~rgb_image', '/camera_remote/rgb/image_raw')
+    rgb_topic = rospy.get_param('~rgb_image', '/camera_remote/color/image_raw')
     depth_topic = rospy.get_param('~depth_image', '/camera_remote/aligned_depth_to_color/image_raw')
 
     # Create subscribers

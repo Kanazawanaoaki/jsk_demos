@@ -1,5 +1,5 @@
 <launch>
-  <arg name="INPUT_IMAGE" default="/camera_remote/rgb/image_raw" />
+  <arg name="INPUT_IMAGE" default="/camera_remote/color/image_raw" />
   <arg name="INPUT_CLOUD" default="/camera_remote/aligned_depth_to_color/points" />
 
   <arg name="BGR_MASK_IMAGE" default="/cutie_node/output/segmentation_bgr" />

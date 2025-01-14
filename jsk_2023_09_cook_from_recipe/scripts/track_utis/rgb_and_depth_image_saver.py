@@ -63,7 +63,7 @@ def main():
     rospy.init_node('image_synchronizer', anonymous=True)
 
     # Define the topics to subscribe to
-    rgb_topic = '/camera_remote/rgb/image_raw'
+    rgb_topic = '/camera_remote/color/image_raw'
     depth_topic = '/camera_remote/aligned_depth_to_color/image_raw'
 
     # Create subscribers
