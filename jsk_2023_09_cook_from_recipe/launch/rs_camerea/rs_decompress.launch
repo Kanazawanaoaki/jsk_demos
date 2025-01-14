@@ -8,7 +8,7 @@
 
   <arg name="RGB_CAMERA_INFO" default="/camera/color/camera_info" />
   <arg name="RGB_IMAGE" default="/camera/color/image_raw" />
-  <arg name="RGB_REMOTE_IMAGE" default="/camera_remote/rgb/image_raw" />
+  <arg name="RGB_REMOTE_IMAGE" default="/camera_remote/color/image_raw" />
   <arg name="DEPTH_CAMERA_INFO" default="/camera/aligned_depth_to_color/camera_info" />
   <arg name="DEPTH_IMAGE" default="/camera/aligned_depth_to_color/image_raw"  />
   <arg name="DEPTH_REMOTE_IMAGE" default="/camera_remote/aligned_depth_to_color/image_raw" />

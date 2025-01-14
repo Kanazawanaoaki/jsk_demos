@@ -1,0 +1,16 @@
+<launch>
+
+  <arg name="rgb_image" default="/camera_remote/color/image_raw" />
+  <arg name="depth_image" default="/camera_remote/aligned_depth_to_color/image_raw" />
+  <arg name="specified_dir_name" default="sample_images" />
+
+  <node name="rgb_and_depth_image_saver"
+        pkg="jsk_2023_09_cook_from_recipe" type="rgb_and_depth_image_saver.py"
+        output="screen">
+    <rosparam subst_value="true">
+      rgb_image: $(arg rgb_image)
+      depth_image: $(arg depth_image)
+      specified_folder: $(find jsk_2023_09_cook_from_recipe)/datas/object_datas/$(arg specified_dir_name)/
+    </rosparam>
+  </node>
+</launch>

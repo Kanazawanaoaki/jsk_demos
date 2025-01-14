@@ -1,0 +1,10 @@
+<launch>
+  <arg name="gui" default="true"/>
+  <!-- rviz -->
+  <group if="$(arg gui)">
+    <node name="realsense_rgbd_rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/realsense_rgbd_datas.rviz">
+    </node>
+  </group>
+</launch>

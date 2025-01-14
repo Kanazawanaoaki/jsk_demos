@@ -11,9 +11,11 @@ from std_srvs.srv import Empty, EmptyResponse
 
 # Global variable to control the start/stop state
 is_running = False
+image_count = 0
 
 def callback(rgb_msg, depth_msg):
     global is_running
+    global image_count
     if not is_running:
         return
 
@@ -44,8 +46,10 @@ def callback(rgb_msg, depth_msg):
     cv2.imwrite(rgb_filename, rgb_image)
     cv2.imwrite(depth_filename, depth_image)
 
+    rospy.loginfo(f'Current image count: {image_count}')
     rospy.loginfo(f'Saved RGB image: {rgb_filename}')
     rospy.loginfo(f'Saved Depth image: {depth_filename}')
+    image_count += 1
 
 def start_service(req):
     global is_running
@@ -63,8 +67,8 @@ def main():
     rospy.init_node('rgb_and_depth_saver', anonymous=True)
 
     # Define the topics to subscribe to
-    rgb_topic = '/camera_remote/rgb/image_raw'
-    depth_topic = '/camera_remote/aligned_depth_to_color/image_raw'
+    rgb_topic = rospy.get_param('~rgb_image', '/camera_remote/rgb/image_raw')
+    depth_topic = rospy.get_param('~depth_image', '/camera_remote/aligned_depth_to_color/image_raw')
 
     # Create subscribers
     rgb_sub = message_filters.Subscriber(rgb_topic, Image)
