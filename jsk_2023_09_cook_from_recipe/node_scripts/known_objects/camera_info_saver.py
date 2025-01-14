@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import rospy
+import os
 from sensor_msgs.msg import CameraInfo
 
 def camera_info_callback(msg):
@@ -15,7 +16,11 @@ def camera_info_callback(msg):
     )
 
     # Write the camera matrix to a file
-    with open('cam_K.txt', 'w') as file:
+    save_folder = rospy.get_param('~save_folder', '../../datas/object_datas/images')
+    if not os.path.exists(save_folder):
+        os.makedirs(save_folder)
+    save_filename = os.path.join(save_folder, 'cam_K.txt')
+    with open(save_filename, 'w') as file:
         file.write(cam_K_str)
 
     # Print the camera matrix to the console for verification
@@ -28,8 +33,11 @@ def main():
     # Initialize the ROS node
     rospy.init_node('camera_info_saver', anonymous=True)
 
+    # Get ROS parameters
+    cam_info_topic = rospy.get_param('~cam_info', '/camera/color/camera_info')
+
     # Subscribe to the camera_info topic
-    rospy.Subscriber('/camera/color/camera_info', CameraInfo, camera_info_callback)
+    rospy.Subscriber(cam_info_topic, CameraInfo, camera_info_callback)
 
     # Keep the node running
     rospy.spin()

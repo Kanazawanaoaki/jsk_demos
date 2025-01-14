@@ -4,6 +4,9 @@
   <arg name="depth_image" default="/camera_remote/aligned_depth_to_color/image_raw" />
   <arg name="specified_dir_name" default="sample_images" />
 
+  <arg name="cam_info" default="/camera/color/camera_info" />
+  <arg name="save_cam_k" default="True" />
+
   <node name="rgb_and_depth_image_saver"
         pkg="jsk_2023_09_cook_from_recipe" type="rgb_and_depth_image_saver.py"
         output="screen">
@@ -13,4 +16,15 @@
       specified_folder: $(find jsk_2023_09_cook_from_recipe)/datas/object_datas/$(arg specified_dir_name)/
     </rosparam>
   </node>
+
+  <group if="$(arg save_cam_k)">
+    <node name="camera_info_saver"
+          pkg="jsk_2023_09_cook_from_recipe" type="camera_info_saver.py"
+          output="screen">
+      <rosparam subst_value="true">
+        cam_info: $(arg cam_info)
+        save_folder: $(find jsk_2023_09_cook_from_recipe)/datas/object_datas/$(arg specified_dir_name)/
+      </rosparam>
+    </node>
+  </group>
 </launch>
