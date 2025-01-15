@@ -57,7 +57,7 @@ python jpg2graypng.py [input_dir] [output_dir]
 python image_file_check.py [input_dir]
 ```
 
-#### milkデータの形式にする
+#### bundlesdf用のデータ形式にする
 ```bash
 root
   ├──rgb/    (PNG files)
@@ -73,6 +73,12 @@ roscd jsk_2023_09_cook_from_recipe/scripts/for-cut
 python milk_ptcloud_construct.py -r [milk_data_rgb]
 ## if you want to use mask
 python milk_ptcloud_construct.py -r [milk_data_rgb] -m
+```
+#### データの数を減らす
+指定した番号以降の数のファイルを削除する
+```bash
+roscd jsk_2023_09_cook_from_recipe/scripts/for-cut
+python check_and_delete.py  [path to directory] [delete start number]
 ```
 
 ### Mask STL file
