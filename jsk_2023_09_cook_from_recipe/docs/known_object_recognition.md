@@ -36,13 +36,25 @@ https://github.com/Kanazawanaoaki/sam2_annotation を使う（暫定）
 ```bash
 python png2jpg.py [input_dir] [output_dir]
 ```
-#### annotate segmation to video
+#### split jpg dir (This is necessary if you have a lot of image files and are experiencing GPU memory issues.)
+```bash
+python data_split.py [input_dir] [output_dir] -n 2
+```
+#### annotate segmation to images
 ```bash
 python interactive_video_predictor.py -i ../videos/bedroom -o ../output/bedroom
+```
+#### convert overlay_mask to video
+```bash
+python overlay_mask2video.py [overlay_mask] -o [output_file_name].mp4
 ```
 #### convert jpg to grasy png
 ```bash
 python jpg2graypng.py [input_dir] [output_dir]
+```
+#### image file dim check
+```bash
+python image_file_check.py [input_dir]
 ```
 
 #### milkデータの形式にする
@@ -91,4 +103,9 @@ python run_custom.py --mode global_refine --video_dir /mnt/[dataset_name] --out_
 #### 3) (Optional) If you want to draw the oriented bounding box to visualize the pose, similar to our demo
 ```bash
 python run_custom.py --mode draw_pose --out_folder /mnt/bundlesdf/bundlesdf_[dataset_name]
+```
+
+pose_visを動画にする
+```bash
+python png_files2video.py /media/almagest/73B2/kanazawa/datas/milk_data/bundlesdf/bundlesdf_milk_data_20250114_green_bowl/pose_vis -o bundlesdf_milk_data_20250114_green_bowl_pose_vis.mp4
 ```
