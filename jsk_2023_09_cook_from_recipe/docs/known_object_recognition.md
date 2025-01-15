@@ -76,6 +76,8 @@ pip uninstall scipy
 pip install scipy==1.9
 ```
 
+`Ctrl + P + Q` でコンテナから抜けて，`docker exec -it bundlesdf /bin/bash`で中に入るとかもできそう．
+
 #### 1) Run joint tracking and reconstruction. 
 ```bash
 python run_custom.py --mode run_video --video_dir /mnt/[dataset_name] --out_folder /mnt/bundlesdf/bundlesdf_[dataset_name] --use_segmenter 1 --use_gui 1 --debug_level 2
@@ -83,10 +85,10 @@ python run_custom.py --mode run_video --video_dir /mnt/[dataset_name] --out_fold
 
 #### 2) Run global refinement post-processing to refine the mesh
 ```bash
-python run_custom.py --mode global_refine --video_dir /mnt/[dataset_name] --out_folder /home/bundlesdf/bundlesdf_[dataset_name]
+python run_custom.py --mode global_refine --video_dir /mnt/[dataset_name] --out_folder /mnt/bundlesdf/bundlesdf_[dataset_name]
 ```
 
 #### 3) (Optional) If you want to draw the oriented bounding box to visualize the pose, similar to our demo
 ```bash
-python run_custom.py --mode draw_pose --out_folder /home/bundlesdf/bundlesdf_[dataset_name]
+python run_custom.py --mode draw_pose --out_folder /mnt/bundlesdf/bundlesdf_[dataset_name]
 ```
