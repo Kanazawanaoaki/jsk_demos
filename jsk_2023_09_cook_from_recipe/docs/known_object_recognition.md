@@ -6,18 +6,43 @@
 https://github.com/W567/tracking を使う．
 
 ### Data Collection
+
+#### camera launch
 (D435を使う場合)カメラのlaunchを立ち上げる
 ```bash
 roslaunch realsense2_camera rs_rgbd.launch color_height:=480 color_width:=640 color_fps:=60 depth_height:=480 depth_width:=640 depth_fps:=60
 ```
-そのままで使うときのrviz
+(D435で，圧縮解凍して使う場合さらに)
+```bash
+roslaunch jsk_2023_09_cook_from_recipe rs_decompress.launch
+```
+
+(pr1040のkinectを使う場合)画像の解凍と同期のlaunch
+```bash
+rosparam set /kinect_head/depth_registered/image_raw/compressedDepth/png_level 6
+rosnode kill /kinect_head/kinect_head_nodelet_manager
+
+roslaunch jsk_2023_09_cook_from_recipe pr2_decompress_and_sync.launch DEPTH_IMAGE:=/kinect_head/depth_registered/image_raw
+```
+
+#### rviz
+(D435を使う場合)そのままで使うときのrviz
 ```bash
 roslaunch jsk_2023_09_cook_from_recipe realsense_rgbd_rviz.launch
 ```
+(pr1040のkinectを使う場合)
+```bash
+roslaunch jsk_2023_09_cook_from_recipe pr2_known_object_rviz.launch
+```
 
+#### data save
 データ保存のlaunch（specified_dir_nameを指定してフォルダ名変更，RGBとDepthとcamera infoを保存）
 ```bash
-roslaunch jsk_2023_09_cook_from_recipe rgb_and_depth_data_collection.launch rgb_image:=/camera/color/image_raw depth_image:=/camera/aligned_depth_to_color/image_raw specified_dir_name:=sample_images
+## realsense
+roslaunch jsk_2023_09_cook_from_recipe rgb_and_depth_data_collection.launch rgb_image:=/camera/color/image_raw depth_image:=/camera/aligned_depth_to_color/image_raw cam_info:=/camera/color/camera_info specified_dir_name:=sample_images
+
+## pr1040
+roslaunch jsk_2023_09_cook_from_recipe rgb_and_depth_data_collection.launch rgb_image:=/synchronize_republish/pub_00 depth_image:=/synchronize_republish/pub_01 cam_info:=/kinect_head/rgb/camera_info specified_dir_name:=pr2_sample_images
 ```
 
 データの取得を開始する
