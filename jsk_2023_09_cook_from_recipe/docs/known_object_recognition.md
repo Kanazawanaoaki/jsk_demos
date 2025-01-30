@@ -100,7 +100,7 @@ python milk_ptcloud_construct.py -r [milk_data_rgb]
 python milk_ptcloud_construct.py -r [milk_data_rgb] -m
 ```
 #### データの数を減らす
-指定した番号以降の数のファイルを削除する
+指定した番号以降の数のファイルを削除する．`-b`を付けるとその番号より前を削除．
 ```bash
 roscd jsk_2023_09_cook_from_recipe/scripts/for-cut
 python check_and_delete.py  [path to directory] [delete start number]
