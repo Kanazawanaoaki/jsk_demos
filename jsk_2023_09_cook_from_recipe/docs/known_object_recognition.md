@@ -121,6 +121,11 @@ pip install scipy==1.9
 
 `Ctrl + P + Q` でコンテナから抜けて，`docker exec -it bundlesdf /bin/bash`で中に入るとかもできそう．
 
+以下の1~3の手順で実行できる．あるいはデータの置き場所を`/mnt/source_datas/[dataset_name]`にできるのなら，以下のコマンドで全部を実行可能
+```bash
+python exec_all.py [dataset_name]
+```
+
 #### 1) Run joint tracking and reconstruction. 
 ```bash
 python run_custom.py --mode run_video --video_dir /mnt/source_datas/[dataset_name] --out_folder /mnt/bundlesdf/bundlesdf_[dataset_name] --use_segmenter 1 --use_gui 1 --debug_level 2
@@ -135,6 +140,7 @@ python run_custom.py --mode global_refine --video_dir /mnt/source_datas/[dataset
 ```bash
 python run_custom.py --mode draw_pose --out_folder /mnt/bundlesdf/bundlesdf_[dataset_name]
 ```
+
 
 pose_visを動画にする
 ```bash
