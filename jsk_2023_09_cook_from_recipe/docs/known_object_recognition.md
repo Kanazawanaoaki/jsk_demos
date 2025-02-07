@@ -146,3 +146,8 @@ pose_visを動画にする
 ```bash
 python png_files2video.py /media/almagest/73B2/kanazawa/datas/milk_data/bundlesdf/bundlesdf_milk_data_20250114_green_bowl/pose_vis -o bundlesdf_milk_data_20250114_green_bowl_pose_vis.mp4
 ```
+
+作成したメッシュの原点を変更する
+```bash
+python transform_mesh_orig.py [input_mesh path]
+```
