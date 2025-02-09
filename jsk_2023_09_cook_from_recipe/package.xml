@@ -43,6 +43,7 @@
   <depend>jsk_pr2_startup</depend>
   <depend>rviz_interactive_tf</depend>
   <depend>m5stack_ros</depend>
+  <depend>tracking</depend>
   <!-- Only needed for certain sketches -->
   <exec_depend>audio_common_msgs</exec_depend>
   <exec_depend>audio_to_spectrogram</exec_depend>

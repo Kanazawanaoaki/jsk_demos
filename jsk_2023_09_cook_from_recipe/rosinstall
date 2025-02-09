@@ -34,3 +34,6 @@
 - git:
     local-name: rviz_interactive_tf
     uri: git@github.com:lucasw/rviz_interactive_tf.git
+- git:
+    local-name: tracking
+    uri: git@github.com:W567/tracking.git
