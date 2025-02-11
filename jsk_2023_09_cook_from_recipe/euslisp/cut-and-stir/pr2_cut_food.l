@@ -16,6 +16,8 @@
 ;; ros init
 (ros::roseus "pr2_cut_food" :anonymous t)
 (ros::load-ros-manifest "jsk_recognition_msgs")
+(ros::load-ros-manifest "tracking") ;; FoundationPose tracking
+
 (unless (boundp '*tfl*)
   (setq *tfl* (instance ros::transform-listener :init))
   )
@@ -74,6 +76,8 @@
 ;; global variables
 
 ;; defun util fuction
+
+;; calib-check
 (defun calib-check-rec (&key (arm :larm) (set-offset t) (side :upper))
   (let ((calib-check-topic)
         (ideal-ee-coords)
@@ -311,7 +315,6 @@
 
 
 ;; plane rec
-
 (defun plane-cb (msg)
   (let ((cam-coords nil))
     (setq *msg* msg)
@@ -365,7 +368,7 @@
       )
     ))
 
-;; defun action codes
+;; object rec
 (defun change-hsi-param (&key (object-name "knife"))
   (cond
    ((string= object-name "knife")
@@ -420,10 +423,6 @@
   (format t "change deva class to ~A detection ~%" object-name)
   t)
 
-
-
-
-;; for rec
 (defun deva-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (rec-num 5) (fix-rot nil) (bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes"))
   ;; TODO Add let
   (let ((msg nil)
@@ -482,6 +481,90 @@
            ))
   *obj-coord*)
 
+;; ;; object-rec, FoundationPose tracking
+(defun get-fp-tracking-coords (&optional (frame-id "object_center"))
+  (let ((tm2)
+        (obj-coords nil))
+    (setq tm2 (send *tfl* :get-latest-common-time "base_footprint" frame-id))
+    (when (send *tfl* :wait-for-transform  "base_footprint" frame-id tm2 10)
+      (setq obj-coords (send (send *pr2* :copy-worldcoords) :transform
+                             (send *tfl* :lookup-transform "base_footprint" frame-id tm2))))
+    obj-coords))
+
+(defun fp-pause-tracking (&optional (service-name "/pause_tracking_object"))
+  (format t "wait for ~A~%" service-name)
+  (ros::wait-for-service service-name)
+  (setq req (instance std_srvs::TriggerRequest :init))
+  (setq res (ros::service-call service-name req))
+  )
+
+(defun fp-stop-tracking (&optional (service-name "/stop_tracking_object"))
+  (format t "wait for ~A~%" service-name)
+  (ros::wait-for-service service-name)
+  (setq req (instance std_srvs::TriggerRequest :init))
+  (setq res (ros::service-call service-name req))
+  )
+
+(defun fp-reset-mask (&key (label "marker")
+                           (service-name "/reset_mask_object"))
+  (format t "wait for ~A~%" service-name)
+  (ros::wait-for-service service-name)
+  (setq req (instance tracking::ResetMaskRequest :init))
+  (send req :label label)
+  (setq res (ros::service-call service-name req))
+  )
+
+(defun fp-reset-mesh (&key (label "marker")
+                           (mesh_name "marker" )
+                           (service-name "/reset_mesh_object"))
+  (format t "wait for ~A~%" service-name)
+  (ros::wait-for-service service-name)
+  (setq req (instance tracking::ResetMeshRequest :init))
+  (send req :mesh_name mesh_name)
+  (send req :label label)
+  (setq res (ros::service-call service-name req))
+  )
+
+
+(defun change-fp-mesh (&key (object-name "knife"))
+  (cond
+   ((string= object-name "knife")
+    (fp-reset-mesh :label "black knife" :mesh_name "kn_knife_20241017_v2_edit_orig_fixed") ;; TODO check
+    )
+   ((string= object-name "cutting board")
+    ;; (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "white cutting board;")
+    ;; TODO
+    )
+   ((string= object-name "peeler")
+    (fp-reset-mesh :label "blue peeler" :mesh_name "kn_peeler_20241017_wu_scan")
+    )
+   ((string= object-name "potato peeler")
+    (fp-reset-mesh :label "yellow potato peeler" :mesh_name "kn_potato_peeler_20241017_wu_scan")
+    )
+   ((string= object-name "white cup")
+    (fp-reset-mesh :label "white and black cup" :mesh_name "kn_white_cup_20250123_bundlesdf")
+    )
+   ((string= object-name "brown cup")
+    (fp-reset-mesh :label "brown cup" :mesh_name "kn_brown_cup_big_20241017_wu_scan")
+    )
+   ((string= object-name "green bowl")
+    (fp-reset-mesh :label "green bowl" :mesh_name "kn_green_bowl_20241017_wu_blender")
+    )
+   ((string= object-name "gray bowl")
+    (fp-reset-mesh :label "gray bowl" :mesh_name "kn_gray_bowl_20250119_bundlesdf_pr2_orig_fixed")
+    )
+   ((string= object-name "wooden spatula")
+    (fp-reset-mesh :label "wooden spatula" :mesh_name "kn_wooden_spatula_20250130_edit")
+    )
+   ((string= object-name "black whisk")
+    (fp-reset-mesh :label "black whisk" :mesh_name "kn_whisk_20250130_edit")
+    )
+   )
+  (format t "start ~A tracking by FoundatioinPose~%" object-name)
+  t)
+
+
+;; defun action codes
 (defun grasp-object-primitive (&key (pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041)
                                                        #f(-17.2701 6.61532 -15.8472 -46.5569 -153.821 -114.592 99.202)
                                                        ))
