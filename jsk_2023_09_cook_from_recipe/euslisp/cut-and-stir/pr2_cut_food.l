@@ -17,6 +17,7 @@
 (ros::roseus "pr2_cut_food" :anonymous t)
 (ros::load-ros-manifest "jsk_recognition_msgs")
 (ros::load-ros-manifest "tracking") ;; FoundationPose tracking
+(ros::load-ros-manifest "visualization_msgs") ;; FoundationPose tracking
 
 (unless (boundp '*tfl*)
   (setq *tfl* (instance ros::transform-listener :init))
@@ -491,6 +492,20 @@
                              (send *tfl* :lookup-transform "base_footprint" frame-id tm2))))
     obj-coords))
 
+(defun wait-fp-topic-update (&optional (marker-topic "/bbox_marker_object"))
+  (let (marker_msg
+        (start_time (ros::time-now))
+        (update-flag nil)
+        )
+    (setq update-flag nil)
+    (until update-flag
+           (setq marker_msg (one-shot-subscribe marker-topic visualization_msgs::Marker))
+           (if (ros::time>= (send marker_msg :header :stamp) start_time)
+               (setq update-flag t)
+             )
+           )
+    )
+
 (defun fp-pause-tracking (&optional (service-name "/pause_tracking_object"))
   (format t "wait for ~A~%" service-name)
   (ros::wait-for-service service-name)
@@ -553,11 +568,20 @@
    ((string= object-name "gray bowl")
     (fp-reset-mesh :label "gray bowl" :mesh_name "kn_gray_bowl_20250119_bundlesdf_pr2_orig_fixed")
     )
+   ((string= object-name "oil dispenser")
+    (fp-reset-mesh :label "oil dispenser" :mesh_name "kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed")
+    )
+   ((string= object-name "frying pan")
+    (fp-reset-mesh :label "black frying pan" :mesh_name "");; TODO
+    )
    ((string= object-name "wooden spatula")
     (fp-reset-mesh :label "wooden spatula" :mesh_name "kn_wooden_spatula_20250130_edit")
     )
    ((string= object-name "black whisk")
     (fp-reset-mesh :label "black whisk" :mesh_name "kn_whisk_20250130_edit")
+    )
+   ((string= object-name "pink spoon")
+    (fp-reset-mesh :label "pink spoon" :mesh_name "");; TODO
     )
    )
   (format t "start ~A tracking by FoundatioinPose~%" object-name)
