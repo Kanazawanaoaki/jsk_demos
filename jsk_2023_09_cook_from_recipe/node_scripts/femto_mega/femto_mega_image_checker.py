@@ -22,8 +22,8 @@ class ImageSubscriber:
 
         self.say_something("femto_mega image check start")
         # イメージメッセージをサブスクライブ
-        # self.image_sub = rospy.Subscriber('/femto_mega/color/image_raw/compressed', CompressedImage, self.image_callback)
-        self.image_sub = rospy.Subscriber('/femto_mega/color/image_raw', Image, self.image_callback)
+        self.image_sub = rospy.Subscriber('/femto_mega/color/image_raw/compressed', CompressedImage, self.image_callback)
+        # self.image_sub = rospy.Subscriber('/femto_mega/color/image_raw', Image, self.image_callback)
         # 最後にトピックが更新された時間
         self.last_image_time = time.time()
 
