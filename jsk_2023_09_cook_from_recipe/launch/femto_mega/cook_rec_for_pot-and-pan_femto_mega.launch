@@ -2,7 +2,8 @@
 
   <arg name="run_rviz" default="false" />
 
-  <arg name="input_image" default="/femto_mega/color/image_raw"/>
+  <!-- <arg name="input_image" default="/femto_mega/color/image_raw"/> -->
+  <arg name="input_image" default="/femto_mega_remote/color/image_raw"/>
 
   <node name="rect_added_image_publisher" pkg="jsk_2023_09_cook_from_recipe"
         type="femto_mega_rect_added_image_publisher.py" output="screen" clear_params="true">
