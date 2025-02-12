@@ -498,10 +498,12 @@
         (update-flag nil)
         )
     (setq update-flag nil)
+    (format t "Waiting for a fp new topic~%")
     (until update-flag
            (setq marker_msg (one-shot-subscribe marker-topic visualization_msgs::Marker))
            (if (ros::time>= (send marker_msg :header :stamp) start_time)
                (setq update-flag t)
+             (format t "A fp new topic is comming!~%")
              )
            )
     )
@@ -581,7 +583,12 @@
     (fp-reset-mesh :label "black whisk" :mesh_name "kn_whisk_20250130_edit")
     )
    ((string= object-name "pink spoon")
-    (fp-reset-mesh :label "pink spoon" :mesh_name "");; TODO
+    (fp-reset-mesh :label "pink spoon" :mesh_name "kn_pink_spoon_20250130_edit_edit")
+    )
+
+   (t
+    (format t "~A is not implemented for change-fp-mesh! ~%" object-name)
+    (return-from change-fp-mesh)
     )
    )
   (format t "start ~A tracking by FoundatioinPose~%" object-name)
@@ -752,20 +759,32 @@
 
 
 
-(defun grasp-rec-object (&key (object-name "knife") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm) (is-grasp t) (action-mode :pick-up) (use-calib-offset nil) (wait-after-grasp nil) (exit-after-grasp nil) (wait-before-grasp nil) (exit-before-grasp nil))
+(defun grasp-rec-object (&key (object-name "knife") (use-model "fp") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm) (is-grasp t) (action-mode :pick-up) (use-calib-offset nil) (wait-after-grasp nil) (exit-after-grasp nil) (wait-before-grasp nil) (exit-before-grasp nil))
   (cond
-   ((and (string= object-name "knife") (equal arm :rarm))
-    (if use-calib-offset
+   ((and (string= object-name "knife") (equal arm :rarm));; knife
+    (cond
+     ((equal use-model "fp");; if use FoundationPose
+      (if use-calib-offset
+          (progn
+            (setq object-offset (make-coords :pos #f(-100.308 -12.233 -10.919) :rpy #f(-0.09 0.071 0.061))) ;; TODO
+            )
         (progn
-          ;; (setq object-offset (make-coords :pos #f(-104.764 -12.283 2.579) :rpy #f(-0.003 0.065 0.067))) ;; for only deva and with offset
-          (setq object-offset (make-coords :pos #f(-100.308 -12.233 -10.919) :rpy #f(-0.09 0.071 0.061))) ;; for only deva and with offset
+          (setq object-offset (make-coords :pos #f(-105.089 -11.948 -2.399) :rpy #f(-0.09 0.071 -3.081))) ;; TODO
           )
-      (progn
-        ;; (setq object-offset (make-coords :pos #f(-105.089 -11.948 -2.399) :rpy #f(-0.09 0.071 0.061))) ;; for only deva
-        (setq object-offset (make-coords :pos #f(-105.089 -11.948 -2.399) :rpy #f(-0.09 0.071 -3.081))) ;; for only deva for upper
         )
       )
-
+     ((equal use-model "deva");; if use deva
+      (if use-calib-offset
+          (progn
+            ;; (setq object-offset (make-coords :pos #f(-104.764 -12.283 2.579) :rpy #f(-0.003 0.065 0.067))) ;; for only deva and with offset
+            (setq object-offset (make-coords :pos #f(-100.308 -12.233 -10.919) :rpy #f(-0.09 0.071 0.061))) ;; for only deva and with offset
+            )
+        (progn
+          ;; (setq object-offset (make-coords :pos #f(-105.089 -11.948 -2.399) :rpy #f(-0.09 0.071 0.061))) ;; for only deva
+          (setq object-offset (make-coords :pos #f(-105.089 -11.948 -2.399) :rpy #f(-0.09 0.071 -3.081))) ;; for only deva for upper
+          )
+        ))
+     )
     ;; (setq object-offset (make-coords :pos #f(-3.846 -15.18 -28.556) :rpy #f(-0.171 0.071 0.061))) ;; for with tabletop
 
     ;; (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
@@ -774,17 +793,32 @@
     ;; (setq pre-set-val #f(-100 0 100))
     (setq pre-set-val #f(-50 0 -100)) ;; for upper
     (setq fix-rot nil)
-    (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+    (if (equal use-model "deva")
+        (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+      )
     )
-   ((and (string= object-name "potato peeler") (equal arm :rarm))
-    (if use-calib-offset
+   ((and (string= object-name "potato peeler") (equal arm :rarm));; potato peeler
+    (cond
+     ((equal use-model "fp");; if use FoundationPose
+      (if use-calib-offset
+          (progn
+            (setq object-offset (make-coords :pos #f(-100.308 -12.233 -10.919) :rpy #f(-0.09 0.071 0.061))) ;; TODO
+            )
         (progn
-          (setq object-offset (make-coords :pos #f(-100.308 -12.233 -10.919) :rpy #f(-0.09 0.071 0.061))) ;; for only deva and with offset TODO
+          (setq object-offset (make-coords :pos #f(-58.86 -2.424 -11.255) :rpy #f(0.138 0.036 3.127))) ;; TODO
           )
-      (progn
-        (setq object-offset (make-coords :pos #f(-58.86 -2.424 -11.255) :rpy #f(0.138 0.036 3.127))) ;; for only deva for upper
         )
       )
+     ((equal use-model "deva");; if use deva
+      (if use-calib-offset
+          (progn
+            (setq object-offset (make-coords :pos #f(-100.308 -12.233 -10.919) :rpy #f(-0.09 0.071 0.061))) ;; for only deva and with offset TODO
+            )
+        (progn
+          (setq object-offset (make-coords :pos #f(-58.86 -2.424 -11.255) :rpy #f(0.138 0.036 3.127))) ;; for only deva for upper
+          )
+        ))
+     )
 
     ;; (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
     (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)) ;; for upper
@@ -792,35 +826,59 @@
     ;; (setq pre-set-val #f(-100 0 100))
     (setq pre-set-val #f(-50 0 -100)) ;; for upper
     (setq fix-rot nil)
-    (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+    (if (equal use-model "deva")
+        (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+      )
     )
    ((and (string= object-name "peeler") (equal arm :rarm))
-    ;; (setq object-offset (make-coords :pos #f(-53.198 -7.425 -12.732) :rpy #f(-0.109 0.026 -0.005)))
-    ;; (setq object-offset (make-coords :pos #f(-53.198 -7.425 -10.732) :rpy #f(-0.109 0.026 -0.005)))
-    ;; (setq object-offset (make-coords :pos #f(-43.198 -7.425 -10.732) :rpy #f(-0.109 0.026 -0.005)))
-    (setq object-offset (make-coords :pos #f(-49.884 -6.29 -7.923) :rpy #f(0.091 -0.008 -3.131))) ;; for upper
+    (cond
+     ((equal use-model "fp");; if use FoundationPose
+      (setq object-offset (make-coords :pos #f(-49.884 -6.29 -7.923) :rpy #f(0.091 -0.008 -3.131))) ;; for upper
+      )
+     ((equal use-model "deva");; if use deva
+      ;; (setq object-offset (make-coords :pos #f(-53.198 -7.425 -12.732) :rpy #f(-0.109 0.026 -0.005)))
+      ;; (setq object-offset (make-coords :pos #f(-53.198 -7.425 -10.732) :rpy #f(-0.109 0.026 -0.005)))
+      ;; (setq object-offset (make-coords :pos #f(-43.198 -7.425 -10.732) :rpy #f(-0.109 0.026 -0.005)))
+      (setq object-offset (make-coords :pos #f(-49.884 -6.29 -7.923) :rpy #f(0.091 -0.008 -3.131))) ;; for upper
+      )
+     )
 
     ;; (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
     (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)) ;; for upper
     ;; (setq pre-set-val #f(-100 0 100))
     (setq pre-set-val #f(-50 0 -100)) ;;for upper
     (setq fix-rot nil)
-    (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+    (if (equal use-model "deva")
+        (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+      )
     )
    ((and (string= object-name "white cup") (equal arm :rarm))
-    (if use-calib-offset
+    (cond
+     ((equal use-model "fp");; if use FoundationPose
+      (if use-calib-offset
         (progn
-          ;; (setq object-offset (make-coords :pos #f(-113.441 11.776 7.149) :rpy #f(-0.033 0.036 -0.005))) ;; for with table mite tyousetu
-          ;; (setq object-offset (make-coords :pos #f(-93.773 1.137 -23.002) :rpy #f(-0.033 0.036 -0.057))) ;; for with table for origin
           (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for with table sukoshi ue
           )
-      (progn
-        ;; (setq object-offset (make-coords :pos #f(-98.527 0.551 -14.482) :rpy #f(-0.033 0.036 -0.057))) ;; for deva only
-        ;; (setq object-offset (make-coords :pos #f(-113.441 11.776 7.149) :rpy #f(-0.033 0.036 -0.005))) ;; for with table
-        ;; (setq object-offset (make-coords :pos #f(-88.997 0.777 -11.522) :rpy #f(-0.033 0.036 -0.057))) ;; for with table sukoshi ue
-        (setq object-offset (make-coords :pos #f(-98.961 1.766 -10.442) :rpy #f(-0.033 0.036 3.085))) ;; for with table and upper
+        (progn
+          (setq object-offset (make-coords :pos #f(-98.961 1.766 -10.442) :rpy #f(-0.033 0.036 3.085))) ;; for with table and upper
+          )
         )
       )
+     ((equal use-model "deva");; if use deva
+      (if use-calib-offset
+          (progn
+            ;; (setq object-offset (make-coords :pos #f(-113.441 11.776 7.149) :rpy #f(-0.033 0.036 -0.005))) ;; for with table mite tyousetu
+            ;; (setq object-offset (make-coords :pos #f(-93.773 1.137 -23.002) :rpy #f(-0.033 0.036 -0.057))) ;; for with table for origin
+            (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for with table sukoshi ue
+            )
+        (progn
+          ;; (setq object-offset (make-coords :pos #f(-98.527 0.551 -14.482) :rpy #f(-0.033 0.036 -0.057))) ;; for deva only
+          ;; (setq object-offset (make-coords :pos #f(-113.441 11.776 7.149) :rpy #f(-0.033 0.036 -0.005))) ;; for with table
+          ;; (setq object-offset (make-coords :pos #f(-88.997 0.777 -11.522) :rpy #f(-0.033 0.036 -0.057))) ;; for with table sukoshi ue
+          (setq object-offset (make-coords :pos #f(-98.961 1.766 -10.442) :rpy #f(-0.033 0.036 3.085))) ;; for with table and upper
+          )
+        ))
+     )
 
     ;; (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
     (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)) ;; for upper
@@ -828,11 +886,25 @@
     ;; (setq pre-set-val #f(-100 0 100))
     (setq pre-set-val #f(-100 0 -100)) ;; for upper
     (setq fix-rot nil)
-    ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
-    (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
+    (if (equal use-model "deva")
+        (progn
+          ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+          (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
+          ))
     )
-   ((and (string= object-name "white cup") (equal arm :larm))
-    (if use-calib-offset
+   ((and (string= object-name "white cup") (equal arm :larm));; white cup
+    (cond
+     ((equal use-model "fp");; if use FoundationPose
+      (if use-calib-offset
+          (progn
+            (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for with table sukoshi ue
+            )
+        (progn
+          (setq object-offset (make-coords :pos #f(-89.009 2.446 -4.482) :rpy #f(-0.033 0.036 3.085))) ;; for with table upper
+          )
+        ))
+     ((equal use-model "deva");; if use deva
+      (if use-calib-offset
         (progn
           ;; (setq object-offset (make-coords :pos #f(-113.441 11.776 7.149) :rpy #f(-0.033 0.036 -0.005))) ;; for with table mite tyousetu
           ;; (setq object-offset (make-coords :pos #f(-93.773 1.137 -23.002) :rpy #f(-0.033 0.036 -0.057))) ;; for with table for origin
@@ -845,7 +917,8 @@
         ;; (setq object-offset (make-coords :pos #f(-79.009 2.446 -4.482) :rpy #f(-0.033 0.036 -0.057))) ;; for with table sukoshi ue
         (setq object-offset (make-coords :pos #f(-89.009 2.446 -4.482) :rpy #f(-0.033 0.036 3.085))) ;; for with table upper
         )
-      )
+      ))
+     )
 
     ;; (setq wait-av #f(18.6793 40.7013 -15.7633 -105.901 -210.673 -70.7818 203.18))
     (setq wait-av #f(18.6793 40.7013 -15.7633 -105.901 -210.673 -70.7818 383.1)) ;; for upper
@@ -853,20 +926,37 @@
     ;; (setq pre-set-val #f(-100 0 100))
     (setq pre-set-val #f(-100 0 -100)) ;; for upper
     (setq fix-rot nil)
-    ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
-    (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
+    (if (equal use-model "deva")
+        (progn
+          ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+          (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
+          ))
     )
    ((and (string= object-name "green bowl") (equal arm :rarm))
-    (if use-calib-offset
+    (cond
+     ((equal use-model "fp");; if use FoundationPose
+      (if use-calib-offset
+          (progn
+            (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
+            )
         (progn
-          (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
-          )
-      (progn
-        ;; (setq object-offset (make-coords :pos #f(-88.997 0.777 -11.522) :rpy #f(-0.033 0.036 -0.057))) ;; for with table sukoshi ue
-        ;; (setq object-offset (make-coords :pos #f(-78.028 33.761 -22.64) :rpy #f(0.124 1.34 1.821))) ;; for with table and upper
-        (setq object-offset (make-coords :pos #f(-78.028 33.761 -22.64) :rpy #f(0.124 1.34 -1.321))) ;; for with table and upper and rotate (upper is in outside)
-        )
+          ;; (setq object-offset (make-coords :pos #f(-88.997 0.777 -11.522) :rpy #f(-0.033 0.036 -0.057))) ;; for with table sukoshi ue
+          ;; (setq object-offset (make-coords :pos #f(-78.028 33.761 -22.64) :rpy #f(0.124 1.34 1.821))) ;; for with table and upper
+          (setq object-offset (make-coords :pos #f(-78.028 33.761 -22.64) :rpy #f(0.124 1.34 -1.321))) ;; for with table and upper and rotate (upper is in outside)
+          ))
       )
+     ((equal use-model "deva");; if use deva
+      (if use-calib-offset
+          (progn
+            (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
+            )
+        (progn
+          ;; (setq object-offset (make-coords :pos #f(-88.997 0.777 -11.522) :rpy #f(-0.033 0.036 -0.057))) ;; for with table sukoshi ue
+          ;; (setq object-offset (make-coords :pos #f(-78.028 33.761 -22.64) :rpy #f(0.124 1.34 1.821))) ;; for with table and upper
+          (setq object-offset (make-coords :pos #f(-78.028 33.761 -22.64) :rpy #f(0.124 1.34 -1.321))) ;; for with table and upper and rotate (upper is in outside)
+          )
+        ))
+     )
 
     ;; (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
     ;; (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)) ;; for upper
@@ -875,12 +965,21 @@
     ;; (setq pre-set-val #f(-100 0 100))
     (setq pre-set-val #f(-100 50 0)) ;; for upper
     (setq fix-rot t)
-    ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
-    (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
+    (if (equal use-model "deva")
+        (progn
+          ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+          (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
+          ))
     )
-   ((and (string= object-name "gray bowl") (equal arm :rarm)) ;; TODO
-
-    (setq object-offset (make-coords :pos #f(-4.353 147.388 -10.049) :rpy #f(-1.143 1.405 -1.282))) ;; for with table and upper and rotate (upper is in outside)
+   ((and (string= object-name "gray bowl") (equal arm :rarm)) ;; gray bowl ;; rarm
+    (cond
+     ((equal use-model "fp");; if use FoundationPose
+      (setq object-offset (make-coords :pos #f(-4.353 147.388 -10.049) :rpy #f(-1.143 1.405 -1.282))) ;; TODO
+      )
+     ((equal use-model "deva");; if use deva
+      (setq object-offset (make-coords :pos #f(-4.353 147.388 -10.049) :rpy #f(-1.143 1.405 -1.282))) ;; for with table and upper and rotate (upper is in outside)
+      )
+     )
 
     ;; (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)) ;; for upper
     ;; (setq wait-av #f(-38.3278 -3.2288 -63.6414 -68.0071 -83.1809 -108.309 393.782)) ;; for green bowl, upper outside
@@ -888,18 +987,34 @@
 
     (setq pre-set-val #f(-147 -23 7)) ;; for upper #f(0 0 150) :world
     (setq fix-rot t)
-    ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
-    (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
+    (if (equal use-model "deva")
+        (progn
+          ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+          (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
+          ))
     )
    ((and (string= object-name "gray bowl") (equal arm :larm)) ;; TODO
-    (if use-calib-offset
+    (cond
+     ((equal use-model "fp");; if use FoundationPose
+      (if use-calib-offset
+          (progn
+            (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
+            )
         (progn
-          (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
+          (setq object-offset (make-coords :pos #f(-78.028 33.761 -22.64) :rpy #f(0.124 1.34 -1.321))) ;; for with table and upper and rotate (upper is in outside)
           )
-      (progn
-        (setq object-offset (make-coords :pos #f(-78.028 33.761 -22.64) :rpy #f(0.124 1.34 -1.321))) ;; for with table and upper and rotate (upper is in outside)
         )
       )
+     ((equal use-model "deva");; if use deva
+      (if use-calib-offset
+          (progn
+            (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
+            )
+        (progn
+          (setq object-offset (make-coords :pos #f(-78.028 33.761 -22.64) :rpy #f(0.124 1.34 -1.321))) ;; for with table and upper and rotate (upper is in outside)
+          )
+        ))
+     )
 
     ;; (setq wait-av #f(18.6793 40.7013 -15.7633 -105.901 -210.673 -70.7818 383.1)) ;; for upper
     (setq wait-av #f(41.0448 2.03593 63.3981 -67.6587 27.9651 -69.6477 -117.945)) ;; TODO
@@ -907,8 +1022,11 @@
     ;; (setq pre-set-val #f(-100 0 100))
     (setq pre-set-val #f(-100 0 100)) ;; for upper
     (setq fix-rot t)
-    ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
-    (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
+    (if (equal use-model "deva")
+        (progn
+          ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+          (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
+          ))
     )
    ((and (string= object-name "onion") (equal arm :larm))
     ;; (setq object-offset (make-coords :pos #f(-29.83 -6.456 -5.102) :rpy #f(-1.593 0.604 0.126)))
@@ -927,7 +1045,16 @@
     )
    )
 
-  (setq *object-rec-coord* (deva-rec-object :object-name object-name :change-deva change-deva :multi-rec multi-rec :bbox-topic bbox-topic))
+  (cond
+   ((equal use-model "fp");; if use FoundationPose
+    (change-fp-mesh :object-name object-name)
+    (wait-fp-topic-update)
+    (setq *object-rec-coord* (get-fp-tracking-coords))
+    )
+   ((equal use-model "deva");; if use deva
+    (setq *object-rec-coord* (deva-rec-object :object-name object-name :change-deva change-deva :multi-rec multi-rec :bbox-topic bbox-topic))
+    )
+   )
   (setq *grasp-coords* (send (send *object-rec-coord* :copy-worldcoords) :transform object-offset))
 
   (publish-cds-tf *grasp-coords*)
