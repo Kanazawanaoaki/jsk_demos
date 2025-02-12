@@ -132,12 +132,20 @@
 
   (if *use-english*
       (speak-with-log "I cooked sunny-side up!" :lang "en")
-    (speak-with-log "目玉焼きの盛り付けに挑戦します"))
+    (speak-with-log "目玉焼きの盛り付けに挑戦しました"))
   (if *use-english*
       (speak-with-log "Please enjoy the meal." :lang "en")
     (speak-with-log "どうぞめしあがってください"))
   (reset-cook-pose)
   )
+
+
+;; egg cracker
+
+;; before
+
+
+;; set-to-cracker
 
 (defun exec-sunny-all ()
   (do-sunny)

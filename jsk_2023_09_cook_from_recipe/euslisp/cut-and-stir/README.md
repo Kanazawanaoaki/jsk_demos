@@ -338,6 +338,39 @@ Stop collecting data.
 rosservice call /rgb_and_depth_saver/stop_sync "{}"
 ```
 
+#### PR2でFoundationPoseを利用
+pr2体内のjsk_robotを`png-level-5`のbranchに切り替える．
+
+TRでGroundingDINOのサーバーを立ち上げる
+```bash
+roscd jsk_perception/docker/
+./run_jsk_vil_api dino --port 8080
+```
+TRでtrackingのサーバーを立ち上げる
+```bash
+roscd tracking/docker/
+./run_docker.py -host pr1040 -cuda 0 -launch track.launch mode:=track mesh:=kn_green_bowl_20241017_wu_blender label:=green-bowl rec_model:=groundingdino seg_model:=sam2 camera_type:=kinect camera_tf_frame:=head_mount_kinect_rgb_optical_frame vis:=true decompress:=true depth_topic:=/kinect_head/depth_registered/image_raw rec_port:=8080 fix_name:=true
+```
+手元のRviz
+```bash
+roslaunch jsk_2023_09_cook_from_recipe view_tracking_with_fp.launch
+```
+
+実行中の操作
+一時中断
+```bash
+rosservice call /pause_tracking_object "{}"
+```
+マスクの更新（中断時も再開される）
+```bash
+rosservice call /reset_mask_object "label: 'green bowl'"
+```
+メッシュの更新（中断時も再開される）
+```bash
+
+```
+
+
 ### Rvizでインタラクティブに座標指定
 ```
 roslaunch jsk_2023_09_cook_from_recipe interactive_tf_pr2.launch

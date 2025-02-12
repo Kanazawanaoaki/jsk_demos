@@ -500,13 +500,22 @@
     (setq update-flag nil)
     (format t "Waiting for a fp new topic~%")
     (until update-flag
-           (setq marker_msg (one-shot-subscribe marker-topic visualization_msgs::Marker))
-           (if (ros::time>= (send marker_msg :header :stamp) start_time)
-               (setq update-flag t)
-             (format t "A fp new topic is comming!~%")
+           (setq marker_msg (one-shot-subscribe marker-topic visualization_msgs::Marker :timeout 3000))
+           (if marker_msg
+               (progn
+                 (setq update-flag t)
+                 (format t "A fp new topic is comming!~%")
+                 )
              )
+           ;; (format t "msg ~A, start ~A" (send marker_msg :header :stamp) start_time)
+           ;; (if (ros::time>= (send marker_msg :header :stamp) start_time)
+           ;;     (progn
+           ;;       (setq update-flag t)
+           ;;       (format t "A fp new topic is comming!~%")
+           ;;       )
+           ;;   )
            )
-    )
+    ))
 
 (defun fp-pause-tracking (&optional (service-name "/pause_tracking_object"))
   (format t "wait for ~A~%" service-name)
@@ -574,7 +583,7 @@
     (fp-reset-mesh :label "oil dispenser" :mesh_name "kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed")
     )
    ((string= object-name "frying pan")
-    (fp-reset-mesh :label "black frying pan" :mesh_name "");; TODO
+    (fp-reset-mesh :label "black frying pan" :mesh_name "kn_pan_20250114_bundlesdf_orig_fixed")
     )
    ((string= object-name "wooden spatula")
     (fp-reset-mesh :label "wooden spatula" :mesh_name "kn_wooden_spatula_20250130_edit")
