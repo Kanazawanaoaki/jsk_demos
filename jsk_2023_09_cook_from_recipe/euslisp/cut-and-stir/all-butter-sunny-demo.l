@@ -114,7 +114,8 @@
   ;; (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
   ;; (cook-from-now-replay-once :larm nil :initial-av t)
 
-  (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20240909-data-02.l")
+  ;; (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20240909-data-02.l")
+  (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20250213-data-01.l")
   (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
   (cook-from-now-replay-once :larm nil :initial-av nil :time 100) ;; default time is 150
   )
