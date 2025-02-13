@@ -14,7 +14,7 @@ from tqdm import tqdm
 bridge = CvBridge()
 
 
-def process_image(msg):
+def process_image(msg, is_font_black=False):
     # CompressedImageをOpenCVの画像に変換
     cv_img = bridge.compressed_imgmsg_to_cv2(msg, "bgr8")
 
@@ -28,8 +28,10 @@ def process_image(msg):
     # タイムスタンプを画像に描画（左上に描画）
     font = cv2.FONT_HERSHEY_SIMPLEX
     text = f"ROS Time: {timestamp_ros}, JST: {timestamp_jst}"
-    cv2.putText(cv_img, text, (10, 30), font, 0.5, (255, 255, 255), 2, cv2.LINE_AA) ## 白
-    # cv2.putText(cv_img, text, (10, 30), font, 0.5, (0, 0, 0), 1, cv2.LINE_AA) ## 黒
+    if is_font_black:
+        cv2.putText(cv_img, text, (10, 30), font, 0.5, (0, 0, 0), 1, cv2.LINE_AA) ## 黒
+    else:
+        cv2.putText(cv_img, text, (10, 30), font, 0.5, (255, 255, 255), 2, cv2.LINE_AA) ## 白
 
     return cv_img
 
@@ -52,7 +54,7 @@ def save_video(output_filename, image_list, fps=30):
     # 動画ファイルを閉じる
     out.release()
 
-def read_rosbag(bag_path, image_topic, output_dir):
+def read_rosbag(bag_path, image_topic, output_dir, is_font_black):
     # rosbagファイルの名前を抽出
     bag_name = Path(bag_path).stem
 
@@ -77,7 +79,7 @@ def read_rosbag(bag_path, image_topic, output_dir):
     with rosbag.Bag(bag_path, 'r') as bag:
         # トピックのメッセージを全て取得
         for topic, msg, t in tqdm(bag.read_messages(topics=[image_topic]), desc=f'Processing {image_topic}'):
-            img = process_image(msg)
+            img = process_image(msg, is_font_black=is_font_black)
             image_list.append(img)
 
         save_video(output_file, image_list, fps=30)
@@ -89,11 +91,12 @@ def main():
     parser.add_argument('-b', '--bag', required=True, help='Path to the input rosbag file.')
     parser.add_argument('-o', '--output', default="../../datas/sensor_data_images/" , help='Directory to save the output CSV files.')
     parser.add_argument('-i', '--image', default="/camera/color/image_raw/compressed", help='Name of image topic.')
+    parser.add_argument('-fb', '--font_black', action='store_true', help='Path to the input rosbag file.')
 
     args = parser.parse_args()
 
     # rosbagを読み込んでトピックを抽出しCSVとして保存
-    read_rosbag(args.bag, args.image, args.output)
+    read_rosbag(args.bag, args.image, args.output, args.font_black)
 
 if __name__ == '__main__':
     main()
