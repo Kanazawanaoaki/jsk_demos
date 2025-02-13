@@ -121,7 +121,7 @@
 
 (defun now-finish-sunny-all ()
   (if *use-english*
-      (speak-with-log "I start cooking sunny-side-up" :lang "en")
+      (speak-with-log "I start cooking sunny-side-up" :lang "en") ;;TODO
     (speak-with-log "目玉焼きの盛り付けに挑戦します"))
 
   (grasp-frying-pan)
@@ -131,7 +131,7 @@
   (put-spatula-on-table)
 
   (if *use-english*
-      (speak-with-log "I cooked sunny-side up!" :lang "en")
+      (speak-with-log "I cooked sunny-side up!" :lang "en") ;; TODO
     (speak-with-log "目玉焼きの盛り付けに挑戦しました"))
   (if *use-english*
       (speak-with-log "Please enjoy the meal." :lang "en")
@@ -215,12 +215,19 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
   (send *ri* :wait-interpolation)
 
+  (send *pr2* :larm :move-end-pos (float-vector 50 0 -100) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
 
   ;; 卵を割る
   (send *ri* :start-grasp :rarm :gain 0.1 :wait t)
   (unix::sleep 2)
 
   (send *ri* :move-gripper :rarm 0.07)
+
+  (send *pr2* :larm :move-end-pos (float-vector 50 0 -100) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
 
   (pr2-arm-up :num 100 :time 2000 :arm :rarm)
 
@@ -238,12 +245,21 @@
 
   (pr2-arm-up :num 100 :time 2000 :arm :rarm)
 
+  ;; 待機姿勢 from green bowl
+  (send *pr2* :rarm :angle-vector #f(-38.3278 -3.2288 -63.6414 -68.0071 -83.1809 -108.309 393.782))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
   (reset-cook-pose :arm :rarm)
   )
 
 
 ;; set-to-cracker
 (defun now-egg-crack-all ()
+  (if *use-english*
+      (speak-with-log "I start cooking sunny-side-up" :lang "en") ;; TODO
+    (speak-with-log "卵を割る動作に挑戦します"))
+
   (egg-crack-rarm-set)
   (egg-crack-larm-grasp)
   (egg-crack-larm-carry)
