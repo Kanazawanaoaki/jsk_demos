@@ -452,7 +452,7 @@ roslaunch jsk_2023_09_cook_from_recipe pot-and-pan_rviz.launch
 ```
 roscd jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/
 rlwrap roseus all-butter-sunny-demo.l
-(move-to-spot "stove")
+(move-to-spot "stove") ;; テンプレートマッチングの修正無しで動かしたい場合は (send *ri* :move-to (make-coords :pos #f(1300 7970 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
 (turn-on-stove frying-pan arm1) ;; これを実行して位置を確認
 
 (prepare-sunny) ;; 物体を設置

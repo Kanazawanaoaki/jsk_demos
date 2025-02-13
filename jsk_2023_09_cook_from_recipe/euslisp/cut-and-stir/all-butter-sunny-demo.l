@@ -142,10 +142,113 @@
 
 ;; egg cracker
 
-;; before
+(defun egg-crack-rarm-set ()
+  ;; 待機姿勢 from green bowl
+  (send *pr2* :rarm :angle-vector #f(-38.3278 -3.2288 -63.6414 -68.0071 -83.1809 -108.309 393.782))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  ;; egg opener セットの位置
+  (send *pr2* :rarm :angle-vector #f(-8.1748 5.21505 -58.7948 -48.9126 -99.9733 -100.896 129.251))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+  (send *ri* :wait-interpolation)
+
+  (send *ri* :move-gripper :rarm 0.07)
+  (if *use-english*
+      (send *ri* :speak-en (format nil "Please set ~A and say OK." "egg opener"))
+    (send *ri* :speak-jp (format nil "~AをセットしてOKと言ってください" "egg opener"))
+    )
+  (ok-wait)
+  )
+
+(defun egg-crack-larm-grasp ()
+  ;; 待機姿勢
+  (send *pr2* :larm :angle-vector #f(46.0802 4.45794 62.0517 -76.0447 24.8164 -67.3512 60.6811))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  ;; 左手の卵を掴む位置
+  (send *pr2* :larm :angle-vector #f(25.4644 6.30462 81.3182 -27.1804 103.643 -87.3789 -5.18068)) ;; #<cascaded-coords #X55ebe5530d60 :larm-end-coords  723.236 403.655 857.552 / 1.244 1.515 -1.962>
+  (send *pr2* :larm :move-end-pos (float-vector 0 0 100) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :move-end-pos (float-vector 0 0 -80) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  ;; 掴んでみる
+  (send *ri* :start-grasp :larm :gain 0.007 :wait t)
+  (unix::sleep 1)
+
+  ;; 持ち上げる
+  (pr2-arm-up :num 100 :time 2000 :arm :larm)
+  )
+
+(defun egg-crack-larm-carry ()
+  ;; 卵をセットする左腕の位置
+  (send *pr2* :larm :angle-vector #f(4.42574 -7.14561 63.5217 -42.4095 110.235 -114.592 54.596)) ;; #<cascaded-coords #X55ebe5530d60 :larm-end-coords  686.977 64.883 1086.202 / 1.295 1.487 -0.291>
+  (send *pr2* :larm :move-end-pos (float-vector 0 0 100) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :move-end-pos (float-vector -10 -10 -100) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  ;; 卵を離す
+  (send *ri* :stop-grasp :larm :wait t)
+  (unix::sleep 1)
+
+  (pr2-arm-up :num 100 :time 2000 :arm :larm)
+
+  (send *pr2* :larm :angle-vector #f(46.0802 4.45794 62.0517 -76.0447 24.8164 -67.3512 60.6811))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (reset-cook-pose :arm :larm)
+  )
+
+(defun egg-crack-rarm ()
+  ;; 卵を割る右手の位置
+  (send *pr2* :rarm :angle-vector #f(-36.4907 1.11455 -61.744 -29.561 -114.175 -83.8649 169.336))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
+  (send *ri* :wait-interpolation)
+
+
+  ;; 卵を割る
+  (send *ri* :start-grasp :rarm :gain 0.1 :wait t)
+  (unix::sleep 2)
+
+  (send *ri* :move-gripper :rarm 0.07)
+
+  (pr2-arm-up :num 100 :time 2000 :arm :rarm)
+
+  ;; 渡す姿勢
+  (send *pr2* :rarm :angle-vector #f(-44.0483 4.94362 -15.3096 -9.5872 -156.086 -73.7338 138.434))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (if *use-english*
+      (send *ri* :speak-en (format nil "Please recieve ~A and say OK." "egg opener"))
+    (send *ri* :speak-jp (format nil "~Aを回収してOKと言ってください" "egg opener"))
+    )
+  (ok-wait)
+  (send *ri* :stop-grasp :rarm :wait t)
+
+  (pr2-arm-up :num 100 :time 2000 :arm :rarm)
+
+  (reset-cook-pose :arm :rarm)
+  )
 
 
 ;; set-to-cracker
+(defun now-egg-crack-all ()
+  (egg-crack-rarm-set)
+  (egg-crack-larm-grasp)
+  (egg-crack-larm-carry)
+  (egg-crack-rarm)
+  )
 
 (defun exec-sunny-all ()
   (do-sunny)
