@@ -1,5 +1,5 @@
 #!/usr/bin/env roseus
-
+65;6003;1c
 ;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_utils.l")
 ;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/wrench.l")
 ;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/move-to-adjust.l")
@@ -192,7 +192,8 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
   (send *ri* :wait-interpolation)
 
-  (send *pr2* :larm :move-end-pos (float-vector -10 -10 -100) :world)
+  ;; (send *pr2* :larm :move-end-pos (float-vector -10 -10 -100) :world)
+  (send *pr2* :larm :move-end-pos (float-vector -10 -10 -110) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
 
@@ -215,17 +216,17 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
   (send *ri* :wait-interpolation)
 
-  (send *pr2* :larm :move-end-pos (float-vector 50 0 -100) :world)
+  (send *pr2* :rarm :move-end-pos (float-vector 50 0 -100) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
   ;; 卵を割る
-  (send *ri* :start-grasp :rarm :gain 0.1 :wait t)
+  (send *ri* :start-grasp :rarm :gain 1.0 :wait t)
   (unix::sleep 2)
 
   (send *ri* :move-gripper :rarm 0.07)
 
-  (send *pr2* :larm :move-end-pos (float-vector 50 0 -100) :world)
+  (send *pr2* :rarm :move-end-pos (float-vector -50 0 100) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
@@ -267,6 +268,12 @@
   )
 
 (defun exec-sunny-all ()
+  (do-sunny)
+  (now-finish-sunny-all)
+  )
+
+(defun tmp-exec-all ()
+  (now-egg-crack-all)
   (do-sunny)
   (now-finish-sunny-all)
   )

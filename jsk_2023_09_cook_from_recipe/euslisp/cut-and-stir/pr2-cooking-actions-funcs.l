@@ -368,7 +368,7 @@
      ((equal arm :larm)
       (load-cook-from-now-file :file_name cook-from-now-file-name :larm t)
       ;; (cook-from-now-replay-once :larm t :initial-av t)
-      (cook-from-now-replay-once :larm t :initial-av nil) ;;20240909 champ?
+      ;; (cook-from-now-replay-once :larm t :initial-av nil) ;;20240909 champ?
       (cook-from-now-replay-once :larm t :initial-av nil :time 100)
       )
      )
