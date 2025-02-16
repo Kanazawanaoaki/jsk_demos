@@ -150,11 +150,12 @@
   (send *ri* :wait-interpolation)
 
   ;; egg opener セットの位置
-  (send *pr2* :rarm :angle-vector #f(-8.1748 5.21505 -58.7948 -48.9126 -99.9733 -100.896 129.251))
+  ;; (send *pr2* :rarm :angle-vector #f(-8.1748 5.21505 -58.7948 -48.9126 -99.9733 -100.896 129.251)) ;; #<cascaded-coords #X55ebe51a0f08 :rarm-end-coords  684.369 -32.859 987.897 / 1.714 1.271 0.148>
+  (send *pr2* :rarm :angle-vector #f(-15.7712 9.99542 -60.6957 -77.3209 -95.7696 -102.646 149.115)) ;; #<cascaded-coords #X560d5c4c6b18 :rarm-end-coords  584.37 -32.86 988.016 / 1.714 1.271 0.148>
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
-  (send *ri* :move-gripper :rarm 0.07)
+  (send *ri* :move-gripper :rarm 0.07 :wait t)
   (if *use-english*
       (send *ri* :speak-en (format nil "Please set ~A and say OK." "egg opener"))
     (send *ri* :speak-jp (format nil "~AをセットしてOKと言ってください" "egg opener"))
@@ -188,21 +189,34 @@
 
 (defun egg-crack-larm-carry ()
   ;; 卵をセットする左腕の位置
-  (send *pr2* :larm :angle-vector #f(4.42574 -7.14561 63.5217 -42.4095 110.235 -114.592 54.596)) ;; #<cascaded-coords #X55ebe5530d60 :larm-end-coords  686.977 64.883 1086.202 / 1.295 1.487 -0.291>
-  (send *pr2* :larm :move-end-pos (float-vector 0 0 100) :world)
+  ;; (send *pr2* :larm :angle-vector #f(4.42574 -7.14561 63.5217 -42.4095 110.235 -114.592 54.596)) ;; #<cascaded-coords #X55ebe5530d60 :larm-end-coords  686.977 64.883 1086.202 / 1.295 1.487 -0.291>
+  (send *pr2* :larm :angle-vector #f(14.0062 -8.38952 70.2396 -71.6376 91.7893 -114.585 31.1574)) ;; #<cascaded-coords #X560d5c4b5860 :larm-end-coords  586.977 64.883 1086.322 / 1.295 1.487 -0.291>
+  (send *pr2* :larm :move-end-pos (float-vector 0 0 50) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
   (send *ri* :wait-interpolation)
 
+  ;; 卵をセットする
   ;; (send *pr2* :larm :move-end-pos (float-vector -10 -10 -100) :world)
-  (send *pr2* :larm :move-end-pos (float-vector -10 -10 -110) :world)
+  ;; (send *pr2* :larm :move-end-pos (float-vector -10 -10 -110) :world) ;; これをつかっていた
+
+  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+  (send *arrow* :translate #f(0 0 -60) :world)
+  (send *arrow* :rotate (deg2rad 30) :z)
+  (send *pr2* :larm :inverse-kinematics *arrow*)
+
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
 
   ;; 卵を離す
-  (send *ri* :stop-grasp :larm :wait t)
+  ;; (send *ri* :stop-grasp :larm :wait t)
+  (send *ri* :move-gripper :larm 0.07 :wait t)
   (unix::sleep 1)
 
-  (pr2-arm-up :num 100 :time 2000 :arm :larm)
+  ;; (pr2-arm-up :num 100 :time 2000 :arm :larm)
+  (send *pr2* :larm :angle-vector #f(14.0062 -8.38952 70.2396 -71.6376 91.7893 -114.585 31.1574)) ;; #<cascaded-coords #X560d5c4b5860 :larm-end-coords  586.977 64.883 1086.322 / 1.295 1.487 -0.291>
+  (send *pr2* :larm :move-end-pos (float-vector 0 0 50) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
 
   (send *pr2* :larm :angle-vector #f(46.0802 4.45794 62.0517 -76.0447 24.8164 -67.3512 60.6811))
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
@@ -217,7 +231,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
   (send *ri* :wait-interpolation)
 
-  (send *pr2* :rarm :move-end-pos (float-vector 50 0 -100) :world)
+  (send *pr2* :rarm :move-end-pos (float-vector 40 0 -60) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
@@ -227,11 +241,11 @@
 
   (send *ri* :move-gripper :rarm 0.07)
 
-  (send *pr2* :rarm :move-end-pos (float-vector -50 0 100) :world)
+  (send *pr2* :rarm :move-end-pos (float-vector -40 0 60) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
-  (pr2-arm-up :num 100 :time 2000 :arm :rarm)
+  (pr2-arm-up :num 50 :time 2000 :arm :rarm)
 
   ;; 渡す姿勢
   (send *pr2* :rarm :angle-vector #f(-44.0483 4.94362 -15.3096 -9.5872 -156.086 -73.7338 138.434))
