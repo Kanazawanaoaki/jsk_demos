@@ -838,7 +838,7 @@
 
 
 
-(defun grasp-rec-object (&key (object-name "knife") (use-model "fp") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm) (is-grasp t) (action-mode :pick-up) (use-calib-offset nil) (wait-after-grasp nil) (exit-after-grasp nil) (wait-before-grasp nil) (exit-before-grasp nil))
+(defun grasp-rec-object (&key (object-name "knife") (use-model "fp") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm) (is-grasp t) (action-mode :pick-up) (use-calib-offset nil) (wait-after-grasp nil) (wait-before-grasp nil))
   (cond
    ((and (string= object-name "knife") (equal arm :rarm));; knife
     (cond
@@ -1019,9 +1019,7 @@
             (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
             )
         (progn
-          ;; (setq object-offset (make-coords :pos #f(-88.997 0.777 -11.522) :rpy #f(-0.033 0.036 -0.057))) ;; for with table sukoshi ue
-          ;; (setq object-offset (make-coords :pos #f(-78.028 33.761 -22.64) :rpy #f(0.124 1.34 1.821))) ;; for with table and upper
-          (setq object-offset (make-coords :pos #f(-78.028 33.761 -22.64) :rpy #f(0.124 1.34 -1.321))) ;; for with table and upper and rotate (upper is in outside)
+          (setq object-offset (make-coords :pos #f(-64.669 15.002 -9.072) :rpy #f(0.115 1.25 -1.37))) ;; for FoundationPose by track fix-rot
           ))
       )
      ((equal use-model "deva");; if use deva
@@ -1129,9 +1127,12 @@
     (change-fp-mesh :object-name object-name)
     (wait-fp-topic-update)
     (setq *object-rec-coord* (get-fp-tracking-coords))
+    (when fix-rot
+      (send *object-rec-coord* :newcoords (make-coords :pos (send (send *object-rec-coord* :copy-worldcoords) :worldpos)))
+      )
     )
    ((equal use-model "deva");; if use deva
-    (setq *object-rec-coord* (deva-rec-object :object-name object-name :change-deva change-deva :multi-rec multi-rec :bbox-topic bbox-topic))
+    (setq *object-rec-coord* (deva-rec-object :object-name object-name :change-deva change-deva :multi-rec multi-rec :bbox-topic bbox-topic :fix-rot fix-rot))
     )
    )
   (setq *grasp-coords* (send (send *object-rec-coord* :copy-worldcoords) :transform object-offset))
@@ -1156,7 +1157,7 @@
     )
 
   (grasp-object-primitive :pre-set-avs (list wait-av) :grasp-coords *grasp-coords-exec* :pre-set-val pre-set-val :arm arm
-                          :object-name object-name :action-mode action-mode :wait-after-grasp wait-after-grasp :exit-after-grasp exit-after-grasp :wait-before-grasp wait-before-grasp :exit-before-grasp exit-before-grasp)
+                          :object-name object-name :action-mode action-mode :wait-after-grasp wait-after-grasp :wait-before-grasp wait-before-grasp)
 
   ;; TODO rec fail pattern
   )

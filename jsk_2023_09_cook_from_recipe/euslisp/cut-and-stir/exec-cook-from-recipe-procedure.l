@@ -33,6 +33,7 @@
    ((string= object "small-bowl")
     ;; (place-objects-on-table :object-name "ボウル0" :arm :rarm :spot-name spot :grasp-flag t)
     (pick-up-green-bowl :arm :rarm) ;; TODO arm
+    ;; (grasp-rec-object :object-name "green bowl" :arm :rarm :use-model "fp" :use-calib-offset nil) ;; with FoundaionPose
     )
    ((string= object "spatula")
     ;; (place-objects-on-table :object-name "ヘラ" :arm :rarm :spot-name spot :grasp-flag t)

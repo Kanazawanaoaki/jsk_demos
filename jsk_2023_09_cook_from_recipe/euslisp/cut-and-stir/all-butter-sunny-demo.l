@@ -1,5 +1,4 @@
 #!/usr/bin/env roseus
-65;6003;1c
 ;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_utils.l")
 ;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/wrench.l")
 ;; (load "package://jsk_2023_09_cook_from_recipe/euslisp/move-to-adjust.l")
