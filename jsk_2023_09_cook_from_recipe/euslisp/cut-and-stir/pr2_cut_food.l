@@ -482,6 +482,76 @@
            ))
   *obj-coord*)
 
+
+;; 2d object detection with dino
+(defun change-dino-query (&optional (query "black frying pan"))
+  (ros::set-dynamic-reconfigure-param "/detection" "queries" :string query)
+  )
+
+(defun get-dino-rects (&optional (query "black frying pan") (rects-topic "/detection/rects"))
+  (let ((rects_msg)
+        (start_time)
+        (update-flag nil)
+        )
+    ;; change dino query
+    (change-dino-query query)
+    ;; recieve dino new msg
+    (setq start_time (ros::time-now))
+    (setq update-flag nil)
+    (format t "Waiting for dino new topic~%")
+    (until update-flag
+           (setq rects_msg (one-shot-subscribe rects-topic jsk_recognition_msgs::RectArray :timeout 3000))
+           (if rects_msg
+               (progn
+                 (format t "msg ~A, start ~A~%" (send rects_msg :header :stamp) start_time)
+                 (if (ros::time>= (send rects_msg :header :stamp) start_time)
+                     (progn
+                       (setq update-flag t)
+                       (format t "A new dino topic is comming!~%")
+                       )
+                   )
+                 ))
+           )
+    (send rects_msg :rects)
+    ))
+
+(defun change-rect-gaze-area (&optional (x 643) (y 188) (w 135) (h 95))
+  (ros::set-dynamic-reconfigure-param
+   "/rect_added_image_publisher" "offset_x" :int x)
+  (ros::set-dynamic-reconfigure-param
+   "/rect_added_image_publisher" "offset_y" :int y)
+  (ros::set-dynamic-reconfigure-param
+   "/rect_added_image_publisher" "width" :int w)
+  (ros::set-dynamic-reconfigure-param
+   "/rect_added_image_publisher" "height" :int h)
+  )
+
+(defun set-gaze-from-dino (&key (object-name "frying pan"))
+  (let ((query)
+        (h-coefficient)
+        (res-rects)
+        (target-rect)
+        )
+    (cond
+     ((string= object-name "frying pan")
+      (setq query "black frying pan")
+      (setq h-coefficient 0.5)
+      )
+     ((string= object-name "pot")
+      (setq query "cooking pot")
+      (setq h-coefficient 0.5)
+      )
+     )
+    (setq res-rects (get-dino-rects query "/detection/rects"))
+    (setq target-rect (elt res-rects 0)) ;;最初のrectを取り出す
+
+    (change-rect-gaze-area (send target-rect :x)
+                           (send target-rect :y)
+                           (send target-rect :width)
+                           (round (* (send target-rect :height) h-coefficient))
+                           )
+    ))
+
 ;; ;; object-rec, FoundationPose tracking
 (defun get-fp-tracking-coords (&optional (frame-id "object_center"))
   (let ((tm2)
@@ -504,10 +574,10 @@
            (if marker_msg
                (progn
                  (setq update-flag t)
-                 (format t "A fp new topic is comming!~%")
+                 (format t "A new fp topic is comming!~%")
                  )
              )
-           ;; (format t "msg ~A, start ~A" (send marker_msg :header :stamp) start_time)
+           ;; (format t "msg ~A, start ~A~%" (send marker_msg :header :stamp) start_time)
            ;; (if (ros::time>= (send marker_msg :header :stamp) start_time)
            ;;     (progn
            ;;       (setq update-flag t)

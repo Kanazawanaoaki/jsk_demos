@@ -1063,7 +1063,8 @@
         ;; (setq model_file "2023-12-12_cook_sunny_datas_model_2023_1212_2131.pkl")
         (setq model_file "multi_data_20240310_kitchen_egg_train_model_2024_0311_0310.pkl")
         (setq target_state "egg is cooked")
-        (gaze-right-pan)
+        ;; (gaze-right-pan) ;; without dino
+        (set-gaze-from-dino :object-name "frying pan")
         )
        ((and ;; butter melt
          (or (string= state "melt") (string= state "melted"))
@@ -1072,7 +1073,8 @@
          )
         (setq model_file "multi_data_20240310_kitchen_butter_train_model_2024_0311_0307.pkl")
         (setq target_state "butter is melt")
-        (gaze-right-pan)
+        ;; (gaze-right-pan) ;; without dino
+        (set-gaze-from-dino :object-name "frying pan")
         )
        ((and ;; boil
          (or (string= state "boiled-water") (string= state "boiled"))
@@ -1082,6 +1084,7 @@
         (setq model_file "multi_data_20240310_kitchen_boil_train_model_2024_0311_0305.pkl")
         (setq target_state "water is boiled")
         (gaze-left-pot)
+        ;; (set-gaze-from-dino :object-name "pot");; TODO check and add
         )
        (t
         (format t "object-name ~A, state ~A, vessel ~A is not defined !!!~%" object-name state vessel)

@@ -375,6 +375,20 @@ euslispのモデルから操作するには
 (fp-pause-tracking)
 (change-fp-mesh :object-name "green bowl")
 ```
+### DINOで鍋の注目領域の検出など
+TRでこれ用のdinoサーバーを立ち上げる．
+```bash
+roscd jsk_perception/docker/
+./run_jsk_vil_api dino --port 8888
+```
+dino用のlaunchを立ち上げる
+```bash
+roslaunch jsk_perception detection.launch port:=8888 DETECTION_INPUT_IMAGE:=/femto_mega_remote/color/image_raw
+```
+手元のPCでこれ用のrvizの立ち上げ
+```bash
+roslaunch jsk_2023_09_cook_from_recipe view_rviz_cook.launch rviz_name:=dino_gen4_vis
+```
 
 ### Rvizでインタラクティブに座標指定
 ```bash
@@ -457,7 +471,8 @@ roslaunch jsk_2023_09_cook_from_recipe pot-and-pan_rviz.launch
 ```
 roscd jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/
 rlwrap roseus all-butter-sunny-demo.l
-(move-to-spot "stove") ;; テンプレートマッチングの修正無しで動かしたい場合は (send *ri* :move-to (make-coords :pos #f(1300 7970 351) :rpy (float-vector pi 0 0)) :frame-id "/map")
+(move-to-spot "stove")
+;; (send *ri* :move-to (make-coords :pos #f(1300 7970 351) :rpy (float-vector pi 0 0)) :frame-id "/map") ;; テンプレートマッチングの修正無しで動かしたい場合
 (turn-on-stove frying-pan arm1) ;; これを実行して位置を確認
 
 (prepare-sunny) ;; 物体を設置
