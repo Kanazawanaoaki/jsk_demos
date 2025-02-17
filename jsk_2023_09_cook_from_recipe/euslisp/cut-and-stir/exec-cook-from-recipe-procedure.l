@@ -29,6 +29,7 @@
    ((string= object "bowl")
     ;; (place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name spot :grasp-flag t)
     (pick-up-gray-bowl :spot spot)
+    ;; (grasp-rec-object :object-name "gray bowl" :arm :rarm :use-model "fp" :use-calib-offset nil) ;; with FoundaionPose
     )
    ((string= object "small-bowl")
     ;; (place-objects-on-table :object-name "ボウル0" :arm :rarm :spot-name spot :grasp-flag t)
