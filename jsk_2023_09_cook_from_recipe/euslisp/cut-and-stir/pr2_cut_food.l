@@ -665,7 +665,12 @@
    ((string= object-name "pink spoon")
     (fp-reset-mesh :label "pink spoon" :mesh_name "kn_pink_spoon_20250130_edit_edit")
     )
-
+   ((string= object-name "egg opener")
+    (fp-reset-mesh :label "hand-tool" :mesh_name "kn_egg_opener_20241013_edit_orig_fixed")
+    )
+   ((string= object-name "turner")
+    (fp-reset-mesh :label "turner-tool" :mesh_name "kn_turner_20250130_orig_fixed")
+    )
    (t
     (format t "~A is not implemented for change-fp-mesh! ~%" object-name)
     (return-from change-fp-mesh)
@@ -1122,6 +1127,22 @@
                               ))
 
       (setq pre-set-val #f(-150 0 0))
+      (setq fix-rot nil)
+      )
+     ((and (string= object-name "egg opener") (equal arm :larm)) ;; egg opener
+      (cond
+       ((equal use-model "fp");; if use FoundationPose
+        (setq object-offset (make-coords :pos #f(19.013 -55.632 -50.931) :rpy #f(0.025 0.402 0.001)))
+        )
+       ((equal use-model "deva");; if use deva
+        (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
+        )
+       )
+
+      (setq pre-set-avs (list #f(38.3564 13.2212 62.8877 -95.6121 117.6 -104.476 -45.8748)
+                              ))
+
+      (setq pre-set-val #f(-100 0 0))
       (setq fix-rot nil)
       )
      ((and (string= object-name "onion") (equal arm :larm))

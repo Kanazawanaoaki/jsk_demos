@@ -141,8 +141,36 @@
 
 
 ;; egg cracker
+(defun now-egg-crack-set-both ()
+  ;; 左腕でegg openerを掴む
+  (grasp-rec-object :object-name "egg opener" :arm :larm :use-model "fp" :use-calib-offset nil)
 
-(defun egg-crack-rarm-set ()
+  ;; 右腕を位置にセットする
+  (egg-crack-rarm-set-motion)
+  (send *ri* :stop-grasp :rarm :wait t)
+
+  ;; 左腕で右手にエッグオープナーを握らせる
+  (setq cook-from-now-file-name "../av-files/cook-from-now-larm-set-egg-opener-20250217-data-01.l")
+  (load-cook-from-now-file :file_name cook-from-now-file-name :larm t)
+  (cook-from-now-replay-once :larm t :initial-av nil)
+
+  (send *ri* :move-gripper :rarm 0.07 :wait t)
+  (unix::sleep 1)
+
+  (send *ri* :stop-grasp :larm :wait t)
+
+  (send *pr2* :larm :move-end-pos #f(0 100 50) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :angle-vector #f(38.3564 13.2212 62.8877 -95.6121 117.6 -104.476 -45.8748))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (reset-cook-pose :arm :larm)
+  )
+
+(defun egg-crack-rarm-set-motion ()
   ;; 待機姿勢 from green bowl
   (send *pr2* :rarm :angle-vector #f(-38.3278 -3.2288 -63.6414 -68.0071 -83.1809 -108.309 393.782))
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
@@ -153,6 +181,10 @@
   (send *pr2* :rarm :angle-vector #f(-15.7712 9.99542 -60.6957 -77.3209 -95.7696 -102.646 149.115)) ;; #<cascaded-coords #X560d5c4c6b18 :rarm-end-coords  584.37 -32.86 988.016 / 1.714 1.271 0.148>
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
+  )
+
+(defun egg-crack-rarm-recieve ()
+  (egg-crack-rarm-set-motion)
 
   (send *ri* :move-gripper :rarm 0.07 :wait t)
   (if *use-english*
@@ -275,7 +307,7 @@
       (speak-with-log "I start cooking sunny-side-up" :lang "en") ;; TODO
     (speak-with-log "卵を割る動作に挑戦します"))
 
-  (egg-crack-rarm-set)
+  (egg-crack-rarm-recieve)
   (egg-crack-larm-grasp)
   (egg-crack-larm-carry)
   (egg-crack-rarm)
