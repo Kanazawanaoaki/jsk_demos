@@ -274,7 +274,8 @@
       ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl1-to-pan-20240221-data.l")
       ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl1-to-pan-20240310-data.l")
       ;; (setq cook-from-now-file-name "../av-files/cook-from-now-pour-bowl1-to-pan-20240310-data_edit.l")
-      (setq cook-from-now-file-name "../av-files/cook-from-now-pour-gray-bowl-to-pan-20240922-data-01.l")
+      ;; (setq cook-from-now-file-name "../av-files/cook-from-now-pour-gray-bowl-to-pan-20240922-data-01.l");; old calib
+      (setq cook-from-now-file-name "../av-files/cook-from-now-pour-gray-bowl-from-pan-20250217-data-01.l")
       (send *ri* :start-grasp :rarm :gain 1.0 :wait t)
       )
      ((and (string= from-object "green bowl") (string= to-object "frying pan") (string= spot-name "stove") (equal arm :rarm)) ;; butter
@@ -286,7 +287,8 @@
                               ))
       ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl0-to-pan-20240221-data.l")
       ;; (setq cook-from-now-file-name "../av-files/cook-from-now-pour-bowl0-to-pan-20240221-data_edit.l")
-      (setq cook-from-now-file-name "../av-files/cook-from-now-pour-bowl0-to-pan-20240221-data_edit_for-upper.l")
+      ;; (setq cook-from-now-file-name "../av-files/cook-from-now-pour-bowl0-to-pan-20240221-data_edit_for-upper.l");; old calib
+      (setq cook-from-now-file-name "../av-files/cook-from-now-pour-green-bowl-from-pan-20250217-data-01.l")
       (send *ri* :start-grasp :rarm :gain 1.0 :wait t)
       )
      ((and (string= from-object "あぶら") (string= to-object "フライパン") (string= spot-name "stove")) ;; larmだったが結局両腕使うので

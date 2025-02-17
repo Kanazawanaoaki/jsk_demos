@@ -2042,12 +2042,12 @@
   (unix:sleep 2)
   (if larm
       (progn
-        (setq place-ans (record-rav-voice :arm "larm") :not-manequine not-manequine)
+        (setq place-ans (record-rav-voice :arm "larm" :not-manequine not-manequine))
         (setq *cook-short-lav-list* (elt place-ans 0))
         (setq *cook-short-lec-list* (elt place-ans 1))
         )
     (progn
-      (setq place-ans (record-rav-voice) :not-manequine not-manequine)
+      (setq place-ans (record-rav-voice :not-manequine not-manequine))
       (setq *cook-short-rav-list* (elt place-ans 0))
       (setq *cook-short-rec-list* (elt place-ans 1))
       ))

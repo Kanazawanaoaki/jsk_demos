@@ -494,6 +494,7 @@
         (update-flag nil)
         )
     ;; change dino query
+    (format t "detect ~A by dino~%" query)
     (change-dino-query query)
     ;; recieve dino new msg
     (setq start_time (ros::time-now))
