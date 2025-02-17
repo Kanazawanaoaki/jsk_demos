@@ -668,7 +668,7 @@
    ((string= object-name "egg opener")
     (fp-reset-mesh :label "hand-tool" :mesh_name "kn_egg_opener_20241013_edit_orig_fixed")
     )
-   ((string= object-name "turner")
+   ((string= object-name "spatula")
     (fp-reset-mesh :label "turner-tool" :mesh_name "kn_turner_20250130_orig_fixed")
     )
    (t
@@ -1143,6 +1143,22 @@
                               ))
 
       (setq pre-set-val #f(-100 0 0))
+      (setq fix-rot nil)
+      )
+     ((and (string= object-name "spatula") (equal arm :rarm)) ;; spatula
+      (cond
+       ((equal use-model "fp");; if use FoundationPose
+        (setq object-offset (make-coords :pos #f(10.129 -15.933 -101.669) :rpy #f(-0.843 -1.449 2.908)))
+        )
+       ((equal use-model "deva");; if use deva
+        (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
+        )
+       )
+
+      (setq pre-set-avs (list #f(-41.0354 31.325 -34.2869 -99.4442 -158.179 -54.5975 103.313)
+                              ))
+
+      (setq pre-set-val #f(-100 0 -100))
       (setq fix-rot nil)
       )
      ((and (string= object-name "onion") (equal arm :larm))

@@ -355,6 +355,10 @@ roscd tracking/docker/
 ```bash
 roslaunch jsk_2023_09_cook_from_recipe view_tracking_with_fp.launch
 ```
+手元でguiを立ち上げておく
+```bash
+roslaunch tracking gui.launch rgb_topic:=/tracking/rgb_topic
+```
 
 実行中の操作
 一時中断
@@ -423,13 +427,13 @@ roscd tracking_ros_utils/../tracking_ros
 ./run_docker -host pr1040 -launch deva.launch     input_image:=/kinect_head/rgb/image_rect_color     model_type:=vit_t     device:=cuda:0
 ```
 手元PCでrvizを立ち上げる
-```
+```bash
 roslaunch jsk_pr2_startup rviz.launch
 roslaunch jsk_2023_09_cook_from_recipe view_rviz_cook.launch 
 ```
 
 必要に応じて立ち上げる
-```
+```bash
 roslaunch jsk_2023_09_cook_from_recipe kitchen_template_matching_k4a.launch
 roslaunch jsk_2023_09_cook_from_recipe interactive_tf_pr2.launch
 ```
