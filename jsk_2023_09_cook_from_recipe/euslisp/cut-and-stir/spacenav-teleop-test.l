@@ -10,6 +10,7 @@
 (setq *arrow* (arrow))
 (objects (list *arrow* *pr2*))
 
+(setq *only-yaw-flag* nil)
 
 ;; define cb
 (defun spacenav-joy-cb (msg)
@@ -55,14 +56,14 @@
   (send now-coords :translate (float-vector x-trans y-trans z-trans) trans-methods)
 
   ;; roll
-  (if (> (abs (elt (send msg :axes) 3)) spacenav-rot-thre)
+  (if (and (> (abs (elt (send msg :axes) 3)) spacenav-rot-thre) (not *only-yaw-flag*))
       (progn
         (send now-coords :rotate (deg2rad (* (elt (send msg :axes) 3) spacenav-rot-scale)) :x trans-methods)
         (setq change-flag t)
         )
     )
   ;; pitch
-  (if (> (abs (elt (send msg :axes) 4)) spacenav-rot-thre)
+  (if (and (> (abs (elt (send msg :axes) 4)) spacenav-rot-thre) (not *only-yaw-flag*))
       (progn
         (send now-coords :rotate (deg2rad (* (elt (send msg :axes) 4) spacenav-rot-scale)) :y trans-methods)
         (setq change-flag t)
@@ -139,165 +140,166 @@
   (send *irtviewer* :look-all (list *pr2* *arrow*))
   )
 
-(defun spacenav-joy-cb-old (msg)
-  (print (send msg :axes))
-  (print (send msg :buttons))
-  (setq spacenav-trans-thre 0.4)
-  (setq spacenav-trans-step 20) ;; TODO use scale instead?
-  (setq spacenav-rot-thre 0.4)
-  (setq spacenav-rot-step 10)
-  (setq trans-methods :world) ;; :local or :world
+;; ;; old ver not use
+;; (defun spacenav-joy-cb-old (msg)
+;;   (print (send msg :axes))
+;;   (print (send msg :buttons))
+;;   (setq spacenav-trans-thre 0.4)
+;;   (setq spacenav-trans-step 20) ;; TODO use scale instead?
+;;   (setq spacenav-rot-thre 0.4)
+;;   (setq spacenav-rot-step 10)
+;;   (setq trans-methods :world) ;; :local or :world
 
-  (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
-  (setq now-coords (send (send *pr2* *spacenav-arm* :end-coords) :copy-worldcoords))
-  (setq *now-axes* (send msg :axes))
-  (setq change-flag nil)
+;;   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
+;;   (setq now-coords (send (send *pr2* *spacenav-arm* :end-coords) :copy-worldcoords))
+;;   (setq *now-axes* (send msg :axes))
+;;   (setq change-flag nil)
 
-  ;; x
-  (if (> (elt (send msg :axes) 0) spacenav-trans-thre)
-      (progn
-        (send now-coords :translate (float-vector spacenav-trans-step 0 0) trans-methods)
-        (setq change-flag t)
-        )
-    )
-  (if (< (elt (send msg :axes) 0) (* -1.0 spacenav-trans-thre))
-      (progn
-        (send now-coords :translate (float-vector (* -1.0 spacenav-trans-step) 0 0) trans-methods)
-        (setq change-flag t)
-        )
-    )
-  ;; y
-  (if (> (elt (send msg :axes) 1) spacenav-trans-thre)
-      (progn
-        (send now-coords :translate (float-vector 0 spacenav-trans-step 0) trans-methods)
-        (setq change-flag t)
-        )
-    )
-  (if (< (elt (send msg :axes) 1) (* -1.0 spacenav-trans-thre))
-      (progn
-        (send now-coords :translate (float-vector 0 (* -1.0 spacenav-trans-step) 0) trans-methods)
-        (setq change-flag t)
-        )
-    )
-  ;; z
-  (if (> (elt (send msg :axes) 2) spacenav-trans-thre)
-      (progn
-        (send now-coords :translate (float-vector 0 0 spacenav-trans-step) trans-methods)
-        (setq change-flag t)
-        )
-    )
-  (if (< (elt (send msg :axes) 2) (* -1.0 spacenav-trans-thre))
-      (progn
-        (send now-coords :translate (float-vector 0 0 (* -1 spacenav-trans-step)) trans-methods)
-        (setq change-flag t)
-        )
-    )
+;;   ;; x
+;;   (if (> (elt (send msg :axes) 0) spacenav-trans-thre)
+;;       (progn
+;;         (send now-coords :translate (float-vector spacenav-trans-step 0 0) trans-methods)
+;;         (setq change-flag t)
+;;         )
+;;     )
+;;   (if (< (elt (send msg :axes) 0) (* -1.0 spacenav-trans-thre))
+;;       (progn
+;;         (send now-coords :translate (float-vector (* -1.0 spacenav-trans-step) 0 0) trans-methods)
+;;         (setq change-flag t)
+;;         )
+;;     )
+;;   ;; y
+;;   (if (> (elt (send msg :axes) 1) spacenav-trans-thre)
+;;       (progn
+;;         (send now-coords :translate (float-vector 0 spacenav-trans-step 0) trans-methods)
+;;         (setq change-flag t)
+;;         )
+;;     )
+;;   (if (< (elt (send msg :axes) 1) (* -1.0 spacenav-trans-thre))
+;;       (progn
+;;         (send now-coords :translate (float-vector 0 (* -1.0 spacenav-trans-step) 0) trans-methods)
+;;         (setq change-flag t)
+;;         )
+;;     )
+;;   ;; z
+;;   (if (> (elt (send msg :axes) 2) spacenav-trans-thre)
+;;       (progn
+;;         (send now-coords :translate (float-vector 0 0 spacenav-trans-step) trans-methods)
+;;         (setq change-flag t)
+;;         )
+;;     )
+;;   (if (< (elt (send msg :axes) 2) (* -1.0 spacenav-trans-thre))
+;;       (progn
+;;         (send now-coords :translate (float-vector 0 0 (* -1 spacenav-trans-step)) trans-methods)
+;;         (setq change-flag t)
+;;         )
+;;     )
 
-  ;; roll
-  (if (> (elt (send msg :axes) 3) spacenav-rot-thre)
-      (progn
-        (send now-coords :rotate (deg2rad spacenav-rot-step) :x trans-methods)
-        (setq change-flag t)
-        )
-    )
-  (if (< (elt (send msg :axes) 3) (* -1.0 spacenav-rot-thre))
-      (progn
-        (send now-coords :rotate (deg2rad (* -1 spacenav-rot-step)) :x trans-methods)
-        (setq change-flag t)
-        )
-    )
-  ;; pitch
-  (if (> (elt (send msg :axes) 4) spacenav-rot-thre)
-      (progn
-        (send now-coords :rotate (deg2rad spacenav-rot-step) :y trans-methods)
-        (setq change-flag t)
-        )
-    )
-  (if (< (elt (send msg :axes) 4) (* -1.0 spacenav-rot-thre))
-      (progn
-        (send now-coords :rotate (deg2rad (* -1 spacenav-rot-step)) :y trans-methods)
-        (setq change-flag t)
-        )
-    )
-  ;; yaw
-  (if (> (elt (send msg :axes) 5) spacenav-rot-thre)
-      (progn
-        (send now-coords :rotate (deg2rad spacenav-rot-step) :z trans-methods)
-        (setq change-flag t)
-        )
-    )
-  (if (< (elt (send msg :axes) 5) (* -1.0 spacenav-rot-thre))
-      (progn
-        (send now-coords :rotate (deg2rad (* -1 spacenav-rot-step)) :z trans-methods)
-        (setq change-flag t)
-        )
-    )
+;;   ;; roll
+;;   (if (> (elt (send msg :axes) 3) spacenav-rot-thre)
+;;       (progn
+;;         (send now-coords :rotate (deg2rad spacenav-rot-step) :x trans-methods)
+;;         (setq change-flag t)
+;;         )
+;;     )
+;;   (if (< (elt (send msg :axes) 3) (* -1.0 spacenav-rot-thre))
+;;       (progn
+;;         (send now-coords :rotate (deg2rad (* -1 spacenav-rot-step)) :x trans-methods)
+;;         (setq change-flag t)
+;;         )
+;;     )
+;;   ;; pitch
+;;   (if (> (elt (send msg :axes) 4) spacenav-rot-thre)
+;;       (progn
+;;         (send now-coords :rotate (deg2rad spacenav-rot-step) :y trans-methods)
+;;         (setq change-flag t)
+;;         )
+;;     )
+;;   (if (< (elt (send msg :axes) 4) (* -1.0 spacenav-rot-thre))
+;;       (progn
+;;         (send now-coords :rotate (deg2rad (* -1 spacenav-rot-step)) :y trans-methods)
+;;         (setq change-flag t)
+;;         )
+;;     )
+;;   ;; yaw
+;;   (if (> (elt (send msg :axes) 5) spacenav-rot-thre)
+;;       (progn
+;;         (send now-coords :rotate (deg2rad spacenav-rot-step) :z trans-methods)
+;;         (setq change-flag t)
+;;         )
+;;     )
+;;   (if (< (elt (send msg :axes) 5) (* -1.0 spacenav-rot-thre))
+;;       (progn
+;;         (send now-coords :rotate (deg2rad (* -1 spacenav-rot-step)) :z trans-methods)
+;;         (setq change-flag t)
+;;         )
+;;     )
 
-  ;; switch arm
-  (if (= (elt (send msg :buttons) 0) 1)
-      (if (equal *spacenav-arm* :rarm)
-          (progn
-            (setq *spacenav-arm* :larm)
-            (speak-with-log "左腕に切り替えます")
-            )
-        (progn
-          (setq *spacenav-arm* :rarm)
-          (speak-with-log "右腕に切り替えます")
-          )
-        )
-    )
-  ;; gripper
-  (if (= (elt (send msg :buttons) 1) 1)
-      (progn
-        (if (and (equal *spacenav-arm* :rarm) (equal *spacenav-r-gripper-state* nil))
-            (progn
-              (send *ri* :start-grasp :rarm :gain *spacenav-r-grasp-gain* :wait t)
-              (setq *spacenav-r-gripper-state* t)
-              )
-          (progn
-            (if (and (equal *spacenav-arm* :rarm) (equal *spacenav-r-gripper-state* t))
-                (progn
-                  ;; (send *ri* :stop-grasp :rarm :wait t)
-                  (send *ri* :move-gripper :rarm *spacenav-r-gripper-dis* :effort (* 2000 0.03) :wait t)
-                  (setq *spacenav-r-gripper-state* nil)
-                  )
-              )
-            )
-          )
-        (if (and (equal *spacenav-arm* :larm) (equal *spacenav-l-gripper-state* nil))
-            (progn
-              (send *ri* :start-grasp :larm :gain *spacenav-r-grasp-gain* :wait t)
-              (setq *spacenav-l-gripper-state* t)
-              )
-          (progn
-            (if (and (equal *spacenav-arm* :larm) (equal *spacenav-l-gripper-state* t))
-                (progn
-                  ;; (send *ri* :stop-grasp :larm :wait t)
-                  (send *ri* :move-gripper :larm *spacenav-l-gripper-dis* :effort (* 2000 0.03) :wait t)
-                  (setq *spacenav-l-gripper-state* nil)
-                  )
-              )
-            )
-          )
-        )
-    )
-  (if change-flag
-      (progn
-        (send *pr2* :head-neck-y :joint-angle *spacenav-init-head-y*)
-        (send *pr2* :head-neck-p :joint-angle *spacenav-init-head-p*)
-        (send *pr2* *spacenav-arm* :inverse-kinematics (send now-coords :copy-worldcoords))
-        (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
-        ;; (send *ri* :wait-interpolation)
-        (unix::usleep (floor (* 1000000 0.1)))
-        )
-    )
-  (send *arrow* :newcoords (send now-coords :copy-worldcoords))
-  (send *viewer* :draw-objects)
-  (send *irtviewer* :look-all (list *pr2* *arrow*))
-  )
+;;   ;; switch arm
+;;   (if (= (elt (send msg :buttons) 0) 1)
+;;       (if (equal *spacenav-arm* :rarm)
+;;           (progn
+;;             (setq *spacenav-arm* :larm)
+;;             (speak-with-log "左腕に切り替えます")
+;;             )
+;;         (progn
+;;           (setq *spacenav-arm* :rarm)
+;;           (speak-with-log "右腕に切り替えます")
+;;           )
+;;         )
+;;     )
+;;   ;; gripper
+;;   (if (= (elt (send msg :buttons) 1) 1)
+;;       (progn
+;;         (if (and (equal *spacenav-arm* :rarm) (equal *spacenav-r-gripper-state* nil))
+;;             (progn
+;;               (send *ri* :start-grasp :rarm :gain *spacenav-r-grasp-gain* :wait t)
+;;               (setq *spacenav-r-gripper-state* t)
+;;               )
+;;           (progn
+;;             (if (and (equal *spacenav-arm* :rarm) (equal *spacenav-r-gripper-state* t))
+;;                 (progn
+;;                   ;; (send *ri* :stop-grasp :rarm :wait t)
+;;                   (send *ri* :move-gripper :rarm *spacenav-r-gripper-dis* :effort (* 2000 0.03) :wait t)
+;;                   (setq *spacenav-r-gripper-state* nil)
+;;                   )
+;;               )
+;;             )
+;;           )
+;;         (if (and (equal *spacenav-arm* :larm) (equal *spacenav-l-gripper-state* nil))
+;;             (progn
+;;               (send *ri* :start-grasp :larm :gain *spacenav-r-grasp-gain* :wait t)
+;;               (setq *spacenav-l-gripper-state* t)
+;;               )
+;;           (progn
+;;             (if (and (equal *spacenav-arm* :larm) (equal *spacenav-l-gripper-state* t))
+;;                 (progn
+;;                   ;; (send *ri* :stop-grasp :larm :wait t)
+;;                   (send *ri* :move-gripper :larm *spacenav-l-gripper-dis* :effort (* 2000 0.03) :wait t)
+;;                   (setq *spacenav-l-gripper-state* nil)
+;;                   )
+;;               )
+;;             )
+;;           )
+;;         )
+;;     )
+;;   (if change-flag
+;;       (progn
+;;         (send *pr2* :head-neck-y :joint-angle *spacenav-init-head-y*)
+;;         (send *pr2* :head-neck-p :joint-angle *spacenav-init-head-p*)
+;;         (send *pr2* *spacenav-arm* :inverse-kinematics (send now-coords :copy-worldcoords))
+;;         (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+;;         ;; (send *ri* :wait-interpolation)
+;;         (unix::usleep (floor (* 1000000 0.1)))
+;;         )
+;;     )
+;;   (send *arrow* :newcoords (send now-coords :copy-worldcoords))
+;;   (send *viewer* :draw-objects)
+;;   (send *irtviewer* :look-all (list *pr2* *arrow*))
+;;   )
 
 
-(defun spacenav-teleop (&key (init-pose (send *pr2* :reset-manip-pose)) (r-grasp-gain 0.01) (l-grasp-gain 0.01) (r-gripper-dis 0.09) (l-gripper-dis 0.09) (pose-initialize t))
+(defun spacenav-teleop (&key (init-pose (send *pr2* :reset-manip-pose)) (r-grasp-gain 0.01) (l-grasp-gain 0.01) (r-gripper-dis 0.09) (l-gripper-dis 0.09) (pose-initialize t) (only-yaw-flag nil))
   (manequine-end)
   (send *pr2* :angle-vector (send *ri* :state :potentio-vector))
   (if pose-initialize
@@ -306,6 +308,10 @@
         (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
         (send *ri* :wait-interpolation)
         )
+    )
+  (if only-yaw-flag
+      (setq *only-yaw-flag* t)
+    (setq *only-yaw-flag* nil)
     )
 
   (speak-with-log "three D マウスの操縦を開始します")

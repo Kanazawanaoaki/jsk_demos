@@ -704,9 +704,12 @@
   rav-list
   )
 
-(defun record-rav-voice (&key (arm "rarm"))
+(defun record-rav-voice (&key (arm "rarm") (not-manequine nil))
   ;; okと言われるまで待つ
-  (manequine-mode :arm (list arm) :start t)
+  (if not-manequine
+      (format t "start motion recording!~%")
+    (manequine-mode :arm (list arm) :start t)
+    )
   (ros::unsubscribe "/speech_to_text")
   (setq *ok-flag* nil)
   (ros::subscribe "/speech_to_text" speech_recognition_msgs::SpeechRecognitionCandidates #'voice-ok-cb)
@@ -1984,7 +1987,7 @@
 
 
 
-(defun cook-from-now-teach (&key (larm nil))
+(defun cook-from-now-teach (&key (larm nil) (start-not-manequine nil) (not-manequine nil))
   (unix:sleep 3)
   (send *ri* :speak-jp "現在の姿勢を記憶します" :wait t)
   (if larm
@@ -2003,9 +2006,19 @@
   (unix:sleep 2)
   (send *ri* :speak-jp "調理動作の開始地点を教えて下さい" :wait t)
   (unix:sleep 1)
-  (if larm
-      (wait-ok-manequine :arm (list "larm"))
-    (wait-ok-manequine :arm (list "rarm")))
+  (if (or start-not-manequine not-manequine)
+      (progn
+        (print "wait for key pressed (cook-from-now-teach) 調理動作の開始地点")
+        (do-until-key
+         (unix:usleep 100000)
+         )
+        )
+    (progn
+      (if larm
+          (wait-ok-manequine :arm (list "larm"))
+        (wait-ok-manequine :arm (list "rarm")))
+      )
+    )
   (send *robot* :head-neck-y :joint-angle 0.0)
   ;; (send *robot* :head-neck-p :joint-angle 60.0)
   (send *robot* :head-neck-p :joint-angle 50.0)
@@ -2029,12 +2042,12 @@
   (unix:sleep 2)
   (if larm
       (progn
-          (setq place-ans (record-rav-voice :arm "larm"))
-          (setq *cook-short-lav-list* (elt place-ans 0))
-          (setq *cook-short-lec-list* (elt place-ans 1))
-          )
+        (setq place-ans (record-rav-voice :arm "larm") :not-manequine not-manequine)
+        (setq *cook-short-lav-list* (elt place-ans 0))
+        (setq *cook-short-lec-list* (elt place-ans 1))
+        )
     (progn
-      (setq place-ans (record-rav-voice))
+      (setq place-ans (record-rav-voice) :not-manequine not-manequine)
       (setq *cook-short-rav-list* (elt place-ans 0))
       (setq *cook-short-rec-list* (elt place-ans 1))
       ))
