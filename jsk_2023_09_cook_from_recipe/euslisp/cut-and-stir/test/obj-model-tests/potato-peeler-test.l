@@ -17,7 +17,7 @@
   (setq test-cds (send *potato-peeler* :copy-worldcoords))
   (send test-cds :rotate (deg2rad -90) :x)
   (format t "obj coords ~A , set target coords is ~A ~%" (send *potato-peeler* :copy-worldcoords) (send test-cds :copy-worldcoords))
-  (print (calc-object-rel-coords *potato-peeler* test-cds))
+  (print (calc-rel-from-base-target *potato-peeler* test-cds))
   )
 
 (warn "please run (view-coords) or (test-coords)~%")

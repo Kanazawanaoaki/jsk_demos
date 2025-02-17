@@ -149,7 +149,7 @@
 ;;       (setq pre-set-val #f(-147 -23 7)) ;; for upper #f(0 0 150) :world
 
 ;;       ;; calc from defined coords
-;;       (send *arrow* :newcoords (calc-coords-from-rel *gray-bowl-stove-coords* (make-coords :pos #f(-89.819 12.851 40.629) :rpy #f(0.478 1.218 -0.929))))
+;;       (send *arrow* :newcoords (calc-target-from-base-rel *gray-bowl-stove-coords* (make-coords :pos #f(-89.819 12.851 40.629) :rpy #f(0.478 1.218 -0.929))))
 ;;       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *gray-bowl-stove-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
 ;;       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
 ;;       )
@@ -158,7 +158,7 @@
 ;;       (setq pre-set-val #f(-100 0 0))
 
 ;;       ;; calc from defined coords
-;;       (send *arrow* :newcoords (calc-coords-from-rel *green-bowl-stove-coords* (make-coords :pos #f(-57.768 20.693 22.929) :rpy #f(0.115 1.25 -1.37))))
+;;       (send *arrow* :newcoords (calc-target-from-base-rel *green-bowl-stove-coords* (make-coords :pos #f(-57.768 20.693 22.929) :rpy #f(0.115 1.25 -1.37))))
 ;;       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *green-bowl-stove-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
 ;;       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
 ;;       )
@@ -167,7 +167,7 @@
 ;;       (setq pre-set-val #f(-100 0 0)) ;; for upper #f(0 0 150) :world
 
 ;;       ;; calc from defined coords
-;;       (send *arrow* :newcoords (calc-coords-from-rel *green-bowl-stove-coords* (make-coords :pos #f(-57.768 20.693 22.929) :rpy #f(0.115 1.25 -1.37))))
+;;       (send *arrow* :newcoords (calc-target-from-base-rel *green-bowl-stove-coords* (make-coords :pos #f(-57.768 20.693 22.929) :rpy #f(0.115 1.25 -1.37))))
 ;;       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *green-bowl-stove-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
 ;;       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
 ;;       )
@@ -177,7 +177,7 @@
 ;;       (setq pre-set-val #f(-5.697 1.756 -99.822)) ;; for upper #f(0 0 100) :world
 
 ;;       ;; calc from defined coords
-;;       (send *arrow* :newcoords (calc-coords-from-rel *oil-dispenser-stove-coords* (make-coords :pos #f(-9.925 5.389 113.022) :rpy #f(-0.023 0.057 3.124))))
+;;       (send *arrow* :newcoords (calc-target-from-base-rel *oil-dispenser-stove-coords* (make-coords :pos #f(-9.925 5.389 113.022) :rpy #f(-0.023 0.057 3.124))))
 ;;       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *oil-dispenser-stove-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
 ;;       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
 ;;       )
@@ -187,7 +187,7 @@
 ;;       (setq pre-set-val #f(-100 0 -100)) ;; for upper
 
 ;;       ;; calc from defined coords
-;;       (send *arrow* :newcoords (calc-coords-from-rel *spatula-coords-1* (make-coords :pos #f(-160 0 0) :rpy #f(0 0 0))))
+;;       (send *arrow* :newcoords (calc-target-from-base-rel *spatula-coords-1* (make-coords :pos #f(-160 0 0) :rpy #f(0 0 0))))
 ;;       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *spatula-coords-1* :copy-worldcoords) (send *arrow* :copy-worldcoords))
 ;;       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
 ;;       )
@@ -216,7 +216,7 @@
 
 ;; (defun hold-gray-bowl ()
 ;;   (set-bowl-on-table :object-name "gray bowl" :arm :rarm :action-mode :hold :spot-name "stove" :use-cds-offset nil)
-;;   ;; (assoc-object-to-arm *oil-dispenser* (calc-coords-from-rel *oil-dispenser* (make-coords :pos #f(-9.925 5.389 113.022) :rpy #f(-0.023 0.057 3.124))) :arm :larm) ;; TODO
+;;   ;; (assoc-object-to-arm *oil-dispenser* (calc-target-from-base-rel *oil-dispenser* (make-coords :pos #f(-9.925 5.389 113.022) :rpy #f(-0.023 0.057 3.124))) :arm :larm) ;; TODO
 ;;   )
 
 ;; (defun receive-and-set-green-bowl (&key (arm :larm))
@@ -229,7 +229,7 @@
 
 ;; (defun hold-green-bowl (&key (arm :larm))
 ;;   (set-bowl-on-table :object-name "green bowl" :arm arm :action-mode :hold :spot-name "stove" :use-cds-offset nil)
-;;   ;; (assoc-object-to-arm *oil-dispenser* (calc-coords-from-rel *oil-dispenser* (make-coords :pos #f(-9.925 5.389 113.022) :rpy #f(-0.023 0.057 3.124))) :arm :larm) ;; TODO rarm and larm
+;;   ;; (assoc-object-to-arm *oil-dispenser* (calc-target-from-base-rel *oil-dispenser* (make-coords :pos #f(-9.925 5.389 113.022) :rpy #f(-0.023 0.057 3.124))) :arm :larm) ;; TODO rarm and larm
 ;;   )
 
 ;; (defun receive-and-set-oil-dispenser ()
@@ -246,7 +246,7 @@
 ;;   (set-bowl-on-table :object-name "oil dispenser" :arm :larm :action-mode :hold :spot-name "stove" :use-cds-offset nil)
 
 ;;   ;; (assoc-object-to-arm *oil-dispenser* (send *oil-dispenser* :handle-handle1) :arm :larm)
-;;   (assoc-object-to-arm *oil-dispenser* (calc-coords-from-rel *oil-dispenser* (make-coords :pos #f(-9.925 5.389 113.022) :rpy #f(-0.023 0.057 3.124))) :arm :larm)
+;;   (assoc-object-to-arm *oil-dispenser* (calc-target-from-base-rel *oil-dispenser* (make-coords :pos #f(-9.925 5.389 113.022) :rpy #f(-0.023 0.057 3.124))) :arm :larm)
 ;;   )
 
 ;; (defun grasp-pot-on-stove (&key (arm :larm) (object-name "pot") (action-mode :grasp) (spot-name "stove") (use-cds-offset nil))
@@ -263,7 +263,7 @@
 
 ;;       ;; calc from defined coords
 ;;       ;; (send set-target-coords :newcoords (make-coords :pos #f(699.076 178.059 947.711) :rpy #f(0.012 -0.62 3.14)))
-;;       (send *arrow* :newcoords (calc-coords-from-rel *pot-coords* (make-coords :pos #f(-180.924 8.059 107.711) :rpy (float-vector 0.012 -0.62 pi))))
+;;       (send *arrow* :newcoords (calc-target-from-base-rel *pot-coords* (make-coords :pos #f(-180.924 8.059 107.711) :rpy (float-vector 0.012 -0.62 pi))))
 ;;       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *pot-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
 ;;       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
 ;;       )
@@ -274,7 +274,7 @@
 
 ;;       ;; calc from defined coords
 ;;       ;; (send set-target-coords :newcoords (make-coords :pos #f(657.029 -101.483 899.763) :rpy #f(0.056 -0.405 3.04)));; TODO calc from object coords
-;;       (send *arrow* :newcoords (calc-coords-from-rel *pan-coords* (make-coords :pos #f(-222.971 8.517 59.763) :rpy (float-vector 0.056 -0.405 3.04))))
+;;       (send *arrow* :newcoords (calc-target-from-base-rel *pan-coords* (make-coords :pos #f(-222.971 8.517 59.763) :rpy (float-vector 0.056 -0.405 3.04))))
 ;;       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *pan-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
 ;;       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
 ;;       )
@@ -459,7 +459,7 @@
 ;;   ;; 左腕で再びつかむ
 ;;   ;; (send *arrow* :newcoords (send (send *oil-dispenser* :handle-handle1) :copy-worldcoords))
 ;;   ;; (send *arrow* :rotate (deg2rad 180) :z)
-;;   (send *arrow* :newcoords (calc-coords-from-rel *oil-dispenser* (make-coords :pos #f(-9.925 5.389 113.022) :rpy #f(-0.023 0.057 3.124))))
+;;   (send *arrow* :newcoords (calc-target-from-base-rel *oil-dispenser* (make-coords :pos #f(-9.925 5.389 113.022) :rpy #f(-0.023 0.057 3.124))))
 ;;   ;; (send *arrow* :rotate (deg2rad 180) :z)
 ;;   (send *arrow* :rotate (deg2rad 90) :z) ;; fix v2 because larm end-effector angle is changed
 

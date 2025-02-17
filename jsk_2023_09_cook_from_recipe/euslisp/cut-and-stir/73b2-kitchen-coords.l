@@ -366,29 +366,29 @@
 ;; define set objects for dishes
 (defun 73b2-kitchen-obj-init (&key (type :curry) (kitchen-coords (make-coords)))
   ;; (send *kitchen-plane* :newcoords  (send *kitchen-plane-coords* :copy-worldcoords))
-  (set-object *kitchen-plane* (calc-coords-from-rel kitchen-coords (send *kitchen-plane-coords* :copy-worldcoords)))
+  (set-object *kitchen-plane* (calc-target-from-base-rel kitchen-coords (send *kitchen-plane-coords* :copy-worldcoords)))
   (case type
         (:curry
          ;; (dissoc-object *knife*)
          ;; (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
-         (set-object *knife* (calc-coords-from-rel kitchen-coords (send *knife-coords* :copy-worldcoords)))
+         (set-object *knife* (calc-target-from-base-rel kitchen-coords (send *knife-coords* :copy-worldcoords)))
 
-         (set-object *peeler* (calc-coords-from-rel kitchen-coords (send *peeler-coords* :copy-worldcoords)))
+         (set-object *peeler* (calc-target-from-base-rel kitchen-coords (send *peeler-coords* :copy-worldcoords)))
 
-         (set-object *potato-peeler* (calc-coords-from-rel kitchen-coords (send *potato-peeler-coords* :copy-worldcoords)))
+         (set-object *potato-peeler* (calc-target-from-base-rel kitchen-coords (send *potato-peeler-coords* :copy-worldcoords)))
 
-         (set-object *spatula* (calc-coords-from-rel kitchen-coords (send *spatula-coords-1* :copy-worldcoords))) ;; TODO
+         (set-object *spatula* (calc-target-from-base-rel kitchen-coords (send *spatula-coords-1* :copy-worldcoords))) ;; TODO
 
-         (set-object *ladle* (calc-coords-from-rel kitchen-coords (send *ladle-coords-1* :copy-worldcoords))) ;; TODO
+         (set-object *ladle* (calc-target-from-base-rel kitchen-coords (send *ladle-coords-1* :copy-worldcoords))) ;; TODO
 
-         (set-object *pot* (calc-coords-from-rel kitchen-coords (send *pot-coords* :copy-worldcoords)))
+         (set-object *pot* (calc-target-from-base-rel kitchen-coords (send *pot-coords* :copy-worldcoords)))
 
-         (set-object *gray-bowl* (calc-coords-from-rel kitchen-coords (send *gray-bowl-kitchen-coords* :copy-worldcoords)))
+         (set-object *gray-bowl* (calc-target-from-base-rel kitchen-coords (send *gray-bowl-kitchen-coords* :copy-worldcoords)))
 
-         (set-object *cutting-board* (calc-coords-from-rel kitchen-coords (send *cutting-board-coords* :copy-worldcoords)))
+         (set-object *cutting-board* (calc-target-from-base-rel kitchen-coords (send *cutting-board-coords* :copy-worldcoords)))
 
          ;; set equipment
-         (set-object *shelf-door* (calc-coords-from-rel kitchen-coords (send *shelf-door-coords* :copy-worldcoords)))
+         (set-object *shelf-door* (calc-target-from-base-rel kitchen-coords (send *shelf-door-coords* :copy-worldcoords)))
          (setq *shelf-look-coords* (send (send *shelf-door* :handle-handle0) :copy-worldcoords))
 
          ;; (objects (list *kitchen-plane* *peeler* *knife* *potato-peeler* *spatula* *ladle* *shelf-door*))
@@ -396,27 +396,27 @@
         (:old-curry
          ;; (dissoc-object *knife*)
          ;; (send *knife* :newcoords (send *knife-coords* :copy-worldcoords))
-         (set-object *knife* (calc-coords-from-rel kitchen-coords (send *knife-coords* :copy-worldcoords)))
+         (set-object *knife* (calc-target-from-base-rel kitchen-coords (send *knife-coords* :copy-worldcoords)))
 
-         (set-object *peeler* (calc-coords-from-rel kitchen-coords (send *peeler-coords* :copy-worldcoords)))
+         (set-object *peeler* (calc-target-from-base-rel kitchen-coords (send *peeler-coords* :copy-worldcoords)))
 
-         (set-object *potato-peeler* (calc-coords-from-rel kitchen-coords (send *potato-peeler-coords* :copy-worldcoords)))
+         (set-object *potato-peeler* (calc-target-from-base-rel kitchen-coords (send *potato-peeler-coords* :copy-worldcoords)))
 
-         (set-object *spatula* (calc-coords-from-rel kitchen-coords (send *spatula-coords-1* :copy-worldcoords)))
+         (set-object *spatula* (calc-target-from-base-rel kitchen-coords (send *spatula-coords-1* :copy-worldcoords)))
 
-         (set-object *ladle* (calc-coords-from-rel kitchen-coords (send *ladle-coords-1* :copy-worldcoords)))
+         (set-object *ladle* (calc-target-from-base-rel kitchen-coords (send *ladle-coords-1* :copy-worldcoords)))
 
-         (set-object *pot* (calc-coords-from-rel kitchen-coords (send *pot-coords* :copy-worldcoords)))
+         (set-object *pot* (calc-target-from-base-rel kitchen-coords (send *pot-coords* :copy-worldcoords)))
 
          ;; (dissoc-object *bowl-1*)
          ;; (send *bowl-1* :newcoords (send *bowl-1-kitchen-coords* :copy-worldcoords))
 
          ;; (dissoc-object *cutting-board*)
          ;; (send *cutting-board* :newcoords (send *cutting-board-coords* :copy-worldcoords))
-         (set-object *cutting-board* (calc-coords-from-rel kitchen-coords (send *cutting-board-coords* :copy-worldcoords)))
+         (set-object *cutting-board* (calc-target-from-base-rel kitchen-coords (send *cutting-board-coords* :copy-worldcoords)))
 
          ;; set equipment
-         (set-object *shelf-door* (calc-coords-from-rel kitchen-coords (send *shelf-door-coords* :copy-worldcoords)))
+         (set-object *shelf-door* (calc-target-from-base-rel kitchen-coords (send *shelf-door-coords* :copy-worldcoords)))
          (setq *shelf-look-coords* (send (send *shelf-door* :handle-handle0) :copy-worldcoords))
 
          ;; (objects (list *kitchen-plane* *peeler* *knife* *potato-peeler* *spatula* *ladle* *shelf-door*))
@@ -430,100 +430,100 @@
 (defun 73b2-stove-obj-init (&key (type :curry) (stove-coords (make-coords)))
 
   ;; (send *stove-kitchen-plane* :newcoords  (send *stove-kitchen-plane-coords* :copy-worldcoords))
-  (set-object *stove-kitchen-plane* (calc-coords-from-rel stove-coords (send *stove-kitchen-plane-coords* :copy-worldcoords)))
+  (set-object *stove-kitchen-plane* (calc-target-from-base-rel stove-coords (send *stove-kitchen-plane-coords* :copy-worldcoords)))
   (case type
         (:sunny-side-up
          ;; (dissoc-object *pan*)
          ;; (send *pan* :newcoords (send *pan-coords* :copy-worldcoords))
-         (set-object *pan* (calc-coords-from-rel stove-coords (send *pan-coords* :copy-worldcoords)))
+         (set-object *pan* (calc-target-from-base-rel stove-coords (send *pan-coords* :copy-worldcoords)))
 
          ;; (dissoc-object *oil-dispenser*)
          ;; (send *oil-dispenser* :newcoords (send *oil-dispenser-stove-coords* :copy-worldcoords))
-         (set-object *oil-dispenser* (calc-coords-from-rel stove-coords (send *oil-dispenser-stove-coords* :copy-worldcoords)))
+         (set-object *oil-dispenser* (calc-target-from-base-rel stove-coords (send *oil-dispenser-stove-coords* :copy-worldcoords)))
 
          ;; (dissoc-object *gray-bowl*)
          ;; (send *gray-bowl* :newcoords (send *gray-bowl-stove-coords* :copy-worldcoords))
-         (set-object *gray-bowl* (calc-coords-from-rel stove-coords (send *gray-bowl-stove-coords* :copy-worldcoords)))
+         (set-object *gray-bowl* (calc-target-from-base-rel stove-coords (send *gray-bowl-stove-coords* :copy-worldcoords)))
 
          ;; (objects (list *pr2* *stove-kitchen-plane* *pan* *gray-bowl* *oil-dispenser*))
          )
         (:butter-sunny-side-up
-         (set-object *pan* (calc-coords-from-rel stove-coords (send *pan-coords* :copy-worldcoords)))
+         (set-object *pan* (calc-target-from-base-rel stove-coords (send *pan-coords* :copy-worldcoords)))
 
-         (set-object *gray-bowl* (calc-coords-from-rel stove-coords (send *gray-bowl-stove-coords* :copy-worldcoords)))
+         (set-object *gray-bowl* (calc-target-from-base-rel stove-coords (send *gray-bowl-stove-coords* :copy-worldcoords)))
 
-         (set-object *green-bowl* (calc-coords-from-rel stove-coords (send *green-bowl-stove-coords* :copy-worldcoords)))
+         (set-object *green-bowl* (calc-target-from-base-rel stove-coords (send *green-bowl-stove-coords* :copy-worldcoords)))
 
-         (set-object *spatula* (calc-coords-from-rel stove-coords (send *spatula-stove-coords* :copy-worldcoords)))
+         (set-object *spatula* (calc-target-from-base-rel stove-coords (send *spatula-stove-coords* :copy-worldcoords)))
          ;; (objects (list *pr2* *stove-kitchen-plane* *pan* *gray-bowl* *green-bowl*))
          )
         (:scrambled-egg
-         (set-object *pan* (calc-coords-from-rel stove-coords (send *pan-coords* :copy-worldcoords)))
+         (set-object *pan* (calc-target-from-base-rel stove-coords (send *pan-coords* :copy-worldcoords)))
 
-         (set-object *green-bowl* (calc-coords-from-rel stove-coords (send *green-bowl-stove-coords* :copy-worldcoords)))
+         (set-object *green-bowl* (calc-target-from-base-rel stove-coords (send *green-bowl-stove-coords* :copy-worldcoords)))
 
-         (set-object *wood-spatula* (calc-coords-from-rel stove-coords (send *wood-spatula-stove-coords* :copy-worldcoords)))
+         (set-object *wood-spatula* (calc-target-from-base-rel stove-coords (send *wood-spatula-stove-coords* :copy-worldcoords)))
 
          ;; (objects (list *pr2* *stove-kitchen-plane* *pan* *green-bowl* *spatula*))
          )
         (:poached-egg
          ;; (dissoc-object *pot*)
          ;; (send *pot* :newcoords (send *pot-coords* :copy-worldcoords))
-         (set-object *pot* (calc-coords-from-rel stove-coords (send *pot-coords* :copy-worldcoords)))
+         (set-object *pot* (calc-target-from-base-rel stove-coords (send *pot-coords* :copy-worldcoords)))
 
-         (set-object *gray-bowl* (calc-coords-from-rel stove-coords (send *gray-bowl-stove-coords* :copy-worldcoords)))
+         (set-object *gray-bowl* (calc-target-from-base-rel stove-coords (send *gray-bowl-stove-coords* :copy-worldcoords)))
 
          ;; TODO Add spoon
 
          ;; (objects (list *pr2* *stove-kitchen-plane* *pot* *gray-bowl*))
          )
         (:curry
-         (set-object *spatula* (calc-coords-from-rel stove-coords (send *spatula-coords-1* :copy-worldcoords))) ;; spatula on the cutting board
+         (set-object *spatula* (calc-target-from-base-rel stove-coords (send *spatula-coords-1* :copy-worldcoords))) ;; spatula on the cutting board
 
-         (set-object *ladle* (calc-coords-from-rel stove-coords (send *ladle-coords-1* :copy-worldcoords))) ;; ladle on the cutting board
+         (set-object *ladle* (calc-target-from-base-rel stove-coords (send *ladle-coords-1* :copy-worldcoords))) ;; ladle on the cutting board
 
-         (set-object *pot* (calc-coords-from-rel stove-coords (send *pot-coords* :copy-worldcoords)))
+         (set-object *pot* (calc-target-from-base-rel stove-coords (send *pot-coords* :copy-worldcoords)))
 
-         (set-object *mcup* (calc-coords-from-rel stove-coords (send *mcup-coords* :copy-worldcoords)))
+         (set-object *mcup* (calc-target-from-base-rel stove-coords (send *mcup-coords* :copy-worldcoords)))
 
-         (set-object *bowl-2* (calc-coords-from-rel stove-coords (send *bowl-2-stove-coords* :copy-worldcoords))) ;; TODO update
+         (set-object *bowl-2* (calc-target-from-base-rel stove-coords (send *bowl-2-stove-coords* :copy-worldcoords))) ;; TODO update
 
-         ;; (set-object *gray-bowl* (calc-coords-from-rel stove-coords (send *gray-bowl-stove-coords* :copy-worldcoords)))
+         ;; (set-object *gray-bowl* (calc-target-from-base-rel stove-coords (send *gray-bowl-stove-coords* :copy-worldcoords)))
 
-         (set-object *green-bowl* (calc-coords-from-rel stove-coords (send *green-bowl-stove-coords* :copy-worldcoords)))
+         (set-object *green-bowl* (calc-target-from-base-rel stove-coords (send *green-bowl-stove-coords* :copy-worldcoords)))
 
-         (set-object *oil-dispenser* (calc-coords-from-rel stove-coords (send *oil-dispenser-stove-coords* :copy-worldcoords)))
+         (set-object *oil-dispenser* (calc-target-from-base-rel stove-coords (send *oil-dispenser-stove-coords* :copy-worldcoords)))
 
          ;; (objects (list *pr2* *stove-kitchen-plane* *spatula* *mcup* *ladle* *pot* *bowl-2* *gray-bowl* *green-bowl* *oil-dispenser*))
          )
         (:old-curry
          ;; (dissoc-object *spatula*)
          ;; (send *spatula* :newcoords (send *spatula-coords-1* :copy-worldcoords)) ;; spatula on the cutting board
-         (set-object *spatula* (calc-coords-from-rel stove-coords (send *spatula-coords-1* :copy-worldcoords))) ;; spatula on the cutting board
+         (set-object *spatula* (calc-target-from-base-rel stove-coords (send *spatula-coords-1* :copy-worldcoords))) ;; spatula on the cutting board
 
          ;; (dissoc-object *ladle*)
          ;; (send *ladle* :newcoords (send *ladle-coords-1* :copy-worldcoords))
-         (set-object *ladle* (calc-coords-from-rel stove-coords (send *ladle-coords-1* :copy-worldcoords))) ;; ladle on the cutting board
+         (set-object *ladle* (calc-target-from-base-rel stove-coords (send *ladle-coords-1* :copy-worldcoords))) ;; ladle on the cutting board
 
-         (set-object *pot* (calc-coords-from-rel stove-coords (send *pot-coords* :copy-worldcoords)))
+         (set-object *pot* (calc-target-from-base-rel stove-coords (send *pot-coords* :copy-worldcoords)))
 
          ;; (dissoc-object *mcup*)
          ;; (send *mcup* :newcoords (send *mcup-coords* :copy-worldcoords))
-         (set-object *mcup* (calc-coords-from-rel stove-coords (send *mcup-coords* :copy-worldcoords)))
+         (set-object *mcup* (calc-target-from-base-rel stove-coords (send *mcup-coords* :copy-worldcoords)))
 
          ;; (dissoc-object *bowl-1*)
          ;; (send *bowl-1* :newcoords (send *bowl-1-stove-coords* :copy-worldcoords))
-         (set-object *bowl-1* (calc-coords-from-rel stove-coords (send *bowl-1-stove-coords* :copy-worldcoords)))
+         (set-object *bowl-1* (calc-target-from-base-rel stove-coords (send *bowl-1-stove-coords* :copy-worldcoords)))
 
          ;; (dissoc-object *bowl-2*)
          ;; (send *bowl-2* :newcoords (send *bowl-2-stove-coords* :copy-worldcoords))
-         (set-object *bowl-2* (calc-coords-from-rel stove-coords (send *bowl-2-stove-coords* :copy-worldcoords)))
+         (set-object *bowl-2* (calc-target-from-base-rel stove-coords (send *bowl-2-stove-coords* :copy-worldcoords)))
 
          ;; (dissoc-object *bowl-3*)
          ;; (send *bowl-3* :newcoords (send *bowl-3-stove-coords* :copy-worldcoords))
-         (set-object *bowl-3* (calc-coords-from-rel stove-coords (send *bowl-3-stove-coords* :copy-worldcoords)))
+         (set-object *bowl-3* (calc-target-from-base-rel stove-coords (send *bowl-3-stove-coords* :copy-worldcoords)))
 
-         (set-object *oil-dispenser* (calc-coords-from-rel stove-coords (send *oil-dispenser-stove-coords* :copy-worldcoords)))
+         (set-object *oil-dispenser* (calc-target-from-base-rel stove-coords (send *oil-dispenser-stove-coords* :copy-worldcoords)))
 
          ;; (objects (list *pr2* *scene* *spatula* *mcup* *ladle* *pot* *bowl-1* *bowl-2* *bowl-3* *oil-dispenser*))
          ;; (move-to-stove-irt)

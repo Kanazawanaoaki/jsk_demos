@@ -189,7 +189,7 @@
 ;;       (setq pre-set-val #f(-147 -23 7)) ;; for upper #f(0 0 150) :world
 
 ;;       ;; calc from defined coords
-;;       (send *arrow* :newcoords (calc-coords-from-rel *gray-bowl-kitchen-coords* (make-coords :pos #f(-101.233 0.0 53.999) :rpy #f(0.265 1.405 -1.282))))
+;;       (send *arrow* :newcoords (calc-target-from-base-rel *gray-bowl-kitchen-coords* (make-coords :pos #f(-101.233 0.0 53.999) :rpy #f(0.265 1.405 -1.282))))
 ;;       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *gray-bowl-kitchen-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
 ;;       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
 ;;       )

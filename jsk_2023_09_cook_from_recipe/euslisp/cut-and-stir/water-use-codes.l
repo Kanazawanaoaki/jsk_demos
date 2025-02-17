@@ -145,8 +145,8 @@
     ;; (setq hoge (send rec-coords :copy-worldcoords))
     (format t "point_pose_sink result: ~A ~%" rec-coords)
 
-    (setq grasp-cds (calc-coords-from-rel rec-coords rec-to-grasp-offset))
-    (setq faucet-cds (calc-coords-from-rel rec-coords rec-to-faucet-offset))
+    (setq grasp-cds (calc-target-from-base-rel rec-coords rec-to-grasp-offset))
+    (setq faucet-cds (calc-target-from-base-rel rec-coords rec-to-faucet-offset))
     (publish-cds-tf-list (list grasp-cds faucet-cds))
     (setq *faucet-rec-coords* (send faucet-cds :copy-worldcoords))
 
@@ -199,7 +199,7 @@
     (if with-rec
         (progn
           (setq off-on-rel (make-coords :pos #f(0.634896 -34.6435 -12.8812) :rpy #f(0.207 0.246 0.267)))
-          (setq target-coords (calc-coords-from-rel target-coords off-on-rel))
+          (setq target-coords (calc-target-from-base-rel target-coords off-on-rel))
           )
       (progn
         ;; (setq now-coords (make-coords :pos #f(893.597 -17.28 1043.267) :rpy #f(0.539 0.466 -1.373)))

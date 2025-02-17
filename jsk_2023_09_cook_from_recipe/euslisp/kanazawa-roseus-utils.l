@@ -71,18 +71,18 @@
     result))
 
 ;; calc coords  base-coords - rel-coords -> target-coords
-(defun calc-object-rel-coords (base-coords target-coords) ;; base-coords, target-coords -> rel-coords
+(defun calc-rel-from-base-target (base-coords target-coords) ;; base-coords, target-coords -> rel-coords
   (let ((rel-coords))
     (setq rel-coords (send (send base-coords :copy-worldcoords) :transformation (send target-coords :copy-worldcoords)))
     ;; (setq rel-coords (send (send (send base-coords :copy-worldcoords) :inverse-transformation) :transform (send target-coords :copy-worldcoords))) ;; これも同じ
     rel-coords))
 
-(defun calc-coords-from-rel (base-coords rel-coords) ;; base-coords, rel-coords -> target-coords
+(defun calc-target-from-base-rel (base-coords rel-coords) ;; base-coords, rel-coords -> target-coords
   (let ((target-coords))
     (setq target-coords (send (send base-coords :copy-worldcoords) :transform (send rel-coords :copy-worldcoords)))
     target-coords))
 
-(defun calc-object-base-coords (target-coords rel-coords) ;; target-coords, rel-coords -> base-coords
+(defun calc-base-from-target-rel (target-coords rel-coords) ;; target-coords, rel-coords -> base-coords
   (let ((base-coords))
     (setq base-coords (send (send (send target-coords :copy-worldcoords) :transformation (send rel-coords :copy-worldcoords) :world) :inverse-transformation))
     ;; (setq base-coords (send (send rel-coords :copy-worldcoords) :transformation (send target-coords :copy-worldcoords) :world)) ;; これも同じ
@@ -91,9 +91,9 @@
     base-coords))
 
 
-(defun calc-rel-only-pos (ideal-coords rec-coords) ;; calc rel-coords (ideal-coords -> rec-coords) 
+(defun calc-rel-only-pos (ideal-coords rec-coords) ;; calc rel-coords (ideal-coords -> rec-coords)
   (setq current-target-coords (make-coords :pos (send rec-coords :worldpos) :rot (send ideal-coords :worldrot))) ;; only use rec pos
-  (setq ans (calc-object-rel-coords ideal-coords current-target-coords))
+  (setq ans (calc-rel-from-base-target ideal-coords current-target-coords))
   ans)
 
 (defun calc-diff-world-vec-from-rel (base-coords rel-coords)

@@ -30,9 +30,9 @@
 (objects (list *arrow1* *arrow2* *arrow3*))
 
 
-(setq current-rel-coords (calc-object-rel-coords base-coords target-coords))
-(setq current-target-coords (calc-coords-from-rel base-coords rel-coords))
-(setq current-base-coords (calc-object-base-coords target-coords rel-coords))
+(setq current-rel-coords (calc-rel-from-base-target base-coords target-coords))
+(setq current-target-coords (calc-target-from-base-rel base-coords rel-coords))
+(setq current-base-coords (calc-base-from-target-rel target-coords rel-coords))
 (format t "rel-coords ~A, ans ~A, dis ~A ~%" current-rel-coords rel-coords (calc-dis-two-coords current-rel-coords rel-coords))
 (format t "target-coords ~A, ans ~A, dis ~A ~%" current-target-coords target-coords (calc-dis-two-coords current-target-coords target-coords))
 c(format t "base-coords ~A, ans ~A, dis ~A ~%" current-base-coords base-coords (calc-dis-two-coords current-base-coords base-coords))

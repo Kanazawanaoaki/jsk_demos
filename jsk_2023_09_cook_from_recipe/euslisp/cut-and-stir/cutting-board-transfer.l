@@ -239,7 +239,7 @@
 
 (defun slide-board-set ()
   ;; slide時の左腕待機座標
-  (setq *slide-larm-coords* (calc-coords-from-rel *cutting-board* *slide-larm-coords-rel*))
+  (setq *slide-larm-coords* (calc-target-from-base-rel *cutting-board* *slide-larm-coords-rel*))
   (send *arrow* :newcoords (send *slide-larm-coords* :copy-worldcoords))
 
   (send *ri* :start-grasp :larm :wait t)
@@ -270,7 +270,7 @@
   (send *ri* :start-grasp :rarm :wait t)
 
   ;; slideを始める右腕の位置
-  (setq *slide-rarm-coords* (calc-coords-from-rel *cutting-board* *slide-rarm-coords-rel*))
+  (setq *slide-rarm-coords* (calc-target-from-base-rel *cutting-board* *slide-rarm-coords-rel*))
   (send *arrow* :newcoords (send *slide-rarm-coords* :copy-worldcoords))
   ;; (send *arrow* :translate #f(-10 0 100) :world) ;;original
   (send *arrow* :translate #f(10 0 100) :world) ;; fix
@@ -353,7 +353,7 @@
 
 (defun grasp-board ()
   ;; 掴む位置
-  (setq *grasp-larm-coords* (calc-coords-from-rel *cutting-board* *grasp-larm-coords-rel*))
+  (setq *grasp-larm-coords* (calc-target-from-base-rel *cutting-board* *grasp-larm-coords-rel*))
   (send *arrow* :newcoords (send *grasp-larm-coords* :copy-worldcoords))
 
   ;; (send *arrow* :translate #f(35 -100 0) :world) ;; original
@@ -942,7 +942,7 @@
 
 (defun tmp-grasp ()
   ;; 掴む位置
-  (setq *grasp-larm-coords* (calc-coords-from-rel *cutting-board* *grasp-larm-coords-rel*))
+  (setq *grasp-larm-coords* (calc-target-from-base-rel *cutting-board* *grasp-larm-coords-rel*))
   (send *arrow* :newcoords (send *grasp-larm-coords* :copy-worldcoords))
 
   ;; (send *arrow* :translate #f(35 -100 0) :world) ;; original
