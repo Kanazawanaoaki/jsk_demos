@@ -183,7 +183,7 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun egg-crack-rarm-recieve ()
+(defun egg-crack-rarm-receive ()
   (egg-crack-rarm-set-motion)
 
   (send *ri* :move-gripper :rarm 0.07 :wait t)
@@ -284,7 +284,7 @@
   (send *ri* :wait-interpolation)
 
   (if *use-english*
-      (send *ri* :speak-en (format nil "Please recieve ~A and say OK." "egg opener"))
+      (send *ri* :speak-en (format nil "Please receive ~A and say OK." "egg opener"))
     (send *ri* :speak-jp (format nil "~Aを回収してOKと言ってください" "egg opener"))
     )
   (ok-wait)
@@ -307,7 +307,7 @@
       (speak-with-log "I start cooking sunny-side-up" :lang "en") ;; TODO
     (speak-with-log "卵を割る動作に挑戦します"))
 
-  (egg-crack-rarm-recieve)
+  (egg-crack-rarm-receive)
   (egg-crack-larm-grasp)
   (egg-crack-larm-carry)
   (egg-crack-rarm)

@@ -323,7 +323,7 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun before-recieve-larm ()
+(defun before-receive-larm ()
   ;;少し上に
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 250) :world)
@@ -409,7 +409,7 @@
   )
 
 
-(defun before-recieve-rarm ()
+(defun before-receive-rarm ()
   ;;少し上に
   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 250) :world)
@@ -483,7 +483,7 @@
   )
 
 (defun grasp-bowl-larm (&rest args &key (gain 0.01) (slide 0) &allow-other-keys)
-  (before-recieve-larm)
+  (before-receive-larm)
   
   (send *ri* :stop-grasp :larm :wait t)
   
@@ -556,7 +556,7 @@
   )
 
 (defun grasp-bowl-rarm ()
-  (before-recieve-rarm)
+  (before-receive-rarm)
   
   (send *ri* :stop-grasp :rarm :wait t)
   
@@ -612,8 +612,8 @@
 
 ;; bowl funcs
 
-(defun recieve-bowl-1 ()
-  (before-recieve-larm)
+(defun receive-bowl-1 ()
+  (before-receive-larm)
   
   (send *ri* :stop-grasp :larm :wait t)
   (send *ri* :speak-jp "ボウル１を握らせて下さい")
@@ -624,8 +624,8 @@
   )
 
 
-(defun recieve-bowl-1-with-dialogue ()
-  (before-recieve-larm)
+(defun receive-bowl-1-with-dialogue ()
+  (before-receive-larm)
   
   (send *ri* :speak-jp "ボウル１を渡す準備をして，合図をして下さい")
   (receive-with-dialogue-larm)  
@@ -634,8 +634,8 @@
   (warn "please run (put-bowl-1-model) ~%")
   )
 
-(defun recieve-bowl-1-rarm ()
-  (before-recieve-rarm)
+(defun receive-bowl-1-rarm ()
+  (before-receive-rarm)
   
   (send *ri* :stop-grasp :rarm :wait t)
   (send *ri* :speak-jp "ボウル１を握らせて下さい")
@@ -646,8 +646,8 @@
   )
 
 
-(defun recieve-bowl-1-with-dialogue-rarm ()
-  (before-recieve-rarm)
+(defun receive-bowl-1-with-dialogue-rarm ()
+  (before-receive-rarm)
   
   (send *ri* :speak-jp "ボウル１を渡す準備をして，合図をして下さい")
   (receive-with-dialogue)  
@@ -663,8 +663,8 @@
   (put-bowl-larm)
   )
 
-(defun recieve-bowl-2 ()
-  (before-recieve-rarm)
+(defun receive-bowl-2 ()
+  (before-receive-rarm)
   
   (send *ri* :stop-grasp :rarm :wait t)
   (send *ri* :speak-jp "ボウル２を握らせて下さい")
@@ -683,8 +683,8 @@
   )
 
 
-(defun recieve-bowl-3 ()
-  (before-recieve-larm)
+(defun receive-bowl-3 ()
+  (before-receive-larm)
   
   (send *ri* :stop-grasp :larm :wait t)
   (send *ri* :speak-jp "ボウル３を握らせて下さい")
@@ -694,8 +694,8 @@
   (warn "please run (put-bowl-3) ~%")
   )
 
-(defun recieve-bowl-4 ()
-  (before-recieve-larm)
+(defun receive-bowl-4 ()
+  (before-receive-larm)
   
   (send *ri* :stop-grasp :larm :wait t)
   (send *ri* :speak-jp "ボウル４を握らせて下さい")
@@ -1567,7 +1567,7 @@
   (warn "please run (put-mcup) ~%")
   )
 
-(defun recieve-mcup ()
+(defun receive-mcup ()
   (carry-mcup-pose)
   
   ;; mcupを受け取る
@@ -1581,7 +1581,7 @@
   (warn "please run (put-mcup) ~%")
   )
 
-(defun recieve-mcup-with-dialogue ()
+(defun receive-mcup-with-dialogue ()
   (carry-mcup-pose)
   
   ;; mcupを受け取る
@@ -1608,7 +1608,7 @@
   (send (send *pr2* :larm :end-coords) :assoc *oil-dispenser*)
   )
 
-(defun recieve-oil-dispenser ()
+(defun receive-oil-dispenser ()
   ;;少し上に
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 250) :world)
@@ -1707,7 +1707,7 @@
   (send *ri* :wait-interpolation)
   
   ;;右腕をセットしておく
-  (before-recieve-rarm)
+  (before-receive-rarm)
   
   ;; 右腕をセットする位置
   (send *arrow* :newcoords (send (send *oil-dispenser* :handle-handle0) :copy-worldcoords))
@@ -1914,7 +1914,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)  
   
-  (before-recieve-larm)
+  (before-receive-larm)
 
   (send *ri* :stop-grasp :larm :wait t)
   
@@ -1975,7 +1975,7 @@
   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
   (send *ri* :wait-interpolation)  
   
-  (before-recieve-rarm)
+  (before-receive-rarm)
   
   (send *ri* :stop-grasp :rarm :wait t)
   
@@ -2401,7 +2401,7 @@
   )
 
 ;; add for rcup
-(defun recieve-rcup ()
+(defun receive-rcup ()
   (carry-rcup-pose)
   
   ;; mcupを受け取る
@@ -2415,7 +2415,7 @@
   (warn "please run (put-rcup) ~%")
   )
 
-(defun recieve-rcup-with-dialogue ()
+(defun receive-rcup-with-dialogue ()
   (carry-rcup-pose)
   
   ;; mcupを受け取る
@@ -2517,26 +2517,26 @@
 ;; now funcs
 ;; ボウル２をセット
 (defun now-set-2 ()
-  (recieve-bowl-2)
+  (receive-bowl-2)
   (put-bowl-2)
   (reset-rarm)
   )
 
 ;; ボウル１をセット
 (defun now-set-1 ()
-  (recieve-bowl-1)
+  (receive-bowl-1)
   (put-bowl-1)
   (reset-larm)
   )
 
 (defun now-set-3 ()
-  (recieve-bowl-3)
+  (receive-bowl-3)
   (put-bowl-3)
   (reset-larm)
   )
 
 (defun now-set-4 ()
-  (recieve-bowl-4)
+  (receive-bowl-4)
   (put-bowl-4)
   (reset-larm)
   )
@@ -2623,19 +2623,19 @@
 
 
 (defun now-set-test ()
-  (recieve-bowl-2)
+  (receive-bowl-2)
   (put-bowl-2)
   (reset-rarm)
 
-  (recieve-bowl-1)
+  (receive-bowl-1)
   (put-bowl-1)
   (reset-larm)
 
-  (recieve-bowl-3)
+  (receive-bowl-3)
   (put-bowl-3)
   (reset-larm)
 
-  (recieve-bowl-4)
+  (receive-bowl-4)
   (put-bowl-4)
   (reset-larm)
   )
@@ -2649,13 +2649,13 @@
   )
 
 (defun now-set-mcup ()
-  (recieve-mcup)
+  (receive-mcup)
   (put-mcup)
   (reset-larm)
   )
 
 (defun now-set-mcup-with-dialogue ()
-  (recieve-mcup-with-dialogue)
+  (receive-mcup-with-dialogue)
   (put-mcup)
   (reset-larm)
   )
@@ -2701,38 +2701,38 @@
 
 ;; ボウル２をセット
 (defun now-set-2-model ()
-  (recieve-bowl-2)
+  (receive-bowl-2)
   (put-bowl-2-model)
   (reset-rarm)
   )
 
 ;; ボウル１をセット
 (defun now-set-1-model ()
-  (recieve-bowl-1)
+  (receive-bowl-1)
   (put-bowl-1-model)
   (reset-larm)
   )
 
 (defun now-set-1-model-with-dialogue ()
-  (recieve-bowl-1-with-dialogue)
+  (receive-bowl-1-with-dialogue)
   (put-bowl-1-model)
   (reset-larm)
   )
 
 (defun now-set-1-model-rarm-with-dialogue ()
-  (recieve-bowl-1-with-dialogue-rarm)
+  (receive-bowl-1-with-dialogue-rarm)
   (put-bowl-1-model-rarm)
   (reset-rarm)
   )
 
 (defun now-set-3-model ()
-  (recieve-bowl-3)
+  (receive-bowl-3)
   (put-bowl-3-model)
   (reset-larm)
   )
 
 (defun now-set-4-model ()
-  (recieve-bowl-4)
+  (receive-bowl-4)
   (put-bowl-4-model)
   (reset-larm)
   )
@@ -2866,7 +2866,7 @@
 
 
 (defun now-set-oil ()
-  (recieve-oil-dispenser)
+  (receive-oil-dispenser)
   (put-oil-dispenser)
   )
 
@@ -2900,13 +2900,13 @@
   )
 
 (defun now-set-rcup ()
-  (recieve-rcup)
+  (receive-rcup)
   (put-rcup)
   (reset-larm)
   )
 
 (defun now-set-rcup-with-dialogue ()
-  (recieve-rcup-with-dialogue)
+  (receive-rcup-with-dialogue)
 
   (send *arrow* :newcoords (make-coords :pos #f(437.222 7883.657 31276.961) :rpy #f(-3.14 0.0 -1.57)))
   (send *pr2* :larm :inverse-kinematics

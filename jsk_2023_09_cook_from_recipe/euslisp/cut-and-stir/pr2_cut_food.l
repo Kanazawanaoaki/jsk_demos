@@ -496,7 +496,7 @@
     ;; change dino query
     (format t "detect ~A by dino~%" query)
     (change-dino-query query)
-    ;; recieve dino new msg
+    ;; receive dino new msg
     (setq start_time (ros::time-now))
     (setq update-flag nil)
     (format t "Waiting for dino new topic~%")

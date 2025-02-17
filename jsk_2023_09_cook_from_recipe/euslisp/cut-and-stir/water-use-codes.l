@@ -107,7 +107,7 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun before-recieve-larm ()
+(defun before-receive-larm ()
   ;;少し上に
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   (send *arrow* :translate (float-vector 0 0 250) :world)
@@ -652,8 +652,8 @@
   (send (send *pr2* :larm :end-coords) :assoc *veg*)
   )
 
-(defun recieve-veg ()
-  (before-recieve-larm)
+(defun receive-veg ()
+  (before-receive-larm)
   
   (send *veg* :newcoords (make-coords :pos (float-vector 450 9160 30870)))  
   (send *veg* :rotate (deg2rad 90) :z)
@@ -959,19 +959,19 @@
   )
 
 (defun tmp-wash-veg ()
-  (recieve-veg)
+  (receive-veg)
   (now-devel-wash-veg)
   )
 
 (defun tmp-devel ()
   (unix:sleep 1)
   (wash-veg-set)
-  
+
   (grasp-lever)
   (water-on)
-  
+
   (unix:sleep 3)
-  
+
   (water-off)
   (release-lever)
   )
@@ -979,15 +979,15 @@
 (defun now-wash-veg (&rest args &key (sleep-time 3) &allow-other-keys)
   (after-move)
   (wash-veg-set)
-  
+
   (grasp-lever)
   (water-on)
-  
+
   (unix:sleep sleep-time)
-  
+
   (water-off)
   (release-lever)
-  
+
   (after-wash-veg-set)
   (after-wash)
   (vegs-carry-pose)
@@ -1005,18 +1005,18 @@
   (after-move)
   (set-rcup)
   (rcup-water-set)
-  
+
   (before-lever)
   (grasp-lever-tmp)
-  
+
   ;; 失敗を検知する
-  (unix:sleep 1) ;; tmp  
+  (unix:sleep 1) ;; tmp
   (grasp-fail-detection :g-thre 10)
   (if (equal *fail-flag* t) ;; 一度失敗したらもう一度挑戦する
       (progn
         (release-lever-tmp)
         (grasp-lever-tmp :adjust -20)
-        (unix:sleep 1) ;; tmp  
+        (unix:sleep 1) ;; tmp
         (grasp-fail-detection :g-thre 10)
         (if (equal *fail-flag* t) ;; 二度失敗したら人に助けてもらう
             (progn

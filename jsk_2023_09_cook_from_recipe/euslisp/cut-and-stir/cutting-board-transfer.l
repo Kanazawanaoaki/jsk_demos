@@ -492,7 +492,7 @@
   )
 
 
-(defun recieve-cutting-board-with-dialogue ()
+(defun receive-cutting-board-with-dialogue ()
   ;;少し上に
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 250) :world)
@@ -526,7 +526,7 @@
   (warn "please run (put-cutting-board) ~%")
   )
 
-(defun recieve-cutting-board ()
+(defun receive-cutting-board ()
   ;;少し上に
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   (send *arrow* :translate #f(0 0 250) :world)
@@ -1165,7 +1165,7 @@
   )
 
 (defun now-set-board ()
-  (recieve-cutting-board)
+  (receive-cutting-board)
   (put-cutting-board)
   (push-board-set)
   (push-board-1) ;; (push-board-1-fix)
@@ -1174,7 +1174,7 @@
   )
 
 (defun now-set-board-with-dialogue ()
-  (recieve-cutting-board-with-dialogue)
+  (receive-cutting-board-with-dialogue)
   (put-cutting-board)
   (push-board-set)
   (push-board-1)
