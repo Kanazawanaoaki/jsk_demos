@@ -57,6 +57,12 @@ rosservice call /rgb_and_depth_image_saver/stop_sync "{}"
 ### Data annotation
 https://github.com/Kanazawanaoaki/sam2_annotation を使う（暫定）  
 環境構築をしてsam2_annotationのディレクトリに移動．
+
+一応用意した全部を一度に実行するスクリプト．ただしdata_splitは含まないのでGPUメモリエラーになったら個別に実行する
+```bash
+python exec_all_bundlesdf_data_make.py [input_data_dir] [dataset_name]
+```
+
 #### convert png to jpg (if rgb image is png, this conversioin is needed.)
 ```bash
 python png2jpg.py [input_dir] [output_dir]
