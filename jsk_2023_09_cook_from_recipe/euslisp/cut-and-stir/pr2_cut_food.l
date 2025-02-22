@@ -654,7 +654,7 @@
     (fp-reset-mesh :label "oil dispenser" :mesh_name "kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed")
     )
    ((string= object-name "frying pan")
-    (fp-reset-mesh :label "black frying pan" :mesh_name "kn_pan_20250114_bundlesdf_orig_fixed")
+    (fp-reset-mesh :label "black frying pan" :mesh_name "kn_pan_20250114_bundlesdf_orig_changed")
     )
    ((string= object-name "wooden spatula")
     (fp-reset-mesh :label "wooden spatula" :mesh_name "kn_wooden_spatula_20250130_edit")
@@ -668,8 +668,11 @@
    ((string= object-name "egg opener")
     (fp-reset-mesh :label "hand-tool" :mesh_name "kn_egg_opener_20241013_edit_orig_fixed")
     )
+   ((string= object-name "white dish")
+    (fp-reset-mesh :label "white plate" :mesh_name "kn_white_dish_20250219_cad")
+    )
    ((string= object-name "spatula")
-    (fp-reset-mesh :label "turner-tool" :mesh_name "kn_turner_20250130_orig_fixed")
+    (fp-reset-mesh :label "turner-tool" :mesh_name "kn_turner_20250130_orig_edit")
     )
    (t
     (format t "~A is not implemented for change-fp-mesh! ~%" object-name)
@@ -679,6 +682,20 @@
   (format t "start ~A tracking by FoundatioinPose~%" object-name)
   t)
 
+
+(defun fp-rec-object (&key (object-name "knife") (change-rec t) (multi-rec nil) (rec-num 5) (fix-rot nil))
+  ;; TODO add multi-rec etc
+  (let ((rec-coords)
+        )
+    (when change-rec
+      (change-fp-mesh :object-name object-name)
+      )
+    (wait-fp-topic-update)
+    (setq rec-coords (get-fp-tracking-coords))
+    (when fix-rot
+      (send rec-coords :newcoords (make-coords :pos (send (send rec-coords :copy-worldcoords) :worldpos)))
+      )
+    rec-coords))
 
 ;; defun action codes
 (defun grasp-object-primitive (&key (pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041)
@@ -842,7 +859,7 @@
     (send *viewer* :draw-objects)
     ))
 
-(defun grasp-rec-object (&key (object-name "knife") (use-model "fp") (change-deva t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm) (is-grasp t) (action-mode :pick-up) (use-calib-offset nil) (wait-after-grasp nil) (wait-before-grasp nil))
+(defun grasp-rec-object (&key (object-name "knife") (use-model "fp") (change-rec t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm) (is-grasp t) (action-mode :pick-up) (use-calib-offset nil) (wait-after-grasp nil) (wait-before-grasp nil))
   (let ((pre-set-avs (list))
         (pre-set-val (float-vector 0 0 0))
         )
@@ -1115,7 +1132,8 @@
      ((and (string= object-name "frying pan") (equal arm :larm)) ;; frying pan
       (cond
        ((equal use-model "fp");; if use FoundationPose
-        (setq object-offset (make-coords :pos #f(-20.073 49.203 -107.231) :rpy #f(-3.14 -0.361 2.767)))
+        ;; (setq object-offset (make-coords :pos #f(-20.073 49.203 -107.231) :rpy #f(-3.14 -0.361 2.767))) ;; for kn_pan_20250114_bundlesdf_orig_fixed
+        (setq object-offset (make-coords :pos #f(-26.762 11.468 -120.327) :rpy #f(3.008 -0.335 3.12))) ;; for kn_pan_20250114_bundlesdf_orig_changed
         )
        ((equal use-model "deva");; if use deva
         (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
@@ -1148,7 +1166,8 @@
      ((and (string= object-name "spatula") (equal arm :rarm)) ;; spatula
       (cond
        ((equal use-model "fp");; if use FoundationPose
-        (setq object-offset (make-coords :pos #f(10.129 -15.933 -101.669) :rpy #f(-0.843 -1.449 2.908)))
+        ;; (setq object-offset (make-coords :pos #f(10.129 -15.933 -101.669) :rpy #f(-0.843 -1.449 2.908))) ;; for kn_turner_20250130_orig_fixed
+        (setq object-offset (make-coords :pos #f(-0.206 -19.675 -107.581) :rpy #f(-1.259 -1.438 2.877))) ;; for kn_turner_20250130_orig_edit
         )
        ((equal use-model "deva");; if use deva
         (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
@@ -1180,15 +1199,10 @@
 
     (cond
      ((equal use-model "fp");; if use FoundationPose
-      (change-fp-mesh :object-name object-name)
-      (wait-fp-topic-update)
-      (setq *object-rec-coord* (get-fp-tracking-coords))
-      (when fix-rot
-        (send *object-rec-coord* :newcoords (make-coords :pos (send (send *object-rec-coord* :copy-worldcoords) :worldpos)))
-        )
+      (setq *object-rec-coord* (fp-rec-object :object-name object-name :change-rec change-rec :multi-rec multi-rec :fix-rot fix-rot))
       )
      ((equal use-model "deva");; if use deva
-      (setq *object-rec-coord* (deva-rec-object :object-name object-name :change-deva change-deva :multi-rec multi-rec :bbox-topic bbox-topic :fix-rot fix-rot))
+      (setq *object-rec-coord* (deva-rec-object :object-name object-name :change-deva change-rec :multi-rec multi-rec :bbox-topic bbox-topic :fix-rot fix-rot))
       )
      )
     (setq *grasp-coords* (send (send *object-rec-coord* :copy-worldcoords) :transform object-offset))
