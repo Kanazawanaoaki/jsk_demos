@@ -70,7 +70,8 @@
       (setq result (append result (list i))))
     result))
 
-;; calc coords  base-coords - rel-coords -> target-coords
+
+;; calc coords  base-coords -> rel-coords = target-coords
 (defun calc-rel-from-base-target (base-coords target-coords) ;; base-coords, target-coords -> rel-coords
   (let ((rel-coords))
     (setq rel-coords (send (send base-coords :copy-worldcoords) :transformation (send target-coords :copy-worldcoords)))
@@ -182,6 +183,15 @@
     ;; 外れ値を除いたリストを返す
     filtered-points))
 
+;; tf -> coords
+(defun get-tf-coords (&optional (base-frame "base_footprint") (target-frame "head_mount_kinect_rgb_optical_frame"))
+  (let ((tm2)
+        (tf-coords nil))
+    (setq tm2 (send *tfl* :get-latest-common-time base-frame target-frame))
+    (when (send *tfl* :wait-for-transform  base-frame target-frame tm2 10)
+      (setq tf-coords (send (send *pr2* :copy-worldcoords) :transform
+                            (send *tfl* :lookup-transform base-frame target-frame tm2))))
+    tf-coords))
 
 ;; show cds
 (defun publish-cds-tf (cds &key (base-frame "/base_footprint"))

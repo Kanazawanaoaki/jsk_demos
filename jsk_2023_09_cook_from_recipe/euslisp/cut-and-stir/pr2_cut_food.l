@@ -28,13 +28,7 @@
 
 ;; define cb
 (defun get-pr2-cam-coords (&optional (frame-id "head_mount_kinect_rgb_optical_frame"))
-  (let ((tm2)
-        (cam-coords nil))
-    (setq tm2 (send *tfl* :get-latest-common-time "base_footprint" frame-id))
-    (when (send *tfl* :wait-for-transform  "base_footprint" frame-id tm2 10)
-      (setq cam-coords (send (send *pr2* :copy-worldcoords) :transform
-                             (send *tfl* :lookup-transform "base_footprint" frame-id tm2))))
-    cam-coords))
+  (get-tf-coords "base_footprint" frame-id))
 
 (defun object-pose-cb (msg)
   (setq *msg* msg)
@@ -555,13 +549,7 @@
 
 ;; ;; object-rec, FoundationPose tracking
 (defun get-fp-tracking-coords (&optional (frame-id "object_center"))
-  (let ((tm2)
-        (obj-coords nil))
-    (setq tm2 (send *tfl* :get-latest-common-time "base_footprint" frame-id))
-    (when (send *tfl* :wait-for-transform  "base_footprint" frame-id tm2 10)
-      (setq obj-coords (send (send *pr2* :copy-worldcoords) :transform
-                             (send *tfl* :lookup-transform "base_footprint" frame-id tm2))))
-    obj-coords))
+  (get-tf-coords "base_footprint" frame-id))
 
 (defun wait-fp-topic-update (&optional (marker-topic "/bbox_marker_object"))
   (let (marker_msg
