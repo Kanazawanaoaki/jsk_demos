@@ -1,9 +1,16 @@
 <launch>
-  <machine name="localhost" address="localhost" />
+  <!-- <machine name="localhost" address="localhost" /> -->
+
+  <!-- <arg name="standalone" default="false"/> -->
+  <!-- <arg name="MANAGER" value="femto_mega_decompress_nodelet_manager" unless="$(arg standalone)"/> -->
+  <!-- <arg name="MANAGER" value="" if="$(arg standalone)"/> -->
+  <!-- <arg name="LOAD_STATEMENT" value="load" unless="$(arg standalone)"/> -->
+  <!-- <arg name="LOAD_STATEMENT" value="standalone" if="$(arg standalone)"/> -->
+
 
   <arg name="manager" default="femto_mega_decompress_nodelet_manager" />
   <arg name="launch_manager" default="true" />
-  <arg name="machine" default="localhost" />
+  <!-- <arg name="machine" default="localhost" /> -->
 
   <arg name="gui" default="false" />
 
@@ -14,10 +21,10 @@
   <arg name="DEPTH_IMAGE" default="/femto_mega/depth/image_raw" />
   <arg name="DEPTH_REMOTE_IMAGE" default="/femto_mega_remote/depth/image_raw" />
   <arg name="CLOUD" default="/femto_mega_remote/depth_registered/points" />
+  <arg name="HALF_CLOUD" default="/femto_mega_remote/depth_registered/half_points" />
 
   <node name="$(arg manager)" pkg="nodelet" type="nodelet" args="manager"
-        machine="$(arg machine)" if="$(arg launch_manager)"
-        output="screen" />
+        if="$(arg launch_manager)" output="screen" />
 
   <node name="femto_mega_rgb_decompress" pkg="image_transport" type="republish"
         args="compressed in:=$(arg RGB_IMAGE) out:=$(arg RGB_REMOTE_IMAGE)" />
@@ -41,6 +48,32 @@
     <remap from="depth_registered/points" to="$(arg CLOUD)" />
     <rosparam>
       queue_size: 100
+    </rosparam>
+  </node>
+
+  <!-- half -->
+  <!-- <node name="downsample_cloud_half" -->
+  <!--       pkg="nodelet" type="nodelet" -->
+  <!--       args="load jsk_pcl/ResizePointsPublisher $(arg manager)" -->
+  <!--       output="screen" -->
+  <!--       respawn="true"> -->
+  <!--   <remap from="~input" to="$(arg CLOUD)" /> -->
+  <!--   <remap from="~output" to="$(arg CLOUD)" /> -->
+  <!--   <rosparam> -->
+  <!--     step_x: 2 -->
+  <!--     step_y: 2 -->
+  <!--   </rosparam> -->
+  <!-- </node> -->
+  <node name="downsample_cloud_half"
+        pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl/ResizePointsPublisher"
+        output="screen"
+        respawn="true">
+    <remap from="~input" to="$(arg CLOUD)" />
+    <remap from="~output" to="$(arg CLOUD)" />
+    <rosparam>
+      step_x: 2
+      step_y: 2
     </rosparam>
   </node>
 
