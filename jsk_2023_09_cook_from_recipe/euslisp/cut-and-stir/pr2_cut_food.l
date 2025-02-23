@@ -212,6 +212,29 @@
   (send *ri* :wait-interpolation)
   )
 
+;; calib cam with ar
+(defun calib-cam-pose-ar ()
+  (send *ri* :start-grasp :larm :wait t)
+  (send *pr2* :head-neck-p :joint-angle 50)
+  (send *pr2* :head-neck-y :joint-angle 0)
+  (send *pr2* :larm :angle-vector #f(-21.2329 43.4616 -14.0587 -59.841 -139.419 -17.4945 331.111)) ;; reset-cook-pose -> ik (make-coords :pos #f(800 0 900)  :rpy #f(0.0 0.0 3.14))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun calc-calib-camera-cds (kinect-tag-cds mega-tag-cds mega-link-cds)
+  (let ((mega-link->tag)
+        (true-mega-link-cds)
+        )
+    (setq mega-link->tag (calc-rel-from-base-target mega-link-cds mega-tag-cds))
+    (setq true-mega-link-cds (calc-base-from-target-rel kinect-tag-cds mega-link->tag))
+    true-mega-link-cds))
+
+(defun calc-calib-cam-offset (base-link-cds camera-root-cds)
+  (let ((offset-cds))
+    (setq offset-cds (calc-rel-from-base-target base-link-cds camera-root-cds))
+    offset-cds))
+
 (defun kitchen-pose-calib-check ()
   (let ((l-arm-calib-list)
         (r-arm-calib-list))
