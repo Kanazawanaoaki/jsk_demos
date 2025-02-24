@@ -681,7 +681,7 @@
     (fp-reset-mesh :label "pink spoon" :mesh_name "kn_pink_spoon_20250130_edit_edit")
     )
    ((string= object-name "egg opener")
-    (fp-reset-mesh :label "hand-tool" :mesh_name "kn_egg_opener_20241013_edit_orig_fixed")
+    (fp-reset-mesh :label "egg crack tool" :mesh_name "kn_egg_opener_20241013_edit_orig_fixed");; label not-pan-hand-tool 'egg crack tool' 'gray egg crack tool'
     )
    ((string= object-name "white dish")
     (fp-reset-mesh :label "white plate" :mesh_name "kn_white_dish_20250219_cad")
@@ -1058,7 +1058,8 @@
               (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
               )
           (progn
-            (setq object-offset (make-coords :pos #f(-64.669 15.002 -9.072) :rpy #f(0.115 1.25 -1.37))) ;; for FoundationPose by track fix-rot
+            ;; (setq object-offset (make-coords :pos #f(-64.669 15.002 -9.072) :rpy #f(0.115 1.25 -1.37))) ;; for FoundationPose by track fix-rot Kinecr
+            (setq object-offset (make-coords :pos #f(-87.927 7.604 3.318) :rpy #f(0.115 1.25 -1.37))) ;; for FoundationPose by track fix-rot 20250224 mega offset
             ))
         )
        ((equal use-model "deva");; if use deva
@@ -1090,7 +1091,8 @@
      ((and (string= object-name "gray bowl") (equal arm :rarm)) ;; gray bowl ;; rarm
       (cond
        ((equal use-model "fp");; if use FoundationPose
-        (setq object-offset (make-coords :pos #f(-93.914 36.645 -15.145) :rpy #f(0.478 1.218 -0.929)))
+        ;; (setq object-offset (make-coords :pos #f(-93.914 36.645 -15.145) :rpy #f(0.478 1.218 -0.929)));; old Kinect
+        (setq object-offset (make-coords :pos #f(-116.616 45.628 -6.626) :rpy #f(0.478 1.218 -0.929)));; mega 20250224 calib
         )
        ((equal use-model "deva");; if use deva
         (setq object-offset (make-coords :pos #f(-4.353 147.388 -10.049) :rpy #f(-1.143 1.405 -1.282))) ;; for with table and upper and rotate (upper is in outside)
@@ -1165,7 +1167,8 @@
      ((and (string= object-name "egg opener") (equal arm :larm)) ;; egg opener
       (cond
        ((equal use-model "fp");; if use FoundationPose
-        (setq object-offset (make-coords :pos #f(19.013 -55.632 -50.931) :rpy #f(0.025 0.402 0.001)))
+        ;; (setq object-offset (make-coords :pos #f(19.013 -55.632 -50.931) :rpy #f(0.025 0.402 0.001))) ;; kinect
+        (setq object-offset (make-coords :pos #f(-1.387 -55.258 -21.432) :rpy #f(-0.037 0.318 -0.024))) ;; mega 20250224 calib
         )
        ((equal use-model "deva");; if use deva
         (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
@@ -1223,6 +1226,7 @@
     (setq *grasp-coords* (send (send *object-rec-coord* :copy-worldcoords) :transform object-offset))
 
     (publish-cds-tf *grasp-coords*)
+    (print *grasp-coords*)
 
     (if use-calib-offset
         (progn
