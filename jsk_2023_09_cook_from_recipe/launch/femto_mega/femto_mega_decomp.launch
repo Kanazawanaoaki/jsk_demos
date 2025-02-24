@@ -70,7 +70,7 @@
         output="screen"
         respawn="true">
     <remap from="~input" to="$(arg CLOUD)" />
-    <remap from="~output" to="$(arg CLOUD)" />
+    <remap from="~output" to="$(arg HALF_CLOUD)" />
     <rosparam>
       step_x: 2
       step_y: 2
