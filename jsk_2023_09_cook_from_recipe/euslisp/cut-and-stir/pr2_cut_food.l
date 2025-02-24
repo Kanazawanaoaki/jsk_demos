@@ -231,8 +231,12 @@
     true-mega-link-cds))
 
 (defun calc-calib-cam-offset (base-link-cds camera-root-cds)
-  (let ((offset-cds))
+  (let ((offset-cds)
+        (rot-quaternion))
     (setq offset-cds (calc-rel-from-base-target base-link-cds camera-root-cds))
+    (format t "offset : ~A~%" offset-cds)
+    (setq rot-quaternion (ros::rot->tf-quaternion (send offset-cds :worldrot)))
+    (format t "quaternion is x:~A y:~A z:~A w:~A~%" (send rot-quaternion :x) (send rot-quaternion :y) (send rot-quaternion :z) (send rot-quaternion :w))
     offset-cds))
 
 (defun kitchen-pose-calib-check ()
