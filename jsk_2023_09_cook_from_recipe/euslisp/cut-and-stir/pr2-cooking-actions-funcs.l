@@ -170,6 +170,19 @@
       ;; calc from defined coords
       (setq set-target-coords (make-coords :pos #f(700 367.301 914.519) :rpy #f(-1.371 0.162 1.508))) ;; TODO Add model?
       )
+     ((and (string= object-name "egg opener") (string= spot-name "stove") (equal arm :larm))
+      (setq pre-set-avs (list #f(38.3564 13.2212 62.8877 -95.6121 117.6 -104.476 -45.8748)
+                              ))
+
+      (setq pre-set-val #f(-100 0 0)) ;; for upper
+
+      ;; calc from defined coords
+      ;; (setq obj-coords (send *egg-opener* :copy-worldcoords)) ;;TODO add egg-opener model and cds?
+      (setq obj-coords (make-coords :pos #f(774.667 162.944 861.898) :rpy #f(0.115 1.496 -2.972)))
+      (send *arrow* :newcoords (calc-target-from-base-rel obj-coords (make-coords :pos #f(-1.387 -55.258 -21.432) :rpy #f(-0.037 0.318 -0.024))))
+      (format t "~A coords ~A , set target coords is ~A ~%" object-name (send obj-coords :copy-worldcoords) (send *arrow* :copy-worldcoords))
+      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
+      )
      (t
       (format t "Sorry, object-name ~A, spot-name ~A, arm ~A is not defined now !!!~%" object-name spot-name arm)
       (return-from set-tool-on-table nil)
@@ -1309,6 +1322,23 @@
   ;; (set-object *broccoli* (send *broccoli-stove-coords* :copy-worldcoords))
   )
 
+
+(defun pick-up-egg-opener ()
+  (set-tool-on-table :object-name "egg opener" :arm :larm :action-mode :pick-up :spot-name "stove" :use-cds-offset t)
+
+  ;; (assoc-object-to-arm *broccoli* (calc-target-from-base-rel *broccoli* (make-coords :pos #f(-160 0 0) :rpy #f(0 0 -1.571))) :arm :rarm)
+  )
+
+(defun place-egg-opener ()
+  (set-tool-on-table :object-name "egg opener" :arm :larm :action-mode :place :spot-name "stove" :use-cds-offset t)
+  ;; (set-object *broccoli* (send *broccoli-stove-coords* :copy-worldcoords))
+  )
+
+(defun receive-and-set-egg-opener ()
+  (set-tool-on-table :object-name "egg opener" :arm :larm :action-mode :set :spot-name "stove" :use-cds-offset t)
+
+  ;; (set-object *broccoli* (send *broccoli-stove-coords* :copy-worldcoords))
+  )
 
 ;; TODO add pot
 (defun pick-up-pot ()

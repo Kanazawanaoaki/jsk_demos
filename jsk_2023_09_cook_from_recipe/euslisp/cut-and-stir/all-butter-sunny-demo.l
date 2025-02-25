@@ -14,7 +14,7 @@
 (setq *use-english* nil)
 
 
-(defun prepare-sunny ()
+(defun prepare-sunny (&key (use-opener nil))
   (reset-view-list)
   (init-pr2)
   (pr2-cook-init :spot "stove" :type :butter-sunny-side-up)
@@ -22,6 +22,10 @@
   (receive-and-set-green-bowl :arm :rarm)
   (receive-and-set-gray-bowl :spot "stove")
   ;; (receive-and-set-frying-pan)
+
+  (if use-opener
+      (receive-and-set-egg-opener)
+    )
   (set-pot-on-stove :object-name "frying pan")
 
   ;; TODO add spatula?
@@ -104,6 +108,10 @@
   (place-spatula)
   )
 
+
+(defun put-egg-opener ()
+  (place-egg-opener)
+  )
 
 (defun transfer-sunny-from-pan () ;; TODO update
   ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-transfer-sunny-from-pan-20240909-data.l")
@@ -313,9 +321,45 @@
       (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
       (send *ri* :wait-interpolation)
       (reset-cook-pose :arm :rarm)
-      )
+      ))
   )
 
+(defun egg-crack-return-to-left ()
+  ;; (egg-crack-rarm :return-pose t) の後に実行
+
+  ;; from egg-crack-larm-grasp
+  (send *pr2* :larm :angle-vector #f(46.0802 4.45794 62.0517 -76.0447 24.8164 -67.3512 -119.3189)) ;;orig 60.6811
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  ;; from egg-crack-larm-carry
+  (send *pr2* :larm :angle-vector #f(14.0062 -8.38952 70.2396 -71.6376 91.7893 -114.585 -148.8426)) ;;orig 31.1574 ;; #<cascaded-coords #X560d5c4b5860 :larm-end-coords  586.977 64.883 1086.322 / 1.295 1.487 -0.291>
+  (send *pr2* :larm :move-end-pos (float-vector 0 0 50) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
+  (send *ri* :wait-interpolation)
+
+  (send *ri* :stop-grasp :larm :wait t)
+
+  ;; 右への受け渡し終わりと同じ姿勢
+  (send *pr2* :larm #f(14.2111 21.2526 34.3601 -87.8648 101.518 -114.362 -149.226))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
+  (send *ri* :wait-interpolation)
+
+  ;; 受け渡し
+  (send *ri* :start-grasp :larm :wait t :gain 0.1)
+  (send *ri* :stop-grasp :rarm :wait t)
+
+  ;; 右手を退避
+  (send *pr2* :rarm :move-end-pos #f(0 -100 50) :world)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :rarm :angle-vector #f(-38.3278 -3.2288 -63.6414 -68.0071 -83.1809 -108.309 393.782));; 393.782
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (reset-cook-pose :arm :rarm)
+  )
 
 ;; set-to-cracker
 (defun now-egg-crack-all (&key (use-rec t))
@@ -334,8 +378,10 @@
         (egg-crack-rarm :return-pose t)
         ;; () TODO return to left
         ;; TODO put-egg-opener with left
+        (egg-crack-return-to-left)
+        (put-egg-opener)
         )
-  (egg-crack-rarm))
+    (egg-crack-rarm));; not-use-rec ver
   )
 
 (defun exec-sunny-all ()
