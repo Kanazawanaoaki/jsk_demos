@@ -1,6 +1,7 @@
 <launch>
   <arg name="input_image" default="/kinect_head_remote/rgb/image_rect_color" />
   <arg name="input_cloud" default="/kinect_head_remote/depth_registered/points" />
+  <arg name="sensor_frame" default="head_mount_kinect_rgb_optical_frame" />
   <arg name="target_frame_id" default="base_footprint" />
   <arg name="mask_image" default="/deva_node/output/segmentation" />
 
@@ -18,6 +19,8 @@
 
   <include file="$(find jsk_2023_09_cook_from_recipe)/launch/for_cut/tabletop_object_rec.launch" if="$(arg run_tabletop)" >
     <arg name="run_rviz" value="false" />
+    <arg name="input" value="$(arg input_cloud)" />
+    <arg name="sensor_frame" value="$(arg sensor_frame)" />
     <arg name="publish_objects_tf" value="false" />
   </include>
 
