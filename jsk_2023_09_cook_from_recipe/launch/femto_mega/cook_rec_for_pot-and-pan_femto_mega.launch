@@ -1,6 +1,7 @@
 <launch>
 
   <arg name="run_rviz" default="false" />
+  <arg name="learn_mode" default="false" />
 
   <!-- <arg name="input_image" default="/femto_mega/color/image_raw"/> -->
   <arg name="input_image" default="/femto_mega_remote/color/image_raw"/>
@@ -13,6 +14,7 @@
   <node name="adjusted_clip_state_recognizer" pkg="lc_state_recognition"
         type="adjusted_clip_state_recognizer.py" output="screen" clear_params="true">
     <remap from="~input_image" to="/rect_added_image_publisher/crop_image" />
+    <param name="learning_mode" value="$(arg learn_mode)"/>
   </node>
 
   <include file="$(find jsk_2023_09_cook_from_recipe)/launch/rviz.launch" if="$(arg run_rviz)">
