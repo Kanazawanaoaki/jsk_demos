@@ -35,6 +35,8 @@
           /kinect_head/depth_registered/image_raw/compressedDepth
           /femto_mega/color/camera_info
           /femto_mega/color/image_raw/compressed
+          /femto_mega/depth/camera_info
+          /femto_mega/depth/image_raw/compressedDepth
           /audio
           /audio_info
           /timestamped_cal_gas
