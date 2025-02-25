@@ -17,10 +17,11 @@
 
 ;; object detection with k4a
 (defun k4a-check-detection (detecion-topic &key (rec-num 1) (use-out-filter nil) (filter-thre 50))
-  (let (cds
-        trans
-        pp_msg
-        rec_coords
+  (let (tmp
+        ;; cds
+        ;; trans
+        ;; pp_msg
+        ;; rec_coords
         (start_time (ros::time-now))
         (rec-cnt 0)
         (rec-coords-list (list))
@@ -35,6 +36,7 @@
            (setq rec_coords (ros::tf-pose->coords (send (car (send pp_msg :objects)) :pose)))
            (if (ros::time>= (send pp_msg :header :stamp) start_time)
                (setq trans (send *tfl* :lookup-transform *base-frame-id* (send pp_msg :header :frame_id) (send pp_msg :header :stamp)))
+             (return-from k4a-check-detection nil)
              )
            (when (> rec-num 1)
              (setq rec-cnt (+ rec-cnt 1))

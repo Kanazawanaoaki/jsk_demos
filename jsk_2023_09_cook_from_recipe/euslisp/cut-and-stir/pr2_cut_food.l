@@ -441,6 +441,9 @@
    ((string= object-name "onion")
     (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "brown onion;")
     )
+   ((string= object-name "egg")
+    (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "white egg;")
+    )
    )
   (format t "change deva class to ~A detection ~%" object-name)
   t)
@@ -687,7 +690,7 @@
     (fp-reset-mesh :label "white plate" :mesh_name "kn_white_dish_20250219_cad")
     )
    ((string= object-name "spatula")
-    (fp-reset-mesh :label "turner-tool" :mesh_name "kn_turner_20250130_orig_edit")
+    (fp-reset-mesh :label "grill spatula" :mesh_name "kn_turner_20250130_orig_edit") ;;turner-tool
     )
    (t
     (format t "~A is not implemented for change-fp-mesh! ~%" object-name)
@@ -1150,7 +1153,8 @@
       (cond
        ((equal use-model "fp");; if use FoundationPose
         ;; (setq object-offset (make-coords :pos #f(-20.073 49.203 -107.231) :rpy #f(-3.14 -0.361 2.767))) ;; for kn_pan_20250114_bundlesdf_orig_fixed
-        (setq object-offset (make-coords :pos #f(-26.762 11.468 -120.327) :rpy #f(3.008 -0.335 3.12))) ;; for kn_pan_20250114_bundlesdf_orig_changed
+        ;; (setq object-offset (make-coords :pos #f(-26.762 11.468 -120.327) :rpy #f(3.008 -0.335 3.12))) ;; for kn_pan_20250114_bundlesdf_orig_changed kinect
+        (setq object-offset (make-coords :pos #f(-10.613 7.666 -143.44) :rpy #f(3.036 -0.319 3.09))) ;; for kn_pan_20250114_bundlesdf_orig_changed mega 20250225 calib
         )
        ((equal use-model "deva");; if use deva
         (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
@@ -1185,7 +1189,8 @@
       (cond
        ((equal use-model "fp");; if use FoundationPose
         ;; (setq object-offset (make-coords :pos #f(10.129 -15.933 -101.669) :rpy #f(-0.843 -1.449 2.908))) ;; for kn_turner_20250130_orig_fixed
-        (setq object-offset (make-coords :pos #f(-0.206 -19.675 -107.581) :rpy #f(-1.259 -1.438 2.877))) ;; for kn_turner_20250130_orig_edit
+        ;; (setq object-offset (make-coords :pos #f(-0.206 -19.675 -107.581) :rpy #f(-1.259 -1.438 2.877))) ;; for kn_turner_20250130_orig_edit kinect
+        (setq object-offset (make-coords :pos #f(3.233 -10.057 -112.425) :rpy #f(-1.294 -1.408 2.901))) ;; for kn_turner_20250130_orig_edit mega 20240224 calib
         )
        ((equal use-model "deva");; if use deva
         (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
@@ -1209,6 +1214,14 @@
       (setq fix-rot t)
       (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
       )
+     ((and (string= object-name "egg") (equal arm :larm))
+      (setq object-offset (make-coords :pos #f(-16.863 2.244 2.165) :rpy #f(1.244 1.515 -1.962))) ;; for only deva
+      (setq pre-set-avs (list #f(46.0802 4.45794 62.0517 -76.0447 24.8164 -67.3512 60.6811)))
+      (setq pre-set-val #f(-80 0 0))
+      (setq fix-rot t)
+      (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+      (setq grasp-gain 0.007) ;;tmp
+      )
      (t
       (format t "this setting is not implemented yet! ~%")
       (return-from grasp-rec-object)
@@ -1223,6 +1236,17 @@
       (setq *object-rec-coord* (deva-rec-object :object-name object-name :change-deva change-rec :multi-rec multi-rec :bbox-topic bbox-topic :fix-rot fix-rot))
       )
      )
+    (if (equal *object-rec-coords* nil)
+        (progn
+          (format t "recognition result is nil !!! ~%");; TODO Update!!!
+          (speak-with-log "認識に失敗しました")
+          (print "wait for key pressed")
+          (do-until-key
+           (unix:usleep 100000)
+           )
+          (return-from grasp-rec-object)
+          )
+      )
     (setq *grasp-coords* (send (send *object-rec-coord* :copy-worldcoords) :transform object-offset))
 
     (publish-cds-tf *grasp-coords*)
@@ -1245,7 +1269,7 @@
       (return-from grasp-rec-object)
       )
 
-    (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords *grasp-coords-exec* :pre-set-val pre-set-val :arm arm
+    (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords *grasp-coords-exec* :pre-set-val pre-set-val :arm arm :grasp-gain grasp-gain
                             :object-name object-name :action-mode action-mode :wait-after-grasp wait-after-grasp :wait-before-grasp wait-before-grasp)
 
     ;; TODO rec fail pattern

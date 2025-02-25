@@ -216,6 +216,21 @@
 
 ;; c.f. https://github.com/jsk-ros-pkg/jsk_demos/blob/088b186ea8d02ebda8fee2dc411135f8fd813be1/jsk_demo_common/euslisp/pr2-action.l#L708-L856
 (defparameter *adjust-spot-object-cds* nil)
+
+(defun calc-diffcds (idealcds rec-cds distance-threshold rotation-threshold)
+  (let ((diffcds))
+    (setq diffcds (send (send idealcds :inverse-transformation)
+                        :transform (send rec-cds :worldcoords) :world))
+
+    (warn "~%~A -> ~A / ~A~%" diffcds rec-cds idealcds)
+    (ros::ros-info "DIFF: ~A" diffcds)
+    (ros::ros-info "DIFF distrance: ~A, distance-threshold: ~A" (norm (float-vector (elt (send diffcds :worldpos) 0)
+                                                                                    (elt (send diffcds :worldpos) 1)))
+                   distance-threshold)
+    (ros::ros-info "DIFF rotation: ~A, rotation-threshold: ~A" (abs (elt (car (rpy-angle (send diffcds :worldrot))) 0))
+                   rotation-threshold)
+    diffcds))
+
 (defun move-with-adjust (&key (move-spot :stove) (ratio 1) (look-around nil) (head-pitch 14) (torso-lift 130) (move t) (wait t) (use-base nil) (use-k4a t) (rec-num 5))
   (let ((ret nil)
         (distance-threshold 20.0) ;;25.0
@@ -311,16 +326,8 @@
                       (list (send *pr2* :copy-worldcoords)
                             (send cds :copy-worldcoords)))
 
-      (setq diffcds (send (send idealcds :inverse-transformation)
-                          :transform (send cds :worldcoords) :world))
+      (setq diffcds (calc-diffcds idealcds cds))
 
-      (warn "~%~A -> ~A / ~A~%" diffcds cds idealcds)
-      (ros::ros-info "DIFF: ~A" diffcds)
-      (ros::ros-info "DIFF distrance: ~A, distance-threshold: ~A" (norm (float-vector (elt (send diffcds :worldpos) 0)
-                                                                                      (elt (send diffcds :worldpos) 1)))
-                     distance-threshold)
-      (ros::ros-info "DIFF rotation: ~A, rotation-threshold: ~A" (abs (elt (car (rpy-angle (send diffcds :worldrot))) 0))
-                     rotation-threshold)
       (cond
        ((or (send *ri* :simulation-modep) ;;if in simulation mode, execute
             (and (< (norm (float-vector (elt (send diffcds :worldpos) 0)

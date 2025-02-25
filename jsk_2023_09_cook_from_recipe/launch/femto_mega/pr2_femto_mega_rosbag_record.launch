@@ -6,7 +6,7 @@
   <arg unless="$(arg compress)" name="compress_flag" value="" />
 
   <node name="pr2_kanazawa_rosbag_record" pkg="rosbag" type="record"
-      args="-q $(arg compress_flag) -O $(arg rosbag) -b 0 
+      args="-q $(arg compress_flag) -O $(arg rosbag) -b 0
           /rosout
           /tf
           /tf_static
@@ -45,6 +45,18 @@
           /timestamped_tgs_2600_analog
           /timestamped_tgs_2602_analog
           /timestamped_tgs_2603_analog
+          /gas_v2_102b
+          /gas_v2_302b
+          /gas_v2_502b
+          /gas_v2_702b
+          /tgs_2600_analog
+          /tgs_2602_analog
+          /tgs_2603_analog
+          /at9944/audio
+          /at9944/audio_info
+          /at9944/audio_stamped
+          /flir/thermal
+          /flir/visualize
           /pr2_cooking_current_action
           /pr2_current_cmd_memo"
       output="screen" />

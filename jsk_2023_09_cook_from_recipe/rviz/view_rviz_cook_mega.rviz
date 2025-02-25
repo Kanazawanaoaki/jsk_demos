@@ -6,9 +6,8 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /Marker1
       Splitter Ratio: 0.5
-    Tree Height: 419
+    Tree Height: 411
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -26,7 +25,7 @@ Panels:
   - Class: rviz/Time
     Name: Time
     SyncMode: 0
-    SyncSource: Decomp Cloud
+    SyncSource: Segmentation Image
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -96,7 +95,7 @@ Visualization Manager:
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Min Color: 0; 0; 0
-      Name: Mega Cloud
+      Name: Femto Mega Decomp Cloud
       Position Transformer: XYZ
       Queue Size: 10
       Selectable: true
@@ -110,7 +109,7 @@ Visualization Manager:
       Value: false
     - Class: rviz/Image
       Enabled: true
-      Image Topic: /tracking/debug/track_debug_image
+      Image Topic: /deva_node/output/segmentation_image
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -120,6 +119,18 @@ Visualization Manager:
       Transport Hint: raw
       Unreliable: false
       Value: true
+    - Class: rviz/Image
+      Enabled: false
+      Image Topic: /deva_apply_mask/apply_mask_image/output
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Object Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
+      Value: false
     - Class: rviz/TF
       Enabled: true
       Filter (blacklist): ""
@@ -549,6 +560,110 @@ Visualization Manager:
               {}
       Update Interval: 0
       Value: true
+    - Class: jsk_rviz_plugin/BoundingBoxArray
+      Enabled: true
+      Name: DevaOnlyBBox
+      Queue Size: 10
+      Topic: /deva_apply_mask/deva_segmentor/output/boxes
+      Unreliable: false
+      Value: true
+      alpha: 0.800000011920929
+      alpha max: 1
+      alpha method: flat
+      alpha min: 0
+      color: 25; 255; 0
+      coloring: Auto
+      line width: 0.004999999888241291
+      only edge: true
+      show coords: true
+      value threshold: 0
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: RGB8
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: DevaOnlyCloud
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Flat Squares
+      Topic: /deva_apply_mask/extract_indices/output
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
+    - Class: jsk_rviz_plugin/BoundingBoxArray
+      Enabled: true
+      Name: WithTableBBox
+      Queue Size: 10
+      Topic: /table_and_deva_apply/deva_segmentor/output/boxes
+      Unreliable: false
+      Value: true
+      alpha: 0.800000011920929
+      alpha max: 1
+      alpha method: flat
+      alpha min: 0
+      color: 25; 255; 0
+      coloring: Auto
+      line width: 0.004999999888241291
+      only edge: true
+      show coords: true
+      value threshold: 0
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: RGB8
+      Decay Time: 0
+      Enabled: false
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: WithTableCloud
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Flat Squares
+      Topic: /table_and_deva_apply/extract_indices/output
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: false
+    - Alpha: 1
+      Class: jsk_rviz_plugin/PolygonArray
+      Color: 25; 255; 0
+      Enabled: true
+      Name: DetecedPlane
+      Queue Size: 10
+      Topic: /multi_plane_estimate/output_refined_polygon
+      Unreliable: false
+      Value: true
+      coloring: Auto
+      enable lighting: true
+      normal length: 0.10000000149011612
+      only border: true
+      show normal: true
     - Alpha: 1
       Class: rviz/RobotModel
       Collision Enabled: false
@@ -1011,74 +1126,6 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
-    - Class: jsk_rviz_plugin/BoundingBoxArray
-      Enabled: true
-      Name: LGripperDefault
-      Queue Size: 10
-      Topic: /l_gripper_tape_bounding_boxes
-      Unreliable: false
-      Value: true
-      alpha: 0.800000011920929
-      alpha max: 1
-      alpha method: flat
-      alpha min: 0
-      color: 25; 255; 0
-      coloring: Auto
-      line width: 0.004999999888241291
-      only edge: true
-      show coords: false
-      value threshold: 0
-    - Class: jsk_rviz_plugin/BoundingBoxArray
-      Enabled: true
-      Name: RGripperDefault
-      Queue Size: 10
-      Topic: /r_gripper_tape_bounding_boxes
-      Unreliable: false
-      Value: true
-      alpha: 0.800000011920929
-      alpha max: 1
-      alpha method: flat
-      alpha min: 0
-      color: 25; 255; 0
-      coloring: Auto
-      line width: 0.004999999888241291
-      only edge: true
-      show coords: false
-      value threshold: 0
-    - Class: jsk_rviz_plugin/BoundingBoxArray
-      Enabled: true
-      Name: LGrippeRec
-      Queue Size: 10
-      Topic: /l_gripper_tape_hsi/hsi_segmentation_decomposer/boxes
-      Unreliable: false
-      Value: true
-      alpha: 0.800000011920929
-      alpha max: 1
-      alpha method: flat
-      alpha min: 0
-      color: 25; 255; 0
-      coloring: Auto
-      line width: 0.004999999888241291
-      only edge: false
-      show coords: true
-      value threshold: 0
-    - Class: jsk_rviz_plugin/BoundingBoxArray
-      Enabled: true
-      Name: RGrippeRec
-      Queue Size: 10
-      Topic: /r_gripper_tape_hsi/hsi_segmentation_decomposer/boxes
-      Unreliable: false
-      Value: true
-      alpha: 0.800000011920929
-      alpha max: 1
-      alpha method: flat
-      alpha min: 0
-      color: 25; 255; 0
-      coloring: Auto
-      line width: 0.004999999888241291
-      only edge: false
-      show coords: true
-      value threshold: 0
     - Class: rviz/InteractiveMarkers
       Enable Transparency: true
       Enabled: true
@@ -1089,7 +1136,7 @@ Visualization Manager:
       Update Topic: /itf2/interactive_tf/update
       Value: true
     - Class: rviz/Image
-      Enabled: false
+      Enabled: true
       Image Topic: /kinect_head_remote/rgb/image_rect_color
       Max Value: 1
       Median window: 5
@@ -1099,7 +1146,19 @@ Visualization Manager:
       Queue Size: 2
       Transport Hint: raw
       Unreliable: false
-      Value: false
+      Value: true
+    - Class: rviz/Image
+      Enabled: true
+      Image Topic: /tracking/debug/track_debug_image
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: TrackImage
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
+      Value: true
     - Class: rviz/Marker
       Enabled: true
       Marker Topic: /bbox_marker_object
@@ -1107,6 +1166,18 @@ Visualization Manager:
       Namespaces:
         object_bbox: true
       Queue Size: 100
+      Value: true
+    - Class: rviz/Image
+      Enabled: true
+      Image Topic: /rect_added_image_publisher/rect_added_image
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: RectAddedImage
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
       Value: true
   Enabled: true
   Global Options:
@@ -1152,9 +1223,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.5697963237762451
+      Pitch: 0.3597966134548187
       Target Frame: <Fixed Frame>
-      Yaw: 3.0690324306488037
+      Yaw: 1.804032325744629
     Saved: ~
 Window Geometry:
   Displays:
@@ -1164,7 +1235,11 @@ Window Geometry:
   Hide Right Dock: false
   KinectImage:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd0000000400000000000001560000035afc020000000bfb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d0000022e000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb00000024005300650067006d0065006e0074006100740069006f006e00200049006d0061006700650100000271000001260000001600fffffffb00000018004f0062006a00650063007400200049006d0061006700650000000276000000540000000000000000fb00000016004b0069006e0065006300740049006d00610067006500000002b8000000df0000001600ffffff000000010000010f0000035afc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003d0000035a000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007380000003efc0100000002fb0000000800540069006d0065010000000000000738000003bc00fffffffb0000000800540069006d00650100000000000004500000000000000000000004c70000035a00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Object Image:
+    collapsed: false
+  QMainWindow State: 000000ff00000000fd0000000400000000000001560000035afc020000000afb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d00000226000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb00000018004f0062006a00650063007400200049006d0061006700650000000276000000540000001600fffffffb00000016004b0069006e0065006300740049006d00610067006501000002690000012e0000001600ffffff00000001000001a80000035afc0200000006fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb00000024005300650067006d0065006e0074006100740069006f006e00200049006d006100670065010000003d000001220000001600fffffffb000000140054007200610063006b0049006d0061006700650100000165000001230000001600fffffffb0000001c0052006500630074004100640064006500640049006d006100670065010000028e000001090000001600fffffffb0000000a0056006900650077007300000002f3000000a4000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007380000003efc0100000002fb0000000800540069006d0065010000000000000738000003bc00fffffffb0000000800540069006d006501000000000000045000000000000000000000042e0000035a00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  RectAddedImage:
+    collapsed: false
   Segmentation Image:
     collapsed: false
   Selection:
@@ -1172,6 +1247,8 @@ Window Geometry:
   Time:
     collapsed: false
   Tool Properties:
+    collapsed: false
+  TrackImage:
     collapsed: false
   Views:
     collapsed: false

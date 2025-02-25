@@ -124,9 +124,47 @@
   ;; (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20240909-data-02.l")
 
   (send *ri* :start-grasp :rarm :gain 0.1 :wait t)
-  (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20250213-data-01.l")
+
+
+  ;; ;; original
+  ;; (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20250213-data-01.l")
+  ;; (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
+  ;; (cook-from-now-replay-once :larm nil :initial-av nil :time 100) ;; default time is 150
+
+
+  ;; devid
+  ;; すくう動作
+  (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20250213-data-01-01.l")
   (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
   (cook-from-now-replay-once :larm nil :initial-av nil :time 100) ;; default time is 150
+
+  ;; 運ぶ動作
+  ;; (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20250213-data-01-02.l")
+  ;; (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
+  ;; (cook-from-now-replay-once :larm nil :initial-av nil :time 100) ;; default time is 150
+
+  (send *pr2* :rarm :angle-vector #f(-29.4794 32.8183 -41.1178 -57.6387 -54.1418 -80.9058 15.6591)) ;;すくい終わりの関節角度
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :rarm :angle-vector #f(-51.7294 30.3803 -36.5974 -50.0075 -62.2124 -56.8969 7.41022)) ;;盛り付けはじめの関節角度
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
+  (send *ri* :wait-interpolation)
+
+  ;; 盛り付け動作
+  (send *pr2* :head-neck-y :joint-angle -25)
+  (send *ri* :angle-vector (send *pr2* :angle-vector))
+  (send *ri* :wait-interpolation)
+
+  (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20250213-data-01-03.l")
+  (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
+  (setq *initial-head-neck-y* -25)
+  (cook-from-now-replay-once :larm nil :initial-av nil :time 100) ;; default time is 150
+
+  (setq *initial-head-neck-y* 0)
+  (send *pr2* :head-neck-y :joint-angle 0)
+  (send *ri* :angle-vector (send *pr2* :angle-vector))
+  (send *ri* :wait-interpolation)
   )
 
 (defun now-finish-sunny-all ()
@@ -151,9 +189,16 @@
 
 
 ;; egg cracker
-(defun now-egg-crack-set-both ()
-  ;; 左腕でegg openerを掴む
-  (grasp-rec-object :object-name "egg opener" :arm :larm :use-model "fp" :use-calib-offset nil)
+(defun now-egg-crack-set-both (&key (use-rec nil))
+  (if use-rec
+      (progn
+        ;; 左腕でegg openerを掴む
+        (grasp-rec-object :object-name "egg opener" :arm :larm :use-model "fp" :use-calib-offset nil)
+        )
+    (progn
+      (pick-up-egg-opener)
+      )
+    )
 
   ;; 右腕を位置にセットする
   (egg-crack-rarm-set-motion)
@@ -204,28 +249,35 @@
   (ok-wait)
   )
 
-(defun egg-crack-larm-grasp ()
-  ;; 待機姿勢
-  (send *pr2* :larm :angle-vector #f(46.0802 4.45794 62.0517 -76.0447 24.8164 -67.3512 60.6811))
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)
+(defun egg-crack-larm-grasp (&key (use-rec t))
+  (if use-rec
+      (progn
+        (grasp-rec-object :object-name "egg" :arm :larm :use-model "deva" :use-calib-offset nil :grasp-gain 0.007)
+        )
+    (progn
+      ;; 待機姿勢
+      (send *pr2* :larm :angle-vector #f(46.0802 4.45794 62.0517 -76.0447 24.8164 -67.3512 60.6811))
+      (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+      (send *ri* :wait-interpolation)
 
-  ;; 左手の卵を掴む位置
-  (send *pr2* :larm :angle-vector #f(25.4644 6.30462 81.3182 -27.1804 103.643 -87.3789 -5.18068)) ;; #<cascaded-coords #X55ebe5530d60 :larm-end-coords  723.236 403.655 857.552 / 1.244 1.515 -1.962>
-  (send *pr2* :larm :move-end-pos (float-vector 0 0 100) :world)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)
+      ;; 左手の卵を掴む位置
+      ;; (send *pr2* :larm :angle-vector #f(25.4644 6.30462 81.3182 -27.1804 103.643 -87.3789 -5.18068)) ;; #<cascaded-coords #X55ebe5530d60 :larm-end-coords  723.236 403.655 857.552 / 1.244 1.515 -1.962>
+      (send *pr2* :larm :angle-vector #f(25.736 4.73558 81.1203 -27.9526 103.117 -89.0249 -5.55466)) ;; #<cascaded-coords #X55ebe5530d60 :larm-end-coords  723.23 403.655 877.67 / 1.244 1.515 -1.962>
+      (send *pr2* :larm :move-end-pos (float-vector 0 0 80) :world)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+      (send *ri* :wait-interpolation)
 
-  (send *pr2* :larm :move-end-pos (float-vector 0 0 -80) :world)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)
+      (send *pr2* :larm :move-end-pos (float-vector 0 0 -80) :world)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+      (send *ri* :wait-interpolation)
 
-  ;; 掴んでみる
-  (send *ri* :start-grasp :larm :gain 0.007 :wait t)
-  (unix::sleep 1)
+      ;; 掴んでみる
+      (send *ri* :start-grasp :larm :gain 0.007 :wait t)
+      (unix::sleep 1)
 
-  ;; 持ち上げる
-  (pr2-arm-up :num 100 :time 2000 :arm :larm)
+      ;; 持ち上げる
+      (pr2-arm-up :num 100 :time 2000 :arm :larm)
+      ))
   )
 
 (defun egg-crack-larm-carry ()
@@ -340,8 +392,9 @@
 
   (send *ri* :stop-grasp :larm :wait t)
 
-  ;; 右への受け渡し終わりと同じ姿勢
-  (send *pr2* :larm #f(14.2111 21.2526 34.3601 -87.8648 101.518 -114.362 -149.226))
+  ;; 左の受け取る姿勢
+  ;; (send *pr2* :larm :angle-vector #f(14.2111 21.2526 34.3601 -87.8648 101.518 -114.362 -149.226)) ;; 右への受け渡しの姿勢．初期の持ち方とは大分変わってしまう．．．
+  (send *pr2* :larm :angle-vector #f(12.7046 -10.8142 84.8851 -78.3595 86.7942 -114.586 -154.147))
   (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
   (send *ri* :wait-interpolation)
 
@@ -362,26 +415,44 @@
   )
 
 ;; set-to-cracker
-(defun now-egg-crack-all (&key (use-rec t))
+(defun now-egg-crack-all (&key (human-help nil) (use-rec t) (egg-rec nil))
   (if *use-english*
       (speak-with-log "I start cooking sunny-side-up" :lang "en") ;; TODO
     (speak-with-log "卵を割る動作に挑戦します"))
 
-  (if use-rec
-      (now-egg-crack-set-both)
-    (egg-crack-rarm-receive)
+  (if human-help
+      (egg-crack-rarm-receive)
+    (now-egg-crack-set-both :use-rec use-rec)
     )
-  (egg-crack-larm-grasp)
+
+  (egg-crack-larm-grasp :use-rec egg-rec)
   (egg-crack-larm-carry)
-  (if use-rec
+
+  ;; ボウルの方を見る
+  (send *pr2* :head-neck-y :joint-angle -30)
+  (send *ri* :angle-vector (send *pr2* :angle-vector))
+  (send *ri* :wait-interpolation)
+
+  (if human-help
       (progn
-        (egg-crack-rarm :return-pose t)
-        ;; () TODO return to left
-        ;; TODO put-egg-opener with left
-        (egg-crack-return-to-left)
-        (put-egg-opener)
+        (egg-crack-rarm) ;; human receive tool
+
+        (send *pr2* :head-neck-y :joint-angle 0)
+        (send *ri* :angle-vector (send *pr2* :angle-vector))
+        (send *ri* :wait-interpolation)
         )
-    (egg-crack-rarm));; not-use-rec ver
+    (progn
+      (egg-crack-rarm :return-pose t)
+      ;; () TODO return to left
+      ;; TODO put-egg-opener with left
+
+      (send *pr2* :head-neck-y :joint-angle 0)
+      (send *ri* :angle-vector (send *pr2* :angle-vector))
+      (send *ri* :wait-interpolation)
+
+      (egg-crack-return-to-left)
+      (put-egg-opener)
+      ))
   )
 
 (defun exec-sunny-all ()
