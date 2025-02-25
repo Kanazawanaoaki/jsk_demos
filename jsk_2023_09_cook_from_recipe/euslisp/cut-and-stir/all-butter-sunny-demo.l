@@ -452,6 +452,7 @@
 
       (egg-crack-return-to-left)
       (put-egg-opener)
+      (reset-cook-pose :arm :larm)
       ))
   )
 
@@ -460,8 +461,8 @@
   (now-finish-sunny-all)
   )
 
-(defun tmp-exec-all ()
-  (now-egg-crack-all)
+(defun tmp-exec-all (&key (egg-rec nil))
+  (now-egg-crack-all :egg-rec egg-rec)
   (do-sunny)
   (now-finish-sunny-all)
   )

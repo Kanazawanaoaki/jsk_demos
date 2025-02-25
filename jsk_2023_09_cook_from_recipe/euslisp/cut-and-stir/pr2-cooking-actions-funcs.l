@@ -1136,6 +1136,7 @@
                  )
           (ros::unsubscribe "/adjusted_clip_state_recognizer/state")
           (ros::unsubscribe "/speech_to_text")
+          (lc_adjusted_clip_stop-command)
           )
         )
       (lc_adjusted_clip_stop-command)

@@ -684,7 +684,7 @@
     (fp-reset-mesh :label "pink spoon" :mesh_name "kn_pink_spoon_20250130_edit_edit")
     )
    ((string= object-name "egg opener")
-    (fp-reset-mesh :label "egg crack tool" :mesh_name "kn_egg_opener_20241013_edit_orig_fixed");; label not-pan-hand-tool 'egg crack tool' 'gray egg crack tool'
+    (fp-reset-mesh :label "eggshell crack tool" :mesh_name "kn_egg_opener_20241013_edit_orig_fixed");; label not-pan-hand-tool 'egg crack tool' 'gray egg crack tool' egg crack tool
     )
    ((string= object-name "white dish")
     (fp-reset-mesh :label "white plate" :mesh_name "kn_white_dish_20250219_cad")
@@ -1236,7 +1236,7 @@
       (setq *object-rec-coord* (deva-rec-object :object-name object-name :change-deva change-rec :multi-rec multi-rec :bbox-topic bbox-topic :fix-rot fix-rot))
       )
      )
-    (if (equal *object-rec-coords* nil)
+    (if (equal *object-rec-coord* nil)
         (progn
           (format t "recognition result is nil !!! ~%");; TODO Update!!!
           (speak-with-log "認識に失敗しました")
