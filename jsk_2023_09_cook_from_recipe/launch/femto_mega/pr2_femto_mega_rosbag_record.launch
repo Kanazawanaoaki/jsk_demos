@@ -59,6 +59,7 @@
           /at9944/audio_stamped
           /flir/thermal
           /flir/visualize
+          /flir/visible/compressed
           /pr2_cooking_current_action
           /pr2_current_cmd_memo"
       output="screen" />
