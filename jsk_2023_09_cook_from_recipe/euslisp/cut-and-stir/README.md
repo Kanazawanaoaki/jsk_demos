@@ -438,6 +438,66 @@ roslaunch jsk_2023_09_cook_from_recipe kitchen_template_matching_k4a.launch
 roslaunch jsk_2023_09_cook_from_recipe interactive_tf_pr2.launch
 ```
 
+## 五感とトラッキングを使うデモ
+### 前提 c2
+Femto Megaがc2で立ち上がっている
+https://github.com/Kanazawanaoaki/OrbbecSDK_ROS1/tree/for-pr1040 のブランチを使っている時には
+```bash
+roslaunch orbbec_camera femto_mega.launch color_fps:=15 depth_fps:=15 enable_colored_point_cloud:=true depth_registration:=true camera_name:=femto_mega
+```
+のみで良い
+
+
+### z800で立ち上げる
+```bash
+
+```
+
+### 手元で前もって立ち上げておくと良さそうなやつ
+```bash
+roslaunch jsk_pr2_startup rviz.launch ## 自己位置の確認・修正
+
+roslaunch tracking gui.launch button_gui:=true rgb_topic:=/tracking/rgb_topic
+```
+
+### TRで立ち上げるもの
+```bash
+
+```
+
+### 手元(P1 Gen 4)で立ち上げる
+```bash
+## roslaunch jsk_2023_09_cook_from_recipe kitchen_template_matching_femto_mega.launch ## キッチンでのテンプレートマッチングを使うなど
+roslaunch jsk_2023_09_cook_from_recipe view_rviz_cook.launch rviz_name:=view_rviz_cook_mega
+
+## 他のrviz
+roslaunch jsk_2023_09_cook_from_recipe view_rviz_cook.launch  rviz_name:=dino_gen4_vis ## dinoのチェック
+roslaunch jsk_2023_09_cook_from_recipe view_tracking_with_fp.launch
+roslaunch jsk_2023_09_cook_from_recipe pot-and-pan_rviz_gen4.launch ## if you use P1 Gen4 見学用のデモの話
+```
+
+### 五感をつかっていく
+匂いセンサ
+```bash
+roslaunch jsk_2023_09_cook_from_recipe nose_module_gas_sensors.launch
+roslaunch jsk_2023_09_cook_from_recipe nose_module_utils_for_gas_sensors.launch ## これも必要なのか？
+```
+マイクセンサ
+```bash
+roslaunch audio_capture capture.launch device:=0 sample_rate:=44100 channels:=2 ns:=at9944 format:=wave
+
+## 音を聞くためには roslaunch audio_play play.launch sample_rate:=44100 channels:=2 ns:=at9944 format:=wave
+
+## rosbagにして音を聞くなど
+rosbag record /at9944/audio /at9944/audio_info  /femto_mega/color/image_raw/compressed -O 20250226_test_01
+rosrun jsk_rosbag_tools bag_to_video.py [bag path] --samplerate 44100 --channels 2 --audio-topic /at9944/audio --image-topic /femto_mega/color/image_raw/compressed -o /tmp/20250225_hp_kitchen_04_rosbag_audio.mp4
+```
+熱カメラ
+```bash
+roslaunch thermal_camera_ros flirone_ros.launch
+```
+
+それらを確認してアラートを出すものなど
 
 ## 見学のデモ
 ### 前提
