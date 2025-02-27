@@ -451,6 +451,8 @@ roslaunch orbbec_camera femto_mega.launch color_fps:=15 depth_fps:=15 enable_col
 ### z800で立ち上げる
 ```bash
 
+
+roslaunch jsk_2023_09_cook_from_recipe ns_tabletop_and_deva_apply_mask.launch run_tabletop:=false run_rviz:=false run_deva_only:=true run_with_table:=false input_image:=/femto_mega_remote/color/image_raw input_cloud:=/femto_mega_remote/depth_registered/pointsonly:=true
 ```
 
 ### 手元で前もって立ち上げておくと良さそうなやつ

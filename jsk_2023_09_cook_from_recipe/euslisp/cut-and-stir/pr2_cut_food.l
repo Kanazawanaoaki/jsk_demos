@@ -1091,6 +1091,45 @@
             (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
             ))
       )
+
+
+     ((and (string= object-name "green bowl") (equal arm :larm))
+      (cond
+       ((equal use-model "fp");; if use FoundationPose
+        (if use-calib-offset
+            (progn
+              (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
+              )
+          (progn
+            (setq object-offset (make-coords :pos #f(-104.462 -8.469 2.959) :rpy #f(-0.163 1.313 1.362))) ;; for FoundationPose by track fix-rot 20250224 mega offset
+            ))
+        )
+       ((equal use-model "deva");; if use deva
+        (if use-calib-offset
+            (progn
+              (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.163 1.313 1.362))) ;; for TODO
+              )
+          (progn
+            ;; (setq object-offset (make-coords :pos #f(-88.997 0.777 -11.522) :rpy #f(-0.033 0.036 -0.057))) ;; for with table sukoshi ue
+            ;; (setq object-offset (make-coords :pos #f(-78.028 33.761 -22.64) :rpy #f(0.124 1.34 1.821))) ;; for with table and upper
+            (setq object-offset (make-coords :pos #f(-78.028 33.761 -22.64) :rpy #f(0.124 1.34 -1.321))) ;; for with table and upper and rotate (upper is in outside)
+            )
+          ))
+       )
+
+      (setq pre-set-avs (list #f(33.63 2.1508 57.5497 -93.8038 -255.515 -114.586 220.634)))  ;; for green bowl, upper outside
+
+      ;; (setq pre-set-val #f(-100 0 100))
+      (setq pre-set-val #f(-100 0 0)) ;; for upper
+      (setq fix-rot t)
+      (if (equal use-model "deva")
+          (progn
+            ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+            (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
+            ))
+      )
+
+
      ((and (string= object-name "gray bowl") (equal arm :rarm)) ;; gray bowl ;; rarm
       (cond
        ((equal use-model "fp");; if use FoundationPose

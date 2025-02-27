@@ -167,13 +167,16 @@
   (send *ri* :wait-interpolation)
   )
 
-(defun now-finish-sunny-all ()
+(defun now-finish-sunny-all (&key (use-rec nil))
   (if *use-english*
       (speak-with-log "I start cooking sunny-side-up" :lang "en") ;;TODO
     (speak-with-log "目玉焼きの盛り付けに挑戦します"))
 
-  (grasp-frying-pan)
-  (receive-spatula-for-sunny)
+  ;; (grasp-frying-pan)
+  (if use-rec
+      (grasp-rec-object :object-name "spatula" :arm :rarm :use-model "fp" :use-calib-offset nil)
+    (receive-spatula-for-sunny)
+    )
   (transfer-sunny-from-pan)
   (put-frying-pan)
   (put-spatula-on-table)
@@ -456,7 +459,103 @@
   (reset-cook-pose :arm :rarm)
   )
 
-;; set-to-cracker
+
+
+
+(defun current-set-transfer-butter ()
+  ;; 注ぎの待機姿勢
+  (send *pr2* :larm :angle-vector #f(13.4701 -4.47495 59.3413 -41.1902 -242.208 -99.7355 250.576))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  ;; 注ぐ位置 フライパンの位置から計算されるべきかも
+  (send *pr2* :larm :angle-vector #f(-2.55706 3.44493 55.9327 -28.1094 -199.81 -33.6095 358.652))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  )
+
+
+(defun current-transfer-butter-with-spatula ()
+  ;; after grasp spatula
+
+  (send *ri* :start-grasp :rarm :wait t)
+
+  (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-butter-to-pan-20250227-data-01.l")
+  (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
+  (cook-from-now-replay-once :larm nil :initial-av nil :time 100) ;; default time is 150
+
+  )
+
+(defun current-place-green-bowl ()
+  ;; 注ぎの待機姿勢
+  (send *pr2* :larm :angle-vector #f(13.4701 -4.47495 59.3413 -41.1902 -242.208 -99.7355 250.576))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :angle-vector #f(35.207 15.7998 63.9443 -51.2849 -240.945 -84.4143 257.371))
+  (send *pr2* :larm :move-end-pos #f(-100 0 0) :local)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :move-end-pos #f(100 0 0) :local)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *ri* :stop-grasp :larm :wait t)
+
+  (send *pr2* :larm :move-end-pos #f(-100 0 0) :local)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+
+  (send *pr2* :larm :angle-vector #f(33.63 2.1508 57.5497 -93.8038 -255.515 -114.586 220.634))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun now-transfer-butter-with-spatula ()
+  (grasp-rec-object :object-name "spatula" :arm :rarm :use-model "fp" :use-calib-offset nil)
+
+  (grasp-rec-object :object-name "green bowl" :arm :larm :use-model "fp" :use-calib-offset nil)
+
+  (current-set-transfer-butter)
+  (current-transfer-butter-with-spatula)
+
+  (place-spatula)
+
+  (current-place-green-bowl)
+
+  (reset-cook-pose)
+  )
+
+(defun do-sunny-tmp ()
+  (if *use-english*
+      (speak-with-log "I start cooking sunny-side-up" :lang "en")
+    (speak-with-log "目玉焼きの調理を開始します"))
+  (reset-view-list)
+  (init-pr2)
+  (pr2-cook-init :spot "stove" :type :butter-sunny-side-up)
+  ;; (exec-cook-from-recipe "egg-recipes-prompt_butter-sunny_converted_conv_planned.l")
+
+
+  ;; (hold small-bowl arm2 stove)
+  ;; (transfer butter small-bowl frying-pan arm2 stove)
+  ;; (place small-bowl arm2 stove)
+  (now-transfer-butter-with-spatula)
+
+  (turn-on-stove frying-pan arm1)
+  (heat butter frying-pan melt)
+  (grasp-rec-object :object-name "gray bowl" :arm :rarm :use-model "fp" :use-calib-offset nil) ;;(hold bowl arm2 stove)
+  (transfer egg bowl frying-pan arm2 stove)
+  (place bowl arm2 stove)
+  (cook egg cooked-egg)
+  (turn-off-stove middle frying-pan arm1)
+
+  ;; (speak-with-log "目玉焼きの調理を行いました")
+  )
+
+
+
+;; use  egg-cracker
 (defun now-egg-crack-all (&key (human-help nil) (use-rec t) (egg-rec nil))
   (if *use-english*
       (speak-with-log "I start cooking sunny-side-up" :lang "en") ;; TODO
@@ -506,7 +605,12 @@
   (now-finish-sunny-all)
   )
 
-(defun tmp-exec-all (&key (egg-rec nil))
+(defun exec-sunny-all-tmp ()
+  (do-sunny-tmp)
+  (now-finish-sunny-all :use-rec t)
+  )
+
+(defun from-crack-exec-all (&key (egg-rec nil))
   (now-egg-crack-all :egg-rec egg-rec)
   (do-sunny)
   (now-finish-sunny-all)
