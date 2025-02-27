@@ -684,7 +684,7 @@
     (fp-reset-mesh :label "pink spoon" :mesh_name "kn_pink_spoon_20250130_edit_edit")
     )
    ((string= object-name "egg opener")
-    (fp-reset-mesh :label "eggshell crack tool" :mesh_name "kn_egg_opener_20241013_edit_orig_fixed");; label not-pan-hand-tool 'egg crack tool' 'gray egg crack tool' egg crack tool
+    (fp-reset-mesh :label "black eggshell crack tool" :mesh_name "kn_egg_opener_20241013_edit_orig_fixed");; label not-pan-hand-tool 'egg crack tool' 'gray egg crack tool' egg crack tool , eggshell crack tool
     )
    ((string= object-name "white dish")
     (fp-reset-mesh :label "white plate" :mesh_name "kn_white_dish_20250219_cad")
@@ -1172,7 +1172,8 @@
       (cond
        ((equal use-model "fp");; if use FoundationPose
         ;; (setq object-offset (make-coords :pos #f(19.013 -55.632 -50.931) :rpy #f(0.025 0.402 0.001))) ;; kinect
-        (setq object-offset (make-coords :pos #f(-1.387 -55.258 -21.432) :rpy #f(-0.037 0.318 -0.024))) ;; mega 20250224 calib
+        ;; (setq object-offset (make-coords :pos #f(-1.387 -55.258 -21.432) :rpy #f(-0.037 0.318 -0.024))) ;; mega 20250224 calib
+        (setq object-offset (make-coords :pos #f(-6.249 50.706 -76.233) :rpy #f(0.007 -0.311 3.087))) ;; mega 20250224 calib hanten for ukewatashi
         )
        ((equal use-model "deva");; if use deva
         (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO

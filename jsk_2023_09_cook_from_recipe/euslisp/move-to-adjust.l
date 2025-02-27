@@ -183,6 +183,7 @@
                (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
                (format t "pr2 reset-pose ~%")
                (setq adjust-suc-flag (move-with-adjust :move-spot :stove :use-k4a use-k4a))
+               ;; (setq adjust-suc-flag (move-with-adjust :move-spot :stove :use-k4a use-k4a :rec-num 1))
                )
         ))
      ((string= to "kitchen")
@@ -257,9 +258,12 @@
                  ;; (setq idealcds ;; for femto mega v1
                  ;;       (make-coords :pos (float-vector 1261.166 167.382 1381.361)
                  ;;                    :rpy (float-vector -0.041 1.547 3.118)))
-                 (setq idealcds ;; for femto mega v2
-                       (make-coords :pos (float-vector 1298.364 111.351 1386.061)
-                                    :rpy (float-vector -3.085 1.508 0.21)))
+                 ;; (setq idealcds ;; for femto mega v2
+                 ;;       (make-coords :pos (float-vector 1298.364 111.351 1386.061)
+                 ;;                    :rpy (float-vector -3.085 1.508 0.21)))
+                 (setq idealcds ;; for femto mega 20250224 calib v3 staight
+                       (make-coords :pos (float-vector 1377.415 184.07 1430.816)
+                                    :rpy (float-vector 1.416 1.555 -1.706)))
                  )
              (setq idealcds ;; for kinect
                    (make-coords :pos (float-vector 1145.287 325.273 1420.734)
@@ -326,7 +330,7 @@
                       (list (send *pr2* :copy-worldcoords)
                             (send cds :copy-worldcoords)))
 
-      (setq diffcds (calc-diffcds idealcds cds))
+      (setq diffcds (calc-diffcds idealcds cds distance-threshold rotation-threshold))
 
       (cond
        ((or (send *ri* :simulation-modep) ;;if in simulation mode, execute

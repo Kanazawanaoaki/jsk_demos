@@ -189,7 +189,7 @@
 
 
 ;; egg cracker
-(defun now-egg-crack-set-both (&key (use-rec nil))
+(defun now-egg-crack-set-both (&key (use-rec nil) (left-first t))
   (if use-rec
       (progn
         ;; 左腕でegg openerを掴む
@@ -200,21 +200,49 @@
       )
     )
 
-  ;; 右腕を位置にセットする
-  (egg-crack-rarm-set-motion)
-  (send *ri* :stop-grasp :rarm :wait t)
+  (setq after-larm-grasp-cds (fp-rec-object :object-name "egg opener" :change-rec nil))
+  (format t "after-larm-grasp-cds: ~A~%" after-larm-grasp-cds)
 
-  ;; 左腕で右手にエッグオープナーを握らせる
-  (setq cook-from-now-file-name "../av-files/cook-from-now-larm-set-egg-opener-20250217-data-01.l")
-  (load-cook-from-now-file :file_name cook-from-now-file-name :larm t)
-  (cook-from-now-replay-once :larm t :initial-av nil)
+  (if left-first
+      (progn
+        ;; 受け渡す姿勢
+        (send *pr2* :larm :angle-vector #f(21.3222 8.37911 41.9583 -91.0416 89.868 -111.036 8.85392))
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+        (send *ri* :wait-interpolation)
 
+        ;; 右手をアプローチして
+        (send *pr2* :rarm :angle-vector #f(-38.3278 -3.2288 -63.6414 -68.0071 -83.1809 -108.309 393.782))
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+        (send *ri* :wait-interpolation)
+        (send *ri* :stop-grasp :rarm :wait t)
+
+        (send *pr2* :rarm :angle-vector #f(-21.6654 -5.50636 -71.2073 -98.2083 -77.9226 -81.6828 353.614))
+        (send *pr2* :rarm :move-end-pos #f(0 0 100) :world)
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+        (send *ri* :wait-interpolation)
+
+        (send *pr2* :rarm :move-end-pos #f(0 0 -110) :world)
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+        (send *ri* :wait-interpolation)
+        )
+    (progn
+      ;; 右腕を位置にセットする
+      (egg-crack-rarm-set-motion)
+      (send *ri* :stop-grasp :rarm :wait t)
+
+      ;; 左腕で右手にエッグオープナーを握らせる
+      (setq cook-from-now-file-name "../av-files/cook-from-now-larm-set-egg-opener-20250217-data-01.l")
+      (load-cook-from-now-file :file_name cook-from-now-file-name :larm t)
+      (cook-from-now-replay-once :larm t :initial-av nil)
+      ))
+
+  (setq rarm-opener-grasp-cds (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
   (send *ri* :move-gripper :rarm 0.07 :wait t)
   (unix::sleep 1)
 
   (send *ri* :stop-grasp :larm :wait t)
 
-  (send *pr2* :larm :move-end-pos #f(0 100 50) :world)
+  (send *pr2* :larm :move-end-pos #f(0 100 100) :world) ;; #f(0 100 50)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
 
@@ -223,6 +251,17 @@
   (send *ri* :wait-interpolation)
 
   (reset-cook-pose :arm :larm)
+
+  (if left-first
+      (progn
+        ;; egg opener セットの位置
+        (send *pr2* :rarm :angle-vector #f(-15.7712 9.99542 -60.6957 -77.3209 -95.7696 -102.646 329.115)) ;; 149.115 ;; #<cascaded-coords #X560d5c4c6b18 :rarm-end-coords  584.37 -32.86 988.016 / 1.714 1.271 0.148>
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+        (send *ri* :wait-interpolation)
+        ))
+
+  (setq after-rarm-grasp-cds (fp-rec-object :object-name "egg opener" :change-rec nil))
+  (format t "after-rarm-grasp-cds: ~A~%" after-rarm-grasp-cds)
   )
 
 (defun egg-crack-rarm-set-motion ()
@@ -293,7 +332,8 @@
   ;; (send *pr2* :larm :move-end-pos (float-vector -10 -10 -110) :world) ;; これをつかっていた
 
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
-  (send *arrow* :translate #f(0 0 -60) :world)
+  ;; (send *arrow* :translate #f(0 0 -60) :world) ;;これを使っていた
+  (send *arrow* :translate #f(10 -10 -60) :world) ;; 受け渡し方を変えたので
   (send *arrow* :rotate (deg2rad 30) :z)
   (send *pr2* :larm :inverse-kinematics *arrow*)
 
@@ -385,7 +425,8 @@
   (send *ri* :wait-interpolation)
 
   ;; from egg-crack-larm-carry
-  (send *pr2* :larm :angle-vector #f(14.0062 -8.38952 70.2396 -71.6376 91.7893 -114.585 -148.8426)) ;;orig 31.1574 ;; #<cascaded-coords #X560d5c4b5860 :larm-end-coords  586.977 64.883 1086.322 / 1.295 1.487 -0.291>
+  ;; (send *pr2* :larm :angle-vector #f(14.0062 -8.38952 70.2396 -71.6376 91.7893 -114.585 -148.8426)) ;;orig 31.1574 ;; #<cascaded-coords #X560d5c4b5860 :larm-end-coords  586.977 64.883 1086.322 / 1.295 1.487 -0.291>
+  (send *pr2* :larm :angle-vector #f(14.0062 -8.38952 70.2396 -71.6376 91.7893 -114.585 31.1574)) ;; #<cascaded-coords #X560d5c4b5860 :larm-end-coords  586.977 64.883 1086.322 / 1.295 1.487 -0.291> 右がアプローチする時の持ち方のために回転を修正
   (send *pr2* :larm :move-end-pos (float-vector 0 0 50) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
   (send *ri* :wait-interpolation)
@@ -394,7 +435,8 @@
 
   ;; 左の受け取る姿勢
   ;; (send *pr2* :larm :angle-vector #f(14.2111 21.2526 34.3601 -87.8648 101.518 -114.362 -149.226)) ;; 右への受け渡しの姿勢．初期の持ち方とは大分変わってしまう．．．
-  (send *pr2* :larm :angle-vector #f(12.7046 -10.8142 84.8851 -78.3595 86.7942 -114.586 -154.147))
+  ;; (send *pr2* :larm :angle-vector #f(12.7046 -10.8142 84.8851 -78.3595 86.7942 -114.586 -154.147)) ;; 右に大分よせた，初期の持ち方に揃えようとした座標
+  (send *pr2* :larm :angle-vector #f(21.4087 -0.209674 71.5661 -66.3259 78.9959 -87.0069 43.3392)) ;; 右がアプローチする受け渡しに変更したので
   (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
   (send *ri* :wait-interpolation)
 
@@ -449,6 +491,9 @@
       (send *pr2* :head-neck-y :joint-angle 0)
       (send *ri* :angle-vector (send *pr2* :angle-vector))
       (send *ri* :wait-interpolation)
+
+      (setq after-crack-egg-cds (fp-rec-object :object-name "egg opener" :change-rec nil))
+      (format t "after-crack-egg-cds: ~A~%" after-crack-egg-cds)
 
       (egg-crack-return-to-left)
       (put-egg-opener)
