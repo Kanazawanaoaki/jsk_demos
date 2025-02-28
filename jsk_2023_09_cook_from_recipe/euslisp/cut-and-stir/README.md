@@ -450,7 +450,8 @@ roslaunch orbbec_camera femto_mega.launch color_fps:=15 depth_fps:=15 enable_col
 
 ### z800で立ち上げる
 ```bash
-
+roslaunch jsk_2023_09_cook_from_recipe pr2_decompress.launch ## 無くても良いかも
+roslaunch jsk_2023_09_cook_from_recipe use_femto_mega_remote.launch
 
 roslaunch jsk_2023_09_cook_from_recipe ns_tabletop_and_deva_apply_mask.launch run_tabletop:=false run_rviz:=false run_deva_only:=true run_with_table:=false input_image:=/femto_mega_remote/color/image_raw input_cloud:=/femto_mega_remote/depth_registered/pointsonly:=true
 ```
@@ -464,7 +465,23 @@ roslaunch tracking gui.launch button_gui:=true rgb_topic:=/tracking/rgb_topic
 
 ### TRで立ち上げるもの
 ```bash
+## for FoundationPose 3D(6D) tracking
+roscd jsk_perception/docker ## ~/ros/jsk_demo_ws
+./run_jsk_vil_api dino --port 8080
+roscd tracking/docker ## ~/ros/tracking_ws
+./run_docker.py -host pr1040 -cuda 2 -launch track.launch mode:=track mesh:=kn_green_bowl_20241017_wu_blender label:=green-bowl rec_model:=groundingdino seg_model:=sam2 camera_type:=kinect camera_tf_frame:=femto_mega_color_optical_frame decompress:=true depth_topic:=/femto_mega/depth/image_raw rgb_topic:=/femto_mega/color/image_raw info_topic:=/femto_mega/color/camera_info rec_port:=8080 fix_name:=true track_debug:=true remote:=true
 
+## for GroundingDINO 2D object detection
+roscd jsk_perception/docker ## ~/ros/jsk_demo_ws
+./run_jsk_vil_api dino --port 8888
+roslaunch jsk_perception detection.launch port:=8888 DETECTION_INPUT_IMAGE:=/femto_mega_remote/color/image_raw
+
+## for state recognition
+roslaunch jsk_2023_09_cook_from_recipe cook_rec_for_pot-and-pan_femto_mega.launch learn_mode:=fals
+
+## for deva 2d segmentation
+roscd tracking_ros_utils/../tracking_ros ## ~/ros/known_object_ws
+./run_docker -host pr1040 -launch deva.launch input_image:=/femto_mega_remote/color/image_raw model_type:=vit_t device:=cuda:0
 ```
 
 ### 手元(P1 Gen 4)で立ち上げる
