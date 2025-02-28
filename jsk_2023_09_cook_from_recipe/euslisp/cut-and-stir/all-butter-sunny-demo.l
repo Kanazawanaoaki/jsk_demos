@@ -152,6 +152,7 @@
   (send *ri* :wait-interpolation)
 
   ;; 盛り付け動作
+  ;; (pr2-move-head :head-p 50 :head-y -25) ;; not test yet
   (send *pr2* :head-neck-y :joint-angle -25)
   (send *ri* :angle-vector (send *pr2* :angle-vector))
   (send *ri* :wait-interpolation)
@@ -570,6 +571,7 @@
   (egg-crack-larm-carry)
 
   ;; ボウルの方を見る
+  ;; (pr2-move-head :head-p 50 :head-y -30) ;; not test yet
   (send *pr2* :head-neck-y :joint-angle -30)
   (send *ri* :angle-vector (send *pr2* :angle-vector))
   (send *ri* :wait-interpolation)
@@ -578,6 +580,7 @@
       (progn
         (egg-crack-rarm) ;; human receive tool
 
+        ;; (pr2-move-head :head-p 50 :head-y 0) ;; not test yet
         (send *pr2* :head-neck-y :joint-angle 0)
         (send *ri* :angle-vector (send *pr2* :angle-vector))
         (send *ri* :wait-interpolation)
@@ -587,6 +590,7 @@
       ;; () TODO return to left
       ;; TODO put-egg-opener with left
 
+      ;; (pr2-move-head :head-p 50 :head-y 0) ;; not test yet
       (send *pr2* :head-neck-y :joint-angle 0)
       (send *ri* :angle-vector (send *pr2* :angle-vector))
       (send *ri* :wait-interpolation)

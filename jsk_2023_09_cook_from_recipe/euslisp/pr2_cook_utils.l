@@ -514,6 +514,15 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun pr2-move-head (&key (head-p 50.0) (head-y 0.0) (time 3000))
+  (send *robot* :angle-vector (send *ri* :state :potentio-vector))
+  (send *robot* :head-neck-p :joint-angle head-p)
+  (send *robot* :head-neck-y :joint-angle head-y)
+  (send *viewer* :draw-objects)
+  (send *ri* :angle-vector (send *robot* :angle-vector) time)
+  (send *ri* :wait-interpolation)
+  )
+
 (defun pr2-arm-up (&key (num 60) (time 3000) (arm :rarm))
   (send *pr2* arm :move-end-pos (float-vector 0 0 num) :world)
   (send *viewer* :draw-objects)
