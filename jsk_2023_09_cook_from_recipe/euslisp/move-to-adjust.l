@@ -261,9 +261,12 @@
                  ;; (setq idealcds ;; for femto mega v2
                  ;;       (make-coords :pos (float-vector 1298.364 111.351 1386.061)
                  ;;                    :rpy (float-vector -3.085 1.508 0.21)))
-                 (setq idealcds ;; for femto mega 20250224 calib v3 staight
-                       (make-coords :pos (float-vector 1377.415 184.07 1430.816)
-                                    :rpy (float-vector 1.416 1.555 -1.706)))
+                 ;; (setq idealcds ;; for femto mega 20250224 calib v3 staight
+                 ;;       (make-coords :pos (float-vector 1377.415 184.07 1430.816)
+                 ;;                    :rpy (float-vector 1.416 1.555 -1.706)))
+                 (setq idealcds ;; for femto mega 20250224 calib use mega image
+                       (make-coords :pos (float-vector 1323.683 137.666 1433.521)
+                                    :rpy (float-vector 2.833 1.545 -0.137)))
                  )
              (setq idealcds ;; for kinect
                    (make-coords :pos (float-vector 1145.287 325.273 1420.734)
