@@ -1,0 +1,66 @@
+<launch>
+  <!-- <machine name="localhost" address="localhost" /> -->
+
+  <!-- <arg name="standalone" default="false"/> -->
+  <!-- <arg name="MANAGER" value="femto_mega_decompress_nodelet_manager" unless="$(arg standalone)"/> -->
+  <!-- <arg name="MANAGER" value="" if="$(arg standalone)"/> -->
+  <!-- <arg name="LOAD_STATEMENT" value="load" unless="$(arg standalone)"/> -->
+  <!-- <arg name="LOAD_STATEMENT" value="standalone" if="$(arg standalone)"/> -->
+
+
+  <arg name="manager" default="r_405_decompress_nodelet_manager" />
+  <arg name="launch_manager" default="true" />
+  <!-- <arg name="machine" default="localhost" /> -->
+
+  <arg name="gui" default="false" />
+
+  <arg name="RGB_CAMERA_INFO" default="/r_hand_d405/color/camera_info" />
+  <arg name="RGB_IMAGE" default="/r_hand_d405/color/image_rect_color" />
+  <arg name="RGB_REMOTE_IMAGE" default="/r_hand_d405_remote/color/image_rect_color" />
+  <arg name="DEPTH_CAMERA_INFO" default="/r_hand_d405/depth/camera_info" />
+  <arg name="DEPTH_IMAGE" default="/r_hand_d405/aligned_depth_to_color/image_raw" />
+  <arg name="DEPTH_REMOTE_IMAGE" default="/r_hand_d405_remote/depth/image_rect_raw" />
+
+  <arg name="CLOUD" default="/r_hand_d405_remote/depth_registered/points" />
+  <arg name="HALF_CLOUD" default="/r_hand_d405_remote/depth_registered/half_points" />
+
+  <node name="$(arg manager)" pkg="nodelet" type="nodelet" args="manager"
+        if="$(arg launch_manager)" output="screen" />
+
+  <!-- <node name="r_d405_mega_rgb_decompress" pkg="image_transport" type="republish" -->
+  <!--       args="compressed in:=$(arg RGB_IMAGE) out:=$(arg RGB_REMOTE_IMAGE)" /> -->
+  <!-- <node name="r_d405_mega_depth_decompress" pkg="image_transport" type="republish" -->
+  <!--       args="compressedDepth in:=$(arg DEPTH_IMAGE) out:=$(arg DEPTH_REMOTE_IMAGE)" /> -->
+  <node pkg="nodelet" type="nodelet" name="r_d405_mega_point_cloud_xyzrgb"
+        args="standalone depth_image_proc/point_cloud_xyzrgb" output="screen" >
+    <remap from="rgb/camera_info" to="$(arg RGB_CAMERA_INFO)" />
+    <remap from="rgb/image_rect_color" to="$(arg RGB_IMAGE)" />
+    <remap from="depth_registered/image_rect" to="$(arg DEPTH_IMAGE)" />
+    <remap from="depth_registered/points" to="$(arg CLOUD)" />
+    <rosparam>
+      queue_size: 100
+    </rosparam>
+  </node>
+
+  <!-- half -->
+  <node name="d405_downsample_cloud_half"
+        pkg="nodelet" type="nodelet"
+        args="standalone jsk_pcl/ResizePointsPublisher"
+        output="screen"
+        respawn="true">
+    <remap from="~input" to="$(arg CLOUD)" />
+    <remap from="~output" to="$(arg HALF_CLOUD)" />
+    <rosparam>
+      step_x: 2
+      step_y: 2
+    </rosparam>
+  </node>
+
+  <!-- rviz -->
+  <group if="$(arg gui)">
+    <node name="femto_mega_decomp_rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/femto_mega_pointcloud_decomp.rviz">
+    </node>
+  </group>
+</launch>

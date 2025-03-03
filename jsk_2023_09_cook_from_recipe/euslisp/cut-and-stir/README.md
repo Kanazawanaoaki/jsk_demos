@@ -443,10 +443,9 @@ roslaunch jsk_2023_09_cook_from_recipe interactive_tf_pr2.launch
 Femto Megaがc2で立ち上がっている
 https://github.com/Kanazawanaoaki/OrbbecSDK_ROS1/tree/for-pr1040 のブランチを使っている時には
 ```bash
-roslaunch orbbec_camera femto_mega.launch color_fps:=15 depth_fps:=15 enable_colored_point_cloud:=true depth_registration:=true camera_name:=femto_mega
+roslaunch orbbec_camera pr1040_femto_mega.launch
 ```
 のみで良い
-
 
 ### z800で立ち上げる
 ```bash
@@ -467,13 +466,13 @@ roslaunch tracking gui.launch button_gui:=true rgb_topic:=/tracking/rgb_topic
 ```bash
 ## for FoundationPose 3D(6D) tracking
 roscd jsk_perception/docker ## ~/ros/jsk_demo_ws
-./run_jsk_vil_api dino --port 8080
+./run_jsk_vil_api dino --port 8080 -g 0
 roscd tracking/docker ## ~/ros/tracking_ws
 ./run_docker.py -host pr1040 -cuda 2 -launch track.launch mode:=track mesh:=kn_green_bowl_20241017_wu_blender label:=green-bowl rec_model:=groundingdino seg_model:=sam2 camera_type:=kinect camera_tf_frame:=femto_mega_color_optical_frame decompress:=true depth_topic:=/femto_mega/depth/image_raw rgb_topic:=/femto_mega/color/image_raw info_topic:=/femto_mega/color/camera_info rec_port:=8080 fix_name:=true track_debug:=true remote:=true
 
 ## for GroundingDINO 2D object detection
 roscd jsk_perception/docker ## ~/ros/jsk_demo_ws
-./run_jsk_vil_api dino --port 8888
+./run_jsk_vil_api dino --port 8888 -g 0
 roslaunch jsk_perception detection.launch port:=8888 DETECTION_INPUT_IMAGE:=/femto_mega_remote/color/image_raw
 
 ## for state recognition
