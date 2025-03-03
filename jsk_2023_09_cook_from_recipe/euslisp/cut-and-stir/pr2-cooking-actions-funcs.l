@@ -139,12 +139,20 @@
       )
      ((and (string= object-name "wooden spatula") (string= spot-name "stove") (equal arm :rarm))
       (setq pre-set-avs (list #f(-41.0354 31.325 -34.2869 -99.4442 -158.179 -54.5975 103.313)))
-      ;; (setq pre-set-val #f(-50 0 -100))
       (setq pre-set-val #f(-100 0 -100)) ;; for upper
 
       ;; calc from defined coords
       (send *arrow* :newcoords (calc-target-from-base-rel *wooden-spatula-stove-coords* (make-coords :pos #f(-140 0 0) :rpy #f(0 0 -1.571))))
       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *wooden-spatula-stove-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
+      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
+      )
+     ((and (string= object-name "whisk") (string= spot-name "kitchen") (equal arm :rarm))
+      (setq pre-set-avs (list #f(-41.0354 31.325 -34.2869 -99.4442 -158.179 -54.5975 103.313))) ;; TODO
+      (setq pre-set-val #f(-100 0 -100)) ;; for upper
+
+      ;; calc from defined coords
+      (send *arrow* :newcoords (calc-target-from-base-rel *whisk-kitchen-coords* (make-coords :pos #f(-120 0 0) :rpy #f(0 0 -1.571))))
+      (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *whisk-kitchen-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
       )
      ((and (string= object-name "frying pan") (string= spot-name "stove") (equal arm :larm))
@@ -1332,6 +1340,22 @@
 (defun receive-and-set-wooden-spatula ()
   (set-tool-on-table :object-name "wooden spatula" :arm :rarm :action-mode :set :spot-name "stove" :use-cds-offset t)
   (set-object *wooden-spatula* (send *wooden-spatula-stove-coords* :copy-worldcoords))
+  )
+
+(defun pick-up-whisk ()
+  (set-tool-on-table :object-name "whisk" :arm :rarm :action-mode :pick-up :spot-name "kitchen" :use-cds-offset t)
+
+  (assoc-object-to-arm *whisk* (calc-target-from-base-rel *whisk* (make-coords :pos #f(-120 0 0) :rpy #f(0 0 -1.571))) :arm :rarm)
+  )
+
+(defun place-whisk ()
+  (set-tool-on-table :object-name "whisk" :arm :rarm :action-mode :place :spot-name "kitchen" :use-cds-offset t)
+  (set-object *whisk* (send *whisk-kitchen-coords* :copy-worldcoords))
+  )
+
+(defun receive-and-set-whisk ()
+  (set-tool-on-table :object-name "whisk" :arm :rarm :action-mode :set :spot-name "kitchen" :use-cds-offset t)
+  (set-object *whisk* (send *whisk-kitchen-coords* :copy-worldcoords))
   )
 
 (defun pick-up-broccoli ()
