@@ -25,6 +25,12 @@
     (setq *spatula* (spatula))
     ))
 
+(unless (boundp '*wooden-spatula*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/wooden-spatula.l")
+    (setq *wooden-spatula* (wooden-spatula))
+    ))
+
 (unless (boundp '*ladle*)
   (progn
     (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/ladle.l")
@@ -236,6 +242,7 @@
         (:scrambled-egg
          (setq *gray-bowl-kitchen-coords* (make-coords :pos (float-vector 880.0 -160.0 840.0) :rpy (float-vector 0 0 0))) ;; fix
 
+         (setq *whisk-kitchen-coords* (make-coords :pos (float-vector 880.0 -160.0 840.0) :rpy (float-vector 0 0 0))) ;; fix
          )
         (t
          (format t "type ~A is not defined now !! ~%" type)
@@ -295,7 +302,7 @@
 
          ;; (setq *spatula-coords-1* (make-coords :pos (float-vector 700.0 -579.0 872.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix v2
          ;; (setq *spatula-coords-stove* (make-coords :pos (float-vector 730.0 -300.0 852.0) :rpy (float-vector -0.058 -0.042 1.542))) ;; ヘラ，平置き fix v3
-         (setq *wood-spatula-stove-coords* (make-coords :pos (float-vector 879 -318 833) :rpy (float-vector 0.012 0.028 -3.129))) ;; 木ヘラ，平置き tmp for moritsuke ;; 878.781 -317.629 833.461 / 0.012 0.028 -3.129
+         (setq *wooden-spatula-stove-coords* (make-coords :pos (float-vector 879 -318 833) :rpy (float-vector 0.012 0.028 -1.558))) ;; 木ヘラ，平置き tmp for moritsuke ;; 878.781 -317.629 833.461 / 0.012 0.028 -3.129
 
          (setq *pan-coords* (make-coords :pos (float-vector 880.0 -110.0 840.0) :rpy (float-vector 0.0 0.0 0.0))) ;; pot fix v2
          )
@@ -421,6 +428,10 @@
 
          ;; (objects (list *kitchen-plane* *peeler* *knife* *potato-peeler* *spatula* *ladle* *shelf-door*))
          )
+        (:scrambled-egg
+         (set-object *gray-bowl* (calc-target-from-base-rel kitchen-coords (send *gray-bowl-kitchen-coords* :copy-worldcoords)))
+
+         )
         (t
          (format t "type ~A is not defined now !! ~%" type)
          )
@@ -462,7 +473,7 @@
 
          (set-object *green-bowl* (calc-target-from-base-rel stove-coords (send *green-bowl-stove-coords* :copy-worldcoords)))
 
-         (set-object *wood-spatula* (calc-target-from-base-rel stove-coords (send *wood-spatula-stove-coords* :copy-worldcoords)))
+         (set-object *wooden-spatula* (calc-target-from-base-rel stove-coords (send *wooden-spatula-stove-coords* :copy-worldcoords)))
 
          ;; (objects (list *pr2* *stove-kitchen-plane* *pan* *green-bowl* *spatula*))
          )
