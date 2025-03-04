@@ -1,0 +1,9 @@
+repositories:
+  realsense-ros:
+    type: git
+    url: https://github.com/IntelRealSense/realsense-ros.git
+    version: ros1-legacy
+  thermal_camera_ros:
+    type: git
+    url: https://github.com/Kanazawanaoaki/thermal_camera_ros.git
+    version: main

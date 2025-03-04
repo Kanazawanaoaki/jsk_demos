@@ -18,6 +18,20 @@ catkin b jsk_2023_09_cook_from_recipe
 source ~/ros/cooking_ws/devel/setup.bash
 ```
 
+### Setup in pr1040n
+```bash
+mkdir -p ~/kanazawa_ws/src
+source /opt/ros/noetic/setup.bash
+catkin init
+cd ~/ros/cooking_ws/src
+git clone https://github.com/Kanazawanaoaki/jsk_demos.git -b cook-from-recipe
+vcs import < jsk_demos/pr1040n_repos.yaml
+rosdep install -iry --from-paths .
+cd ~/ros/cooking_ws/src
+catkin build
+```
+
+
 ## exec cook demo
 
 TODO
