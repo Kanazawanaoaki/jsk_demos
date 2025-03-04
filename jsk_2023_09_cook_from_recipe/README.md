@@ -28,7 +28,7 @@ cd ~/kanazawa_ws/src
 git clone https://github.com/Kanazawanaoaki/jsk_demos.git -b cut-and-stir
 vcs import < jsk_demos/jsk_2023_09_cook_from_recipe/pr1040n_repos.yaml
 rosdep install -iry --from-paths .
-cd ~/ros/cooking_ws/src
+cd ~/kanazawa_ws/
 catkin build
 ```
 
