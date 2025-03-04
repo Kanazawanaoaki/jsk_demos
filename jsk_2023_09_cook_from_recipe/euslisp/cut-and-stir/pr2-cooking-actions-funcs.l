@@ -817,7 +817,7 @@
       (setq adj-target-cds (calc-target-from-base-rel rec-ih-cds ih-to-target-rel))
       (format t "target cds is ~A~%" adj-target-cds)
       )
-    ;; pre motion
+    ;; push button
     (if (or (equal ih-action :stop) (equal ih-action :start))
         (progn
           (send adj-target-cds :translate (float-vector push-length 0 0) :local)
@@ -826,7 +826,7 @@
           )
       )
 
-    ;; push button
+    ;; grasp and rotate
     (if (or (equal ih-action :start) (equal ih-action :rotate))
         (progn
           (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm :rarm :action-mode :hold :object-name "ih stove")

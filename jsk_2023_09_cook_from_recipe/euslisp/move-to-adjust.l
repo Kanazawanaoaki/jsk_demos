@@ -80,14 +80,29 @@
 
 
 ;; tmp check
-(defun check-stove-spot ()
-  (reset-manip-pose)
+(defun check-stove-spot (&key (use-cds-offset nil))
+  ;; (reset-manip-pose)
+  (reset-cook-pose)
 
-  (let ((ik-target (make-coords :pos #f(450 -33.562 705) :rpy #f(0.0 0.0 -1.5708)))
+  ;; pre-set-av  ;; from cut-and-stir/pr2-cooking-actions-funcs.l ih-stove-action
+  (send *pr2* :rarm :angle-vector #f(-51.7423 64.9578 -95.8258 -91.4896 117.771 -46.7522 -2.78394))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  (send *ri* :start-grasp :rarm :wait t)
+  (let ((ik-target (make-coords :pos #f(645.029 -178.873 696.789) :rpy #f(-0.089 0.092 3.019)))
         ik-target-adj
+        (push-length 10)
+        (pre-set-val (float-vector -30 0 0))
         )
-    (setq ik-target-adj (set-offset-cds ik-target *stove-offset-cds*))
+    (if use-cds-offset
+        (setq ik-target-adj (set-offset-cds ik-target *stove-offset-cds*))
+      (setq ik-target-adj (send ik-target :copy-worldcoords)))
     (print ik-target-adj)
+    (send ik-target-adj :translate (float-vector push-length 0 0) :local)
+
+    ;; pre-pose
+    (send ik-target-adj :translate pre-set-val :local)
     (send *pr2* :rarm :inverse-kinematics
           ik-target-adj
           :rotation-axis t
@@ -95,9 +110,8 @@
     (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
     (send *ri* :wait-interpolation)
 
-    (setq ik-target (make-coords :pos #f(527.887 -33.562 705) :rpy #f(0.0 0.0 -1.5708)))
-    (setq ik-target-adj (set-offset-cds ik-target *stove-offset-cds*))
-    (print ik-target-adj)
+    ;; push
+    (send ik-target-adj :translate (scale -1 pre-set-val) :local)
     (send *pr2* :rarm :inverse-kinematics
           ik-target-adj
           :rotation-axis t
@@ -105,12 +119,41 @@
     (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
     (send *ri* :wait-interpolation)
 
-    (format t "wait ok !! ~%")
-    (ok-wait)
+    ;; return
+    (send ik-target-adj :translate pre-set-val :local)
+    (send *pr2* :rarm :inverse-kinematics
+          ik-target-adj
+          :rotation-axis t
+          :revert-if-fail nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
 
-    (setq ik-target (make-coords :pos #f(450 -33.562 705) :rpy #f(0.0 0.0 -1.5708)))
-    (setq ik-target-adj (set-offset-cds ik-target *stove-offset-cds*))
-    (print ik-target-adj)
+    (send *ri* :stop-grasp :rarm :wait t)
+
+    ;; grasp
+    (send ik-target-adj :translate (float-vector (- push-length) 0 0) :local)
+    (send ik-target-adj :translate (scale -1 pre-set-val) :local)
+    (send *pr2* :rarm :inverse-kinematics
+          ik-target-adj
+          :rotation-axis t
+          :revert-if-fail nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send *ri* :start-grasp :rarm :wait t)
+
+    ;; rotate
+    (send ik-target-adj :rotate (deg2rad 30) :x)
+    (send *pr2* :rarm :inverse-kinematics
+          ik-target-adj
+          :rotation-axis t
+          :revert-if-fail nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send *ri* :stop-grasp :rarm :wait t)
+
+    (send ik-target-adj :translate pre-set-val :local)
     (send *pr2* :rarm :inverse-kinematics
           ik-target-adj
           :rotation-axis t
@@ -118,7 +161,13 @@
     (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
     (send *ri* :wait-interpolation)
     )
-  (reset-manip-pose)
+
+  (send *pr2* :rarm :angle-vector #f(-51.7423 64.9578 -95.8258 -91.4896 117.771 -46.7522 -2.78394))
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :wait-interpolation)
+
+  ;; (reset-manip-pose)
+  (reset-cook-pose)
   )
 
 (defun check-kitchen-spot ()
