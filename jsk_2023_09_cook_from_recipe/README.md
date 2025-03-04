@@ -21,11 +21,12 @@ source ~/ros/cooking_ws/devel/setup.bash
 ### Setup in pr1040n
 ```bash
 mkdir -p ~/kanazawa_ws/src
-source /opt/ros/noetic/setup.bash
+source /opt/ros/melodic/setup.bash
+cd ~/kanazawa_ws
 catkin init
-cd ~/ros/cooking_ws/src
-git clone https://github.com/Kanazawanaoaki/jsk_demos.git -b cook-from-recipe
-vcs import < jsk_demos/pr1040n_repos.yaml
+cd ~/kanazawa_ws/src
+git clone https://github.com/Kanazawanaoaki/jsk_demos.git -b cut-and-stir
+vcs import < jsk_demos/jsk_2023_09_cook_from_recipe/pr1040n_repos.yaml
 rosdep install -iry --from-paths .
 cd ~/ros/cooking_ws/src
 catkin build
