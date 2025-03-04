@@ -148,7 +148,7 @@
           ik-target-adj
           :rotation-axis t
           :revert-if-fail nil)
-    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
     (send *ri* :wait-interpolation)
 
     (send *ri* :stop-grasp :rarm :wait t)
@@ -171,19 +171,21 @@
   )
 
 (defun check-kitchen-spot ()
-  (reset-manip-pose :arm :larm :time 2000)
-  (reset-manip-pose :arm :rarm :time 2000)
+  ;; (reset-manip-pose :arm :larm :time 2000)
+  ;; (reset-manip-pose :arm :rarm :time 2000)
+  (reset-cook-pose :arm :larm :time 2000)
+  (reset-cook-pose :arm :rarm :time 2000)
 
-  (send *pr2* :rarm :angle-vector #f(-62.8293 65.5928 -67.1327 -121.542 -176.365 -46.0305 106.586))
-  (send *pr2* :larm :angle-vector #f(37.3159 59.0989 86.3948 -121.483 -132.498 -72.5301 211.024))
+  (send *pr2* :rarm :angle-vector #f(-57.5199 62.5833 -57.6647 -117.726 -171.269 -49.5124 107.99))
+  (send *pr2* :larm :angle-vector #f(32.6942 52.7237 80.3627 -117.552 -144.824 -70.7049 209.82))
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
 
   (format t "wait ok !! ~%")
   (ok-wait)
 
-  (reset-manip-pose :arm :larm :time 2000)
-  (reset-manip-pose :arm :rarm :time 2000)
+  (reset-cook-pose :arm :larm :time 2000)
+  (reset-cook-pose :arm :rarm :time 2000)
   (reset-pose)
   )
 
@@ -237,7 +239,8 @@
         ))
      ((string= to "kitchen")
       (print "move-to kitchen")
-      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8500 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+      ;; (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8500 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8600 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
       (when move-suc-flag
         (setq adjust-suc-flag nil)
         (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
@@ -327,9 +330,14 @@
            (setq speak-name "キッチン")
            (setq detecion-topic "/point_pose_kitchen/ObjectDetection")
            (if use-k4a
-               (setq idealcds ;; for k4a
-                     (make-coords :pos (float-vector 1146.088 237.191 1356.95)
-                                  :rpy (float-vector 3.098 1.549 0.026)))
+               (progn
+                 ;; (setq idealcds ;; for k4a
+                 ;;       (make-coords :pos (float-vector 1146.088 237.191 1356.95)
+                 ;;                    :rpy (float-vector 3.098 1.549 0.026)))
+                 (setq idealcds ;; for femto mega
+                       (make-coords :pos (float-vector 1160.804 229.486 1310.694)
+                                    :rpy (float-vector 0.266 1.508 -2.903)))
+                 )
              (setq idealcds ;; for kinect
                    (make-coords :pos (float-vector 1163.785 266.85 1284.483)
                                 :rpy (float-vector 0.167 1.403 -3.019)))

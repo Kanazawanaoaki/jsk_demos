@@ -324,23 +324,26 @@
       (setq cook-from-now-file-name "../av-files/cook-from-now-pour-green-bowl-from-pan-20250217-data-01.l")
       (send *ri* :start-grasp :rarm :gain 1.0 :wait t)
       )
-     ((and (string= from-object "あぶら") (string= to-object "フライパン") (string= spot-name "stove")) ;; larmだったが結局両腕使うので
+     ((and (string= from-object "あぶら") (string= to-object "フライパン") (string= spot-name "stove") (equal arm :larm)) ;; larmだったが結局両腕使うので,しかりlarmに最初におくるので
       (setq pre-set-avs (list #f(52.4453 35.9984 40.0064 -117.485 -211.029 -72.009 -15.0076)))
 
       ;; 物体把持初期姿勢
-      (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
+      (send *pr2* :larm :angle-vector (elt (reverse pre-set-avs) 0))
       (send *ri* :angle-vector (send *pr2* :angle-vector))
       (send *ri* :wait-interpolation)
 
-      (load-cook-from-now-file :file_name "av-files/cook-from-now-pour-oil-to-pan-larm-20231212-data.l" :larm t)
+      ;; 左腕をフライパン上に
+      (load-cook-from-now-file :file_name "../av-files/cook-from-now-pour-oil-to-pan-larm-20231212-data.l" :larm t)
       (cook-from-now-replay-once :larm t :initial-av nil)
 
+      ;; 右腕もディスペンサーに
       (send *ri* :stop-grasp :rarm :wait t)
-      (load-cook-from-now-file :file_name "av-files/cook-from-now-pour-oil-to-pan-rarm-20231212-data.l" :larm t)
+      (load-cook-from-now-file :file_name "../av-files/cook-from-now-pour-oil-to-pan-rarm-20231212-data.l" :larm nil)
       (cook-from-now-replay-once :larm nil :initial-av nil)
 
       (send *ri* :start-grasp :rarm :wait t)
 
+      ;; あぶらを出す
       (send *ri* :start-grasp :larm :wait t :gain 1.0)
       (unix:sleep 2)
       (send *ri* :stop-grasp :larm :wait t)
@@ -349,10 +352,10 @@
 
       (send *ri* :stop-grasp :rarm :wait t)
 
-      (load-cook-from-now-file :file_name "av-files/cook-from-now-pour-oil-to-pan-rarm-20231212-data.l" :larm t)
+      (load-cook-from-now-file :file_name "../av-files/cook-from-now-pour-oil-to-pan-rarm-20231212-data.l" :larm t)
       (cook-from-now-replay-once :larm nil :initial-av nil :reverse t)
 
-      (load-cook-from-now-file :file_name "av-files/cook-from-now-pour-oil-to-pan-larm-20231212-data.l" :larm t)
+      (load-cook-from-now-file :file_name "../av-files/cook-from-now-pour-oil-to-pan-larm-20231212-data.l" :larm t)
       (cook-from-now-replay-once :larm t :initial-av nil :reverse t)
 
       (reset-manip-pose :arm :rarm)

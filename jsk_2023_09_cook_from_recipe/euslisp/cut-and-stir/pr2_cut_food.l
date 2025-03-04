@@ -669,7 +669,7 @@
     (fp-reset-mesh :label "gray bowl" :mesh_name "kn_gray_bowl_20250119_bundlesdf_pr2_orig_fixed")
     )
    ((string= object-name "oil dispenser")
-    (fp-reset-mesh :label "oil dispenser" :mesh_name "kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed")
+    (fp-reset-mesh :label "white oil dispenser" :mesh_name "kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed") ;; label oil dispenser
     )
    ((string= object-name "frying pan")
     (fp-reset-mesh :label "black frying pan" :mesh_name "kn_pan_20250114_bundlesdf_orig_changed")
@@ -1091,8 +1091,6 @@
             (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
             ))
       )
-
-
      ((and (string= object-name "green bowl") (equal arm :larm))
       (cond
        ((equal use-model "fp");; if use FoundationPose
@@ -1128,8 +1126,6 @@
             (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
             ))
       )
-
-
      ((and (string= object-name "gray bowl") (equal arm :rarm)) ;; gray bowl ;; rarm
       (cond
        ((equal use-model "fp");; if use FoundationPose
@@ -1242,6 +1238,20 @@
 
       (setq pre-set-val #f(-100 0 -100))
       (setq fix-rot nil)
+      )
+     ((and (string= object-name "oil dispenser") (equal arm :larm)) ;; oil dispenser
+      (cond
+       ((equal use-model "fp");; if use FoundationPose
+        (setq object-offset (make-coords :pos #f(-30.618 -11.147 26.985) :rpy #f(-0.025 0.057 3.124))) ;; for kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed
+        )
+       ((equal use-model "deva");; if use deva
+        (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
+        )
+       )
+
+      (setq pre-set-avs (list #f(48.8499 -11.5118 87.4519 -117.546 -193.632 -67.0977 267.029))) ;; (make-coords :pos #f(570.089 255.41 1143.02) :rpy -0.025 0.057 3.124)
+      (setq pre-set-val #f(-5.697 1.756 -99.822)) ;; for upper #f(0 0 100) :world
+      (setq fix-rot t)
       )
      ((and (string= object-name "onion") (equal arm :larm))
       ;; (setq object-offset (make-coords :pos #f(-29.83 -6.456 -5.102) :rpy #f(-1.593 0.604 0.126)))

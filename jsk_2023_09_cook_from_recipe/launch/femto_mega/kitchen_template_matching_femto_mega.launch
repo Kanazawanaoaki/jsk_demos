@@ -46,7 +46,7 @@
     </node>
     <node name="kitchen_detector" pkg="jsk_perception" type="point_pose_extractor" clear_params="true">
       <rosparam subst_value="true">
-        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/pr2-kitchen-k4a.jpg
+        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/femto_mega_kitchen.jpg
         window_name: kitchen_detector
         object_width: 0.297
         object_height: 0.210
