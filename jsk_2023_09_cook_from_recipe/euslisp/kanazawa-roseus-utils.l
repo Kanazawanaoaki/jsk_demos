@@ -184,11 +184,11 @@
     filtered-points))
 
 ;; tf -> coords
-(defun get-tf-coords (&optional (base-frame "base_footprint") (target-frame "head_mount_kinect_rgb_optical_frame"))
+(defun get-tf-coords (&optional (target-frame "head_mount_kinect_rgb_optical_frame") &key (base-frame "base_footprint") (timeout 10))
   (let ((tm2)
         (tf-coords nil))
     (setq tm2 (send *tfl* :get-latest-common-time base-frame target-frame))
-    (when (send *tfl* :wait-for-transform  base-frame target-frame tm2 10)
+    (when (send *tfl* :wait-for-transform  base-frame target-frame tm2 timeout)
       (setq tf-coords (send (send *pr2* :copy-worldcoords) :transform
                             (send *tfl* :lookup-transform base-frame target-frame tm2))))
     tf-coords))

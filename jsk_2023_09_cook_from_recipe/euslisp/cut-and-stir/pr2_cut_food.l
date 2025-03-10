@@ -28,7 +28,7 @@
 
 ;; define cb
 (defun get-pr2-cam-coords (&optional (frame-id "head_mount_kinect_rgb_optical_frame"))
-  (get-tf-coords "base_footprint" frame-id))
+  (get-tf-coords frame-id))
 
 (defun object-pose-cb (msg)
   (setq *msg* msg)
@@ -578,8 +578,8 @@
     ))
 
 ;; ;; object-rec, FoundationPose tracking
-(defun get-fp-tracking-coords (&optional (frame-id "object_center"))
-  (get-tf-coords "base_footprint" frame-id))
+(defun get-fp-tracking-coords (&optional (frame-id "object_center") &key (timeout 20))
+  (get-tf-coords frame-id :timeout timeout))
 
 (defun wait-fp-topic-update (&optional (marker-topic "/bbox_marker_object"))
   (let (marker_msg
