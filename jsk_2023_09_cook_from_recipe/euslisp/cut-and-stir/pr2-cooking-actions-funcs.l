@@ -198,7 +198,22 @@
       ;; (setq obj-coords (send *egg-opener* :copy-worldcoords)) ;;TODO add egg-opener model and cds?
       ;; (setq obj-coords (make-coords :pos #f(774.667 162.944 861.898) :rpy #f(0.115 1.496 -2.972))) ;; ver1
       ;; (send *arrow* :newcoords (calc-target-from-base-rel obj-coords (make-coords :pos #f(-1.387 -55.258 -21.432) :rpy #f(-0.037 0.318 -0.024)))) ;; ver1
-      (setq obj-coords (make-coords :pos #f(841.348 131.205 858.414) :rpy #f(-0.908 1.56 -0.93))) ;; ver2 left ukewatashi
+
+      ;; (setq obj-coords (make-coords :pos #f(841.348 131.205 858.414) :rpy #f(-0.908 1.56 -0.93))) ;; ver2 left ukewatashi
+      (setq obj-coords (send *egg-opener-coords* :copy-worldcoords))
+
+      (send *arrow* :newcoords (calc-target-from-base-rel obj-coords (make-coords :pos #f(-6.249 50.706 -76.233) :rpy #f(0.007 -0.311 3.087)))) ;; ver2 left ukewatashi
+      (format t "~A coords ~A , set target coords is ~A ~%" object-name (send obj-coords :copy-worldcoords) (send *arrow* :copy-worldcoords))
+      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
+      )
+     ((and (string= object-name "egg opener") (string= spot-name "kitchen") (equal arm :larm))
+      (setq pre-set-avs (list #f(38.3564 13.2212 62.8877 -95.6121 117.6 -104.476 -45.8748) ;; TODO need adjust
+                              ))
+
+      (setq pre-set-val #f(-100 0 0)) ;; for upper
+
+      ;; calc from defined coords
+      (setq obj-coords (send *egg-opener-coords* :copy-worldcoords))
       (send *arrow* :newcoords (calc-target-from-base-rel obj-coords (make-coords :pos #f(-6.249 50.706 -76.233) :rpy #f(0.007 -0.311 3.087)))) ;; ver2 left ukewatashi
       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send obj-coords :copy-worldcoords) (send *arrow* :copy-worldcoords))
       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))

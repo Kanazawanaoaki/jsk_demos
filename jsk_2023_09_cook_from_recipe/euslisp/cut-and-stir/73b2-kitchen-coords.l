@@ -239,6 +239,13 @@
          ;; (setq *cutting-board-coords* (make-coords :pos (float-vector 550.0 80.0 840.0) :rpy (float-vector (- pi) 0 0))) ;; fix
          (setq *cutting-board-coords* (make-coords :pos (float-vector 660.0 130.0 840.0) :rpy (float-vector (- pi) 0 0))) ;; fix v2
          )
+        (:sunny-side-up ;; for crack egg in kitchen
+         (setq *green-bowl-kitchen-coords* (make-coords :pos (float-vector 660.0 -350.0 830.0) :rpy (float-vector 0 0 0))) ;; fix
+
+         (setq *gray-bowl-kitchen-coords* (make-coords :pos (float-vector 720.0 -70.0 820.0) :rpy (float-vector 0 0 0))) ;; fix
+
+         (setq *egg-opener-coords* (make-coords :pos #f(672.501 137.099 845.733) :rpy #f(-0.97 1.535 -0.916))) ;; TODO egg opener ;; ver2 left ukewatashi
+         )
         (:scrambled-egg
          (setq *gray-bowl-kitchen-coords* (make-coords :pos (float-vector 880.0 -160.0 840.0) :rpy (float-vector 0 0 0))) ;; fix
 
@@ -284,8 +291,6 @@
 
          (setq *gray-bowl-stove-coords* (make-coords :pos (float-vector 780 -540 830) :rpy (float-vector 0 0 0))) ;; fix
 
-         (setq *green-bowl-stove-coords* (make-coords :pos (float-vector 740 -370 830) :rpy (float-vector 0 0 0))) ;; fix
-
          (setq *pan-coords* (make-coords :pos (float-vector 880.0 -110.0 840.0) :rpy (float-vector 0.0 0.0 0.0))) ;; pot fix v2
          )
         (:butter-sunny-side-up
@@ -296,6 +301,7 @@
          (setq *pan-coords* (make-coords :pos (float-vector 880.0 -110.0 840.0) :rpy (float-vector 0.0 0.0 0.0))) ;; pot fix v2
 
          (setq *spatula-stove-coords* (make-coords :pos (float-vector 879 -318 833) :rpy (float-vector 0.012 0.028 -1.558))) ;; ヘラ，平置き tmp for moritsuke ;; 878.781 -317.629 833.461 / 0.012 0.028 -3.129
+         (setq *egg-opener-coords* (make-coords :pos #f(841.348 131.205 858.414) :rpy #f(-0.908 1.56 -0.93))) ;; TODO egg opener ;; ver2 left ukewatashi
          )
         (:scrambled-egg
          (setq *green-bowl-stove-coords* (make-coords :pos (float-vector 732.733 394.164 831.797) :rpy (float-vector 0 0 0))) ;; fix
@@ -427,6 +433,11 @@
          (setq *shelf-look-coords* (send (send *shelf-door* :handle-handle0) :copy-worldcoords))
 
          ;; (objects (list *kitchen-plane* *peeler* *knife* *potato-peeler* *spatula* *ladle* *shelf-door*))
+         )
+        (:sunny-side-up ;; for crack egg in kitchen
+         (set-object *green-bowl* (calc-target-from-base-rel kitchen-coords (send *green-bowl-kitchen-coords* :copy-worldcoords)))
+
+         (set-object *gray-bowl* (calc-target-from-base-rel kitchen-coords (send *gray-bowl-kitchen-coords* :copy-worldcoords)))
          )
         (:scrambled-egg
          (set-object *gray-bowl* (calc-target-from-base-rel kitchen-coords (send *gray-bowl-kitchen-coords* :copy-worldcoords)))

@@ -13,185 +13,58 @@
 ;; global variables
 (setq *use-english* nil)
 
-
-(defun prepare-sunny (&key (use-opener nil))
+(defun init-sunny (&key (spot stove))
   (reset-view-list)
   (init-pr2)
-  (pr2-cook-init :spot "stove" :type :butter-sunny-side-up)
+  (pr2-cook-init :spot spot :type :sunny-side-up)
+  )
 
-  (receive-and-set-green-bowl :arm :rarm)
-  (receive-and-set-gray-bowl :spot "stove")
-  ;; (receive-and-set-frying-pan)
+(defun prepare-sunny (&key (use-opener nil))
+  (init-sunny :spot kitchen)
 
-  (if use-opener
-      (receive-and-set-egg-opener)
-    )
-  (set-pot-on-stove :object-name "frying pan")
+  ;; (receive-and-set-green-bowl :arm :rarm)
+  ;; (receive-and-set-gray-bowl :spot "stove")
+
+  ;; (set-pot-on-stove :object-name "frying pan")
 
   ;; TODO add spatula?
 
-  ;; (place-objects-on-table :object-name "ボウル0" :arm :rarm :spot-name "stove" :set-flag t) ;; small-bowl
-  ;; (place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name "stove" :set-flag t) ;; bowl
-  ;; (set-pot-on-stove :object-name "フライパン") ;; frying-pan
-
-  (reset-cook-pose)
-  )
-
-(defun do-sunny ()
-  (if *use-english*
-      (speak-with-log "I start cooking sunny-side-up" :lang "en")
-    (speak-with-log "目玉焼きの調理を開始します"))
-  (reset-view-list)
-  (init-pr2)
-  (pr2-cook-init :spot "stove" :type :butter-sunny-side-up)
-  (exec-cook-from-recipe "egg-recipes-prompt_butter-sunny_converted_conv_planned.l")
-  ;; (setq *plan-list* '((hold small-bowl arm2 stove) (transfer butter small-bowl frying-pan arm2 stove) (place small-bowl arm2 stove) (turn-on-stove frying-pan arm1) (heat butter frying-pan melt) (hold bowl arm2 stove) (transfer egg bowl frying-pan arm2 stove) (place bowl arm2 stove) (cook egg cooked-egg) (turn-off-stove middle frying-pan arm1)))
-
-  ;; (speak-with-log "目玉焼きの調理を行いました")
-  )
-
-(defun do-sunny-step ()
-  (if *use-english*
-      (speak-with-log "I start cooking sunny-side-up" :lang "en")
-    (speak-with-log "目玉焼きの調理を開始します"))
-  (reset-view-list)
-  (init-pr2)
-  (pr2-cook-init :spot "stove" :type :butter-sunny-side-up)
-  ;; (exec-cook-from-recipe "egg-recipes-prompt_butter-sunny_converted_conv_planned.l")
-
-  (setq *plan-list* '((hold small-bowl arm2 stove) (transfer butter small-bowl frying-pan arm2 stove) (place small-bowl arm2 stove) (turn-on-stove frying-pan arm1) (heat butter frying-pan melt) (hold bowl arm2 stove) (transfer egg bowl frying-pan arm2 stove) (place bowl arm2 stove) (cook egg cooked-egg) (turn-off-stove middle frying-pan arm1)))
-
-  (if (null *plan-list*)
-      (format t "now plan-list is nill please exec (load-planned-file)!! ~%")
-    (progn
-      (dolist (plan *plan-list*)
-        (format t "now action is ~A ~%" plan)
-        (eval plan)
-        (do-until-key
-         (format t "wait for key pressed, after exec ~A ~%" plan)
-         (unix:usleep 100000)
-         )
-        )
-      ))
-
-  ;; (speak-with-log "目玉焼きの調理を行いました")
-  )
-
-(defun receive-spatula-for-sunny ()
-  (send *pr2* :rarm :angle-vector #f(-41.0354 31.325 -34.2869 -99.4442 -158.179 -54.5975 103.313))
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-  (send *ri* :wait-interpolation)
-
-  (send *ri* :stop-grasp :rarm :wait t)
-  (if *use-english*
-      (send *ri* :speak-en (format nil "Please set ~A and say OK." "spatula"))
-    (send *ri* :speak-jp (format nil "~AをセットしてOKと言ってください" "spatula"))
-    )
-  (ok-wait)
-  (send *ri* :start-grasp :rarm :wait t)
-
-  )
-
-(defun grasp-frying-pan ()
-  ;; (place-objects-on-table :object-name "フライパン" :arm :larm :spot-name "stove" :grasp-flag t :grasp-gain 0.1)
-  (pick-up-frying-pan)
-  )
-
-(defun put-frying-pan ()
-  ;; (place-objects-on-table :object-name "フライパン" :arm :larm :spot-name "stove")
-  (place-frying-pan)
-  )
-
-(defun put-spatula-on-table ()
-  ;; (place-objects-on-table :object-name "ヘラ" :arm :rarm :spot-name "stove")
-  (place-spatula)
-  )
-
-
-(defun put-egg-opener ()
-  (place-egg-opener)
-  )
-
-(defun transfer-sunny-from-pan () ;; TODO update
-  ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-transfer-sunny-from-pan-20240909-data.l")
-
-  ;; 20240909 chapmpion
-  ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-transfer-sunny-from-pan-20240909-data-02.l")
-  ;; (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
-  ;; (cook-from-now-replay-once :larm nil :initial-av t)
-
-  ;; (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20240909-data-02.l")
-
-  (send *ri* :start-grasp :rarm :gain 0.1 :wait t)
-
-
-  ;; ;; original
-  ;; (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20250213-data-01.l")
-  ;; (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
-  ;; (cook-from-now-replay-once :larm nil :initial-av nil :time 100) ;; default time is 150
-
-
-  ;; devid
-  ;; すくう動作
-  (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20250213-data-01-01.l")
-  (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
-  (cook-from-now-replay-once :larm nil :initial-av nil :time 100) ;; default time is 150
-
-  ;; 運ぶ動作
-  ;; (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20250213-data-01-02.l")
-  ;; (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
-  ;; (cook-from-now-replay-once :larm nil :initial-av nil :time 100) ;; default time is 150
-
-  (send *pr2* :rarm :angle-vector #f(-29.4794 32.8183 -41.1178 -57.6387 -54.1418 -80.9058 15.6591)) ;;すくい終わりの関節角度
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
-  (send *ri* :wait-interpolation)
-
-  (send *pr2* :rarm :angle-vector #f(-51.7294 30.3803 -36.5974 -50.0075 -62.2124 -56.8969 7.41022)) ;;盛り付けはじめの関節角度
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
-  (send *ri* :wait-interpolation)
-
-  ;; 盛り付け動作
-  ;; (pr2-move-head :head-p 50 :head-y -25) ;; not test yet
-  (send *pr2* :head-neck-y :joint-angle -25)
-  (send *ri* :angle-vector (send *pr2* :angle-vector))
-  (send *ri* :wait-interpolation)
-
-  (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20250213-data-01-03.l")
-  (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
-  (setq *initial-head-neck-y* -25)
-  (cook-from-now-replay-once :larm nil :initial-av nil :time 100) ;; default time is 150
-
-  (setq *initial-head-neck-y* 0)
-  (send *pr2* :head-neck-y :joint-angle 0)
-  (send *ri* :angle-vector (send *pr2* :angle-vector))
-  (send *ri* :wait-interpolation)
-  )
-
-(defun now-finish-sunny-all (&key (use-rec nil))
-  (if *use-english*
-      (speak-with-log "I start cooking sunny-side-up" :lang "en") ;;TODO
-    (speak-with-log "目玉焼きの盛り付けに挑戦します"))
-
-  ;; (grasp-frying-pan)
-  (if use-rec
-      (grasp-rec-object :object-name "spatula" :arm :rarm :use-model "fp" :use-calib-offset nil)
-    (receive-spatula-for-sunny)
-    )
-  (transfer-sunny-from-pan)
-  (put-frying-pan)
-  (put-spatula-on-table)
-
-  (if *use-english*
-      (speak-with-log "I cooked sunny-side up!" :lang "en") ;; TODO
-    (speak-with-log "目玉焼きの盛り付けに挑戦しました"))
-  (if *use-english*
-      (speak-with-log "Please enjoy the meal." :lang "en")
-    (speak-with-log "どうぞめしあがってください"))
   (reset-cook-pose)
   )
 
 
-;; egg cracker
+(defun do-sunny-tmp ()
+  (if *use-english*
+      (speak-with-log "I start cooking sunny-side-up" :lang "en")
+    (speak-with-log "目玉焼きの調理を開始します"))
+
+  (init-sunny :spot kitchen)
+  ;; (exec-cook-from-recipe "prompt_sunny-side-up_conv_planned.l") ;; sk_2023_09_cook_from_recipe/euslisp/pddl_test/for-pot-and-pan/planned/prompt_sunny-side-up_conv_planned.l
+
+  ;; (hold salad-oil arm2 stove) (pour salad-oil frying-pan arm2 stove) (place salad-oil arm2 stove) (turn-on-stove frying-pan arm1) (heat salad-oil frying-pan thirty-seconds) (hold bowl arm2 stove) (transfer egg bowl frying-pan arm2 stove) (place bowl arm2 stove) (cook egg cooked-egg) (turn-off-stove middle frying-pan arm1)
+
+
+  ;; TODO update
+
+  ;; (hold small-bowl arm2 stove)
+  ;; (transfer butter small-bowl frying-pan arm2 stove)
+  ;; (place small-bowl arm2 stove)
+  (now-transfer-butter-with-spatula)
+
+  (turn-on-stove frying-pan arm1)
+  (heat butter frying-pan melt)
+  (grasp-rec-object :object-name "gray bowl" :arm :rarm :use-model "fp" :use-calib-offset nil) ;;(hold bowl arm2 stove)
+  (transfer egg bowl frying-pan arm2 stove)
+  (place bowl arm2 stove)
+  (cook egg cooked-egg)
+  (turn-off-stove middle frying-pan arm1)
+
+  ;; (speak-with-log "目玉焼きの調理を行いました")
+  )
+
+
+
+;; egg crack
 (defun now-egg-crack-set-both (&key (use-rec nil) (left-first t))
   (if use-rec
       (progn
@@ -459,103 +332,6 @@
   (reset-cook-pose :arm :rarm)
   )
 
-
-
-
-(defun current-set-transfer-butter ()
-  ;; 注ぎの待機姿勢
-  (send *pr2* :larm :angle-vector #f(13.4701 -4.47495 59.3413 -41.1902 -242.208 -99.7355 250.576))
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-  ;; 注ぐ位置 フライパンの位置から計算されるべきかも
-  (send *pr2* :larm :angle-vector #f(-2.55706 3.44493 55.9327 -28.1094 -199.81 -33.6095 358.652))
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-  )
-
-
-(defun current-transfer-butter-with-spatula ()
-  ;; after grasp spatula
-
-  (send *ri* :start-grasp :rarm :wait t)
-
-  (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-butter-to-pan-20250227-data-01.l")
-  (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
-  (cook-from-now-replay-once :larm nil :initial-av nil :time 100) ;; default time is 150
-
-  )
-
-(defun current-place-green-bowl ()
-  ;; 注ぎの待機姿勢
-  (send *pr2* :larm :angle-vector #f(13.4701 -4.47495 59.3413 -41.1902 -242.208 -99.7355 250.576))
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-  (send *pr2* :larm :angle-vector #f(35.207 15.7998 63.9443 -51.2849 -240.945 -84.4143 257.371))
-  (send *pr2* :larm :move-end-pos #f(-100 0 0) :local)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-  (send *pr2* :larm :move-end-pos #f(100 0 0) :local)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-  (send *ri* :stop-grasp :larm :wait t)
-
-  (send *pr2* :larm :move-end-pos #f(-100 0 0) :local)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-  (send *pr2* :larm :angle-vector #f(33.63 2.1508 57.5497 -93.8038 -255.515 -114.586 220.634))
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-  )
-
-(defun now-transfer-butter-with-spatula ()
-  (grasp-rec-object :object-name "spatula" :arm :rarm :use-model "fp" :use-calib-offset nil)
-
-  (grasp-rec-object :object-name "green bowl" :arm :larm :use-model "fp" :use-calib-offset nil)
-
-  (current-set-transfer-butter)
-  (current-transfer-butter-with-spatula)
-
-  (place-spatula)
-
-  (current-place-green-bowl)
-
-  (reset-cook-pose)
-  )
-
-(defun do-sunny-tmp ()
-  (if *use-english*
-      (speak-with-log "I start cooking sunny-side-up" :lang "en")
-    (speak-with-log "目玉焼きの調理を開始します"))
-  (reset-view-list)
-  (init-pr2)
-  (pr2-cook-init :spot "stove" :type :butter-sunny-side-up)
-  ;; (exec-cook-from-recipe "egg-recipes-prompt_butter-sunny_converted_conv_planned.l")
-
-
-  ;; (hold small-bowl arm2 stove)
-  ;; (transfer butter small-bowl frying-pan arm2 stove)
-  ;; (place small-bowl arm2 stove)
-  (now-transfer-butter-with-spatula)
-
-  (turn-on-stove frying-pan arm1)
-  (heat butter frying-pan melt)
-  (grasp-rec-object :object-name "gray bowl" :arm :rarm :use-model "fp" :use-calib-offset nil) ;;(hold bowl arm2 stove)
-  (transfer egg bowl frying-pan arm2 stove)
-  (place bowl arm2 stove)
-  (cook egg cooked-egg)
-  (turn-off-stove middle frying-pan arm1)
-
-  ;; (speak-with-log "目玉焼きの調理を行いました")
-  )
-
-
-
-;; use  egg-cracker
 (defun now-egg-crack-all (&key (human-help nil) (use-rec t) (egg-rec nil))
   (if *use-english*
       (speak-with-log "I start cooking sunny-side-up" :lang "en") ;; TODO
@@ -601,20 +377,4 @@
       (put-egg-opener)
       (reset-cook-pose :arm :larm)
       ))
-  )
-
-(defun exec-sunny-all ()
-  (do-sunny)
-  (now-finish-sunny-all)
-  )
-
-(defun exec-sunny-all-tmp ()
-  (do-sunny-tmp)
-  (now-finish-sunny-all :use-rec t)
-  )
-
-(defun from-crack-exec-all (&key (egg-rec nil))
-  (now-egg-crack-all :egg-rec egg-rec)
-  (do-sunny)
-  (now-finish-sunny-all)
   )
