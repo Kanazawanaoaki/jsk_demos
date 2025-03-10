@@ -1,0 +1,29 @@
+# Check each node png_level by the following command
+# for f in $(rosparam list | grep png_level); do echo "$f: $(rosparam get $f)"; done
+
+# Set png_level to 5 according to the following information
+# https://github.com/start-jsk/jsk_apc/pull/2706
+# https://gist.github.com/iory/12dda33908024223be74cb03f19997b5
+
+r_hand_d405:
+  aligned_depth_to_color:
+    image_raw:
+      disable_pub_plugins:
+        - 'image_transport/compressed'
+        - 'image_transport/theora'
+      compressedDepth:
+        png_level: 4
+  color:
+    image_raw:
+      disable_pub_plugins:
+        - 'image_transport/compressedDepth'
+    image_rect_color:
+      disable_pub_plugins:
+        - 'image_transport/compressedDepth'
+  depth:
+    image_rect_raw:
+      disable_pub_plugins:
+        - 'image_transport/compressed'
+        - 'image_transport/theora'
+      compressedDepth:
+        png_level: 4

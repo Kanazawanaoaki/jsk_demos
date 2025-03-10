@@ -1,0 +1,11 @@
+<launch>
+    <arg name="camera" default="r_hand_d405" />
+    <arg name="align_depth" default="true" />
+
+    <rosparam file="$(find jsk_2023_09_cook_from_recipe)/config/pr1040_r_hand_d405_png_level.yaml" command="load"/>
+
+    <include file="$(find realsense2_camera)/launch/rs_rgbd.launch">
+      <arg name="camera" value="$(arg camera)" />
+      <arg name="align_depth" value="$(arg align_depth)" />
+    </include>
+</launch>
