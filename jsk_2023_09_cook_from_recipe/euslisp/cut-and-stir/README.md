@@ -494,6 +494,16 @@ roslaunch jsk_2023_09_cook_from_recipe view_tracking_with_fp.launch
 roslaunch jsk_2023_09_cook_from_recipe pot-and-pan_rviz_gen4.launch ## if you use P1 Gen4 見学用のデモの話
 ```
 
+### 手首にカメラをつかっていく
+pr1040nの体内で
+```bash
+roslaunch realsense2_camera rs_rgbd.launch camera:=r_hand_d405 align_depth:=false ## ~/kanazawa_ws
+```
+手元で色々立ち上げる
+```bash
+roslaunch jsk_2023_09_cook_from_recipe use_r_hand_d405_remote.launch
+```
+
 ### 五感をつかっていく
 匂いセンサ
 ```bash

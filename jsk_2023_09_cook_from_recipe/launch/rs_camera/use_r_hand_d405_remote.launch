@@ -1,0 +1,21 @@
+<launch>
+
+  <arg name="run_rviz" default="false" />
+
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/rs_camera/r_hand_d405_decomp.launch">
+    <arg name="gui" value="false"/>
+  </include>
+
+  <!-- nodes -->
+  <!-- <node name="femto_mega_image_checker" pkg="jsk_2023_09_cook_from_recipe" type="femto_mega_image_checker.py" output="screen"/> -->  <!-- TODO add -->
+
+  <node name="r_hand_d405_tf_publisher" pkg="jsk_2023_09_cook_from_recipe" type="r_hand_d405_tf_publisher.py" output="screen"/>
+
+  <!-- rviz -->
+  <group if="$(arg run_rviz)">
+    <node name="femto_mega_decomp_pr2_rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/femto_mega_decomp_pr2.rviz">
+    </node>
+  </group>
+</launch>

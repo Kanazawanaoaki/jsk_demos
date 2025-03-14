@@ -26,7 +26,7 @@ Panels:
   - Class: rviz/Time
     Name: Time
     SyncMode: 0
-    SyncSource: Segmentation Image
+    SyncSource: KinectImage
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -92,7 +92,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: RGB8
       Decay Time: 0
-      Enabled: false
+      Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Min Color: 0; 0; 0
@@ -107,7 +107,35 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: false
+      Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: RGB8
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Min Color: 0; 0; 0
+      Name: RHandCloud
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.009999999776482582
+      Style: Flat Squares
+      Topic: /r_hand_d405_remote/depth_registered/half_points
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
     - Class: rviz/Image
       Enabled: true
       Image Topic: /deva_node/output/segmentation_image
@@ -341,6 +369,18 @@ Visualization Manager:
           Value: false
         r_gripper_tool_frame:
           Value: false
+        r_hand_d405_aligned_depth_to_color_frame:
+          Value: true
+        r_hand_d405_color_frame:
+          Value: true
+        r_hand_d405_color_optical_frame:
+          Value: true
+        r_hand_d405_depth_frame:
+          Value: true
+        r_hand_d405_depth_optical_frame:
+          Value: true
+        r_hand_d405_link:
+          Value: true
         r_shoulder_lift_link:
           Value: false
         r_shoulder_pan_link:
@@ -548,6 +588,15 @@ Visualization Manager:
                                                   {}
                                             r_gripper_tool_frame:
                                               {}
+                                            r_hand_d405_link:
+                                              r_hand_d405_aligned_depth_to_color_frame:
+                                                {}
+                                              r_hand_d405_color_frame:
+                                                r_hand_d405_color_optical_frame:
+                                                  {}
+                                              r_hand_d405_depth_frame:
+                                                r_hand_d405_depth_optical_frame:
+                                                  {}
                                           right_arm_chain_cb_link:
                                             {}
                         r_torso_lift_side_plate_link:
@@ -1222,7 +1271,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.4870550632476807
+      Distance: 2.4080312252044678
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -1238,9 +1287,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.3797965943813324
+      Pitch: 0.9597966074943542
       Target Frame: <Fixed Frame>
-      Yaw: 1.7390323877334595
+      Yaw: 2.5840320587158203
     Saved: ~
 Window Geometry:
   Displays:
@@ -1268,5 +1317,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1848
-  X: 712
-  Y: 27
+  X: 665
+  Y: 217

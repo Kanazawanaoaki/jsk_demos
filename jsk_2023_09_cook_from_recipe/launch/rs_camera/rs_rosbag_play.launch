@@ -10,7 +10,7 @@
   <param name="use_sim_time" value="true" />
 
   <!-- decompress -->
-  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/rs_camerea/rs_decompress.launch">
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/rs_camera/rs_decompress.launch">
     <arg name="gui" value="false" />
   </include>
 

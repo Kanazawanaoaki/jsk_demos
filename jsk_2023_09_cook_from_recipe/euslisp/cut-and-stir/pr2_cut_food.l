@@ -222,6 +222,41 @@
   (send *ri* :wait-interpolation)
   )
 
+
+(defun calc-calib-camera-cds-auto (std-rec-frame target-rec-frame cam-link-frame cam-base-frame)
+  (let ((std-rec-cds)
+        (target-rec-cds)
+        (cam-link-cds)
+        (cam-base-cds)
+        (cam-true-cds)
+        (cam-trans-cds)
+        )
+    (setq std-rec-cds (get-tf-coords std-rec-frame))
+    (setq target-rec-cds (get-tf-coords target-rec-frame))
+    (setq cam-link-cds (get-tf-coords cam-link-frame))
+
+    ;; calc true camera cds
+    (setq cam-true-cds (calc-calib-camera-cds std-rec-cds target-rec-cds cam-link-cds))
+    (format t "cam-true-cds: ~A~%" cam-true-cds)
+
+    ;; calc transform from base->camera
+    (setq cam-base-cds (get-tf-coords cam-base-frame))
+    (setq cam-trans-cds (calc-rel-from-base-target cam-base-cds cam-true-cds))
+
+    (format t "cam-trans-cds: ~A~%" cam-trans-cds)
+    (format t "cam-trans-cds translation, x:~A, y:~A, z:~A~%"
+            (* (elt (send cam-trans-cds :pos) 0) 0.001)
+            (* (elt (send cam-trans-cds :pos) 1) 0.001)
+            (* (elt (send cam-trans-cds :pos) 2) 0.001)
+            )
+    (format t "cam-trans-cds rotation in quaternion, x:~A, y:~A, z:~A, w:~A~%"
+            (send (ros::rot->tf-quaternion (send cam-trans-cds :rot)) :x)
+            (send (ros::rot->tf-quaternion (send cam-trans-cds :rot)) :y)
+            (send (ros::rot->tf-quaternion (send cam-trans-cds :rot)) :z)
+            (send (ros::rot->tf-quaternion (send cam-trans-cds :rot)) :w)
+            )
+    cam-trans-cds))
+
 (defun calc-calib-camera-cds (kinect-tag-cds mega-tag-cds mega-link-cds)
   (let ((mega-link->tag)
         (true-mega-link-cds)
