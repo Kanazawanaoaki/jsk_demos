@@ -14,14 +14,21 @@
   </include>
 
   <!-- nodes -->
-  <node name="femto_mega_image_checker" pkg="jsk_2023_09_cook_from_recipe" type="femto_mega_image_checker.py" output="screen"/>
+  <!-- <node name="femto_mega_image_checker" pkg="jsk_2023_09_cook_from_recipe" type="femto_mega_image_checker.py" output="screen"/> -->
+  <node name="femto_mega_image_checker" pkg="jsk_2023_09_cook_from_recipe" type="compressed_image_checker.py" output="screen">
+    <rosparam subst_value="true">
+      camera_name: femto_mega
+      comp_topic: /femto_mega/color/image_raw/compressed
+      timeout_threshold: 5.0
+    </rosparam>
+  </node>
 
   <!-- <node name="femto_mega_tf_publisher" pkg="jsk_2023_09_cook_from_recipe" type="femto_mega_tf_publisher.py" output="screen"/> -->
 
 
   <!-- rviz -->
   <group if="$(arg run_rviz)">
-    <node name="femto_mega_decomp_pr2_rviz"
+    <node name="femto_mega_remote_pr2_rviz"
           pkg="rviz" type="rviz"
           args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/femto_mega_decomp_pr2.rviz">
     </node>

@@ -7,6 +7,7 @@
   <!-- <arg name="LOAD_STATEMENT" value="load" unless="$(arg standalone)"/> -->
   <!-- <arg name="LOAD_STATEMENT" value="standalone" if="$(arg standalone)"/> -->
 
+  <arg name="camera" default="r_hand_d405" />
 
   <arg name="manager" default="r_405_decompress_nodelet_manager" />
   <arg name="launch_manager" default="true" />
@@ -14,27 +15,31 @@
 
   <arg name="gui" default="false" />
 
-  <arg name="RGB_CAMERA_INFO" default="/r_hand_d405/color/camera_info" />
-  <arg name="RGB_IMAGE" default="/r_hand_d405/color/image_rect_color" />
-  <arg name="RGB_REMOTE_IMAGE" default="/r_hand_d405_remote/color/image_rect_color" />
-  <!-- <arg name="DEPTH_CAMERA_INFO" default="/r_hand_d405/depth/camera_info" /> -->
-  <!-- <arg name="DEPTH_IMAGE" default="/r_hand_d405/aligned_depth_to_color/image_raw" /> -->
-  <!-- <arg name="DEPTH_REMOTE_IMAGE" default="/r_hand_d405_remote/depth/image_rect_raw" /> -->
-  <arg name="DEPTH_CAMERA_INFO" default="/r_hand_d405/depth_registered/sw_registered/camera_info" />
-  <arg name="DEPTH_IMAGE" default="/r_hand_d405/depth_registered/sw_registered/image_rect_raw" />
-  <arg name="DEPTH_REMOTE_IMAGE" default="/r_hand_d405_remote/depth_registered/sw_registered/image_rect_raw" />
+  <arg name="align_depth" default="false" />
 
-  <arg name="CLOUD" default="/r_hand_d405_remote/depth_registered/points" />
-  <arg name="HALF_CLOUD" default="/r_hand_d405_remote/depth_registered/half_points" />
+  <arg name="RGB_CAMERA_INFO" value="/$(arg camera)/color/camera_info" />
+  <arg name="RGB_IMAGE" value="/$(arg camera)/color/image_rect_color" />
+  <arg name="RGB_REMOTE_IMAGE" value="/$(arg camera)_remote/color/image_rect_color" />
+
+  <arg name="DEPTH_CAMERA_INFO" value="/$(arg camera)/depth/camera_info" if="$(arg align_depth)"/>
+  <arg name="DEPTH_IMAGE" value="/$(arg camera)/aligned_depth_to_color/image_raw" if="$(arg align_depth)"/>
+  <arg name="DEPTH_REMOTE_IMAGE" value="/$(arg camera)_remote/depth/image_rect_raw" if="$(arg align_depth)"/>
+
+  <arg name="DEPTH_CAMERA_INFO" value="/$(arg camera)/depth_registered/sw_registered/camera_info" unless="$(arg align_depth)"/>
+  <arg name="DEPTH_IMAGE" value="/$(arg camera)/depth_registered/sw_registered/image_rect_raw" unless="$(arg align_depth)"/>
+  <arg name="DEPTH_REMOTE_IMAGE" value="/$(arg camera)/depth_registered/sw_registered/image_rect_raw" unless="$(arg align_depth)"/>
+
+  <arg name="CLOUD" default="/$(arg camera)_remote/depth_registered/points" />
+  <arg name="HALF_CLOUD" default="/$(arg camera)_remote/depth_registered/half_points" />
 
   <node name="$(arg manager)" pkg="nodelet" type="nodelet" args="manager"
         if="$(arg launch_manager)" output="screen" />
 
-  <node name="r_d405_mega_rgb_decompress" pkg="image_transport" type="republish"
+  <node name="$(arg camera)_rgb_decompress" pkg="image_transport" type="republish"
         args="compressed in:=$(arg RGB_IMAGE) out:=$(arg RGB_REMOTE_IMAGE)" />
-  <node name="r_d405_mega_depth_decompress" pkg="image_transport" type="republish"
+  <node name="$(arg camera)_depth_decompress" pkg="image_transport" type="republish"
         args="compressedDepth in:=$(arg DEPTH_IMAGE) out:=$(arg DEPTH_REMOTE_IMAGE)" />
-  <node pkg="nodelet" type="nodelet" name="r_d405_mega_point_cloud_xyzrgb"
+  <node pkg="nodelet" type="nodelet" name="$(arg camera)_point_cloud_xyzrgb"
         args="standalone depth_image_proc/point_cloud_xyzrgb" output="screen" >
     <remap from="rgb/camera_info" to="$(arg RGB_CAMERA_INFO)" />
     <remap from="rgb/image_rect_color" to="$(arg RGB_REMOTE_IMAGE)" />
@@ -46,7 +51,7 @@
   </node>
 
   <!-- half -->
-  <node name="d405_downsample_cloud_half"
+  <node name="$(arg camera)_downsample_cloud_half"
         pkg="nodelet" type="nodelet"
         args="standalone jsk_pcl/ResizePointsPublisher"
         output="screen"
@@ -61,7 +66,7 @@
 
   <!-- rviz -->
   <group if="$(arg gui)">
-    <node name="femto_mega_decomp_rviz"
+    <node name="$(arg camera)_decomp_rviz"
           pkg="rviz" type="rviz"
           args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/femto_mega_pointcloud_decomp.rviz">
     </node>

@@ -7,13 +7,20 @@
   </include>
 
   <!-- nodes -->
-  <!-- <node name="femto_mega_image_checker" pkg="jsk_2023_09_cook_from_recipe" type="femto_mega_image_checker.py" output="screen"/> -->  <!-- TODO add -->
+  <!-- <node name="femto_mega_image_checker" pkg="jsk_2023_09_cook_from_recipe" type="femto_mega_image_checker.py" output="screen"/> -->
+  <node name="r_hand_d405_image_checker" pkg="jsk_2023_09_cook_from_recipe" type="compressed_image_checker.py" output="screen">
+    <rosparam subst_value="true">
+      camera_name: r_hand_d405
+      comp_topic: /r_hand_d405/color/image_rect_color/compressed
+      timeout_threshold: 5.0
+    </rosparam>
+  </node>
 
-  <node name="r_hand_d405_tf_publisher" pkg="jsk_2023_09_cook_from_recipe" type="r_hand_d405_tf_publisher.py" output="screen"/>
+  <!-- <node name="r_hand_d405_tf_publisher" pkg="jsk_2023_09_cook_from_recipe" type="r_hand_d405_tf_publisher.py" output="screen"/> -->
 
   <!-- rviz -->
   <group if="$(arg run_rviz)">
-    <node name="femto_mega_decomp_pr2_rviz"
+    <node name="r_hand_d405_remote_pr2_rviz"
           pkg="rviz" type="rviz"
           args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/femto_mega_decomp_pr2.rviz">
     </node>
