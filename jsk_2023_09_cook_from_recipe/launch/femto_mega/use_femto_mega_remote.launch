@@ -16,7 +16,7 @@
   <!-- nodes -->
   <node name="femto_mega_image_checker" pkg="jsk_2023_09_cook_from_recipe" type="femto_mega_image_checker.py" output="screen"/>
 
-  <node name="femto_mega_tf_publisher" pkg="jsk_2023_09_cook_from_recipe" type="femto_mega_tf_publisher.py" output="screen"/>
+  <!-- <node name="femto_mega_tf_publisher" pkg="jsk_2023_09_cook_from_recipe" type="femto_mega_tf_publisher.py" output="screen"/> -->
 
 
   <!-- rviz -->
