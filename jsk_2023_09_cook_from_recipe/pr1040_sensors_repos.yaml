@@ -7,10 +7,6 @@ repositories:
     type: git
     url: https://github.com/Kanazawanaoaki/thermal_camera_ros.git
     version: main
-  realsense-ros:
-    type: git
-    url: https://github.com/IntelRealSense/realsense-ros.git
-    version: ros1-legacy
   jsk_3rdparty:
     type: git
     url: https://github.com/Kanazawanaoaki/jsk_3rdparty.git

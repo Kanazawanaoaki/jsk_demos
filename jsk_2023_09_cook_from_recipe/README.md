@@ -21,7 +21,7 @@ source ~/ros/cooking_ws/devel/setup.bash
 ### Setup in c2 (pr1040n)
 ```bash
 mkdir -p ~/kanazawa_ws/src
-source /opt/ros/melodic/setup.bash
+source /opt/ros/noetic/setup.bash
 cd ~/kanazawa_ws
 catkin init
 cd ~/kanazawa_ws/src
@@ -31,7 +31,21 @@ rosdep install -iry --from-paths .
 cd ~/kanazawa_ws/
 catkin build
 ```
+c2でudevのrulesを設定
 
+https://github.com/Kanazawanaoaki/jsk_demos/tree/cut-and-stir/jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir#unique-device-file-name-by-udev-rules
+```bash
+sudo cp $(rospack find jsk_2023_09_cook_from_recipe)/config/udev/99-kanazawa-cook-sensors.rules /etc/udev/rules.d/
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
+https://github.com/Kanazawanaoaki/thermal_camera_ros?tab=readme-ov-file#setup-udev-rules
+```bash
+roscd thermal_camera_ros/config/
+sudo cp 99-flir-one.rules /etc/udev/rules.d
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+```
 
 ## exec cook demo
 
