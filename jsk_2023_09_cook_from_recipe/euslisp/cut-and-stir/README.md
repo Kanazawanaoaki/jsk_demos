@@ -497,9 +497,11 @@ roslaunch jsk_2023_09_cook_from_recipe pot-and-pan_rviz_gen4.launch ## if you us
 ### 手首にカメラをつかっていく
 pr1040nの体内で
 ```bash
-roslaunch realsense2_camera rs_rgbd.launch camera:=r_hand_d405 align_depth:=false ## ~/kanazawa_ws
+## roslaunch realsense2_camera rs_rgbd.launch camera:=r_hand_d405 align_depth:=false ## ~/kanazawa_ws
+
+roslaunch jsk_2023_09_cook_from_recipe r_hand_d405.launch ## ~/kanazawa_ws
 ```
-手元で色々立ち上げる
+手元で色々立ち上げる(z800が良いかも)
 ```bash
 roslaunch jsk_2023_09_cook_from_recipe use_r_hand_d405_remote.launch
 ```
