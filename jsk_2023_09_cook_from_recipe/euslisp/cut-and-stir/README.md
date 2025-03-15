@@ -531,7 +531,8 @@ roslaunch thermal_camera_ros flirone_ros.launch
 roslaunch jsk_2023_09_cook_from_recipe nose_module_gas_sensors.launch
 ```
 ```bash
-roslaunch audio_capture capture.launch device:=0 sample_rate:=16000 channels:=1 ns:=mke200 format:=wave
+## roslaunch audio_capture capture.launch device:=0 sample_rate:=16000 channels:=1 ns:=mke200 format:=wave
+roslaunch audio_capture capture.launch device:="plughw:CARD=Device,DEV=0" sample_rate:=16000 channels:=1 ns:=mke200 format:=wave bitrate:=256000
 
 ## 音を聞くためには roslaunch audio_play play.launch sample_rate:=16000 channels:=1 ns:=mke200 format:=wave
 
@@ -543,9 +544,8 @@ rosrun jsk_rosbag_tools bag_to_video.py [bag path] --samplerate 16000 --channels
 ```bash
 roslaunch thermal_camera_ros flirone_ros.launch
 ```
+それらを確認してアラートを出すlaunch（TODO）
 
-
-それらを確認してアラートを出すものなど
 
 ## 見学のデモ
 ### 前提
