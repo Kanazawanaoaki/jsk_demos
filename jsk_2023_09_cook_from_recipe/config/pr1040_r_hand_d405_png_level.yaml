@@ -27,3 +27,11 @@ r_hand_d405:
         - 'image_transport/theora'
       compressedDepth:
         png_level: 4
+  depth_registered:
+    sw_registered:
+      image_rect_raw:
+        disable_pub_plugins:
+          - 'image_transport/compressed'
+          - 'image_transport/theora'
+        compressedDepth:
+          png_level: 4
