@@ -525,6 +525,26 @@ rosrun jsk_rosbag_tools bag_to_video.py [bag path] --samplerate 44100 --channels
 roslaunch thermal_camera_ros flirone_ros.launch
 ```
 
+#### c2で五感を使っていく
+匂いセンサ(udevの設定をした上で実行する)
+```bash
+roslaunch jsk_2023_09_cook_from_recipe nose_module_gas_sensors.launch
+```
+```bash
+roslaunch audio_capture capture.launch device:=0 sample_rate:=16000 channels:=1 ns:=mke200 format:=wave
+
+## 音を聞くためには roslaunch audio_play play.launch sample_rate:=16000 channels:=1 ns:=mke200 format:=wave
+
+## rosbagにして音を聞くなど
+rosbag record /mke200/audio /mke200/audio_info  /femto_mega/color/image_raw/compressed -O 20250226_test_01
+rosrun jsk_rosbag_tools bag_to_video.py [bag path] --samplerate 16000 --channels 1 --audio-topic /mke200/audio --image-topic /femto_mega/color/image_raw/compressed -o /tmp/20250225_hp_kitchen_04_rosbag_audio.mp4
+```
+熱カメラ
+```bash
+roslaunch thermal_camera_ros flirone_ros.launch
+```
+
+
 それらを確認してアラートを出すものなど
 
 ## 見学のデモ

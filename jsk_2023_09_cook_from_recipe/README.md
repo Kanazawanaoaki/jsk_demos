@@ -18,7 +18,7 @@ catkin b jsk_2023_09_cook_from_recipe
 source ~/ros/cooking_ws/devel/setup.bash
 ```
 
-### Setup in pr1040n
+### Setup in c2 (pr1040n)
 ```bash
 mkdir -p ~/kanazawa_ws/src
 source /opt/ros/melodic/setup.bash
@@ -26,7 +26,7 @@ cd ~/kanazawa_ws
 catkin init
 cd ~/kanazawa_ws/src
 git clone https://github.com/Kanazawanaoaki/jsk_demos.git -b cut-and-stir
-vcs import < jsk_demos/jsk_2023_09_cook_from_recipe/pr1040n_repos.yaml
+vcs import < jsk_demos/jsk_2023_09_cook_from_recipe/pr1040_sensors_repos.yaml
 rosdep install -iry --from-paths .
 cd ~/kanazawa_ws/
 catkin build
