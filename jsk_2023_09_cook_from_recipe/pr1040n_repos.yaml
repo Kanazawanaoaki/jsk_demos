@@ -13,5 +13,5 @@ repositories:
     version: ros1-legacy
   jsk_3rdparty:
     type: git
-    uri: https://github.com/Kanazawanaoaki/jsk_3rdparty.git
+    url: https://github.com/Kanazawanaoaki/jsk_3rdparty.git
     version: kanazawa-devel-m5stack-ros-
