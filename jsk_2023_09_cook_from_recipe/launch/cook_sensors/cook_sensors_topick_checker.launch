@@ -1,0 +1,96 @@
+<launch>
+
+  <arg name="is_check_gas" default="true" />
+  <arg name="is_check_audio" default="true" />
+  <arg name="is_check_thermal" default="true" />
+
+  <group if="$(arg is_check_gas)">
+    <!-- tgs 2600 -->
+    <node name="tgs2600_topic_checker" pkg="jsk_2023_09_cook_from_recipe" type="uint16_topic_checker.py" output="screen">
+      <rosparam subst_value="true">
+        topic_name: /tgs_2600_analog
+        timeout_threshold: 5.0
+      </rosparam>
+    </node>
+
+    <!-- tgs 2602 -->
+    <node name="tgs2602_topic_checker" pkg="jsk_2023_09_cook_from_recipe" type="uint16_topic_checker.py" output="screen">
+      <rosparam subst_value="true">
+        topic_name: /tgs_2602_analog
+        timeout_threshold: 5.0
+      </rosparam>
+    </node>
+
+    <!-- tgs 2603 -->
+    <node name="tgs2603_topic_checker" pkg="jsk_2023_09_cook_from_recipe" type="uint16_topic_checker.py" output="screen">
+      <rosparam subst_value="true">
+        topic_name: /tgs_2603_analog
+        timeout_threshold: 5.0
+      </rosparam>
+    </node>
+
+    <!-- gas_v2_102b -->
+    <node name="gas_v2_102b_topic_checker" pkg="jsk_2023_09_cook_from_recipe" type="uint16_topic_checker.py" output="screen">
+      <rosparam subst_value="true">
+        topic_name: /gas_v2_102b
+        timeout_threshold: 5.0
+      </rosparam>
+    </node>
+
+    <!-- gas_v2_302b -->
+    <node name="gas_v2_302b_topic_checker" pkg="jsk_2023_09_cook_from_recipe" type="uint16_topic_checker.py" output="screen">
+      <rosparam subst_value="true">
+        topic_name: /gas_v2_302b
+        timeout_threshold: 5.0
+      </rosparam>
+    </node>
+
+    <!-- gas_v2_502b -->
+    <node name="gas_v2_502b_topic_checker" pkg="jsk_2023_09_cook_from_recipe" type="uint16_topic_checker.py" output="screen">
+      <rosparam subst_value="true">
+        topic_name: /gas_v2_502b
+        timeout_threshold: 5.0
+      </rosparam>
+    </node>
+
+    <!-- gas_v2_702b -->
+    <node name="gas_v2_702b_topic_checker" pkg="jsk_2023_09_cook_from_recipe" type="uint16_topic_checker.py" output="screen">
+      <rosparam subst_value="true">
+        topic_name: /gas_v2_702b
+        timeout_threshold: 5.0
+      </rosparam>
+    </node>
+  </group>
+
+  <group if="$(arg is_check_audio)">
+    <!-- mke200 -->
+    <node name="mke200_audio_checker" pkg="jsk_2023_09_cook_from_recipe" type="audio_topic_checker.py" output="screen">
+      <rosparam subst_value="true">
+        mic_name: mke200
+        topic_name: /mke200/audio
+        timeout_threshold: 5.0
+      </rosparam>
+    </node>
+  </group>
+
+  <group if="$(arg is_check_thermal)">
+    <!-- flir thermal -->
+    <node name="flir_thermal_checker" pkg="jsk_2023_09_cook_from_recipe" type="image_topic_checker.py" output="screen">
+      <rosparam subst_value="true">
+        camera_name: flir_thermal
+        topic_name: /flir/thermal
+        timeout_threshold: 5.0
+      </rosparam>
+    </node>
+
+    <!-- flir image -->
+    <node name="flir_visible_image_checker" pkg="jsk_2023_09_cook_from_recipe" type="compressed_image_checker.py" output="screen">
+      <rosparam subst_value="true">
+        camera_name: flir_visibule
+        comp_topic: /flir/visibule/compressed
+        timeout_threshold: 5.0
+      </rosparam>
+    </node>
+  </group>
+
+</launch>

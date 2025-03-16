@@ -546,8 +546,10 @@ rosrun jsk_rosbag_tools bag_to_video.py [bag path] --samplerate 16000 --channels
 ```bash
 roslaunch thermal_camera_ros flirone_ros.launch
 ```
-それらを確認してアラートを出すlaunch（TODO）
-
+それらのトピックが出ているかを確認してアラートを出すlaunch
+```bash
+roslaunch jsk_2023_09_cook_from_recipe cook_sensors_topick_checker.launch
+```
 
 ## 見学のデモ
 ### 前提

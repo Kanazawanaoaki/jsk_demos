@@ -7,11 +7,11 @@ from sound_play.msg import SoundRequest, SoundRequestAction, SoundRequestGoal
 import actionlib
 import time
 
-class CompImageChecker:
+class ImageChecker:
     def __init__(self):
-        rospy.init_node('compressed_image_checker', anonymous=True)
+        rospy.init_node('image_topic_checker', anonymous=True)
         self.camera_name = rospy.get_param('~camera_name', 'femto_mega')
-        self.comp_topic = rospy.get_param('~comp_topic', '/femto_mega/color/image_raw/compressed')
+        self.image_topic = rospy.get_param('~image_topic', '/femto_mega/color/image_raw')
         self.timeout_threshold = rospy.get_param('~timeout_threshold', 5.0) # トピックが一定時間更新されなかった場合の閾値（秒）
 
         self.no_topic_flag = False ## topicが来ていない状況ならTrue
@@ -26,7 +26,7 @@ class CompImageChecker:
 
         self.say_something("{} image check start".format(self.camera_name))
         # イメージメッセージをサブスクライブ
-        self.image_sub = rospy.Subscriber(self.comp_topic, CompressedImage, self.image_callback)
+        self.image_sub = rospy.Subscriber(self.image_topic, Image, self.image_callback)
 
         # 最後にトピックが更新された時間
         self.last_image_time = time.time()
@@ -74,7 +74,7 @@ class CompImageChecker:
 
 if __name__ == '__main__':
     try:
-        image_checker = CompImageChecker()
+        image_checker = ImageChecker()
         image_checker.run()
     except rospy.ROSInterruptException:
         pass
