@@ -27,7 +27,7 @@
 
   <arg name="DEPTH_CAMERA_INFO" value="/$(arg camera)/depth_registered/sw_registered/camera_info" unless="$(arg align_depth)"/>
   <arg name="DEPTH_IMAGE" value="/$(arg camera)/depth_registered/sw_registered/image_rect_raw" unless="$(arg align_depth)"/>
-  <arg name="DEPTH_REMOTE_IMAGE" value="/$(arg camera)/depth_registered/sw_registered/image_rect_raw" unless="$(arg align_depth)"/>
+  <arg name="DEPTH_REMOTE_IMAGE" value="/$(arg camera)_remote/depth_registered/sw_registered/image_rect_raw" unless="$(arg align_depth)"/>
 
   <arg name="CLOUD" default="/$(arg camera)_remote/depth_registered/points" />
   <arg name="HALF_CLOUD" default="/$(arg camera)_remote/depth_registered/half_points" />
