@@ -37,6 +37,10 @@
           /femto_mega/color/image_raw/compressed
           /femto_mega/depth/camera_info
           /femto_mega/depth/image_raw/compressedDepth
+          /r_hand_d405/color/camera_info
+          /r_hand_d405/color/image_rect_color/compressed
+          /r_hand_d405/depth_registered/sw_registered/camera_info
+          /r_hand_d405/depth_registered/sw_registered/image_rect_raw/compressedDepth
           /audio
           /audio_info
           /timestamped_cal_gas

@@ -865,7 +865,7 @@
 
 (defun ih-stove-action (&key (left nil)
                              (ih-action :start) ;; :start :stop :rotate
-                             (with-rec nil) (use-cds-offset t)
+                             (with-rec nil) (use-cds-offset t) (with-hand-rec nil)
                              (rotate-deg 0))
   (let ((pre-set-avs (list))
         (pre-set-val (float-vector 0 0 0))
@@ -873,6 +873,7 @@
         adj-target-cds
         rec-ih-cds
         ih-to-target-rel
+        ih-to-target-rel-hand
         (push-length 10)
         )
     (if left
@@ -891,6 +892,8 @@
         (setq set-target-coords (make-coords :pos #f(645.029 -178.873 696.789) :rpy #f(-0.089 0.092 3.019)))
         ;; (setq ih-to-target-rel (make-coords :pos #f(-111.388 160.174 159.358) :rpy #f(2.849 1.384 2.788)))
         (setq ih-to-target-rel (make-coords :pos #f(-114.246 169.792 147.386) :rpy #f(2.849 1.384 2.788))) ;; with adj
+        ;; (setq ih-to-target-rel-hand (make-coords :pos #f(71.434 187.91 49.899) :rpy #f(2.89 1.107 2.799))) ;; hand-cam
+        (setq ih-to-target-rel-hand (make-coords :pos #f(71.499 197.845 49.749) :rpy #f(2.889 1.108 2.798))) ;; hand-cam with adj
         ))
     (if use-cds-offset
         (setq adj-target-cds (adjust-cds-with-spot set-target-coords "stove"))
@@ -902,6 +905,15 @@
       (setq rec-ih-cds (setq res-coords (k4a-check-detection "/point_pose_ih/ObjectDetection" :rec-num 10 :use-out-filter t :filter-thre 50)))
       (format t "rec cds is ~A~%" rec-ih-cds)
       (setq adj-target-cds (calc-target-from-base-rel rec-ih-cds ih-to-target-rel))
+      (format t "target cds is ~A~%" adj-target-cds)
+      )
+    (when with-hand-rec
+      (send *pr2* :rarm :angle-vector #f(-53.5193 60.8717 -119.603 -100.522 103.836 -68.5348 98.4082))
+      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+      (send *ri* :wait-interpolation)
+      (setq rec-ih-cds (setq res-coords (k4a-check-detection "/point_pose_ih_rd405/ObjectDetection")))
+      (format t "rec cds is ~A~%" rec-ih-cds)
+      (setq adj-target-cds (calc-target-from-base-rel rec-ih-cds ih-to-target-rel-hand))
       (format t "target cds is ~A~%" adj-target-cds)
       )
     ;; push button

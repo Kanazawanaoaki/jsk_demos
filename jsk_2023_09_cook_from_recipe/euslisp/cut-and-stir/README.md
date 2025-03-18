@@ -501,9 +501,15 @@ pr1040nの体内で
 
 roslaunch jsk_2023_09_cook_from_recipe r_hand_d405.launch ## ~/kanazawa_ws
 ```
-手元で色々立ち上げる(z800が良いかも)
+z800で立ち上げる
 ```bash
 roslaunch jsk_2023_09_cook_from_recipe use_r_hand_d405_remote.launch
+```
+
+手元で色々立ち上げる
+```bash
+## roslaunch jsk_2023_09_cook_from_recipe kitchen_template_matching_rd405.launch ## 手首カメラでのテンプレートマッチングを使う，IHなど
+roslaunch jsk_2023_09_cook_from_recipe view_rviz_cook.launch rviz_name:=view_rviz_cook_mega ## もし立ち上がっていなければ
 ```
 
 ### 五感をつかっていく
