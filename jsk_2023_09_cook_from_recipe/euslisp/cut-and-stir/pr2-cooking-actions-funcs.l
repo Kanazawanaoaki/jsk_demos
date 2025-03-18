@@ -885,7 +885,9 @@
           )
       (progn
         ;; (setq pre-set-avs (list #f(-14.727 68.7101 -60.2136 -76.3185 109.312 -48.51 -7.17108)))
-        (setq pre-set-avs (list #f(-51.7423 64.9578 -95.8258 -91.4896 117.771 -46.7522 -2.78394))) ;; #f(-37.9792 67.891 -75.6121 -80.9552 114.675 -44.3419 -2.95313))) ;; #f(-37.49 74.2613 -98.4166 -92.2371 105.499 -61.216 -179.863) for old
+        ;; (setq pre-set-avs (list #f(-51.7423 64.9578 -95.8258 -91.4896 117.771 -46.7522 -2.78394))) ;; #f(-37.9792 67.891 -75.6121 -80.9552 114.675 -44.3419 -2.95313))) ;; #f(-37.49 74.2613 -98.4166 -92.2371 105.499 -61.216 -179.863) for old
+        (setq pre-set-avs (list #f(-53.5193 60.8717 -119.603 -100.522 103.836 -68.5348 98.4082))) ;; for hand-rec
+
         ;; (setq pre-set-val #f(-100 0 0))
         (setq pre-set-val #f(-30 0 0))
         ;; (setq set-target-coords (make-coords :pos #f(645.029 -178.873 696.789) :rpy #f(-0.089 0.092 1.448)))
@@ -914,6 +916,7 @@
       (setq rec-ih-cds (setq res-coords (k4a-check-detection "/point_pose_ih_rd405/ObjectDetection")))
       (format t "rec cds is ~A~%" rec-ih-cds)
       (setq adj-target-cds (calc-target-from-base-rel rec-ih-cds ih-to-target-rel-hand))
+      (publish-cds-tf adj-target-cds)
       (format t "target cds is ~A~%" adj-target-cds)
       )
     ;; push button
