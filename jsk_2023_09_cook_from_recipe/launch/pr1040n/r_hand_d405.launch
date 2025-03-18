@@ -9,5 +9,13 @@
       <arg name="align_depth" value="$(arg align_depth)" />
     </include>
 
+    <node name="r_hand_d405_image_checker" pkg="jsk_2023_09_cook_from_recipe" type="compressed_image_checker.py" output="screen">
+      <rosparam subst_value="true">
+        camera_name: r_hand_d405
+        comp_topic: /r_hand_d405/color/image_rect_color/compressed
+        timeout_threshold: 5.0
+      </rosparam>
+    </node>
+
     <node name="r_hand_d405_tf_publisher" pkg="jsk_2023_09_cook_from_recipe" type="r_hand_d405_tf_publisher.py" output="screen"/>
 </launch>
