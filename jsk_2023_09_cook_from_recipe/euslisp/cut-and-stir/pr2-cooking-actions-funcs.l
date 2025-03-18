@@ -388,17 +388,24 @@
 
       ;; 左腕をフライパン上に
       (send *pr2* :larm :angle-vector #f(14.0829 -1.877 91.103 -61.869 -183.344 -53.6661 269.742)) ;; (make-coords :pos #f(829.547 90.424 1100.026) :rpy #f(0.103 0.017 3.126))
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
       (send *ri* :wait-interpolation)
 
       (setq ik-target-coords (make-coords :pos #f(840.502 -79.349 1057.366) :rpy #f(-0.795 -0.074 0.012)))
+      (send ik-target-coords :translate #f(0 0 100) :world)
+      (send *pr2* :larm :inverse-kinematics ik-target-coords)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+      (send *ri* :wait-interpolation)
+
+      (send ik-target-coords :translate #f(0 0 -100) :world)
       (send *pr2* :larm :inverse-kinematics ik-target-coords)
       (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
       (send *ri* :wait-interpolation)
 
       ;; 右腕をフライパンの上で添える
       (send *ri* :stop-grasp :rarm :wait t)
-      (send *pr2* :rarm :angle-vector #f(-26.6328 26.1388 -27.7269 -82.8879 -75.6009 -75.0069 -33.872))
+      ;; (send *pr2* :rarm :angle-vector #f(-26.6328 26.1388 -27.7269 -82.8879 -75.6009 -75.0069 -33.872))
+      (send *pr2* :rarm :angle-vector #f(-26.6328 26.1388 -27.7269 -82.8879 -75.6009 -75.0069 326.128))
       (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
       (send *ri* :wait-interpolation)
 
@@ -433,14 +440,21 @@
       (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
       (send *ri* :wait-interpolation)
 
-      (send *pr2* :rarm :angle-vector #f(-26.6328 26.1388 -27.7269 -82.8879 -75.6009 -75.0069 -33.872))
+      ;; (send *pr2* :rarm :angle-vector #f(-26.6328 26.1388 -27.7269 -82.8879 -75.6009 -75.0069 -33.872))
+      (send *pr2* :rarm :angle-vector #f(-26.6328 26.1388 -27.7269 -82.8879 -75.6009 -75.0069 326.128))
       (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
       (send *ri* :wait-interpolation)
       (reset-cook-pose :arm :rarm)
 
       ;; 左腕を元に戻す
-      (send *pr2* :larm :angle-vector (elt (reverse pre-set-avs) 0))
+      (setq ik-target-coords (make-coords :pos #f(840.502 -79.349 1057.366) :rpy #f(-0.795 -0.074 0.012)))
+      (send ik-target-coords :translate #f(0 0 100) :world)
+      (send *pr2* :larm :inverse-kinematics ik-target-coords)
       (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+      (send *ri* :wait-interpolation)
+
+      (send *pr2* :larm :angle-vector (elt (reverse pre-set-avs) 0))
+      (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
       (send *ri* :wait-interpolation)
 
       (return-from pour-object-to-pan nil)

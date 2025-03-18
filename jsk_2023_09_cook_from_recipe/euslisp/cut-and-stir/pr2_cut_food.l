@@ -738,14 +738,17 @@
 
 (defun fp-rec-object (&key (object-name "knife") (change-rec t) (multi-rec nil) (rec-num 5) (fix-rot nil))
   ;; TODO add multi-rec etc
-  (let ((rec-coords)
+  (let ((rec-coords nil)
         )
     (when change-rec
       (change-fp-mesh :object-name object-name)
       )
     (wait-fp-topic-update)
     (setq rec-coords (get-fp-tracking-coords))
-    (when fix-rot
+    (if (equal rec-coords nil)
+        (setq rec-coords (get-fp-tracking-coords))
+      )
+    (when (and fix-rot (not (equal rec-coords nil)))
       (send rec-coords :newcoords (make-coords :pos (send (send rec-coords :copy-worldcoords) :worldpos)))
       )
     rec-coords))
