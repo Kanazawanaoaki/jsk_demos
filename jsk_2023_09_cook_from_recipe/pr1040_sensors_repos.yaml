@@ -11,3 +11,15 @@ repositories:
     type: git
     url: https://github.com/Kanazawanaoaki/jsk_3rdparty.git
     version: kanazawa-devel-m5stack-ros-
+  jsk_control:
+    type: git
+    url: https://github.com/jsk-ros-pkg/jsk_control.git
+    version: master
+  dynamixel-workbench:
+    type: git
+    url: https://github.com/pazeshun/dynamixel-workbench.git
+    version: dynamixel-general-hw
+  mini_controller_ros:
+    type: git
+    url: https://github.com/Kanazawanaoaki/mini_controller_ros.git
+    version: main
