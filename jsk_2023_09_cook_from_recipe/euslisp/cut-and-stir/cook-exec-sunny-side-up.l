@@ -175,9 +175,13 @@
       (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
       (send *ri* :wait-interpolation)
 
+      (send *ri* :stop-grasp :larm :wait t)
+
       ;; 左手の卵を掴む位置
       ;; (send *pr2* :larm :angle-vector #f(25.4644 6.30462 81.3182 -27.1804 103.643 -87.3789 -5.18068)) ;; #<cascaded-coords #X55ebe5530d60 :larm-end-coords  723.236 403.655 857.552 / 1.244 1.515 -1.962>
-      (send *pr2* :larm :angle-vector #f(25.736 4.73558 81.1203 -27.9526 103.117 -89.0249 -5.55466)) ;; #<cascaded-coords #X55ebe5530d60 :larm-end-coords  723.23 403.655 877.67 / 1.244 1.515 -1.962>
+      ;; (send *pr2* :larm :angle-vector #f(25.736 4.73558 81.1203 -27.9526 103.117 -89.0249 -5.55466)) ;; #<cascaded-coords #X55ebe5530d60 :larm-end-coords  723.23 403.655 877.67 / 1.244 1.515 -1.962>
+      ;; kitchen
+      (send *pr2* :larm :angle-vector #f(34.7653 -1.28567 100.125 -68.7785 80.1237 -77.5978 -33.077)) ;; #<cascaded-coords #X55ebe5530d60 :larm-end-coords  723.23 403.655 877.67 / 1.244 1.515 -1.962>
       (send *pr2* :larm :move-end-pos (float-vector 0 0 80) :world)
       (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
       (send *ri* :wait-interpolation)
@@ -332,6 +336,334 @@
   (reset-cook-pose :arm :rarm)
   )
 
+
+
+;; egg cracker grasp
+(defun egg-cracker-grasp-rarm-01 ()
+  (let ((fp-rec-cds)
+        (rel-offset-cds)
+        (target-cds))
+    ;; (setq rel-offset-cds (make-coords :pos #f(24.929 -4.294 41.722) :rpy #f(-0.031 0.031 -0.038)))
+    ;; (setq rel-offset-cds (make-coords :pos #f(24.893 2.338 41.673) :rpy #f(-0.031 0.031 -0.038)))
+    ;; (setq rel-offset-cds (make-coords :pos #f(24.6 2.297 36.402) :rpy #f(-0.031 0.031 -0.038)))
+
+
+    ;; (setq rel-offset-cds (make-coords :pos #f(20.18 0.673 31.467) :rpy #f(0.057 0.04 3.134)));; v2 カメラが後ろに
+    ;; (setq rel-offset-cds (make-coords :pos #f(25.051 5.787 31.111) :rpy #f(0.057 0.04 3.134)));; v2 カメラが後ろに
+    (setq rel-offset-cds (make-coords :pos #f(24.942 5.709 28.114) :rpy #f(0.057 0.04 3.134)));; v2 カメラが後ろに
+
+    ;; 認識
+    (setq fp-rec-cds (fp-rec-object :object-name "egg opener"))
+    (when (equal fp-rec-cds nil)
+      (setq fp-rec-cds (get-fp-tracking-coords))
+      )
+    (when (equal fp-rec-cds nil)
+      (speak-with-log "認識に失敗しました")
+      (print "wait for key pressed")
+      (do-until-key
+       (unix:usleep 100000)
+       )
+      )
+    (setq *egg-opener-rec-cds* (send fp-rec-cds :copy-worldcoords))
+    (setq target-cds (calc-target-from-base-rel fp-rec-cds rel-offset-cds))
+
+    ;; 待機姿勢
+    ;; (send *pr2* :rarm :angle-vector #f(-24.791 1.50715 -71.4646 -67.6422 -105.087 -106.586 398.343))
+    (send *pr2* :rarm :angle-vector #f(-30.9378 -17.2941 -100.148 -67.8661 -75.0556 -83.2304 211.929))
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send *ri* :stop-grasp :rarm :wait t)
+
+    ;; アプローチ
+    ;; (send target-cds :translate #f(-100 0 0) :local)
+    (send target-cds :translate #f(0 0 100) :world)
+    (send *pr2* :rarm :inverse-kinematics
+          target-cds
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    ;; (send target-cds :translate #f(100 0 0) :local)
+    (send target-cds :translate #f(0 0 -100) :world)
+    (send *pr2* :rarm :inverse-kinematics
+          target-cds
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    ;; (send *ri* :move-gripper :rarm 0.083)
+    (send *ri* :move-gripper :rarm 0.08)
+    ;; (send *ri* :move-gripper :rarm 0.075)
+
+    ;; 右腕で持ち上げる
+    (pr2-arm-up :num 100 :arm :rarm)
+
+    (send *pr2* :rarm :angle-vector #f(-30.9378 -17.2941 -100.148 -67.8661 -75.0556 -83.2304 211.929))
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    ;; egg opener セットの位置
+    (send *pr2* :rarm :angle-vector #f(-14.1173 7.40102 -66.2001 -76.6337 -100.911 -102.65 149.109));; 329.109 ;; #<cascaded-coords #X562c04c7c3b8 :rarm-end-coords  595.484 -27.369 976.58 / 1.313 1.418 2.882>
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+    (send *ri* :wait-interpolation)
+    ))
+
+
+(defun egg-cracker-grasp-01 ()
+  (let ((fp-rec-cds)
+        (rel-offset-cds)
+        (target-cds))
+    (setq rel-offset-cds (make-coords :pos #f(11.002 7.935 75.995) :rpy #f(0.099 0.622 -0.052)))
+    ;; (setq rel-offset-cds (make-coords :pos #f(11.002 7.935 75.995) :rpy #f(0.109 0.448 -0.047)))
+
+    ;; 認識
+    (setq fp-rec-cds (fp-rec-object :object-name "egg opener"))
+    (when (equal fp-rec-cds nil)
+      (setq fp-rec-cds (get-fp-tracking-coords))
+      )
+    (when (equal fp-rec-cds nil)
+      (speak-with-log "認識に失敗しました")
+      (print "wait for key pressed")
+      (do-until-key
+       (unix:usleep 100000)
+       )
+      )
+    (setq *egg-opener-rec-cds* (send fp-rec-cds :copy-worldcoords))
+    (setq target-cds (calc-target-from-base-rel fp-rec-cds rel-offset-cds))
+
+    ;; 待機姿勢
+    (send *pr2* :larm :angle-vector #f(32.6277 -7.48005 86.5184 -68.4467 55.5839 -69.3112 51.7346))
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send *ri* :stop-grasp :larm :wait t)
+
+    ;; アプローチ
+    ;; (send target-cds :translate #f(-100 0 0) :local)
+    (send target-cds :translate #f(0 0 100) :world)
+    (send *pr2* :larm :inverse-kinematics
+          target-cds
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    ;; (send target-cds :translate #f(100 0 0) :local)
+    ;; (send target-cds :translate #f(0 0 -100) :world)
+    (send target-cds :translate #f(0 0 -120) :world)
+    (send *pr2* :larm :inverse-kinematics
+          target-cds
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send *ri* :start-grasp :larm :gain 0.01 :wait t)
+    ))
+
+(defun egg-cracker-grasp-02 ()
+  (let ((rel-offset-cds)
+        (target-cds))
+    (setq rel-offset-cds (make-coords :pos #f(20.211 15.703 21.698) :rpy #f(0.115 0.17 0.006)))
+
+    (setq target-cds (calc-target-from-base-rel *egg-opener-rec-cds* rel-offset-cds))
+
+    ;; 待機姿勢
+    (send *pr2* :rarm :angle-vector #f(-24.791 1.50715 -71.4646 -67.6422 -105.087 -106.586 398.343))
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send *ri* :move-gripper :rarm 0.083)
+
+    (send target-cds :translate #f(-100 0 0) :local)
+    (send *pr2* :rarm :inverse-kinematics
+          target-cds
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send target-cds :translate #f(100 0 0) :local)
+    (send *pr2* :rarm :inverse-kinematics
+          target-cds
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send *ri* :stop-grasp :larm :wait t)
+
+    (print "wait for key pressed")
+    (do-until-key
+     (unix:usleep 100000)
+     )
+
+    ;; 左腕を退避する
+    (send target-cds :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+    (send target-cds :translate #f(-100 0 0) :local)
+    (send *pr2* :larm :inverse-kinematics
+          target-cds
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send *pr2* :larm :angle-vector #f(32.6277 -7.48005 86.5184 -68.4467 55.5839 -69.3112 51.7346))
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (reset-cook-pose :arm :larm)
+
+    ;; 右腕で持ち上げる
+    (pr2-arm-up :num 100 :arm :rarm)
+
+    (send *pr2* :rarm :angle-vector #f(-24.791 1.50715 -71.4646 -67.6422 -105.087 -106.586 398.343))
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    ;; egg opener セットの位置
+    (send *pr2* :rarm :angle-vector #f(-14.1173 7.40102 -66.2001 -76.6337 -100.911 -102.65 329.109)) ;; #<cascaded-coords #X562c04c7c3b8 :rarm-end-coords  595.484 -27.369 976.58 / 1.313 1.418 2.882>
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+    (send *ri* :wait-interpolation)
+    ))
+
+
+(defun egg-cracker-put-rarm ()
+  (let ((tool-put-cds)
+        (target-cds)
+        (rel-offest-cds))
+
+    (setq tool-put-cds (make-coords :pos #f(707.139 -115.613 854.016) :rpy #f(2.547 1.527 -0.569)))
+
+    (setq rel-offset-cds (make-coords :pos #f(25.051 5.787 31.111) :rpy #f(0.057 0.04 3.134)));; v2 カメラが後ろに
+    (setq target-cds (calc-target-from-base-rel tool-put-cds rel-offset-cds))
+
+    ;; 待機姿勢
+    (send *pr2* :rarm :angle-vector #f(-30.9378 -17.2941 -100.148 -67.8661 -75.0556 -83.2304 211.929))
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send target-cds :translate #f(-100 0 0) :local)
+    (send *pr2* :rarm :inverse-kinematics
+          target-cds
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send target-cds :translate #f(100 0 0) :local)
+    (send *pr2* :rarm :inverse-kinematics
+          target-cds
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send *ri* :stop-grasp :rarm :wait t)
+
+    (pr2-arm-up :num 200 :arm :rarm)
+
+    (send *pr2* :rarm :angle-vector #f(-30.9378 -17.2941 -100.148 -67.8661 -75.0556 -83.2304 211.929))
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+    )
+
+(defun egg-cracker-put ()
+  (let ((tool-put-cds)
+        (target-cds)
+        (rel-offest-cds))
+
+    (setq tool-put-cds (make-coords :pos #f(650 -12 850) :rpy #f(0.757 1.465 -0.802)))
+
+    ;; 右腕
+    (setq rel-offset-cds (make-coords :pos #f(20.211 15.703 21.698) :rpy #f(0.115 0.17 0.006)))
+    (setq target-cds (calc-target-from-base-rel tool-put-cds rel-offset-cds))
+
+    (send *pr2* :rarm :angle-vector #f(-24.791 1.50715 -71.4646 -67.6422 -105.087 -106.586 398.343))
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send target-cds :translate #f(-100 0 0) :local)
+    (send *pr2* :rarm :inverse-kinematics
+          target-cds
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send target-cds :translate #f(100 0 0) :local)
+    (send *pr2* :rarm :inverse-kinematics
+          target-cds
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+
+    ;; 左腕
+    (setq rel-offset-cds (make-coords :pos #f(11.002 7.935 75.995) :rpy #f(0.099 0.622 -0.052)))
+    (setq target-cds (calc-target-from-base-rel tool-put-cds rel-offset-cds))
+
+    (send *pr2* :larm :angle-vector #f(32.6277 -7.48005 86.5184 -68.4467 55.5839 -69.3112 51.7346))
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send target-cds :translate #f(0 0 100) :world)
+    (send *pr2* :larm :inverse-kinematics
+          target-cds
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send target-cds :translate #f(0 0 -120) :world)
+    (send *pr2* :larm :inverse-kinematics
+          target-cds
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send *ri* :start-grasp :larm :gain 0.01 :wait t)
+
+    (send *ri* :stop-grasp :rarm :wait t)
+
+    ;; 右腕退避
+    (pr2-arm-up :num 100 :arm :rarm)
+
+    (send *pr2* :rarm :angle-vector #f(-24.791 1.50715 -71.4646 -67.6422 -105.087 -106.586 398.343))
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    ;; 左腕退避
+    (send *ri* :stop-grasp :larm :wait t)
+
+    (send target-cds :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+    (send target-cds :translate #f(0 0 100) :world)
+    (send *pr2* :larm :inverse-kinematics
+          target-cds
+          :rotation-axis t
+          :debug-view nil)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    (send *pr2* :larm :angle-vector #f(32.6277 -7.48005 86.5184 -68.4467 55.5839 -69.3112 51.7346))
+    (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+    (send *ri* :wait-interpolation)
+
+    ))
+
+
+(defun now-egg-cracker-grasp ()
+  (egg-cracker-grasp-01)
+  (egg-cracker-grasp-02)
+  )
+
+
+
 (defun now-egg-crack-all (&key (human-help nil) (use-rec t) (egg-rec nil))
   (if *use-english*
       (speak-with-log "I start cooking sunny-side-up" :lang "en") ;; TODO
@@ -355,20 +687,20 @@
       (progn
         (egg-crack-rarm) ;; human receive tool
 
-        ;; (pr2-move-head :head-p 50 :head-y 0) ;; not test yet
-        (send *pr2* :head-neck-y :joint-angle 0)
-        (send *ri* :angle-vector (send *pr2* :angle-vector))
-        (send *ri* :wait-interpolation)
+        (pr2-move-head :head-p 50 :head-y 0) ;; not test yet
+        ;; (send *pr2* :head-neck-y :joint-angle 0)
+        ;; (send *ri* :angle-vector (send *pr2* :angle-vector))
+        ;; (send *ri* :wait-interpolation)
         )
     (progn
       (egg-crack-rarm :return-pose t)
       ;; () TODO return to left
       ;; TODO put-egg-opener with left
 
-      ;; (pr2-move-head :head-p 50 :head-y 0) ;; not test yet
-      (send *pr2* :head-neck-y :joint-angle 0)
-      (send *ri* :angle-vector (send *pr2* :angle-vector))
-      (send *ri* :wait-interpolation)
+      (pr2-move-head :head-p 50 :head-y 0) ;; not test yet
+      ;; (send *pr2* :head-neck-y :joint-angle 0)
+      ;; (send *ri* :angle-vector (send *pr2* :angle-vector))
+      ;; (send *ri* :wait-interpolation)
 
       (setq after-crack-egg-cds (fp-rec-object :object-name "egg opener" :change-rec nil))
       (format t "after-crack-egg-cds: ~A~%" after-crack-egg-cds)
