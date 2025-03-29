@@ -394,9 +394,11 @@
     (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
     (send *ri* :wait-interpolation)
 
-    ;; (send *ri* :move-gripper :rarm 0.083)
-    (send *ri* :move-gripper :rarm 0.08)
+    ;; (send *ri* :move-gripper :rarm 0.083) ;; 輪ゴム無しのベスト
+    ;; (send *ri* :move-gripper :rarm 0.08) ;; 輪ゴム2だとこれが良さそうだったか？
     ;; (send *ri* :move-gripper :rarm 0.075)
+    ;; (send *ri* :move-gripper :rarm 0.076) ;; r6 h12の輪ゴム1のベスト？
+    (send *ri* :move-gripper :rarm 0.074) ;; r6 h12の輪ゴム2のベスト？
 
     ;; 右腕で持ち上げる
     (pr2-arm-up :num 100 :arm :rarm)
