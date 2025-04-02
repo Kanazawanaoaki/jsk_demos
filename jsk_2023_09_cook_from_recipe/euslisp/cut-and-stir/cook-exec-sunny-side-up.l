@@ -213,9 +213,16 @@
 
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
   ;; (send *arrow* :translate #f(0 0 -60) :world) ;;これを使っていた
-  (send *arrow* :translate #f(10 -10 -60) :world) ;; 受け渡し方を変えたので
-  (send *arrow* :rotate (deg2rad 30) :z)
-  (send *pr2* :larm :inverse-kinematics *arrow*)
+  ;; (send *arrow* :translate #f(10 -10 -60) :world) ;; 受け渡し方を変えたので
+  (send *arrow* :translate #f(5 -10 -80) :world) ;; 受け渡し方を変えたので アタッチメント有りで微調整 ;; 20 -10 -80
+  ;; (send *arrow* :rotate (deg2rad 30) :z)
+  (send *arrow* :rotate (deg2rad 35) :z)
+  (let (ik-result)
+    (setq ik-result (send *pr2* :larm :inverse-kinematics *arrow*))
+    (when (equal ik-result nil)
+      (ik-fail-report :wait t)
+      )
+    )
 
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
@@ -227,7 +234,7 @@
 
   ;; (pr2-arm-up :num 100 :time 2000 :arm :larm)
   (send *pr2* :larm :angle-vector #f(14.0062 -8.38952 70.2396 -71.6376 91.7893 -114.585 31.1574)) ;; #<cascaded-coords #X560d5c4b5860 :larm-end-coords  586.977 64.883 1086.322 / 1.295 1.487 -0.291>
-  (send *pr2* :larm :move-end-pos (float-vector 0 0 50) :world)
+  (send *pr2* :larm :move-end-pos (float-vector 10 0 50) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
 
@@ -350,7 +357,9 @@
 
     ;; (setq rel-offset-cds (make-coords :pos #f(20.18 0.673 31.467) :rpy #f(0.057 0.04 3.134)));; v2 カメラが後ろに
     ;; (setq rel-offset-cds (make-coords :pos #f(25.051 5.787 31.111) :rpy #f(0.057 0.04 3.134)));; v2 カメラが後ろに
-    (setq rel-offset-cds (make-coords :pos #f(24.942 5.709 28.114) :rpy #f(0.057 0.04 3.134)));; v2 カメラが後ろに
+
+    ;; (setq rel-offset-cds (make-coords :pos #f(24.942 5.709 28.114) :rpy #f(0.057 0.04 3.134)));; v2 カメラが後ろに 輪ゴム？
+    (setq rel-offset-cds (make-coords :pos #f(25.232 5.917 36.106) :rpy #f(0.057 0.04 3.134)));; v2 カメラが後ろに 10mm 輪ゴム無し
 
     ;; 認識
     (setq fp-rec-cds (fp-rec-object :object-name "egg opener"))
@@ -571,7 +580,7 @@
     (send *pr2* :rarm :angle-vector #f(-30.9378 -17.2941 -100.148 -67.8661 -75.0556 -83.2304 211.929))
     (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
     (send *ri* :wait-interpolation)
-    )
+    ))
 
 (defun egg-cracker-put ()
   (let ((tool-put-cds)
@@ -659,9 +668,10 @@
     ))
 
 
-(defun now-egg-cracker-grasp ()
-  (egg-cracker-grasp-01)
-  (egg-cracker-grasp-02)
+(defun now-egg-cracker-rarm-set (&key (use-rec t))
+  (egg-cracker-grasp-rarm-01)
+  (egg-crack-larm-grasp :use-rec use-rec)
+  (egg-crack-larm-carry)
   )
 
 
