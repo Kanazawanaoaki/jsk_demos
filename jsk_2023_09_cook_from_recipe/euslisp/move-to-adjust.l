@@ -419,11 +419,11 @@
                       (list (send *pr2* :copy-worldcoords)
                             (send cds :copy-worldcoords)))
 
-      (when trans-flag
-        (setq cam-cds (get-tf-coords "femto_mega_color_optical_frame" :base-frame "base_footprint"))
-        (setq idealcds (calc-target-from-base-rel cam-cds idealcds))
-        (setq cds (calc-target-from-base-rel cam-cds cds))
-        )
+      ;; (when trans-flag ;; k4a-check-detectionの中で行われているので要らない
+      ;;   (setq cam-cds (get-tf-coords "femto_mega_color_optical_frame" :base-frame "base_footprint"))
+      ;;   (setq idealcds (calc-target-from-base-rel cam-cds idealcds))
+      ;;   (setq cds (calc-target-from-base-rel cam-cds cds))
+      ;;   )
 
       (setq diffcds (calc-diffcds idealcds cds distance-threshold rotation-threshold))
 

@@ -33,12 +33,17 @@
     (setq rec_coords nil)
     (until rec_coords
            (setq pp_msg (one-shot-subscribe detecion-topic posedetection_msgs::ObjectDetection))
-           (setq rec_coords (ros::tf-pose->coords (send (car (send pp_msg :objects)) :pose)))
            (if (ros::time>= (send pp_msg :header :stamp) start_time)
-               (setq trans (send *tfl* :lookup-transform *base-frame-id* (send pp_msg :header :frame_id) (send pp_msg :header :stamp)))
-             (return-from k4a-check-detection nil)
+               (progn
+                 (setq rec_coords (ros::tf-pose->coords (send (car (send pp_msg :objects)) :pose)))
+                 (setq trans (send *tfl* :lookup-transform *base-frame-id* (send pp_msg :header :frame_id) (send pp_msg :header :stamp)))
+                 )
+             (progn
+               (format t "header ~A, start_time ~A~%" (send pp_msg :header :stamp) start_time)
+               ;; (return-from k4a-check-detection nil)
+               )
              )
-           (when (> rec-num 1)
+           (when (and (> rec-num 1) rec_coords)
              (setq rec-cnt (+ rec-cnt 1))
              (setq rec-coords-list (append rec-coords-list (list rec_coords)))
              (if (null rec-av-coords)

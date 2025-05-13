@@ -222,6 +222,19 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun show-cds-for-tf (cam-trans-cds)
+  (format t "cam-trans-cds translation, x:~A, y:~A, z:~A~%"
+          (* (elt (send cam-trans-cds :pos) 0) 0.001)
+          (* (elt (send cam-trans-cds :pos) 1) 0.001)
+          (* (elt (send cam-trans-cds :pos) 2) 0.001)
+          )
+  (format t "cam-trans-cds rotation in quaternion, x:~A, y:~A, z:~A, w:~A~%"
+          (send (ros::rot->tf-quaternion (send cam-trans-cds :rot)) :x)
+          (send (ros::rot->tf-quaternion (send cam-trans-cds :rot)) :y)
+          (send (ros::rot->tf-quaternion (send cam-trans-cds :rot)) :z)
+          (send (ros::rot->tf-quaternion (send cam-trans-cds :rot)) :w)
+          )
+  )
 
 (defun calc-calib-camera-cds-auto (std-rec-frame target-rec-frame cam-link-frame cam-base-frame)
   (let ((std-rec-cds)
@@ -244,17 +257,7 @@
     (setq cam-trans-cds (calc-rel-from-base-target cam-base-cds cam-true-cds))
 
     (format t "cam-trans-cds: ~A~%" cam-trans-cds)
-    (format t "cam-trans-cds translation, x:~A, y:~A, z:~A~%"
-            (* (elt (send cam-trans-cds :pos) 0) 0.001)
-            (* (elt (send cam-trans-cds :pos) 1) 0.001)
-            (* (elt (send cam-trans-cds :pos) 2) 0.001)
-            )
-    (format t "cam-trans-cds rotation in quaternion, x:~A, y:~A, z:~A, w:~A~%"
-            (send (ros::rot->tf-quaternion (send cam-trans-cds :rot)) :x)
-            (send (ros::rot->tf-quaternion (send cam-trans-cds :rot)) :y)
-            (send (ros::rot->tf-quaternion (send cam-trans-cds :rot)) :z)
-            (send (ros::rot->tf-quaternion (send cam-trans-cds :rot)) :w)
-            )
+    (show-cds-for-tf cam-trans-cds)
     cam-trans-cds))
 
 (defun calc-calib-camera-cds (kinect-tag-cds mega-tag-cds mega-link-cds)
