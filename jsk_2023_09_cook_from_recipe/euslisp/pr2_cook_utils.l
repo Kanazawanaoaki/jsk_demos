@@ -484,6 +484,35 @@
   (send *ri* :wait-interpolation)
   )
 
+(defun reset-cook-manip-pose (&key (time 5000) (arm :arms) (head-p 50.0) (head-y 0.0) (torso-lift 300))
+  (let ((rarm-av)
+        (larm-av))
+    (setq rarm-av #f(-75.0 50.0 -110.0 -110.0 200.0 -10.0 -10.0))
+    (setq larm-av #f(75.0 50.0 110.0 -110.0 -200.0 -10.0 350.0))
+    (case arm
+          (:arms
+           (send *robot* :rarm :angle-vector rarm-av)
+           (send *robot* :larm :angle-vector larm-av)
+           (send *robot* :torso_lift_joint :joint-angle torso-lift)
+           )
+          (:rarm
+           (send *robot* :rarm :angle-vector rarm-av)
+           )
+          (:larm
+           (send *robot* :larm :angle-vector larm-av)
+           )
+          )
+    (send *robot* :head-neck-p :joint-angle head-p)
+    (send *robot* :head-neck-y :joint-angle head-y)
+    (send *viewer* :draw-objects)
+    (send *ri* :angle-vector (send *robot* :angle-vector) time)
+    (send *ri* :wait-interpolation)
+    ))
+
+(defun reset-cook-manip-counter-pose (&key (time 5000) (arm :arms) (head-p 55.0) (head-y 0.0) (torso-lift 300))
+  (reset-cook-manip-pose :head-p head-p) ;; todo rest args
+  )
+
 (defun potentio-vector (&key (head-p 50.0) (head-y 0.0))
   (send *robot* :angle-vector (send *ri* :state :potentio-vector))
   (send *robot* :head-neck-p :joint-angle head-p)

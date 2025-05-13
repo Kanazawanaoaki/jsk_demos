@@ -262,6 +262,18 @@
                (setq adjust-suc-flag (move-with-adjust :move-spot :sink :use-k4a use-k4a))
                )
         ))
+     ((string= to "counter")
+      (print "move-to counter")
+      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(2010 8800 30000) :rpy (float-vector 0 0 0)) :frame-id "/map"))
+      (when move-suc-flag
+        (setq adjust-suc-flag nil)
+        (reset-move-pose :head-p 50.0 :torso 150.0 :tm 1000)
+        (until adjust-suc-flag
+               (reset-move-pose :head-p 50.0 :torso 150.0 :tm 1000)
+               (format t "pr2 reset-pose ~%")
+               (setq adjust-suc-flag (move-with-adjust :move-spot :counter :use-k4a use-k4a :rec-num 3))
+               )
+        ))
      )
     move-suc-flag
     ))
@@ -293,9 +305,12 @@
         spot-name
         speak-name
         detecion-topic
+        trans-flag
+        cam-cds
         cds
         )
     (setq diffcds (make-coords :pos (float-vector 10000 10000 10000)))
+    (setq trans-flag nil)
     ;; finding adjust spot object
     (case move-spot
           (:stove
@@ -356,6 +371,20 @@
                                 :rpy (float-vector 0.258 1.499 -2.909)))
              )
            )
+          (:counter
+           (setq spot-name "counter")
+           (setq speak-name "カウンター")
+           (setq trans-flag t)
+           (setq detecion-topic "/point_pose_counter/ObjectDetection")
+           (if use-k4a
+               (setq idealcds ;; for k4a
+                     (make-coords :pos (float-vector 1005.771 485.175 864.579)
+                                  :rpy (float-vector -3.128 0.017 -0.005)))
+             (setq idealcds ;; for kinect ;; todo
+                   (make-coords :pos (float-vector 1031.396 137.734 1282.394)
+                                :rpy (float-vector 0.258 1.499 -2.909)))
+             )
+           )
           )
     (cond
      ((not (send *ri* :simulation-modep)) ;; real mode
@@ -389,6 +418,12 @@
       (dump-structure *standard-output*
                       (list (send *pr2* :copy-worldcoords)
                             (send cds :copy-worldcoords)))
+
+      (when trans-flag
+        (setq cam-cds (get-tf-coords "femto_mega_color_optical_frame" :base-frame "base_footprint"))
+        (setq idealcds (calc-target-from-base-rel cam-cds idealcds))
+        (setq cds (calc-target-from-base-rel cam-cds cds))
+        )
 
       (setq diffcds (calc-diffcds idealcds cds distance-threshold rotation-threshold))
 
