@@ -1,0 +1,66 @@
+<launch>
+  <arg name="gui" default="true"/>
+
+  <!-- <arg name="PARENT_FRAME" default="/map"/> -->
+  <!-- <arg name="CAMERA_FRAME" default="/head_mount_kinect_rgb_optical_frame"/> -->
+  <!-- <arg name="TRANSFORM" default="5.526 6.230 1.627 0.747 0.387 -0.246 -0.482"/> -->
+
+  <!-- <node name="static_tf_publisher" -->
+  <!--       pkg="tf" type="static_transform_publisher" -->
+  <!--       args="$(arg TRANSFORM) $(arg PARENT_FRAME) $(arg CAMERA_FRAME) 10"/> -->
+
+  <rosparam>
+    display: 0
+    board_type: chess
+    grid0_size_x: 6
+    grid0_size_y: 5
+    rect0_size_x: 0.030
+    rect0_size_y: 0.030
+    queue_size: 10
+  </rosparam>
+
+  <!-- <node name="kinect_checkerboard_detector" -->
+  <!--       pkg="checkerboard_detector" type="checkerboard_detector"> -->
+  <!--   <!-\- input -\-> -->
+  <!--   <remap from="image" to="/kinect_head_remote/rgb/image_rect_color"/> -->
+  <!--   <remap from="camera_info" to="/kinect_head/rgb/camera_info"/> -->
+  <!--   <!-\- output -\-> -->
+  <!--   <remap from="ObjectDetection" to="~output/ObjectDetection"/> -->
+  <!--   <remap from="objectdetection_pose" to="~output/objectdetection_pose"/> -->
+  <!--   <remap from="corner_point" to="~output/corner_point"/> -->
+  <!--   <remap from="polygons" to="~output/polygons"/> -->
+  <!--   <remap from="debug_image" to="~output/debug_image"/> -->
+  <!-- </node> -->
+
+  <node name="femto_mega_checkerboard_detector"
+        pkg="checkerboard_detector" type="checkerboard_detector">
+    <!-- input -->
+    <remap from="image" to="/femto_mega_remote/color/image_raw"/>
+    <remap from="camera_info" to="/femto_mega/color/camera_info"/>
+    <!-- output -->
+    <remap from="ObjectDetection" to="~output/ObjectDetection"/>
+    <remap from="objectdetection_pose" to="~output/objectdetection_pose"/>
+    <remap from="corner_point" to="~output/corner_point"/>
+    <remap from="polygons" to="~output/polygons"/>
+    <remap from="debug_image" to="~output/debug_image"/>
+  </node>
+
+  <node name="r_hand_checkerboard_detector"
+        pkg="checkerboard_detector" type="checkerboard_detector">
+    <!-- input -->
+    <remap from="image" to="/r_hand_d405_remote/color/image_rect_color"/>
+    <remap from="camera_info" to="/r_hand_d405/color/camera_info"/>
+    <!-- output -->
+    <remap from="ObjectDetection" to="~output/ObjectDetection"/>
+    <remap from="objectdetection_pose" to="~output/objectdetection_pose"/>
+    <remap from="corner_point" to="~output/corner_point"/>
+    <remap from="polygons" to="~output/polygons"/>
+    <remap from="debug_image" to="~output/debug_image"/>
+  </node>
+
+  <group if="$(arg gui)">
+    <node name="mega_and_r_hand_rviz"
+          pkg="rviz" type="rviz"
+          args="-d $(find jsk_2023_09_cook_from_recipe)/rviz/mega_and_r_hand_checkerboard_detector.rviz"/>
+  </group>
+</launch>
