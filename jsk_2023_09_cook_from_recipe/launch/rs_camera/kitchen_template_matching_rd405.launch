@@ -16,14 +16,23 @@
       <remap from="image" to="$(arg input_image)" />
       <remap from="camera_info" to="$(arg input_camera_info)"/>
     </node>
+
     <node name="ih_detector" pkg="jsk_perception" type="point_pose_extractor" clear_params="true">
       <rosparam subst_value="true">
-        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/r_hand_d405_ih_panel.jpg
+        template_filename: $(find jsk_2023_09_cook_from_recipe)/image/20250513_ih_rhand_cam.jpg
         window_name: ih_detector
-        object_width: 0.277
-        object_height: 0.144
+        object_width: 0.225
+        object_height: 0.145
       </rosparam>
+      <!-- <rosparam subst_value="true"> -->
+      <!--   template_filename: $(find jsk_2023_09_cook_from_recipe)/image/r_hand_d405_ih_panel.jpg -->
+      <!--   window_name: ih_detector -->
+      <!--   object_width: 0.277 -->
+      <!--   object_height: 0.144 -->
+      <!-- </rosparam> -->
     </node>
+
+
   </group>
 
 </launch>

@@ -908,8 +908,10 @@
         (setq set-target-coords (make-coords :pos #f(645.029 -178.873 696.789) :rpy #f(-0.089 0.092 3.019)))
         ;; (setq ih-to-target-rel (make-coords :pos #f(-111.388 160.174 159.358) :rpy #f(2.849 1.384 2.788)))
         (setq ih-to-target-rel (make-coords :pos #f(-114.246 169.792 147.386) :rpy #f(2.849 1.384 2.788))) ;; with adj
+
         ;; (setq ih-to-target-rel-hand (make-coords :pos #f(71.434 187.91 49.899) :rpy #f(2.89 1.107 2.799))) ;; hand-cam
-        (setq ih-to-target-rel-hand (make-coords :pos #f(71.499 197.845 49.749) :rpy #f(2.889 1.108 2.798))) ;; hand-cam with adj
+        ;; (setq ih-to-target-rel-hand (make-coords :pos #f(71.499 197.845 49.749) :rpy #f(2.889 1.108 2.798))) ;; hand-cam with adj
+        (setq ih-to-target-rel-hand (make-coords :pos #f(65.491 179.629 22.6) :rpy #f(1.563 1.472 1.473))) ;; hand-cam with v4 hand_cam_mout v2
         ))
     (if use-cds-offset
         (setq adj-target-cds (adjust-cds-with-spot set-target-coords "stove"))

@@ -267,9 +267,9 @@
       (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(2010 8800 30000) :rpy (float-vector 0 0 0)) :frame-id "/map"))
       (when move-suc-flag
         (setq adjust-suc-flag nil)
-        (reset-move-pose :head-p 50.0 :torso 150.0 :tm 1000)
+        (reset-move-pose :head-p 50.0 :torso 200.0 :tm 1000);; (reset-move-pose :head-p 50.0 :torso 150.0 :tm 1000)
         (until adjust-suc-flag
-               (reset-move-pose :head-p 50.0 :torso 150.0 :tm 1000)
+               (reset-move-pose :head-p 50.0 :torso 200.0 :tm 1000)
                (format t "pr2 reset-pose ~%")
                (setq adjust-suc-flag (move-with-adjust :move-spot :counter :use-k4a use-k4a :rec-num 3))
                )
@@ -374,12 +374,11 @@
           (:counter
            (setq spot-name "counter")
            (setq speak-name "カウンター")
-           (setq trans-flag t)
            (setq detecion-topic "/point_pose_counter/ObjectDetection")
            (if use-k4a
                (setq idealcds ;; for k4a
-                     (make-coords :pos (float-vector 1005.771 485.175 864.579)
-                                  :rpy (float-vector -3.128 0.017 -0.005)))
+                     (make-coords :pos (float-vector 985.366 496.913 872.82);; 1005.771 485.175 864.579
+                                  :rpy (float-vector -3.101 0.022 0.003)));; -3.128 0.017 -0.005
              (setq idealcds ;; for kinect ;; todo
                    (make-coords :pos (float-vector 1031.396 137.734 1282.394)
                                 :rpy (float-vector 0.258 1.499 -2.909)))
@@ -400,7 +399,8 @@
             ;; (setq cds (make-coords))
             ;; (send cds :move-to trans :local)
             ;; (send cds :move-to (ros::tf-pose->coords (send (car (send pp_msg :objects)) :pose)) :local)
-            (setq cds (k4a-check-detection detecion-topic :rec-num rec-num :use-out-filter t :filter-thre 50))
+            ;; (setq cds (k4a-check-detection detecion-topic :rec-num rec-num :use-out-filter t :filter-thre 50))
+            (setq cds (k4a-check-detection detecion-topic :rec-num rec-num :use-out-filter nil))
             )
         (setq cds (check-detection :type spot-name :speak-name speak-name
                                    :detection-topic detecion-topic

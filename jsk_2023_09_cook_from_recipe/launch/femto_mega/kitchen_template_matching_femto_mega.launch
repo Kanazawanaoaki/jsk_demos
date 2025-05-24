@@ -73,7 +73,7 @@
   <!-- template_filename: $(find jsk_2023_09_cook_from_recipe)/image/20250513_counter_mega.jpg -->
   <group ns="point_pose_counter">
     <node name="sink_sift" pkg="imagesift" type="imagesift"
-          launch-prefix="nice -n +10" output="screen">
+          launch-prefix="nice -n +10" output="screen" clear_params="true">
       <remap from="image" to="$(arg input_image)" />
       <remap from="camera_info" to="$(arg input_camera_info)"/>
     </node>
@@ -83,6 +83,9 @@
         window_name: counter_detector
         object_width: 0.297
         object_height: 0.210
+        error_threshold: 1000
+        reprojection_threshold: 2.0
+        distanceratio_threshold: 0.8
       </rosparam>
     </node>
   </group>
