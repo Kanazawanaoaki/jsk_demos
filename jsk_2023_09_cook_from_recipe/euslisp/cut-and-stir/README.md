@@ -483,7 +483,7 @@ roscd tracking_ros_utils/../tracking_ros ## ~/ros/known_object_ws
 ./run_docker -host pr1040 -launch deva.launch input_image:=/femto_mega_remote/color/image_raw model_type:=vit_t device:=cuda:0
 ```
 
-### 手元(P1 Gen 4)で立ち上げる
+### 手元(x13)で立ち上げる
 ```bash
 ## roslaunch jsk_2023_09_cook_from_recipe kitchen_template_matching_femto_mega.launch ## キッチンでのテンプレートマッチングを使うなど
 roslaunch jsk_2023_09_cook_from_recipe view_rviz_cook.launch rviz_name:=view_rviz_cook_mega
@@ -492,6 +492,18 @@ roslaunch jsk_2023_09_cook_from_recipe view_rviz_cook.launch rviz_name:=view_rvi
 roslaunch jsk_2023_09_cook_from_recipe view_rviz_cook.launch  rviz_name:=dino_gen4_vis ## dinoのチェック
 roslaunch jsk_2023_09_cook_from_recipe view_tracking_with_fp.launch
 roslaunch jsk_2023_09_cook_from_recipe pot-and-pan_rviz_gen4.launch ## if you use P1 Gen4 見学用のデモの話
+```
+
+### 移動のパラメータの変更
+変更する
+```bash
+## rlwrap roseus move-utils.l
+(change-move-params)
+```
+デフォルトに戻す
+```bash
+(set-default-move-params)
+(show-current-move-params)
 ```
 
 ### 手首にカメラをつかっていく
