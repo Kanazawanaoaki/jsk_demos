@@ -147,13 +147,15 @@ python run_custom.py --mode global_refine --video_dir /mnt/source_datas/[dataset
 python run_custom.py --mode draw_pose --out_folder /mnt/bundlesdf/bundlesdf_[dataset_name]
 ```
 
+### Utils
+`jsk_2023_09_cook_from_recipe/scripts/for-cut`にutilのプログラムが存在する．
 
-pose_visを動画にする
+pose_visを動画にする．
 ```bash
 python png_files2video.py /media/almagest/73B2/kanazawa/datas/milk_data/bundlesdf/bundlesdf_milk_data_20250114_green_bowl/pose_vis -o bundlesdf_milk_data_20250114_green_bowl_pose_vis.mp4
 ```
 
-作成したメッシュの原点を変更する
+作成したメッシュの原点を変更する．
 ```bash
 python transform_mesh_orig.py [input_mesh path]
 ```
