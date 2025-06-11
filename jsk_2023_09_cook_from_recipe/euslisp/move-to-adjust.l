@@ -274,7 +274,8 @@
         (until adjust-suc-flag
                (reset-move-pose :head-p 50.0 :torso 200.0 :tm 1000)
                (format t "pr2 reset-pose ~%")
-               (setq adjust-suc-flag (move-with-adjust :move-spot :counter :use-k4a use-k4a :rec-num 3))
+               ;; (setq adjust-suc-flag (move-with-adjust :move-spot :counter :use-k4a use-k4a :rec-num 3))
+               (setq adjust-suc-flag (move-with-adjust :move-spot :counter :use-k4a use-k4a :rec-num 1))
                )
         ))
      )
