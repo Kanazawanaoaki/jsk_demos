@@ -918,7 +918,7 @@
     (send *viewer* :draw-objects)
     ))
 
-(defun grasp-rec-object (&key (object-name "knife") (use-model "fp") (change-rec t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm) (is-grasp t) (action-mode :pick-up) (use-calib-offset nil) (wait-after-grasp nil) (wait-before-grasp nil))
+(defun grasp-rec-object (&key (object-name "knife") (use-model "fp") (spot "stove") (change-rec t) (multi-rec nil) (grasp-gain 0.01) (arm :rarm) (is-grasp t) (action-mode :pick-up) (use-calib-offset nil) (wait-after-grasp nil) (wait-before-grasp nil))
   (let ((pre-set-avs (list))
         (pre-set-val (float-vector 0 0 0))
         )
@@ -1265,7 +1265,7 @@
      ((and (string= object-name "egg opener") (equal arm :rarm)) ;; egg opener
       (cond
        ((equal use-model "fp");; if use FoundationPose
-        (setq object-offset (make-coords :pos #f(14.524 -1.933 29.937) :rpy #f(0.013 0.805 -0.08))) ;; 20250611 ;; TODO
+        (setq object-offset (make-coords :pos #f(14.524 -1.933 29.937) :rpy #f(0.013 0.805 -0.08))) ;; 20250611
         )
        ((equal use-model "deva");; if use deva
         (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
@@ -1321,9 +1321,20 @@
       (setq fix-rot t)
       (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
       )
-     ((and (string= object-name "egg") (equal arm :larm))
+     ((and (string= object-name "egg") (equal arm :larm) (string= spot "kitchen"))
       (setq object-offset (make-coords :pos #f(-16.863 2.244 2.165) :rpy #f(1.244 1.515 -1.962))) ;; for only deva
       (setq pre-set-avs (list #f(46.0802 4.45794 62.0517 -76.0447 24.8164 -67.3512 60.6811)))
+      (setq pre-set-val #f(-80 0 0))
+      (setq fix-rot t)
+      (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+      (setq grasp-gain 0.007) ;;tmp
+      )
+     ((and (string= object-name "egg") (equal arm :larm) (string= spot "counter"))
+      (setq object-offset (make-coords :pos #f(-16.863 2.244 2.165) :rpy #f(1.244 1.515 -1.962))) ;; for only deva
+      (setq pre-set-avs (list #f(71.3839 55.86 90.509 -121.542 -221.823 -31.8871 370.37)
+                              #f(69.5177 10.1531 65.7727 -121.259 -337.106 -52.2361 325.722)
+                              #f(51.785 18.9729 44.1366 -106.419 -315.656 -64.3521 392.927)
+                              ))
       (setq pre-set-val #f(-80 0 0))
       (setq fix-rot t)
       (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")

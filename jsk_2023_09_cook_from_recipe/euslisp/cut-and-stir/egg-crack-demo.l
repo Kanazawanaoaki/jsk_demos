@@ -13,14 +13,18 @@
 ;; global variables
 (setq *use-english* nil)
 
-
-(defun prepare-egg-crack (&key )
+(defun egg-crack-init ()
   (reset-view-list)
   (init-pr2)
-  (pr2-cook-init :spot "stove" :type :butter-sunny-side-up)
 
-  (receive-and-set-gray-bowl :spot "stove")
-  (receive-and-set-egg-opener)
+  (pr2-cook-init :spot "counter" :type :egg)
+  )
+
+(defun prepare-egg-crack (&key )
+  (egg-crack-init)
+
+  (receive-and-set-gray-bowl :spot "counter")
+  (receive-and-set-egg-opener :spot "counter")
 
   ;; (place-objects-on-table :object-name "ボウル0" :arm :rarm :spot-name "stove" :set-flag t) ;; small-bowl
   ;; (place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name "stove" :set-flag t) ;; bowl
@@ -132,7 +136,7 @@
 (defun egg-crack-larm-grasp (&key (use-rec t))
   (if use-rec
       (progn
-        (grasp-rec-object :object-name "egg" :arm :larm :use-model "deva" :use-calib-offset nil :grasp-gain 0.007)
+        (grasp-rec-object :object-name "egg" :arm :larm :spot "counter" :use-model "deva" :use-calib-offset nil :grasp-gain 0.007);; TODO :holdを使った方が良いのか?
         )
     (progn
       (pr2-arm-up :num 100 :arm :larm)
@@ -409,7 +413,7 @@
 
 
 ;; use  egg-cracker
-(defun now-egg-crack-all (&key (use-rec t) (egg-rec nil))
+(defun now-egg-crack-all (&key (use-rec t) (egg-rec nil)) ;; use this one !!
   ;; 右腕でegg openerを掴む
   (grasp-rec-object :object-name "egg opener" :arm :rarm :use-model "fp" :use-calib-offset nil)
 
@@ -424,7 +428,9 @@
   (egg-crack-larm-grasp :use-rec egg-rec)
   (egg-crack-larm-carry)
 
+
   )
+
 
 (defun now-egg-crack-old (&key (human-help nil) (use-rec t) (egg-rec nil))
   (if *use-english*

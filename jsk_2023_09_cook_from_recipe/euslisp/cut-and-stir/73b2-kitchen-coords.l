@@ -121,6 +121,12 @@
     (setq *stove-kitchen-plane* (stove-kitchen-plane))
     ))
 
+(unless (boundp '*counter-plane*)
+  (progn
+    (load "package://jsk_2023_09_cook_from_recipe/euslisp/cut-and-stir/models/counter-plane.l")
+    (setq *counter-plane* (counter-plane))
+    ))
+
 (unless (boundp '*arrow*)
   (progn
     (load "models/arrow-object.l")
@@ -376,6 +382,28 @@
   )
 
 
+(defun 73b2-counter-coords-init (&key (type :egg))
+  ;; set global coords
+
+  (setq *counter-spot* (make-coords :pos (float-vector 2010 8800 30000) :rpy (float-vector 0 0 0)))
+
+  (setq *counter-plane-coords* (make-coords :pos #f(770 50 855)))
+  (setq *counter-plane-end-1* (make-coords :pos #f(1000 450 860)))
+  (setq *counter-plane-end-2* (make-coords :pos #f(1000 -350 860)))
+  (setq *counter-plane-end-3* (make-coords :pos #f(540 450 860)))
+  (setq *counter-plane-end-4* (make-coords :pos #f(540 -350 860)))
+
+  (case type
+        (:egg
+         (setq *gray-bowl-counter-coords* (make-coords :pos (float-vector 720.0 62.0 860.0) :rpy (float-vector 0 0 0)))
+
+         (setq *egg-opener-counter-coords* (make-coords :pos #f(683.992 -248.135 887.45) :rpy #f(2.793 1.522 -0.205)))
+         )
+        )
+  )
+
+
+
 ;; define set objects for dishes
 (defun 73b2-kitchen-obj-init (&key (type :curry) (kitchen-coords (make-coords)))
   ;; (send *kitchen-plane* :newcoords  (send *kitchen-plane-coords* :copy-worldcoords))
@@ -557,6 +585,19 @@
          )
         )
   )
+
+(defun 73b2-counter-obj-init (&key (type :curry) (counter-coords (make-coords)))
+  ;; (send *kitchen-plane* :newcoords  (send *kitchen-plane-coords* :copy-worldcoords))
+  (set-object *counter-plane* (calc-target-from-base-rel counter-coords (send *counter-plane-coords* :copy-worldcoords)))
+  (case type
+        (:egg
+         (set-object *gray-bowl* (calc-target-from-base-rel counter-coords (send *gray-bowl-counter-coords* :copy-worldcoords)))
+
+         ;; *egg-opener-counter-coords*
+         )
+        )
+  )
+
 
 
 (warn "please run (curry-kitchen-view :type :curry) or (curry-stove-view :type :curry)~%")
