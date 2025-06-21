@@ -1394,14 +1394,17 @@
    ))
 
 (defun pick-up-gray-bowl (&key (spot "kitchen"))
+  (set-tool-on-table :object-name "gray bowl" :arm :rarm :action-mode :pick-up :spot-name spot :use-cds-offset t)
   (cond
    ((equal spot "kitchen")
-    (set-tool-on-table :object-name "gray bowl" :arm :rarm :action-mode :pick-up :spot-name "kitchen" :use-cds-offset t)
     (assoc-object-to-arm *gray-bowl* (calc-target-from-base-rel *gray-bowl* (make-coords :pos #f(-101.233 0.0 53.999) :rpy #f(0.265 1.405 -1.282))) :arm :rarm)
     )
    ((equal spot "stove")
-    (set-tool-on-table :object-name "gray bowl" :arm :rarm :action-mode :pick-up :spot-name "stove" :use-cds-offset t)
     (assoc-object-to-arm *gray-bowl* (calc-target-from-base-rel *gray-bowl* (make-coords :pos #f(-89.819 12.851 40.629) :rpy #f(0.478 1.218 -0.929))) :arm :rarm)
+    )
+   ((equal spot "counter")
+    ;; (set-object *gray-bowl* (send *gray-bowl-counter-coords* :copy-worldcoords))
+    ;; TODO
     )
    ))
 

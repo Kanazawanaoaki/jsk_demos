@@ -1265,7 +1265,8 @@
      ((and (string= object-name "egg opener") (equal arm :rarm)) ;; egg opener
       (cond
        ((equal use-model "fp");; if use FoundationPose
-        (setq object-offset (make-coords :pos #f(14.524 -1.933 29.937) :rpy #f(0.013 0.805 -0.08))) ;; 20250611
+        ;; (setq object-offset (make-coords :pos #f(14.524 -1.933 29.937) :rpy #f(0.013 0.805 -0.08))) ;; 20250611
+        (setq object-offset (make-coords :pos #f(10.779 -5.43 30.86) :rpy #f(-0.004 0.796 -0.035))) ;; 20250621 calib
         )
        ((equal use-model "deva");; if use deva
         (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO

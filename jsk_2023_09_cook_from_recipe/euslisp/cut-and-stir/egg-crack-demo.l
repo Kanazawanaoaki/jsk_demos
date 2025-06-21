@@ -281,23 +281,18 @@
         (target-cds)
         (target-angle-vector))
 
-    (if (use-rec t)
+    (if use-rec
         (progn
           (setq object-rec-coord (fp-rec-object :object-name "gray bowl" :change-rec t :multi-rec nil :fix-rot t))
           (setq target-cds (calc-target-from-base-rel object-rec-coord (make-coords :pos #f(-84.953 -83.556 92.875) :rpy #f(0.922 0.88 -3.039))))
-          (setq target-angle-vector (send *pr2* :rarm :inverse-kinematics target-cds))
+          (send *pr2* :rarm :inverse-kinematics target-cds)
           )
       (progn
-        (setq target-angle-vector #f(-18.3307 24.1617 -46.6212 -83.9579 239.981 -86.2007 -1.15531))
+        (send *pr2* :rarm :angle-vector #f(-18.3307 24.1617 -46.6212 -83.9579 239.981 -86.2007 -1.15531))
         ))
 
   ;; 卵を割る右手の位置
-  (send *pr2* :rarm :angle-vector target-angle-vector)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
-  (send *ri* :wait-interpolation)
-
-  (send *pr2* :rarm :move-end-pos (float-vector 40 0 -60) :world)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
   (send *ri* :wait-interpolation)
 
   ;; 卵を割る
@@ -306,12 +301,8 @@
 
   (send *ri* :move-gripper :rarm 0.076)
 
-  (send *pr2* :rarm :move-end-pos (float-vector -40 0 60) :world)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  (send *ri* :wait-interpolation)
-
   (pr2-arm-up :num 50 :time 2000 :arm :rarm)
-  )
+  ))
 
 
 (defun egg-crack-return-to-left ()
@@ -461,7 +452,8 @@
   (send *ri* :move-gripper :rarm 0.076)
 
   ;; 卵セットの位置 右腕
-  (send *pr2* :rarm :angle-vector #f(-27.2041 20.6283 -48.1463 -89.9882 277.543 -88.0405 -29.2401))
+  ;; (send *pr2* :rarm :angle-vector #f(-27.2041 20.6283 -48.1463 -89.9882 277.543 -88.0405 -29.2401));; 20250611
+  (send *pr2* :rarm :angle-vector #f(-27.0663 21.5492 -47.7329 -93.6462 274.136 -93.0092 -27.5173));; 20250621 calib
   (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
   (send *ri* :wait-interpolation)
 
@@ -470,6 +462,10 @@
   (egg-crack-larm-carry)
 
   (egg-crack-rarm :use-rec use-rec)
+
+  (place-egg-opener :spot "counter")
+
+  ;; grasp gray bowl
   )
 
 
