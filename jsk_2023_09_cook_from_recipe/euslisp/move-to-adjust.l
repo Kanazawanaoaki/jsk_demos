@@ -1,7 +1,7 @@
 (unless (boundp '*obj*) (setq *obj* (make-sphere 100))) ;; dummy object
 (require :pr2-pose "package://jsk_demo_common/euslisp/pr2-pose.l")
 (require :pr2-speack "package://pr2eus/speak.l")
-(require :pr2-interface "package://pr2eus/pr2-interface.l")
+;; (require :pr2-interface "package://pr2eus/pr2-interface.l")
 (require :pr2-cook-utils "package://jsk_2023_09_cook_from_recipe/euslisp/pr2_cook_utils.l")
 (require :move-utils "package://jsk_2023_09_cook_from_recipe/euslisp/move-utils.l")
 
@@ -18,6 +18,7 @@
 (unless (boundp '*stove-offset-cds*) (setq *stove-offset-cds* (make-coords)))
 (unless (boundp '*kitchen-offset-cds*) (setq *kitchen-offset-cds* (make-coords)))
 (unless (boundp '*sink-offset-cds*) (setq *sink-offset-cds* (make-coords)))
+(unless (boundp '*counter-offset-cds*) (setq *counter-offset-cds* (make-coords)))
 
 (defun adjust-cds-with-spot (ik-target spot-name)
   (let (ik-target-adj)
@@ -30,6 +31,9 @@
       )
      ((string= spot-name "kitchen")
       (setq ik-target-adj (set-offset-cds ik-target *kitchen-offset-cds*))
+      )
+     ((string= spot-name "counter")
+      (setq ik-target-adj (set-offset-cds ik-target *counter-offset-cds*))
       )
      (t
       (format t "spot-name ~A is not defined !!!~%" spot-name)
@@ -44,7 +48,7 @@
         (file_path))
     (setq dir_path (ros::resolve-ros-path "package://jsk_2023_09_cook_from_recipe/datas/eus-spot-offset"))
     (setq file_path (format nil "~A/eus-spot-offset.l" dir_path))
-    (dump-loadable-structure file_path *stove-offset-cds* *kitchen-offset-cds* *sink-offset-cds*)
+    (dump-loadable-structure file_path *stove-offset-cds* *kitchen-offset-cds* *sink-offset-cds* *counter-offset-cds*)
     (format t "adj coords is saved in ~A ~%" file_path)
     ))
 
@@ -56,7 +60,8 @@
     (setq *stove-offset-cds* (make-coords))
     (setq *kitchen-offset-cds* (make-coords))
     (setq *sink-offset-cds* (make-coords))
-    (dump-loadable-structure file_path *stove-offset-cds* *kitchen-offset-cds* *sink-offset-cds*)
+    (setq *counter-offset-cds* (make-coords))
+    (dump-loadable-structure file_path *stove-offset-cds* *kitchen-offset-cds* *sink-offset-cds* *counter-offset-cds*)
     (format t "adj coords is saved in ~A ~%" file_path)
     ))
 
@@ -76,6 +81,7 @@
     (format t "*stove-offset-cds* : ~A ~%" *stove-offset-cds*)
     (format t "*kitchen-offset-cds* : ~A ~%" *kitchen-offset-cds*)
     (format t "*sink-offset-cds* : ~A ~%" *sink-offset-cds*)
+    (format t "*counter-offset-cds* : ~A ~%" *counter-offset-cds*)
     ;; original (setq *stove-offset-cds* '#s(coordinates plist nil rot #2f((1.0 0.0 0.0) (0.0 1.0 0.0) (0.0 0.0 1.0)) pos #f(0.0 0.0 0.0)))
     ))
 
@@ -452,6 +458,9 @@
               (:sink
                (setq *sink-offset-cds* (make-coords :pos (float-vector (elt (send diffcds :worldpos) 0) (elt (send diffcds :worldpos) 1) 0)
                                                     :rpy (float-vector (elt (car (rpy-angle (send diffcds :worldrot))) 0) 0 0)))
+              (:counter
+               (setq *counter-offset-cds* (make-coords :pos (float-vector (elt (send diffcds :worldpos) 0) (elt (send diffcds :worldpos) 1) 0)
+                                                       :rpy (float-vector (elt (car (rpy-angle (send diffcds :worldrot))) 0) 0 0)))
                )
               )
         (if (not (send *ri* :simulation-modep)) ;; real mode
