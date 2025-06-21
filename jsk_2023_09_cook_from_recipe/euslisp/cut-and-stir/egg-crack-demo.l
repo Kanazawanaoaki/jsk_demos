@@ -28,10 +28,6 @@
   (receive-and-set-gray-bowl :spot "counter")
   (receive-and-set-egg-opener :spot "counter")
 
-  ;; (place-objects-on-table :object-name "ボウル0" :arm :rarm :spot-name "stove" :set-flag t) ;; small-bowl
-  ;; (place-objects-on-table :object-name "ボウル1" :arm :rarm :spot-name "stove" :set-flag t) ;; bowl
-  ;; (set-pot-on-stove :object-name "フライパン") ;; frying-pan
-
   (reset-cook-manip-pose :torso-lift 325)
   )
 
@@ -281,19 +277,22 @@
 ;;   )
 
 (defun egg-crack-rarm (&key (use-rec t)) ;; TODO update
-  (let ((object-rec-coord))
+  (let ((object-rec-coord)
+        (target-cds)
+        (target-angle-vector))
+
     (if (use-rec t)
         (progn
           (setq object-rec-coord (fp-rec-object :object-name "gray bowl" :change-rec t :multi-rec nil :fix-rot t))
-          (setq target-cds (calc-target-from-base-rel object-rec-coord ));; TODO
-          (setq target-angle-vector (send ))
+          (setq target-cds (calc-target-from-base-rel object-rec-coord (make-coords :pos #f(-84.953 -83.556 92.875) :rpy #f(0.922 0.88 -3.039))))
+          (setq target-angle-vector (send *pr2* :rarm :inverse-kinematics target-cds))
           )
       (progn
-
+        (setq target-angle-vector #f(-18.3307 24.1617 -46.6212 -83.9579 239.981 -86.2007 -1.15531))
         ))
 
   ;; 卵を割る右手の位置
-  (send *pr2* :rarm :angle-vector #f(-36.4907 1.11455 -61.744 -29.561 -114.175 -83.8649 349.336));; 169.336
+  (send *pr2* :rarm :angle-vector target-angle-vector)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
   (send *ri* :wait-interpolation)
 
@@ -305,7 +304,7 @@
   (send *ri* :start-grasp :rarm :gain 1.0 :wait t)
   (unix::sleep 2)
 
-  (send *ri* :move-gripper :rarm 0.07)
+  (send *ri* :move-gripper :rarm 0.076)
 
   (send *pr2* :rarm :move-end-pos (float-vector -40 0 60) :world)
   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
@@ -454,7 +453,10 @@
 ;; use  egg-cracker
 (defun now-egg-crack-all (&key (use-rec t) (egg-rec nil)) ;; use this one !!
   ;; 右腕でegg openerを掴む
-  (grasp-rec-object :object-name "egg opener" :arm :rarm :use-model "fp" :use-calib-offset nil)
+  (if use-rec
+      (grasp-rec-object :object-name "egg opener" :arm :rarm :use-model "fp" :use-calib-offset nil)
+    (pick-up-egg-opener :spot "counter" :arm :rarm :use-cds-offset nil)
+    )
 
   (send *ri* :move-gripper :rarm 0.076)
 
