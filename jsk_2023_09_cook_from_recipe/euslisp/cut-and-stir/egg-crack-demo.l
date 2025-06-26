@@ -20,9 +20,18 @@
   (pr2-cook-init :spot "counter" :type :egg)
   )
 
-
 ;; egg cracker
-(defun egg-crack-larm-grasp (&key (use-rec t))
+(defun egg-crack-set-rarm ()
+  (send *ri* :move-gripper :rarm 0.076)
+
+  ;; 卵セットの位置 右腕
+  ;; (send *pr2* :rarm :angle-vector #f(-27.2041 20.6283 -48.1463 -89.9882 277.543 -88.0405 -29.2401));; 20250611
+  (send *pr2* :rarm :angle-vector #f(-27.0663 21.5492 -47.7329 -93.6462 274.136 -93.0092 -27.5173));; 20250621 calib
+  (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
+  (send *ri* :wait-interpolation)
+  )
+
+(defun egg-crack-set-larm-grasp (&key (use-rec t))
   (if use-rec
       (progn
         (grasp-rec-object :object-name "egg" :arm :larm :spot "counter" :use-model "deva" :use-calib-offset nil :grasp-gain 0.007);; TODO :holdを使った方が良いのか?
@@ -62,7 +71,7 @@
       ))
   )
 
-(defun egg-crack-larm-carry ()
+(defun egg-crack-set-larm-carry ()
   ;; 卵をセットする左腕の位置のセット
   (send *pr2* :larm :angle-vector #f(15.3939 -19.6022 69.071 -77.1977 -280.164 -114.3 385.567)) ;; #<cascaded-coords #X56254e5ebed8 :larm-end-coords  530.592 48.542 1199.673 / 0.496 1.477 -1.04>
   (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
@@ -144,22 +153,16 @@
     (pick-up-egg-opener :spot "counter" :arm :rarm :use-cds-offset nil)
     )
 
-  (send *ri* :move-gripper :rarm 0.076)
-
-  ;; 卵セットの位置 右腕
-  ;; (send *pr2* :rarm :angle-vector #f(-27.2041 20.6283 -48.1463 -89.9882 277.543 -88.0405 -29.2401));; 20250611
-  (send *pr2* :rarm :angle-vector #f(-27.0663 21.5492 -47.7329 -93.6462 274.136 -93.0092 -27.5173));; 20250621 calib
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
-  (send *ri* :wait-interpolation)
-
   ;; egg set
-  (egg-crack-larm-grasp :use-rec egg-rec)
-  (egg-crack-larm-carry)
+  (egg-crack-set-rarm)
+  (egg-crack-set-larm-grasp :use-rec egg-rec)
+  (egg-crack-set-larm-carry)
 
   (egg-crack-rarm :use-rec use-rec)
 
   (place-egg-opener :spot "counter")
 
   ;; grasp gray bowl
+  (grasp-rec-object :object-name "gray bowl" :arm :rarm :spot "counter" :use-model "fp" :use-calib-offset nil)
   )
 

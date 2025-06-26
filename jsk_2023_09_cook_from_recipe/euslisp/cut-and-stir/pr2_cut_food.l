@@ -1167,7 +1167,7 @@
             (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
             ))
       )
-     ((and (string= object-name "gray bowl") (equal arm :rarm)) ;; gray bowl ;; rarm
+     ((and (string= object-name "gray bowl") (equal arm :rarm) (equal spot "kitchen")) ;; gray bowl ;; rarm
       (cond
        ((equal use-model "fp");; if use FoundationPose
         ;; (setq object-offset (make-coords :pos #f(-93.914 36.645 -15.145) :rpy #f(0.478 1.218 -0.929)));; old Kinect
@@ -1218,6 +1218,26 @@
 
       ;; (setq pre-set-val #f(-100 0 100))
       (setq pre-set-val #f(-100 0 100)) ;; for upper
+      (setq fix-rot t)
+      (if (equal use-model "deva")
+          (progn
+            ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+            (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
+            ))
+      )
+     ((and (string= object-name "gray bowl") (equal arm :rarm) (equal spot "counter")) ;; gray bowl ;; rarm
+      (cond
+       ((equal use-model "fp");; if use FoundationPose
+        (setq object-offset (make-coords :pos #f(-128.006 5.568 7.022) :rpy #f(0.265 1.405 -1.282))) ;; mega 20250224 calib
+        )
+       ((equal use-model "deva");; if use deva
+        (setq object-offset (make-coords :pos #f(-4.353 147.388 -10.049) :rpy #f(-1.143 1.405 -1.282))) ;; TODO
+        )
+       )
+
+      (setq pre-set-avs (list #f(-49.7343 -1.72576 -48.4495 -101.568 287.125 -114.592 54.2763))) ;; for grary bowl, counter
+
+      (setq pre-set-val #f(-147 -23 7)) ;; for upper #f(0 0 150) :world
       (setq fix-rot t)
       (if (equal use-model "deva")
           (progn

@@ -105,11 +105,10 @@
       ;; calc from defined coords
       (send *arrow* :newcoords (calc-target-from-base-rel *gray-bowl-stove-coords* (make-coords :pos #f(-89.819 12.851 40.629) :rpy #f(0.478 1.218 -0.929))))
       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send *gray-bowl-stove-coords* :copy-worldcoords) (send *arrow* :copy-worldcoords))
-      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
+;; for grary bowl, counter      (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
       )
 
-     ((and (string= object-name "gray bowl") (string= spot-name "counter") (equal arm :rarm));; TODO
-      ;; (setq pre-set-avs (list #f(-39.4916 -5.60379 -51.4586 -70.0476 -75.5379 -114.544 397.394)))
+     ((and (string= object-name "gray bowl") (string= spot-name "counter") (equal arm :rarm))
       (setq pre-set-avs (list #f(-49.7343 -1.72576 -48.4495 -101.568 287.125 -114.592 54.2763)))
       (setq pre-set-val #f(-147 -23 7)) ;; for upper #f(0 0 150) :world
 
