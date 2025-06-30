@@ -399,6 +399,11 @@
 
          (setq *egg-opener-counter-coords* (make-coords :pos #f(683.992 -248.135 887.45) :rpy #f(2.793 1.522 -0.205)))
          )
+        (:sunny-side-up
+         (setq *gray-bowl-counter-coords* (make-coords :pos (float-vector 720.0 62.0 860.0) :rpy (float-vector 0 0 0)))
+
+         (setq *egg-opener-counter-coords* (make-coords :pos #f(683.992 -248.135 887.45) :rpy #f(2.793 1.522 -0.205)))
+         )
         )
   )
 
@@ -591,6 +596,11 @@
   (set-object *counter-plane* (calc-target-from-base-rel counter-coords (send *counter-plane-coords* :copy-worldcoords)))
   (case type
         (:egg
+         (set-object *gray-bowl* (calc-target-from-base-rel counter-coords (send *gray-bowl-counter-coords* :copy-worldcoords)))
+
+         ;; *egg-opener-counter-coords*
+         )
+        (:sunny-side-up
          (set-object *gray-bowl* (calc-target-from-base-rel counter-coords (send *gray-bowl-counter-coords* :copy-worldcoords)))
 
          ;; *egg-opener-counter-coords*
