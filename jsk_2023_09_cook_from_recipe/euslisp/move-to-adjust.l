@@ -458,6 +458,7 @@
               (:sink
                (setq *sink-offset-cds* (make-coords :pos (float-vector (elt (send diffcds :worldpos) 0) (elt (send diffcds :worldpos) 1) 0)
                                                     :rpy (float-vector (elt (car (rpy-angle (send diffcds :worldrot))) 0) 0 0)))
+               )
               (:counter
                (setq *counter-offset-cds* (make-coords :pos (float-vector (elt (send diffcds :worldpos) 0) (elt (send diffcds :worldpos) 1) 0)
                                                        :rpy (float-vector (elt (car (rpy-angle (send diffcds :worldrot))) 0) 0 0)))

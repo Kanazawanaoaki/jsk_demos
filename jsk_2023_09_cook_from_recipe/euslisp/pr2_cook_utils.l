@@ -494,6 +494,7 @@
         (larm-av))
     (setq rarm-av #f(-75.0 50.0 -110.0 -110.0 200.0 -10.0 -10.0))
     (setq larm-av #f(75.0 50.0 110.0 -110.0 -200.0 -10.0 350.0))
+    ;; (setq larm-av #f(75.0 50.0 110.0 -110.0 -200.0 -10.0 -10.0));; これだとめっちゃ回転するfrom reset-pose
     (case arm
           (:arms
            (send *robot* :rarm :angle-vector rarm-av)
