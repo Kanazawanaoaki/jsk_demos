@@ -331,6 +331,8 @@ Visualization Manager:
           Value: false
         narrow_stereo_r_stereo_camera_optical_frame:
           Value: false
+        object_center:
+          Value: true
         odom_combined:
           Value: false
         projector_wg6802418_child_frame:
@@ -387,6 +389,8 @@ Visualization Manager:
           Value: false
         sensor_mount_link:
           Value: false
+        target_cds_frame:
+          Value: true
         torso_lift_link:
           Value: false
         torso_lift_motor_screw_link:
@@ -465,7 +469,8 @@ Visualization Manager:
                                         {}
                                     femto_mega_color_frame:
                                       femto_mega_color_optical_frame:
-                                        {}
+                                        object_center:
+                                          {}
                                     femto_mega_depth_optical_frame:
                                       {}
                                     femto_mega_gyro_frame:
@@ -582,6 +587,8 @@ Visualization Manager:
                           {}
                       torso_lift_motor_screw_link:
                         {}
+                    target_cds_frame:
+                      {}
             eng2/8f:
               {}
       Update Interval: 0
@@ -1145,7 +1152,7 @@ Visualization Manager:
       Marker Topic: /bbox_marker_object
       Name: Marker
       Namespaces:
-        {}
+        object_bbox: true
       Queue Size: 100
       Value: true
     - Class: rviz/Image
@@ -1272,6 +1279,45 @@ Visualization Manager:
       top: 10
       transport hint: compressed
       width: 128
+    - Class: jsk_rviz_plugin/OverlayImage
+      Enabled: true
+      Name: OverlayCounterDetection
+      Topic: /point_pose_counter/counter_detector/debug_image
+      Value: true
+      alpha: 0.800000011920929
+      height: 128
+      keep aspect ratio: false
+      left: 148
+      overwrite alpha value: false
+      top: 10
+      transport hint: compressed
+      width: 128
+    - Class: jsk_rviz_plugin/OverlayImage
+      Enabled: true
+      Name: OverlayKitchenDetection
+      Topic: /point_pose_kitchen/kitchen_detector/debug_image
+      Value: true
+      alpha: 0.800000011920929
+      height: 128
+      keep aspect ratio: false
+      left: 148
+      overwrite alpha value: false
+      top: 10
+      transport hint: compressed
+      width: 128
+    - Class: jsk_rviz_plugin/OverlayImage
+      Enabled: true
+      Name: OverlaySinkDetection
+      Topic: /point_pose_sink/sink_detector/debug_image
+      Value: true
+      alpha: 0.800000011920929
+      height: 128
+      keep aspect ratio: false
+      left: 148
+      overwrite alpha value: false
+      top: 10
+      transport hint: compressed
+      width: 128
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -1316,9 +1362,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.249796748161316
+      Pitch: 1.3047966957092285
       Target Frame: <Fixed Frame>
-      Yaw: 3.1290314197540283
+      Yaw: 3.2990310192108154
     Saved: ~
 Window Geometry:
   Displays:

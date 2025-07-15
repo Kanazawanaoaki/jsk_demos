@@ -515,8 +515,8 @@
     (send *ri* :wait-interpolation)
     ))
 
-(defun reset-cook-manip-counter-pose (&key (time 5000) (arm :arms) (head-p 55.0) (head-y 0.0) (torso-lift 300))
-  (reset-cook-manip-pose :head-p head-p) ;; todo rest args
+(defun reset-cook-manip-counter-pose (&key (time 5000) (arm :arms) (head-p 55.0) (head-y 0.0) (torso-lift 300));; TODO update 
+  (reset-cook-manip-pose :head-p head-p) ;; todo rest args 
   )
 
 (defun potentio-vector (&key (head-p 50.0) (head-y 0.0))

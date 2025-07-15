@@ -913,7 +913,8 @@
      )
     (when reset-pose-end
       ;; (reset-manip-pose :arm arm)
-      (reset-cook-pose :arm arm) ;; TODO add args?
+      ;; (reset-cook-pose :arm arm) ;; TODO add args?
+      (reset-cook-manip-pose :arm arm)
       )
     (send *viewer* :draw-objects)
     ))
@@ -1225,6 +1226,27 @@
             (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
             ))
       )
+     ((and (string= object-name "gray bowl") (equal arm :rarm) (equal spot "stove")) ;; gray bowl ;; rarm
+      (cond
+       ((equal use-model "fp");; if use FoundationPose
+        (setq object-offset (make-coords :pos #f(-116.616 45.628 -6.626) :rpy #f(0.478 1.218 -0.929)));; mega 20250224 calib
+        )
+       ((equal use-model "deva");; if use deva
+        (setq object-offset (make-coords :pos #f(-4.353 147.388 -10.049) :rpy #f(-1.143 1.405 -1.282))) ;; for with table and upper and rotate (upper is in outside)
+        )
+       )
+
+      (setq pre-set-avs (list #f(-49.7343 -1.72576 -48.4495 -101.568 287.125 -114.592 54.2763))) ;; for grary bowl, reset-cook-manip-pose
+
+      (setq pre-set-val #f(-147 -23 7)) ;; for upper #f(0 0 150) :world
+      (setq fix-rot t)
+      (if (equal use-model "deva")
+          (progn
+            ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
+            (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
+            ))
+      )
+
      ((and (string= object-name "gray bowl") (equal arm :rarm) (equal spot "counter")) ;; gray bowl ;; rarm
       (cond
        ((equal use-model "fp");; if use FoundationPose

@@ -25,10 +25,10 @@
     (reset-cook-manip-pose :torso-lift 325)
 
     ;; gray bowl set
-    (receive-and-set-gray-bowl :spot "counter")
+    (receive-and-set-gray-bowl :spot "counter" :use-cds-offset t)
 
     ;; set egg opener
-    (receive-and-set-egg-opener :spot "counter")
+    (receive-and-set-egg-opener :spot "counter" :use-cds-offset t)
 
     (reset-cook-manip-pose :torso-lift 325)
     )
@@ -79,7 +79,7 @@
   )
 
 (defun 05-place-egg-opener ()
-  (place-egg-opener :spot "counter")
+  (place-egg-opener :spot "counter" :use-cds-offset nil)
   )
 
 (defun 06-hold-bowl ()
@@ -93,8 +93,15 @@
   ;; TODO Add to primitive
 
   ;; TODO pose for move ()
+  (reset-move-pose)
 
   (move-to-spot "stove")
+
+  ;; pose after move
+  (reset-move-pose :head-p 50 :torso 300)
+
+  ;; place gray bowl ;; TODO divide?
+  (place-gray-bowl :spot "stove" :use-cds-offset t)
   )
 
 (defun 08-hold-oil ()
@@ -108,7 +115,7 @@
   ;; TODO update
   ;; (pour-object-to-pan :from-object "あぶら" :to-object "フライパン" :arm :larm :spot-name "stove")
   ;; フライパンの認識を入れて，その座標を使って動くようにする. moveitを入れるか？
-
+  (pour-object-to-pan :from-object "あぶら" :to-object "フライパン" :arm :larm :spot-name "stove" :use-rec t)
   )
 
 (defun 10-place-oil ()
@@ -120,27 +127,30 @@
   )
 
 (defun 12-heat-oil ()
-
+  ;; wait
   )
 
 (defun 13-hold-bowl ()
-
+  (if *use-rec*
+      (grasp-rec-object :object-name "gray bowl" :arm :rarm :spot "stove" :use-model "fp" :use-calib-offset nil)
+    (pick-up-gray-bowl :spot "stove")
+    )
   )
 
 (defun 14-transfer-egg ()
-
+  ;; TODO update
   )
 
 (defun 15-place-bowl ()
-
+  (place-gray-bowl :spot "stove")
   )
 
 (defun 16-cook-egg ()
-
+  ;; TODO cook
   )
 
 (defun 17-turn-off-stove ()
-
+  (ih-stove-action :ih-action :stop :with-hand-rec t :use-cds-offset nil)
   )
 
 ;; (heat salad-oil frying-pan thirty-seconds)

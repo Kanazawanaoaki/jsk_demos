@@ -113,7 +113,7 @@
 
   ;; (reset-cook-pose :arm :larm)
   ;; (reset-cook-manip-pose :torso-lift 325)
-  (reset-cook-manip-pose :arm :larm :torso-lift 325)
+  (reset-cook-manip-pose :arm :larm)
   )
 
 
