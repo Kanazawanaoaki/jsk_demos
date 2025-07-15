@@ -119,5 +119,33 @@
   (ih-stove-action :ih-action :start :with-hand-rec t :use-cds-offset nil)
   )
 
-(defun 12-heat-
+(defun 12-heat-oil ()
 
+  )
+
+(defun 13-hold-bowl ()
+
+  )
+
+(defun 14-transfer-egg ()
+
+  )
+
+(defun 15-place-bowl ()
+
+  )
+
+(defun 16-cook-egg ()
+
+  )
+
+(defun 17-turn-off-stove ()
+
+  )
+
+;; (heat salad-oil frying-pan thirty-seconds)
+;; (hold bowl arm2 stove)
+;; (transfer egg bowl frying-pan arm2 stove)
+;; (place bowl arm2 stove)
+;; (cook egg cooked-egg)
+;; (turn-off-stove middle frying-pan arm1)
