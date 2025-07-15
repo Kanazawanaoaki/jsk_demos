@@ -339,11 +339,14 @@
 ;; pour
 ;; add-oil とかはいい感じなので，これもうまく利用したさがある．
 
-(defun pour-object-to-pan (&key (from-object "ボウル1") (to-object "フライパン") (arm :rarm) (spot-name "stove") (use-rec nil))
+(defun pour-object-to-pan (&key (from-object "ボウル1") (to-object "フライパン") (arm :rarm) (spot-name "stove") (use-rec nil) (replay-ec nil))
   (let ((pre-set-avs (list))
-        cook-from-now-file-name
-        ik-target-coords
-        pre-set-val
+        (cook-from-now-file-name)
+        (use-larm)
+        (ik-target-coords)
+        (pre-set-val)
+        (trans-coords (make-coords))
+        (rec-coords)
         )
     (cond
      ((and (string= from-object "gray bowl") (string= to-object "frying pan") (string= spot-name "stove") (equal arm :rarm)) ;; egg
@@ -360,9 +363,14 @@
       ;; (setq cook-from-now-file-name "../av-files/cook-from-now-pour-gray-bowl-to-pan-20240922-data-01.l");; old calib
       (setq cook-from-now-file-name "../av-files/cook-from-now-pour-gray-bowl-from-pan-20250217-data-01.l")
       (send *ri* :start-grasp :rarm :gain 1.0 :wait t)
+
+      (when use-rec
+        (setq rec-coords (fp-rec-object :object-name "frying pan"))
+        (setq trans-coords (send (make-coords :pos #f(821.649 -88.934 868.308) :rpy #f(0.28 -1.52 2.858)) :transformation (send rec-coords :copy-worldcoords) :world))
+        )
       )
      ((and (string= from-object "green bowl") (string= to-object "frying pan") (string= spot-name "stove") (equal arm :rarm)) ;; butter
-     ;; ((and (string= from-object "ボウル0") (string= to-object "フライパン") (string= spot-name "stove") (equal arm :rarm)) ;; butter
+      ;; ((and (string= from-object "ボウル0") (string= to-object "フライパン") (string= spot-name "stove") (equal arm :rarm)) ;; butter
       ;; (setq pre-set-avs (list #f(-28.2146 0.07681 -56.1994 -95.3798 -127.421 -97.0024 137.794)
       ;;                         #f(-21.4171 10.8467 -51.9823 -76.3682 -134.766 -103.742 117.398)))
       ;; (setq cook-from-now-file-name "av-files/cook-from-now-pour-bowl0-to-pan-20231212-data.l")
@@ -375,104 +383,105 @@
       (send *ri* :start-grasp :rarm :gain 1.0 :wait t)
       )
      ((and (string= from-object "あぶら") (string= to-object "フライパン") (string= spot-name "stove") (equal arm :larm)) ;; larmだったが結局両腕使うので,しかりlarmに最初におくるので
-
-      ;; TODO Add rec
-      (if use-rec
-          (progn
-            (setq rec-coords (fp-rec-object :object-name "frying pan"))
-
-            ;; TODO calc, 右と左が両方ありそうなど
-            (setq ik-target-coords (make-coords :pos #f(840.502 -79.349 1057.366) :rpy #f(-0.795 -0.074 0.012)))
+      (let ((rarm-ik-target-coords)
+            (larm-ik-target-coords)
             )
-        (progn
-          (setq ik-target-coords (make-coords :pos #f(840.502 -79.349 1057.366) :rpy #f(-0.795 -0.074 0.012)))
+        (if use-rec
+            (progn
+              (setq rec-coords (fp-rec-object :object-name "frying pan"))
+
+              (setq rarm-ik-target-coords (calc-target-from-base-rel rec-coords (make-coords :pos #f(238.267 -18.041 10.524) :rpy #f(-1.523 -0.735 1.51))))
+              (setq larm-ik-target-coords (calc-target-from-base-rel rec-coords (make-coords :pos #f(190.14 -11.819 9.407) :rpy #f(1.406 -0.766 1.715))))
+              )
+          (progn
+            (setq rarm-ik-target-coords (make-coords :pos #f(843.708 -74.07 1105.512) :rpy #f(0.836 -0.021 -3.125)))
+            (setq larm-ik-target-coords (make-coords :pos #f(840.502 -79.349 1057.366) :rpy #f(-0.795 -0.074 0.012)))
+            )
           )
-        )
-      (setq pre-set-val #f(-100 0 0))
+        (setq pre-set-val #f(-100 0 0))
 
-      ;; new version
-      ;; 待機姿勢
-      (setq pre-set-avs (list #f(48.8499 -11.5118 87.4519 -117.546 -193.632 -67.0977 267.029))) ;; (make-coords :pos #f(570.089 255.41 1143.02) :rpy #f(-0.025 0.057 3.124)) from pr2_cut_food.l
-      (send *pr2* :larm :angle-vector (elt (reverse pre-set-avs) 0))
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-      (send *ri* :wait-interpolation)
+        ;; new version
+        ;; 待機姿勢
+        (setq pre-set-avs (list #f(48.8499 -11.5118 87.4519 -117.546 -193.632 -67.0977 267.029))) ;; (make-coords :pos #f(570.089 255.41 1143.02) :rpy #f(-0.025 0.057 3.124)) from pr2_cut_food.l
+        (send *pr2* :larm :angle-vector (elt (reverse pre-set-avs) 0))
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+        (send *ri* :wait-interpolation)
 
-      ;; 左腕をフライパン上に
-      (send *pr2* :larm :angle-vector #f(14.0829 -1.877 91.103 -61.869 -183.344 -53.6661 269.742)) ;; (make-coords :pos #f(829.547 90.424 1100.026) :rpy #f(0.103 0.017 3.126))
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-      (send *ri* :wait-interpolation)
+        ;; 左腕をフライパン上に
+        (send *pr2* :larm :angle-vector #f(14.0829 -1.877 91.103 -61.869 -183.344 -53.6661 269.742)) ;; (make-coords :pos #f(829.547 90.424 1100.026) :rpy #f(0.103 0.017 3.126))
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+        (send *ri* :wait-interpolation)
 
-      (send ik-target-coords :translate #f(0 0 100) :world)
-      (send *pr2* :larm :inverse-kinematics ik-target-coords)
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-      (send *ri* :wait-interpolation)
+        (setq ik-target-coords (send larm-ik-target-coords :copy-worldcoords))
+        (send ik-target-coords :translate #f(0 0 100) :world)
+        (send *pr2* :larm :inverse-kinematics ik-target-coords)
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+        (send *ri* :wait-interpolation)
 
-      (send ik-target-coords :translate #f(0 0 -100) :world)
-      (send *pr2* :larm :inverse-kinematics ik-target-coords)
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-      (send *ri* :wait-interpolation)
+        (send ik-target-coords :translate #f(0 0 -100) :world)
+        (send *pr2* :larm :inverse-kinematics ik-target-coords)
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+        (send *ri* :wait-interpolation)
 
-      ;; 右腕をフライパンの上で添える
-      (send *ri* :stop-grasp :rarm :wait t)
-      ;; (send *pr2* :rarm :angle-vector #f(-26.6328 26.1388 -27.7269 -82.8879 -75.6009 -75.0069 326.128))
-      (send *pr2* :rarm :angle-vector #f(-41.1879 -20.1804 -109.118 -80.322 391.737 -46.5052 -100.945))
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-      (send *ri* :wait-interpolation)
+        ;; 右腕をフライパンの上で添える
+        (send *ri* :stop-grasp :rarm :wait t)
+        ;; (send *pr2* :rarm :angle-vector #f(-26.6328 26.1388 -27.7269 -82.8879 -75.6009 -75.0069 326.128))
+        (send *pr2* :rarm :angle-vector #f(-41.1879 -20.1804 -109.118 -80.322 391.737 -46.5052 -100.945))
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+        (send *ri* :wait-interpolation)
 
-      ;; TODO Update
-      (setq ik-target-coords (make-coords :pos #f(843.708 -74.07 1105.512) :rpy #f(0.836 -0.021 -3.125)))
-      (setq pre-set-val #f(-100 0 0))
-      (send ik-target-coords :translate pre-set-val :local)
-      (send *pr2* :rarm :inverse-kinematics ik-target-coords)
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-      (send *ri* :wait-interpolation)
+        (setq ik-target-coords (send rarm-ik-target-coords :copy-worldcoords))
+        (setq pre-set-val #f(-100 0 0))
+        (send ik-target-coords :translate pre-set-val :local)
+        (send *pr2* :rarm :inverse-kinematics ik-target-coords)
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+        (send *ri* :wait-interpolation)
 
-      (send ik-target-coords :translate (scale -1 pre-set-val) :local)
-      (send *pr2* :rarm :inverse-kinematics ik-target-coords)
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-      (send *ri* :wait-interpolation)
+        (send ik-target-coords :translate (scale -1 pre-set-val) :local)
+        (send *pr2* :rarm :inverse-kinematics ik-target-coords)
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+        (send *ri* :wait-interpolation)
 
-      (send *ri* :start-grasp :rarm :wait t)
+        (send *ri* :start-grasp :rarm :wait t)
 
-      ;; あぶらを出す
-      (send *ri* :start-grasp :larm :wait t :gain 1.0)
-      (unix:sleep 2)
-      (send *ri* :stop-grasp :larm :wait t)
-      (unix:sleep 2)
-      (send *ri* :start-grasp :larm :wait t)
+        ;; あぶらを出す
+        (send *ri* :start-grasp :larm :wait t :gain 1.0)
+        (unix:sleep 2)
+        (send *ri* :stop-grasp :larm :wait t)
+        (unix:sleep 2)
+        (send *ri* :start-grasp :larm :wait t)
 
-      ;; 右腕を離す？
-      (send *ri* :stop-grasp :rarm :wait t)
+        ;; 右腕を離す？
+        (send *ri* :stop-grasp :rarm :wait t)
 
-      ;; TODO update with rec
-      (setq ik-target-coords (make-coords :pos #f(843.708 -74.07 1105.512) :rpy #f(0.836 -0.021 -3.125)))
-      (setq pre-set-val #f(-100 0 0))
-      (send ik-target-coords :translate pre-set-val :local)
-      (send *pr2* :rarm :inverse-kinematics ik-target-coords)
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-      (send *ri* :wait-interpolation)
+        ;; TODO update with rec
+        (setq ik-target-coords (send rarm-ik-target-coords :copy-worldcoords))
+        (setq pre-set-val #f(-100 0 0))
+        (send ik-target-coords :translate pre-set-val :local)
+        (send *pr2* :rarm :inverse-kinematics ik-target-coords)
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+        (send *ri* :wait-interpolation)
 
-      ;; (send *pr2* :rarm :angle-vector #f(-26.6328 26.1388 -27.7269 -82.8879 -75.6009 -75.0069 326.128))
-      (send *pr2* :rarm :angle-vector #f(-41.1879 -20.1804 -109.118 -80.322 391.737 -46.5052 -100.945))
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-      (send *ri* :wait-interpolation)
-      ;; (reset-cook-pose :arm :rarm)
-      (reset-cook-manip-pose :arm :rarm)
+        ;; (send *pr2* :rarm :angle-vector #f(-26.6328 26.1388 -27.7269 -82.8879 -75.6009 -75.0069 326.128))
+        (send *pr2* :rarm :angle-vector #f(-41.1879 -20.1804 -109.118 -80.322 391.737 -46.5052 -100.945))
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+        (send *ri* :wait-interpolation)
+        ;; (reset-cook-pose :arm :rarm)
+        (reset-cook-manip-pose :arm :rarm)
 
-      ;; 左腕を元に戻す
-      ;; TODO update from rec
-      (setq ik-target-coords (make-coords :pos #f(840.502 -79.349 1057.366) :rpy #f(-0.795 -0.074 0.012)))
-      (send ik-target-coords :translate #f(0 0 100) :world)
-      (send *pr2* :larm :inverse-kinematics ik-target-coords)
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-      (send *ri* :wait-interpolation)
+        ;; 左腕を元に戻す
+        (setq ik-target-coords (send larm-ik-target-coords :copy-worldcoords))
+        (send ik-target-coords :translate #f(0 0 100) :world)
+        (send *pr2* :larm :inverse-kinematics ik-target-coords)
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+        (send *ri* :wait-interpolation)
 
-      (send *pr2* :larm :angle-vector (elt (reverse pre-set-avs) 0))
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
-      (send *ri* :wait-interpolation)
+        (send *pr2* :larm :angle-vector (elt (reverse pre-set-avs) 0))
+        (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+        (send *ri* :wait-interpolation)
 
-      (return-from pour-object-to-pan nil)
-      )
+        (return-from pour-object-to-pan nil)
+        ))
      ((and (string= from-object "ブロッコリー") (string= to-object "鍋") (string= spot-name "stove") (equal arm :larm))
       (send *pr2* :larm :angle-vector #f(27.5715 22.0148 51.6599 -44.6906 40.8698 -83.3365 -15.6292))
       (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
@@ -508,136 +517,19 @@
     ;; (send *ri* :angle-vector (send *pr2* :angle-vector))
     ;; (send *ri* :wait-interpolation)
 
-    (cond
-     ((equal arm :rarm)
-      (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
-      ;; (cook-from-now-replay-once :larm nil :initial-av t)
-      ;; (cook-from-now-replay-once :larm nil :initial-av nil) ;;20240909 champ?
-      (cook-from-now-replay-once :larm nil :initial-av nil :time 100)
+    (setq use-larm (equal arm :larm))
+    (load-cook-from-now-file :file_name cook-from-now-file-name :larm use-larm)
+    ;; (cook-from-now-replay-once :larm use-larm :initial-av t)
+    ;; (cook-from-now-replay-once :larm use-larm :initial-av nil) ;;20240909 champ?
+    (if (or replay-ec use-rec)
+        (cook-from-now-replay-rec-once :larm use-larm :initial-av nil :time 100 :trans-coords trans-coords)
+      (cook-from-now-replay-once :larm use-larm :initial-av nil :time 100)
       )
-     ((equal arm :larm)
-      (load-cook-from-now-file :file_name cook-from-now-file-name :larm t)
-      ;; (cook-from-now-replay-once :larm t :initial-av t)
-      ;; (cook-from-now-replay-once :larm t :initial-av nil) ;;20240909 champ?
-      (cook-from-now-replay-once :larm t :initial-av nil :time 100)
-      )
-     )
-    )
-  )
+
+    ))
+
 
 ;; old
-;; (defun pour-object-to-pan (&key (from-object "ボウル1") (to-object "フライパン") (arm :rarm) (spot-name "stove"))
-;;   (let ((pre-set-avs (list))
-;;         cook-from-now-file-name
-;;         )
-;;     (cond
-;;      ((and (string= from-object "ボウル1") (string= to-object "フライパン") (string= spot-name "stove") (equal arm :rarm)) ;; egg
-;;       ;; (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041) #f(-45.3343 3.47451 -56.4107 -109.672 -99.5375 -114.592 104.776)))
-;;       ;; (setq cook-from-now-file-name "av-files/cook-from-now-pour-bowl1-to-pan-20231212-data.l")
-
-;;       (setq pre-set-avs (list #f(-17.2701 6.61532 -15.8472 -46.5569 -153.821 -114.592 99.202)))
-;;       ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl1-to-pan-20240221-data.l")
-;;       ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl1-to-pan-20240310-data.l")
-;;       (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl1-to-pan-20240310-data_edit.l")
-;;       (send *ri* :start-grasp :rarm :gain 100 :wait t)
-;;       )
-;;      ((and (string= from-object "ボウル0") (string= to-object "フライパン") (string= spot-name "stove") (equal arm :rarm)) ;; butter
-;;       ;; (setq pre-set-avs (list #f(-28.2146 0.07681 -56.1994 -95.3798 -127.421 -97.0024 137.794)
-;;       ;;                         #f(-21.4171 10.8467 -51.9823 -76.3682 -134.766 -103.742 117.398)))
-;;       ;; (setq cook-from-now-file-name "av-files/cook-from-now-pour-bowl0-to-pan-20231212-data.l")
-;;       (setq pre-set-avs (list #f(-27.4926 -3.15125 -53.829 -47.5523 -117.203 -99.9358 106.977)
-;;                               ))
-;;       ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl0-to-pan-20240221-data.l")
-;;       (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl0-to-pan-20240221-data_edit.l")
-;;       )
-;;      ((and (string= from-object "あぶら") (string= to-object "フライパン") (string= spot-name "stove")) ;; larmだったが結局両腕使うので
-;;       (setq pre-set-avs (list #f(52.4453 35.9984 40.0064 -117.485 -211.029 -72.009 -15.0076)))
-
-;;       ;; 物体把持初期姿勢
-;;       (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
-;;       (send *ri* :angle-vector (send *pr2* :angle-vector))
-;;       (send *ri* :wait-interpolation)
-
-;;       (load-cook-from-now-file :file_name "av-files/cook-from-now-pour-oil-to-pan-larm-20231212-data.l" :larm t)
-;;       (cook-from-now-replay-once :larm t :initial-av nil)
-
-;;       (send *ri* :stop-grasp :rarm :wait t)
-;;       (load-cook-from-now-file :file_name "av-files/cook-from-now-pour-oil-to-pan-rarm-20231212-data.l" :larm t)
-;;       (cook-from-now-replay-once :larm nil :initial-av nil)
-
-;;       (send *ri* :start-grasp :rarm :wait t)
-
-;;       (send *ri* :start-grasp :larm :wait t :gain 1.0)
-;;       (unix:sleep 2)
-;;       (send *ri* :stop-grasp :larm :wait t)
-;;       (unix:sleep 2)
-;;       (send *ri* :start-grasp :larm :wait t)
-
-;;       (send *ri* :stop-grasp :rarm :wait t)
-
-;;       (load-cook-from-now-file :file_name "av-files/cook-from-now-pour-oil-to-pan-rarm-20231212-data.l" :larm t)
-;;       (cook-from-now-replay-once :larm nil :initial-av nil :reverse t)
-
-;;       (load-cook-from-now-file :file_name "av-files/cook-from-now-pour-oil-to-pan-larm-20231212-data.l" :larm t)
-;;       (cook-from-now-replay-once :larm t :initial-av nil :reverse t)
-
-;;       (reset-manip-pose :arm :rarm)
-;;       (return-from pour-object-to-pan nil)
-;;       )
-;;      ((and (string= from-object "ブロッコリー") (string= to-object "鍋") (string= spot-name "stove") (equal arm :larm))
-;;       (send *pr2* :larm :angle-vector #f(27.5715 22.0148 51.6599 -44.6906 40.8698 -83.3365 -15.6292))
-;;       (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-;;       (send *ri* :wait-interpolation)
-
-;;       (send *pr2* :larm :angle-vector #f(22.3415 18.6413 51.3751 -30.3821 39.7562 -83.6954 -23.382))
-;;       (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-;;       (send *ri* :wait-interpolation)
-
-;;       (send *ri* :stop-grasp :larm :wait t)
-
-;;       (return-from pour-object-to-pan nil)
-;;       )
-;;      ((and (string= from-object "pot") (string= to-object "frying-pan") (string= spot-name "stove") (equal arm :larm)) ;; for broccoli
-;;       ;; (setq pre-set-avs (list #f(-61.1287 29.236 -64.3672 -121.542 -107.621 -114.592 103.041) #f(-45.3343 3.47451 -56.4107 -109.672 -99.5375 -114.592 104.776)))
-;;       ;; (setq cook-from-now-file-name "av-files/cook-from-now-pour-bowl1-to-pan-20240221-data.l")
-;;       ;; (load-cook-file :file_name "av-files/cook_larm-data_transfer-broccoli_20231119_01.l" :larm t)
-;;       (send *ri* :start-grasp :larm :wait t :gain 100)
-
-;;       (load-cook-file :file_name "../../av-files/cook_larm-data_transfer-broccoli_20231119_01.l" :larm t)
-;;       ;; (cook-replay-once :larm t)
-;;       (cook-from-now-replay-once :larm t :initial-av nil)
-;;       (return-from pour-object-to-pan nil)
-;;       )
-;;      (t
-;;       (format t "from-object ~A, to-object ~A, spot-name ~A, arm ~A is not defined !!!~%" from-object to-object spot-name arm)
-;;       (return-from pour-object-to-pan nil)
-;;       )
-;;      )
-
-;;     ;; 物体把持初期姿勢
-;;     (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
-;;     (send *ri* :angle-vector (send *pr2* :angle-vector))
-;;     (send *ri* :wait-interpolation)
-
-;;     (cond
-;;      ((equal arm :rarm)
-;;       (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
-;;       ;; (cook-from-now-replay-once :larm nil :initial-av t)
-;;       ;; (cook-from-now-replay-once :larm nil :initial-av nil) ;;20240909 champ?
-;;       (cook-from-now-replay-once :larm nil :initial-av nil :time 100)
-;;       )
-;;      ((equal arm :larm)
-;;       (load-cook-from-now-file :file_name cook-from-now-file-name :larm t)
-;;       ;; (cook-from-now-replay-once :larm t :initial-av t)
-;;       (cook-from-now-replay-once :larm t :initial-av nil) ;;20240909 champ?
-;;       (cook-from-now-replay-once :larm t :initial-av nil :time 100)
-;;       )
-;;      )
-;;     )
-;;   )
-
-
-
 
 
 

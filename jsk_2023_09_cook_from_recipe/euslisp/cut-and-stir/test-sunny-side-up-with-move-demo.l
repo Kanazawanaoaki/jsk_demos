@@ -139,6 +139,10 @@
 
 (defun 14-transfer-egg ()
   ;; TODO update
+  (if *use-rec*
+      (pour-object-to-pan :from-object "gray bowl" :to-object "frying pan" :arm :rarm :spot-name "stove" :use-rec t)
+    (pour-object-to-pan :from-object "gray bowl" :to-object "frying pan" :arm :rarm :spot-name "stove" :replay-ec t)
+    )
   )
 
 (defun 15-place-bowl ()

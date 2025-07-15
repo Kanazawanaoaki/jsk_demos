@@ -634,13 +634,6 @@
                  (format t "A new fp topic is comming!~%")
                  )
              )
-           ;; (format t "msg ~A, start ~A~%" (send marker_msg :header :stamp) start_time)
-           ;; (if (ros::time>= (send marker_msg :header :stamp) start_time)
-           ;;     (progn
-           ;;       (setq update-flag t)
-           ;;       (format t "A fp new topic is comming!~%")
-           ;;       )
-           ;;   )
            )
     ))
 

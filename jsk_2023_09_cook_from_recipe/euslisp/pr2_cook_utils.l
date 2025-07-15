@@ -711,7 +711,7 @@
     (send initial-rec-coords :transform trans-coords :world)
     assoced-rec-list))
 
-(defun replay-short-rec-list (rec-list &key (time 150) (larm nil) (trans-coords (make-coords)) (each-step nil)) ;; old (trans-vec #f(0 0 0))
+(defun replay-short-rec-list (rec-list &key (time 150) (larm nil) (trans-coords (make-coords)) (each-step nil) (show-list nil)) ;; old (trans-vec #f(0 0 0))
   (let ((assoced-rec-list)
         )
     ;; (send *robot* :head-neck-y :joint-angle 0.0)
@@ -738,7 +738,10 @@
     ;; (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
     ;; (send *ri* :wait-interpolation)
 
-    (replay-rec-list assoced-rec-list :time time :larm larm :each-step each-step)
+    (if show-list
+        (view-rec-list assoced-rec-list)
+      (replay-rec-list assoced-rec-list :time time :larm larm :each-step each-step)
+      )
     ))
 
 (defun record-rav-key ()
@@ -2174,7 +2177,7 @@
     )
   )
 
-(defun cook-from-now-replay-rec-once (&key (larm nil) (initial-av t) (trans-coords (make-coords)) (each-step nil))
+(defun cook-from-now-replay-rec-once (&key (larm nil) (initial-av t) (trans-coords (make-coords)) (each-step nil) (time 150))
   (if initial-av
       (set-cook-from-now-initial-arm-av :larm larm))
 
@@ -2182,11 +2185,11 @@
   (if larm
       (progn
         (setq *cook-short-lec-list* (rav2rec *cook-short-lav-list* :arm :larm))
-        (replay-short-rec-list *cook-short-lec-list* :larm t :trans-coords trans-coords :each-step each-step)
+        (replay-short-rec-list *cook-short-lec-list* :larm t :trans-coords trans-coords :each-step each-step :time time)
         )
     (progn
       (setq *cook-short-rec-list* (rav2rec *cook-short-rav-list*))
-      (replay-short-rec-list *cook-short-rec-list* :trans-coords trans-coords :each-step each-step)
+      (replay-short-rec-list *cook-short-rec-list* :trans-coords trans-coords :each-step each-step :time time)
       ))
 
   (if initial-av
