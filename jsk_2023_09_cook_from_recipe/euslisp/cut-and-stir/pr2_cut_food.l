@@ -1115,7 +1115,8 @@
 
       ;; (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 178.964))
       ;; (setq wait-av #f(-37.5677 40.413 -17.207 -105.732 -150.297 -58.7309 358.964)) ;; for upper
-      (setq pre-set-avs (list #f(-38.3278 -3.2288 -63.6414 -68.0071 -83.1809 -108.309 393.782))) ;; for green bowl, upper outside
+      ;; (setq pre-set-avs (list #f(-38.3278 -3.2288 -63.6414 -68.0071 -83.1809 -108.309 393.782))) ;; for green bowl, upper outside
+      (setq pre-set-avs (list #f(-36.2686 1.11382 -54.9803 -68.4487 269.277 -114.586 34.1267))) ;; for green bowl, reset-cook-manip-pose
 
       ;; (setq pre-set-val #f(-100 0 100))
       (setq pre-set-val #f(-100 50 0)) ;; for upper

@@ -99,67 +99,73 @@
 
   ;; pose after move
   (reset-move-pose :head-p 50 :torso 300)
+  )
 
+(defun 08-place-bowl ()
   ;; place gray bowl ;; TODO divide?
   (place-gray-bowl :spot "stove" :use-cds-offset t)
   )
 
-(defun 08-hold-oil ()
+(defun 09-hold-oil ()
   (if *use-rec*
       (grasp-rec-object :object-name "oil dispenser" :arm :larm :use-model "fp" :use-calib-offset nil)
     (pick-up-oil-dispenser)
     )
   )
 
-(defun 09-pour-oil ()
+(defun 10-pour-oil ()
   ;; TODO update
   ;; (pour-object-to-pan :from-object "あぶら" :to-object "フライパン" :arm :larm :spot-name "stove")
   ;; フライパンの認識を入れて，その座標を使って動くようにする. moveitを入れるか？
-  (pour-object-to-pan :from-object "あぶら" :to-object "フライパン" :arm :larm :spot-name "stove" :use-rec t)
+  (if *use-rec*
+      (pour-object-to-pan :from-object "あぶら" :to-object "フライパン" :arm :larm :spot-name "stove" :use-rec t)
+    (pour-object-to-pan :from-object "あぶら" :to-object "フライパン" :arm :larm :spot-name "stove" :use-rec nil :replay-ec t)
+    )
   )
 
-(defun 10-place-oil ()
-  (place-oil-dispenser)
+(defun 11-place-oil ()
+  (place-oil-dispenser :use-cds-offset t)
   )
 
-(defun 11-turn-on-stove ()
-  (ih-stove-action :ih-action :start :with-hand-rec t :use-cds-offset nil)
+(defun 12-turn-on-stove ()
+  (if *use-rec*
+      (ih-stove-action :ih-action :start :with-hand-rec t :use-cds-offset nil)
+    (ih-stove-action :ih-action :start :with-hand-rec nil :use-cds-offset nil)
+    )
   )
 
-(defun 12-heat-oil ()
+(defun 13-heat-oil ()
   ;; wait
+  (wait-cook-stove :object-name "oil" :state "thirty-seconds" :vessel "フライパン")
   )
 
-(defun 13-hold-bowl ()
+(defun 14-hold-bowl ()
   (if *use-rec*
       (grasp-rec-object :object-name "gray bowl" :arm :rarm :spot "stove" :use-model "fp" :use-calib-offset nil)
     (pick-up-gray-bowl :spot "stove")
     )
   )
 
-(defun 14-transfer-egg ()
-  ;; TODO update
+(defun 15-transfer-egg ()
   (if *use-rec*
       (pour-object-to-pan :from-object "gray bowl" :to-object "frying pan" :arm :rarm :spot-name "stove" :use-rec t)
     (pour-object-to-pan :from-object "gray bowl" :to-object "frying pan" :arm :rarm :spot-name "stove" :replay-ec t)
     )
   )
 
-(defun 15-place-bowl ()
-  (place-gray-bowl :spot "stove")
+(defun 16-place-bowl ()
+  (place-gray-bowl :spot "stove" :use-cds-offset t)
   )
 
-(defun 16-cook-egg ()
-  ;; TODO cook
+(defun 17-cook-egg ()
+  (wait-cook-stove :object-name "egg" :state "cooked-egg" :vessel "フライパン")
   )
 
-(defun 17-turn-off-stove ()
-  (ih-stove-action :ih-action :stop :with-hand-rec t :use-cds-offset nil)
+(defun 18-turn-off-stove ()
+  (if *use-rec*
+      (ih-stove-action :ih-action :stop :with-hand-rec t :use-cds-offset nil)
+    (ih-stove-action :ih-action :start :with-hand-rec nil :use-cds-offset nil)
+    )
   )
 
-;; (heat salad-oil frying-pan thirty-seconds)
-;; (hold bowl arm2 stove)
-;; (transfer egg bowl frying-pan arm2 stove)
-;; (place bowl arm2 stove)
-;; (cook egg cooked-egg)
-;; (turn-off-stove middle frying-pan arm1)
+;; TODO add 盛りつけ
