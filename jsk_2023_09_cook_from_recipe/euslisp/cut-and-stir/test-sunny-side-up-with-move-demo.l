@@ -169,3 +169,7 @@
   )
 
 ;; TODO add 盛りつけ
+
+(defun after-serving ()
+  (now-finish-sunny-all :use-rec t :receive-from-human t)
+  )
