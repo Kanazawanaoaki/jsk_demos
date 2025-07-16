@@ -214,79 +214,95 @@
   (reset-pose)
   )
 
-(defun move-to-spot (to &key (use-k4a t))
+(defun move-to-spot (to &key (use-k4a t) (after-cable-check t))
   (let ((move-suc-flag nil)
         (adjust-suc-flag nil))
-    ;; move-to
+    ;; move-to start
     (send *ri* :clear-costmap)
     (reset-move-pose :head-p 0.0 :torso 50.0 :tm 3000)
-    (cond
-     ((string= to "stove")
-      (print "move-to stove")
-      ;; (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8100 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
-      ;; (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8070 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
-      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1300 7970 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
-      (format t "move-to result ~A ~%" move-suc-flag)
-      (if (equal move-suc-flag nil)
-          (progn
-            (format t "move-to fail ~%")
-            (send *ri* :speak "move fail. Please help or retry")
-            (return-from move-to-spot nil)
-            ))
-      (when move-suc-flag ;; 移動が成功したら
-        (setq adjust-suc-flag nil)
-        (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
-        (until adjust-suc-flag
-               ;; (reset-pose)
+    ;; cable wait
+    (speech-before-move-with-rec)
+    (until move-suc-flag
+           (cond
+            ((string= to "stove")
+             (print "move-to stove")
+             ;; (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8100 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+             ;; (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8070 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+             (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1300 7970 351) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+             (format t "move-to result ~A ~%" move-suc-flag)
+             (if (equal move-suc-flag nil)
+                 (progn
+                   (format t "move-to fail ~%")
+                   (send *ri* :speak "move fail. Please help or retry")
+                   (return-from move-to-spot nil)
+                   ))
+             (when move-suc-flag ;; 移動が成功したら
+               (setq adjust-suc-flag nil)
                (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
-               (format t "pr2 reset-pose ~%")
-               ;; (setq adjust-suc-flag (move-with-adjust :move-spot :stove :use-k4a use-k4a))
-               (setq adjust-suc-flag (move-with-adjust :move-spot :stove :use-k4a use-k4a :rec-num 1))
-               )
-        ))
-     ((string= to "kitchen")
-      (print "move-to kitchen")
-      ;; (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8500 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
-      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8600 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
-      (when move-suc-flag
-        (setq adjust-suc-flag nil)
-        (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
-        (until adjust-suc-flag
+               (until adjust-suc-flag
+                      ;; (reset-pose)
+                      (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
+                      (format t "pr2 reset-pose ~%")
+                      ;; (setq adjust-suc-flag (move-with-adjust :move-spot :stove :use-k4a use-k4a))
+                      (setq adjust-suc-flag (move-with-adjust :move-spot :stove :use-k4a use-k4a :rec-num 1))
+                      )
+               ))
+            ((string= to "kitchen")
+             (print "move-to kitchen")
+             ;; (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8500 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+             (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1200 8600 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+             (when move-suc-flag
+               (setq adjust-suc-flag nil)
                (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
-               (format t "pr2 reset-pose ~%")
-               ;; (setq adjust-suc-flag (move-with-adjust :move-spot :kitchen :use-k4a use-k4a))
-               (setq adjust-suc-flag (move-with-adjust :move-spot :kitchen :use-k4a use-k4a :rec-num 1))
-               )
-        ))
-     ((string= to "sink")
-      (print "move-to sink")
-      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1110 9100 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
-      (when move-suc-flag
-        (setq adjust-suc-flag nil)
-        (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
-        (until adjust-suc-flag
+               (until adjust-suc-flag
+                      (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
+                      (format t "pr2 reset-pose ~%")
+                      ;; (setq adjust-suc-flag (move-with-adjust :move-spot :kitchen :use-k4a use-k4a))
+                      (setq adjust-suc-flag (move-with-adjust :move-spot :kitchen :use-k4a use-k4a :rec-num 1))
+                      )
+               ))
+            ((string= to "sink")
+             (print "move-to sink")
+             (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(1110 9100 30000) :rpy (float-vector pi 0 0)) :frame-id "/map"))
+             (when move-suc-flag
+               (setq adjust-suc-flag nil)
                (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
-               (format t "pr2 reset-pose ~%")
-               ;; (setq adjust-suc-flag (move-with-adjust :move-spot :sink :use-k4a use-k4a))
-               (setq adjust-suc-flag (move-with-adjust :move-spot :sink :use-k4a use-k4a :rec-num 1))
-               )
-        ))
-     ((string= to "counter")
-      (print "move-to counter")
-      (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(2010 8800 30000) :rpy (float-vector 0 0 0)) :frame-id "/map"))
-      (when move-suc-flag
-        (setq adjust-suc-flag nil)
-        (reset-move-pose :head-p 50.0 :torso 200.0 :tm 1000);; (reset-move-pose :head-p 50.0 :torso 150.0 :tm 1000)
-        (until adjust-suc-flag
-               (reset-move-pose :head-p 50.0 :torso 200.0 :tm 1000)
-               (format t "pr2 reset-pose ~%")
-               ;; (setq adjust-suc-flag (move-with-adjust :move-spot :counter :use-k4a use-k4a :rec-num 3))
-               (setq adjust-suc-flag (move-with-adjust :move-spot :counter :use-k4a use-k4a :rec-num 1))
-               )
-        ))
-     )
-    move-suc-flag
-    ))
+               (until adjust-suc-flag
+                      (reset-move-pose :head-p 0.0 :torso 50.0 :tm 1000)
+                      (format t "pr2 reset-pose ~%")
+                      ;; (setq adjust-suc-flag (move-with-adjust :move-spot :sink :use-k4a use-k4a))
+                      (setq adjust-suc-flag (move-with-adjust :move-spot :sink :use-k4a use-k4a :rec-num 1))
+                      )
+               ))
+            ((string= to "counter")
+             (print "move-to counter")
+             (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(2010 8800 30000) :rpy (float-vector 0 0 0)) :frame-id "/map"))
+             (when move-suc-flag
+               (setq adjust-suc-flag nil)
+               (reset-move-pose :head-p 50.0 :torso 200.0 :tm 1000);; (reset-move-pose :head-p 50.0 :torso 150.0 :tm 1000)
+               (until adjust-suc-flag
+                      (reset-move-pose :head-p 50.0 :torso 200.0 :tm 1000)
+                      (format t "pr2 reset-pose ~%")
+                      ;; (setq adjust-suc-flag (move-with-adjust :move-spot :counter :use-k4a use-k4a :rec-num 3))
+                      (setq adjust-suc-flag (move-with-adjust :move-spot :counter :use-k4a use-k4a :rec-num 1))
+                      )
+               ))
+            )
+           (if move-suc-flag
+               (progn
+                 (if after-cable-check
+                     (speech-after-move-with-rec)
+                   )
+                 )
+             (progn
+               (speak-with-log "移動に失敗しました．アシストして下さい")
+               (print "wait for key pressed (after move fail)")
+               (do-until-key
+                (unix:usleep 100000)
+                ))
+             )
+           )
+    move-suc-flag))
 
 
 ;; c.f. https://github.com/jsk-ros-pkg/jsk_demos/blob/088b186ea8d02ebda8fee2dc411135f8fd813be1/jsk_demo_common/euslisp/pr2-action.l#L708-L856
