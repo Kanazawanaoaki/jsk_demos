@@ -539,227 +539,229 @@
 ;; old
 
 
+;; (defun add-oil-pre ()
+;;   ;; この辺りはreachに置き換えられるか？
+
+;;   ;; dispenserを位置に
+;;   (send *pr2* :larm :move-end-pos #f(100 0 0) :world)
+;;   (send *viewer* :draw-objects)
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+;;   (send *ri* :wait-interpolation)
+
+;;   ;; (send *pr2* :larm :move-end-pos #f(0 100 0) :world)
+;;   (send *pr2* :larm :move-end-pos #f(0 -100 0) :world) ;;fix
+;;   (send *viewer* :draw-objects)
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+;;   (send *ri* :wait-interpolation)
+
+;;   ;; (send *pr2* :larm :move-end-pos #f(0 100 0) :world)
+;;   (send *pr2* :larm :move-end-pos #f(0 -100 0) :world) ;;fix
+;;   (send *viewer* :draw-objects)
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+;;   (send *ri* :wait-interpolation)
+
+;;   (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
+;;   (send *arrow* :translate #f(0 0 120) :world)
+;;   ;; (send *arrow* :rotate (deg2rad -90) :x)
+;;   ;; (send *arrow* :rotate (deg2rad -90) :y :world)
+;;   (send *arrow* :rotate (deg2rad 90) :y)
+;;   (send *arrow* :rotate (deg2rad -90) :x)
+
+;;   (send *pr2* :larm :inverse-kinematics
+;;         (send *arrow* :copy-worldcoords)
+;;         :link-list (list
+;;                     (send *pr2* :larm))
+;;         :move-target (send *oil-dispenser* :attention-attention0)
+;;         :rotation-axis t
+;;         :debug-view *debug-flag*)
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+;;   (send *ri* :wait-interpolation)
+
+;;   ;;右腕をセットしておく この辺りは:graspか:reachで表現できるはず．
+;;   ;; (before-receive-rarm)
+;;   (send *pr2* :rarm :angle-vector #f(-37.8868 -20.239 -85.7141 -64.0592 312.721 -87.1625 -148.994))
+;;   (send *viewer* :draw-objects)
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+;;   (send *ri* :wait-interpolation)
+
+;;   ;; 右腕をセットする位置
+;;   (send *arrow* :newcoords (send (send *oil-dispenser* :handle-handle1) :copy-worldcoords))
+;;   ;; (send *arrow* :translate #f(0 0 80) :world)
+;;   ;; (send *arrow* :rotate (deg2rad 90) :z :world)
+
+;;   (send *arrow* :translate #f(0 0 70) :world)
+;;   ;; (send *arrow* :rotate (deg2rad 90) :z :world)
+;;   (send *arrow* :rotate (deg2rad 45) :z :world)
+
+;;   ;; (send *arrow* :translate #f(0 100 80) :world)
+;;   ;; (send *arrow* :translate #f(0 -100 80) :world) ;; fix
+;;   (send *arrow* :translate #f(-100 0 -50) :local) ;; fix v2
+;;   (send *pr2* :rarm :inverse-kinematics
+;;         (send *arrow* :copy-worldcoords)
+;;         :rotation-axis t
+;;         :debug-view *debug-flag*)
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+;;   (send *ri* :wait-interpolation)
+
+;;   (send *ri* :stop-grasp :rarm :wait t)
+
+;;   ;; (send *arrow* :translate #f(0 -100 -80) :world)
+;;   ;; (send *arrow* :translate #f(0 100 -80) :world) ;; fix
+;;   (send *arrow* :translate #f(100 0 50) :local) ;; fix v2
+;;   (send *pr2* :rarm :inverse-kinematics
+;;         (send *arrow* :copy-worldcoords)
+;;         :rotation-axis t
+;;         :debug-view *debug-flag*)
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+;;   (send *ri* :wait-interpolation)
+
+;;   (send *ri* :start-grasp :rarm :wait t)
+
+;;   (warn "please run (add-oil) ~%")
+;;   )
+
+;; (defun add-oil ()
+;;   ;; (send *ri* :move-gripper :larm 0.04)
+;;   (send *ri* :start-grasp :larm :gain 0.05 :wait t)
+;;   (unix:sleep 3)
+;;   (send *ri* :stop-grasp :larm :wait t)
+
+;;   (warn "please run (after-oil) ~%")
+;;   )
+
+;; (defun add-oil-post ()
+;;   ;; (if (not (eql (send *oil-dispenser* :parent) nil))
+;;   ;;     (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
+;;   (dissoc-object *oil-dispenser*)
+;;   (send *pr2* :rarm :end-coords :assoc *oil-dispenser*)
+
+;;   ;; 上にして持ち替える
+;;   ;; 回転のために左手を引く
+;;   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
+;;   ;; (send *arrow* :translate #f(150 0 0) :world)
+;;   (send *arrow* :translate #f(-150 0 0) :world) ;;fix
+;;   (send *pr2* :larm :inverse-kinematics
+;;         (send *arrow* :copy-worldcoords)
+;;         :rotation-axis t
+;;         :debug-view *debug-flag*)
+;;   (send *viewer* :draw-objects)
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+;;   (send *ri* :wait-interpolation)
+;;   ;; 回転させる
+;;   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+;;   (send *arrow* :rotate (deg2rad 180) :x)
+;;   (send *pr2* :rarm :inverse-kinematics
+;;         (send *arrow* :copy-worldcoords)
+;;         :rotation-axis t
+;;         :debug-view *debug-flag*)
+;;   (send *viewer* :draw-objects)
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+;;   (send *ri* :wait-interpolation)
+;;   ;; IK が解けるように右腕を少し下げる
+;;   (send *arrow* :translate #f(0 0 -100) :world)
+;;   (send *pr2* :rarm :inverse-kinematics
+;;         (send *arrow* :copy-worldcoords)
+;;         :rotation-axis t
+;;         :debug-view *debug-flag*)
+;;   (send *viewer* :draw-objects)
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+;;   (send *ri* :wait-interpolation)
+
+;;   ;; 左腕で再びつかむ
+;;   ;; (send *arrow* :newcoords (send (send *oil-dispenser* :handle-handle1) :copy-worldcoords))
+;;   ;; (send *arrow* :rotate (deg2rad 180) :z)
+;;   (send *arrow* :newcoords (calc-target-from-base-rel *oil-dispenser* (make-coords :pos #f(-9.925 5.389 113.022) :rpy #f(-0.023 0.057 3.124))))
+;;   ;; (send *arrow* :rotate (deg2rad 180) :z)
+;;   (send *arrow* :rotate (deg2rad 90) :z) ;; fix v2 because larm end-effector angle is changed
+
+;;   ;; (send *arrow* :translate #f(100 0 0) :world)
+;;   (send *arrow* :translate #f(-100 0 0) :world) ;;fix
+;;   (send *pr2* :larm :inverse-kinematics
+;;         (send *arrow* :copy-worldcoords)
+;;         :rotation-axis t
+;;         :debug-view *debug-flag*)
+;;   (send *viewer* :draw-objects)
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+;;   (send *ri* :wait-interpolation)
+
+;;   ;; (send *arrow* :translate #f(-100 0 0) :world)
+;;   (send *arrow* :translate #f(100 0 0) :world) ;;fix
+;;   (send *pr2* :larm :inverse-kinematics
+;;         (send *arrow* :copy-worldcoords)
+;;         :rotation-axis t
+;;         :debug-view *debug-flag*)
+;;   (send *viewer* :draw-objects)
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+;;   (send *ri* :wait-interpolation)
+
+;;   (send *ri* :start-grasp :larm :wait t)
+
+;;   ;; (if (not (eql (send *oil-dispenser* :parent) nil))
+;;   ;;     (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
+;;   (dissoc-object *oil-dispenser*)
+;;   (send *pr2* :larm :end-coords :assoc *oil-dispenser*)
 
 
-(defun add-oil-pre ()
-  ;; この辺りはreachに置き換えられるか？
+;;   ;; 右腕を戻して左腕をplaceの前位置にする．
+;;   (send *ri* :stop-grasp :rarm :wait t)
+;;   (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
+;;   ;; (send *arrow* :translate #f(0 100 0) :world)
+;;   (send *arrow* :translate #f(0 -100 0) :world) ;;fix
+;;   (send *pr2* :rarm :inverse-kinematics
+;;         (send *arrow* :copy-worldcoords)
+;;         :rotation-axis t
+;;         :debug-view *debug-flag*)
+;;   (send *viewer* :draw-objects)
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+;;   (send *ri* :wait-interpolation)
 
-  ;; dispenserを位置に
-  (send *pr2* :larm :move-end-pos #f(100 0 0) :world)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  (send *ri* :wait-interpolation)
+;;   ;; (reset-rarm)
+;;   (send *pr2* :rarm :angle-vector #f(-37.8868 -20.239 -85.7141 -64.0592 312.721 -87.1625 -148.994))
+;;   (send *viewer* :draw-objects)
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
+;;   (send *ri* :wait-interpolation)
+;;   (reset-cook-pose :arm :rarm)
 
-  ;; (send *pr2* :larm :move-end-pos #f(0 100 0) :world)
-  (send *pr2* :larm :move-end-pos #f(0 -100 0) :world) ;;fix
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  (send *ri* :wait-interpolation)
+;;   (send *pr2* :larm :move-end-pos #f(-100 0 0) :world)
+;;   (send *viewer* :draw-objects)
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+;;   (send *ri* :wait-interpolation)
 
-  ;; (send *pr2* :larm :move-end-pos #f(0 100 0) :world)
-  (send *pr2* :larm :move-end-pos #f(0 -100 0) :world) ;;fix
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  (send *ri* :wait-interpolation)
+;;   ;; (send *pr2* :larm :move-end-pos #f(-100 0 0) :world)
+;;   ;; (send *viewer* :draw-objects)
+;;   ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+;;   ;; (send *ri* :wait-interpolation)
 
-  (send *arrow* :newcoords (send (send *pot* :attention-attention0) :copy-worldcoords))
-  (send *arrow* :translate #f(0 0 120) :world)
-  ;; (send *arrow* :rotate (deg2rad -90) :x)
-  ;; (send *arrow* :rotate (deg2rad -90) :y :world)
-  (send *arrow* :rotate (deg2rad 90) :y)
-  (send *arrow* :rotate (deg2rad -90) :x)
+;;   ;; (send *pr2* :larm :move-end-pos #f(0 -100 0) :world)
+;;   (send *pr2* :larm :move-end-pos #f(0 100 0) :world)
+;;   (send *viewer* :draw-objects)
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+;;   (send *ri* :wait-interpolation)
 
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :link-list (list
-                    (send *pr2* :larm))
-        :move-target (send *oil-dispenser* :attention-attention0)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
+;;   (send *pr2* :larm :move-end-pos #f(0 100 0) :world)
+;;   (send *viewer* :draw-objects)
+;;   (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+;;   (send *ri* :wait-interpolation)
 
-  ;;右腕をセットしておく この辺りは:graspか:reachで表現できるはず．
-  ;; (before-receive-rarm)
-  (send *pr2* :rarm :angle-vector #f(-37.8868 -20.239 -85.7141 -64.0592 312.721 -87.1625 -148.994))
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
+;;   (warn "please run (place-oil-dispenser) ~%")
+;;   )
 
-  ;; 右腕をセットする位置
-  (send *arrow* :newcoords (send (send *oil-dispenser* :handle-handle1) :copy-worldcoords))
-  ;; (send *arrow* :translate #f(0 0 80) :world)
-  ;; (send *arrow* :rotate (deg2rad 90) :z :world)
-
-  (send *arrow* :translate #f(0 0 70) :world)
-  ;; (send *arrow* :rotate (deg2rad 90) :z :world)
-  (send *arrow* :rotate (deg2rad 45) :z :world)
-
-  ;; (send *arrow* :translate #f(0 100 80) :world)
-  ;; (send *arrow* :translate #f(0 -100 80) :world) ;; fix
-  (send *arrow* :translate #f(-100 0 -50) :local) ;; fix v2
-  (send *pr2* :rarm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-  (send *ri* :stop-grasp :rarm :wait t)
-
-  ;; (send *arrow* :translate #f(0 -100 -80) :world)
-  ;; (send *arrow* :translate #f(0 100 -80) :world) ;; fix
-  (send *arrow* :translate #f(100 0 50) :local) ;; fix v2
-  (send *pr2* :rarm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-  (send *ri* :start-grasp :rarm :wait t)
-
-  (warn "please run (add-oil) ~%")
-  )
-
-(defun add-oil ()
-  ;; (send *ri* :move-gripper :larm 0.04)
-  (send *ri* :start-grasp :larm :gain 0.05 :wait t)
-  (unix:sleep 3)
-  (send *ri* :stop-grasp :larm :wait t)
-
-  (warn "please run (after-oil) ~%")
-  )
-
-(defun add-oil-post ()
-  ;; (if (not (eql (send *oil-dispenser* :parent) nil))
-  ;;     (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
-  (dissoc-object *oil-dispenser*)
-  (send *pr2* :rarm :end-coords :assoc *oil-dispenser*)
-
-  ;; 上にして持ち替える
-  ;; 回転のために左手を引く
-  (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
-  ;; (send *arrow* :translate #f(150 0 0) :world)
-  (send *arrow* :translate #f(-150 0 0) :world) ;;fix
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  (send *ri* :wait-interpolation)
-  ;; 回転させる
-  (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  (send *arrow* :rotate (deg2rad 180) :x)
-  (send *pr2* :rarm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-  ;; IK が解けるように右腕を少し下げる
-  (send *arrow* :translate #f(0 0 -100) :world)
-  (send *pr2* :rarm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-  ;; 左腕で再びつかむ
-  ;; (send *arrow* :newcoords (send (send *oil-dispenser* :handle-handle1) :copy-worldcoords))
-  ;; (send *arrow* :rotate (deg2rad 180) :z)
-  (send *arrow* :newcoords (calc-target-from-base-rel *oil-dispenser* (make-coords :pos #f(-9.925 5.389 113.022) :rpy #f(-0.023 0.057 3.124))))
-  ;; (send *arrow* :rotate (deg2rad 180) :z)
-  (send *arrow* :rotate (deg2rad 90) :z) ;; fix v2 because larm end-effector angle is changed
-
-  ;; (send *arrow* :translate #f(100 0 0) :world)
-  (send *arrow* :translate #f(-100 0 0) :world) ;;fix
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  (send *ri* :wait-interpolation)
-
-  ;; (send *arrow* :translate #f(-100 0 0) :world)
-  (send *arrow* :translate #f(100 0 0) :world) ;;fix
-  (send *pr2* :larm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  (send *ri* :wait-interpolation)
-
-  (send *ri* :start-grasp :larm :wait t)
-
-  ;; (if (not (eql (send *oil-dispenser* :parent) nil))
-  ;;     (send (send *oil-dispenser* :parent) :dissoc *oil-dispenser*))
-  (dissoc-object *oil-dispenser*)
-  (send *pr2* :larm :end-coords :assoc *oil-dispenser*)
-
-
-  ;; 右腕を戻して左腕をplaceの前位置にする．
-  (send *ri* :stop-grasp :rarm :wait t)
-  (send *arrow* :newcoords (send (send *pr2* :rarm :end-coords) :copy-worldcoords))
-  ;; (send *arrow* :translate #f(0 100 0) :world)
-  (send *arrow* :translate #f(0 -100 0) :world) ;;fix
-  (send *pr2* :rarm :inverse-kinematics
-        (send *arrow* :copy-worldcoords)
-        :rotation-axis t
-        :debug-view *debug-flag*)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-
-  ;; (reset-rarm)
-  (send *pr2* :rarm :angle-vector #f(-37.8868 -20.239 -85.7141 -64.0592 312.721 -87.1625 -148.994))
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 4000)
-  (send *ri* :wait-interpolation)
-  (reset-cook-pose :arm :rarm)
-
-  (send *pr2* :larm :move-end-pos #f(-100 0 0) :world)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  (send *ri* :wait-interpolation)
-
-  ;; (send *pr2* :larm :move-end-pos #f(-100 0 0) :world)
-  ;; (send *viewer* :draw-objects)
-  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  ;; (send *ri* :wait-interpolation)
-
-  ;; (send *pr2* :larm :move-end-pos #f(0 -100 0) :world)
-  (send *pr2* :larm :move-end-pos #f(0 100 0) :world)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  (send *ri* :wait-interpolation)
-
-  (send *pr2* :larm :move-end-pos #f(0 100 0) :world)
-  (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-  (send *ri* :wait-interpolation)
-
-  (warn "please run (place-oil-dispenser) ~%")
-  )
-
-(defun add-oil-whole ()
-  (add-oil-pre)
-  (add-oil)
-  (add-oil-post)
-  )
+;; (defun add-oil-whole ()
+;;   (add-oil-pre)
+;;   (add-oil)
+;;   (add-oil-post)
+;;   )
 
 
 ;; ih
 (defun rotate-knob (&rest args &key (deg 30) (arm :larm) &allow-other-keys)
   ;; rotate
   (potentio-vector)
-  (let (av (avs (list)) (tms (list)) (ik-target (send (send *pr2* arm :end-coords) :copy-worldcoords)))
+  (let ((av)
+        (avs (list))
+        (tms (list))
+        (ik-target (send (send *pr2* arm :end-coords) :copy-worldcoords))
+        )
     (if (> deg 0)
       (progn
         (dotimes (i (/ deg 10))
@@ -869,7 +871,8 @@
           (rotate-knob :deg rotate-deg :arm :rarm)
           (grasp-object-primitive :pre-set-avs pre-set-avs :grasp-coords adj-target-cds :pre-set-val pre-set-val :arm :rarm :action-mode :release :object-name "ih stove")
           ))
-    (reset-cook-pose :arm :rarm)
+    ;; (reset-cook-pose :arm :rarm)
+    (reset-cook-manip-pose :arm :rarm)
     )
   )
 
@@ -1103,7 +1106,8 @@
 
 (defun wait-cook-stove (&key (object-name "egg") (state "heat-through") (vessel "フライパン") (do-not-use-rec nil) (init-pose t))
   (when init-pose
-    (reset-cook-pose)
+    ;; (reset-cook-pose)
+    (reset-cook-manip-pose)
     )
   (cond
    ;; state が時間指定ならその時間待つ

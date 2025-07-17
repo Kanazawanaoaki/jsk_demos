@@ -114,9 +114,6 @@
   )
 
 (defun 10-pour-oil ()
-  ;; TODO update
-  ;; (pour-object-to-pan :from-object "あぶら" :to-object "フライパン" :arm :larm :spot-name "stove")
-  ;; フライパンの認識を入れて，その座標を使って動くようにする. moveitを入れるか？
   (if *use-rec*
       (pour-object-to-pan :from-object "あぶら" :to-object "フライパン" :arm :larm :spot-name "stove" :use-rec t)
     (pour-object-to-pan :from-object "あぶら" :to-object "フライパン" :arm :larm :spot-name "stove" :use-rec nil :replay-ec t)
@@ -125,6 +122,7 @@
 
 (defun 11-place-oil ()
   (place-oil-dispenser :use-cds-offset t)
+  (reset-cook-manip-pose)
   )
 
 (defun 12-turn-on-stove ()
@@ -172,4 +170,51 @@
 
 (defun after-serving ()
   (now-finish-sunny-all :use-rec t :receive-from-human t)
+  )
+
+(defun do-all-sunny ()
+  (sunny-side-up-init :spot "counter")
+
+  (01-move-to-counter)
+
+  (02-hold-egg-opener)
+  (03-set-egg-opener)
+  (04-crack-egg-bowl)
+  (05-place-egg-opener)
+  (06-hold-bowl)
+
+  (07-move-to-stove)
+  (08-place-bowl)
+
+  (09-hold-oil)
+  (10-pour-oil)
+  (11-place-oil)
+  (12-turn-on-stove)
+  (13-heat-oil)
+  (14-hold-bowl)
+  (15-transfer-egg)
+  (16-place-bowl)
+  (17-cook-egg)
+  (18-turn-off-stove)
+  )
+
+(defun counter-sunny (&key (egg-rec nil))
+  (02-hold-egg-opener)
+  (03-set-egg-opener :egg-rec egg-rec)
+  (04-crack-egg-bowl)
+  (05-place-egg-opener)
+  (06-hold-bowl)
+  )
+
+(defun stove-test ()
+  (09-hold-oil)
+  (10-pour-oil)
+  (11-place-oil)
+  ;; (12-turn-on-stove)
+  ;; (13-heat-oil)
+  (14-hold-bowl)
+  (15-transfer-egg)
+  (16-place-bowl)
+  ;; (17-cook-egg)
+  ;; (18-turn-off-stove)
   )

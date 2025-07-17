@@ -862,6 +862,7 @@
       )
      ((or (equal action-mode :hold) (equal action-mode :pick-up))
       (send *ri* :start-grasp arm :gain grasp-gain :wait t) ;; 物体を握る
+      (unix:sleep 1);; 念の為 sleep
       )
      )
 
@@ -1260,6 +1261,7 @@
             ;; (setq bbox-topic "/deva_apply_mask/deva_segmentor/output/boxes")
             (setq bbox-topic "/table_and_deva_apply/deva_segmentor/output/boxes")
             ))
+      (setq grasp-gain 0.1) ;; tmp
       )
      ((and (string= object-name "frying pan") (equal arm :larm)) ;; frying pan
       (cond
@@ -1305,7 +1307,8 @@
       (cond
        ((equal use-model "fp");; if use FoundationPose
         ;; (setq object-offset (make-coords :pos #f(14.524 -1.933 29.937) :rpy #f(0.013 0.805 -0.08))) ;; 20250611
-        (setq object-offset (make-coords :pos #f(10.779 -5.43 30.86) :rpy #f(-0.004 0.796 -0.035))) ;; 20250621 calib
+        ;; (setq object-offset (make-coords :pos #f(10.779 -5.43 30.86) :rpy #f(-0.004 0.796 -0.035))) ;; 20250621 calib
+        (setq object-offset (make-coords :pos #f(13.381 -5.678 27.812) :rpy #f(-0.016 0.823 -0.126))) ;; 20250717 calib
         )
        ((equal use-model "deva");; if use deva
         (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
