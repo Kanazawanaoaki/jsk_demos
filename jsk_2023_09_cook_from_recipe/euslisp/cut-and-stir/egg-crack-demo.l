@@ -244,7 +244,10 @@
   (place-egg-opener :spot "counter")
 
   ;; grasp gray bowl
-  (grasp-rec-object :object-name "gray bowl" :arm :rarm :spot "counter" :use-model "fp" :use-calib-offset nil)
+  (if use-rec
+      (grasp-rec-object :object-name "gray bowl" :arm :rarm :spot "counter" :use-model "fp" :use-calib-offset nil)
+    (pick-up-gray-bowl :spot "counter" :use-cds-offset t)
+    )
   )
 
 ;; do transfer sunny
