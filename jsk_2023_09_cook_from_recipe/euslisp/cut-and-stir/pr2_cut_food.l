@@ -628,14 +628,15 @@
     (format t "Waiting for a fp new topic~%")
     (until update-flag
            (setq marker_msg (one-shot-subscribe marker-topic visualization_msgs::Marker :timeout 3000))
-           (format t "msg ~A, start ~A~%" (send marker_msg :header :stamp) start_time)
-           (if (ros::time>= (send marker_msg :header :stamp) start_time)
-               (progn
-                 (setq update-flag t)
-                 (format t "A new fp topic is comming!~%")
-                 )
-             )
-           )
+           (when marker_msg
+             (format t "msg ~A, start ~A~%" (send marker_msg :header :stamp) start_time)
+             (if (ros::time>= (send marker_msg :header :stamp) start_time)
+                 (progn
+                   (setq update-flag t)
+                   (format t "A new fp topic is comming!~%")
+                   )
+               )
+             ))
     ))
 
 (defun fp-pause-tracking (&optional (service-name "/pause_tracking_object"))
