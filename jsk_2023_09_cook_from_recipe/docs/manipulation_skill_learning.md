@@ -82,7 +82,7 @@ https://github.com/Kanazawanaoaki/eus_imitation/tree/add-lerobot-ros/lerobot_ros
 
 ## 学習したpolicyの実行
 https://github.com/Kanazawanaoaki/eus_imitation/tree/add-lerobot-ros/lerobot_ros#execute-policy
-に従う
+に従ってpolicyを立ち上げる．
 
 robot_state_publisherも必要．
 pr1040s(c2)で，ロボットのstate publisherを立ち上げ
@@ -92,4 +92,10 @@ rosrun mini_controller_ros pr2_robot_state_publisher.py
 （rqt_reconfigureで`robot_joint_state_extractor`の`mode`パラメータを`rarm`に指定）
 ```bash
 rosrun rqt_reconfigure rqt_reconfigure
+```
+pr1040s(c2)で，模倣学習のインタフェースを立ち上げる
+```bash
+roscd mini_controller_ros/euslisp
+rlwrap roseus imitation-pr2-rarm-mini-cont-interface.l
+(send *mci* :listen)
 ```
