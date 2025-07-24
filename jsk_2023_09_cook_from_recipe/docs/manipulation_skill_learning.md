@@ -99,3 +99,11 @@ roscd mini_controller_ros/euslisp
 rlwrap roseus imitation-pr2-rarm-mini-cont-interface.l
 (send *mci* :listen)
 ```
+動作を開始/停止する
+```bash
+rosservice call /mini_to_robot_start
+```
+動作を停止する
+```bash
+rosservice call /mini_to_robot_stop
+```
