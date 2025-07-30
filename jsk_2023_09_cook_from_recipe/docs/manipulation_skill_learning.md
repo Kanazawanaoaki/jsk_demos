@@ -149,16 +149,22 @@ rosrun mini_controller_ros pr2_robot_state_publisher.py
 rosrun rqt_reconfigure rqt_reconfigure
 ```
 pr1040s(c2)で，模倣学習のインタフェースを立ち上げる
-```bash
+```lisp
 roscd mini_controller_ros/euslisp
 rlwrap roseus imitation-pr2-rarm-main.l
 (send *mci* :listen)
 ```
+
+rvizを立ち上げる
+```bash
+roslaunch jsk_2023_09_cook_from_recipe view_rviz_cook.launch rviz_name:=view_rviz_cook_mega
+```
+
 動作を開始/停止する
 ```bash
-rosservice call /mini_to_robot_start
+rosservice call /imitation_action_start "{}"
 ```
 動作を停止する
 ```bash
-rosservice call /mini_to_robot_stop
+rosservice call /imitation_action_stop "{}"
 ```
