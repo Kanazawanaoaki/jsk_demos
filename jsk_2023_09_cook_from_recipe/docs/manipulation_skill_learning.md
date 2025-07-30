@@ -151,7 +151,7 @@ rosrun rqt_reconfigure rqt_reconfigure
 pr1040s(c2)で，模倣学習のインタフェースを立ち上げる
 ```bash
 roscd mini_controller_ros/euslisp
-rlwrap roseus imitation-pr2-rarm-mini-cont-interface.l
+rlwrap roseus imitation-pr2-rarm-main.l
 (send *mci* :listen)
 ```
 動作を開始/停止する
