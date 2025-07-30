@@ -4,6 +4,24 @@
 
 ## 操縦でのデータ収集
 
+### 必要なカメラのlaunchの立ち上げ
+(c2)femto_megaの立ち上げ
+```bash
+roslaunch orbbec_camera pr1040_femto_mega.launch
+```
+
+(c3) r_hand カメラの立ち上げ
+```bash
+roslaunch jsk_2023_09_cook_from_recipe r_hand_d405.launch ## ~/kanazawa_ws
+```
+
+z800でリモートのlaunchの立ち上げ
+```bash
+roslaunch jsk_2023_09_cook_from_recipe pr2_decompress.launch ## 無くても良いかも
+roslaunch jsk_2023_09_cook_from_recipe use_femto_mega_remote.launch
+roslaunch jsk_2023_09_cook_from_recipe use_r_hand_d405_remote.launch
+```
+
 ### データ収集のlaunchの立ち上げ
 TRのデスクトップで
 ディレクトリを作成した上で
