@@ -29,8 +29,8 @@
 
 
 ;; egg cracker
-(defun egg-crack-set-rarm ()
-  (send *ri* :move-gripper :rarm 0.076)
+(defun egg-crack-set-rarm (&key (rarm-gripper 0.076))
+  (send *ri* :move-gripper :rarm rarm-gripper)
 
   ;; 卵セットの位置 右腕
   ;; (send *pr2* :rarm :angle-vector #f(-27.2041 20.6283 -48.1463 -89.9882 277.543 -88.0405 -29.2401));; 20250611
@@ -97,9 +97,13 @@
   (send *arrow* :newcoords (send (send *pr2* :larm :end-coords) :copy-worldcoords))
 
   ;; (send *arrow* :translate #f(10 -10 -60) :world)
-  (send *arrow* :translate #f(0 0 -30) :world)
+  ;; (send *arrow* :rotate (deg2rad 30) :z)
 
-  (send *arrow* :rotate (deg2rad 30) :z)
+  ;; (send *arrow* :translate #f(0 0 -30) :world);; original 20250922
+  ;; (send *arrow* :rotate (deg2rad 30) :z);; original 20250922
+  (send *arrow* :translate #f(20 0 -30) :world);; adjusted 20250922
+  (send *arrow* :rotate (deg2rad 20) :z);; adjusted 20250922
+
   (send *pr2* :larm :inverse-kinematics *arrow*)
 
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)

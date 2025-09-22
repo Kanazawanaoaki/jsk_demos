@@ -252,7 +252,10 @@
 
       ;; calc from defined coords
       (setq obj-coords (send *egg-opener-counter-coords* :copy-worldcoords))
-      (send *arrow* :newcoords (calc-target-from-base-rel obj-coords (make-coords :pos #f(14.524 -1.933 29.937) :rpy #f(0.013 0.805 -0.08))))
+      (send *arrow* :newcoords (calc-target-from-base-rel obj-coords (make-coords :pos #f(14.524 -1.933 29.937) :rpy #f(0.013 0.805 -0.08))));; original 2025/09/22
+      ;; (send *arrow* :newcoords (calc-target-from-base-rel obj-coords (make-coords :pos #f(14.524 -1.933 29.937) :rpy #f(0.03 0.804 -0.055))));; adjust 2025/09/22
+      ;; (send *arrow* :newcoords (calc-target-from-base-rel obj-coords (make-coords :pos #f(17.99 -1.77 26.337) :rpy #f(0.133 0.797 0.095))));; adjust 2025/09/22
+      (format t "test!!!~%")
       (format t "~A coords ~A , set target coords is ~A ~%" object-name (send obj-coords :copy-worldcoords) (send *arrow* :copy-worldcoords))
       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
       )

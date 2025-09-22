@@ -66,9 +66,9 @@
   (send *ri* :move-gripper :rarm 0.076)
   )
 
-(defun 03-set-egg-opener (&key (egg-rec t))
+(defun 03-set-egg-opener (&key (egg-rec t) (rarm-gripper 0.076))
   ;; from egg-crack-demo.l
-  (egg-crack-set-rarm)
+  (egg-crack-set-rarm :rarm-gripper rarm-gripper)
   (egg-crack-set-larm-grasp :use-rec egg-rec)
   (egg-crack-set-larm-carry)
   )
@@ -218,3 +218,9 @@
   ;; (17-cook-egg)
   ;; (18-turn-off-stove)
   )
+
+(defun tmp-test (&key (egg-rec t))
+  (02-hold-egg-opener)
+  (03-set-egg-opener :egg-rec egg-rec)
+  )
+
