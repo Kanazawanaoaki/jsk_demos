@@ -1,0 +1,11 @@
+<launch>
+  <arg name="use_hand_camera" default="true"/>
+
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/pr2_decompress.launch" />
+  <include file="$(find jsk_2023_09_cook_from_recipe)/launch/femto_mega/use_femto_mega_remote.launch" />
+
+  <group if="$(arg use_hand_camera)">
+    <include file="$(find jsk_2023_09_cook_from_recipe)/launch/rs_camera/use_r_hand_d405_remote.launch" />
+  </group>
+
+</launch>
