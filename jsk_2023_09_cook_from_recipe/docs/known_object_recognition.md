@@ -7,6 +7,8 @@ https://github.com/W567/tracking を使う．
 
 ### Data Collection
 
+PR1040の3Dカメラ画像かD435の3Dカメラ画像から以下のようにしてメッシュファイルを作るか，iphoneのscaniverseでscanをしてデータを作る．
+
 #### camera launch
 (D435を使う場合)カメラのlaunchを立ち上げる
 ```bash
