@@ -15,7 +15,7 @@ roslaunch orbbec_camera pr1040_femto_mega.launch
 roslaunch jsk_2023_09_cook_from_recipe r_hand_d405.launch ## ~/kanazawa_ws
 ```
 
-### デスクトップで立ち上げておくもの第一弾（カメラの再構成関係）
+### （P51なら手元で良いかも）デスクトップで立ち上げておくもの第一弾（カメラの再構成関係）
 ```bash
 ## 以下の
 roslaunch jsk_2023_09_cook_from_recipe remote_desktop_for_cameras.launch ## use_hand_camera のargsがある
@@ -47,8 +47,10 @@ roscd tracking/docker ## ~/ros/tracking_ws
 ```bash
 roscd tracking_ros_utils/../tracking_ros ## ~/ros/known_object_ws
 ./run_docker -host pr1040 -launch deva.launch input_image:=/femto_mega_remote/color/image_raw model_type:=vit_t device:=cuda:0
-
-
+```
+(P51なら手元で良さそう)
+```bash
+roslaunch jsk_2023_09_cook_from_recipe ns_tabletop_and_deva_apply_mask.launch run_tabletop:=false run_rviz:=true run_deva_only:=true run_with_table:=false input_image:=/femto_mega_remote/color/image_raw input_cloud:=/femto_mega_remote/depth_registered/points
 ```
 
 
