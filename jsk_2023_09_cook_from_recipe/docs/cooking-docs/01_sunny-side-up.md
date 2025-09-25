@@ -17,11 +17,15 @@ roslaunch jsk_2023_09_cook_from_recipe r_hand_d405.launch ## ~/kanazawa_ws
 
 ### デスクトップで立ち上げておくもの第一弾（カメラの再構成関係）
 ```bash
-roslaunch jsk_2023_09_cook_from_recipe pr2_decompress.launch ## 無くても良いかも
-roslaunch jsk_2023_09_cook_from_recipe use_femto_mega_remote.launch
+## 以下の
+roslaunch jsk_2023_09_cook_from_recipe remote_desktop_for_cameras.launch ## use_hand_camera のargsがある
+
+## 立ち上げ
+# roslaunch jsk_2023_09_cook_from_recipe pr2_decompress.launch ## 無くても良いかも
+# roslaunch jsk_2023_09_cook_from_recipe use_femto_mega_remote.launch
 
 ## 手首のカメラを使う場合には
-roslaunch jsk_2023_09_cook_from_recipe use_r_hand_d405_remote.launch
+# roslaunch jsk_2023_09_cook_from_recipe use_r_hand_d405_remote.launch
 ```
 
 
