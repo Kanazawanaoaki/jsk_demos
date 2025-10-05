@@ -132,9 +132,15 @@
     )
   )
 
-(defun 13-heat-oil ()
-  ;; wait
-  (wait-cook-stove :object-name "oil" :state "thirty-seconds" :vessel "フライパン")
+(defun 13-heat-oil (&key (state-rec t))
+  (if state-rec
+      (wait-cook-stove :object-name "oil" :state "thirty-seconds" :vessel "フライパン")
+    (progn
+      (print "wait for key pressed (not state-rec)")
+      (do-until-key
+       (unix:usleep 100000)
+       )
+      ))
   )
 
 (defun 14-hold-bowl ()
@@ -155,8 +161,15 @@
   (place-gray-bowl :spot "stove" :use-cds-offset t)
   )
 
-(defun 17-cook-egg ()
-  (wait-cook-stove :object-name "egg" :state "cooked-egg" :vessel "フライパン")
+(defun 17-cook-egg (&key (state-rec t))
+  (if
+      (wait-cook-stove :object-name "egg" :state "cooked-egg" :vessel "フライパン")
+      (progn
+        (print "wait for key pressed (not state-rec)")
+        (do-until-key
+         (unix:usleep 100000)
+         )
+        ))
   )
 
 (defun 18-turn-off-stove ()
@@ -172,30 +185,36 @@
   (now-finish-sunny-all :use-rec t :receive-from-human t)
   )
 
-(defun do-all-sunny ()
+(defun do-all-sunny (&key (egg-rec t) (use-stove t) (state-rec t))
   (sunny-side-up-init :spot "counter")
 
   (01-move-to-counter)
 
   (02-hold-egg-opener)
-  (03-set-egg-opener)
+  (03-set-egg-opener :egg-rec egg-rec)
   (04-crack-egg-bowl)
   (05-place-egg-opener)
   (06-hold-bowl)
 
   (07-move-to-stove)
+
+  (sunny-side-up-init :spot "stove")
   (08-place-bowl)
 
   (09-hold-oil)
   (10-pour-oil)
   (11-place-oil)
-  (12-turn-on-stove)
-  (13-heat-oil)
+  (when use-stove
+    (12-turn-on-stove)
+    (13-heat-oil :state-rec state-rec)
+    )
   (14-hold-bowl)
   (15-transfer-egg)
   (16-place-bowl)
-  (17-cook-egg)
-  (18-turn-off-stove)
+  (when use-stove
+    (17-cook-egg :state-rec state-rec)
+    (18-turn-off-stove)
+    )
   )
 
 (defun counter-sunny (&key (egg-rec nil))
@@ -206,17 +225,21 @@
   (06-hold-bowl)
   )
 
-(defun stove-test ()
+(defun stove-test (&key (use-stove t) (state-rec t))
   (09-hold-oil)
   (10-pour-oil)
   (11-place-oil)
-  ;; (12-turn-on-stove)
-  ;; (13-heat-oil)
+  (when use-stove
+    (12-turn-on-stove)
+    (13-heat-oil :state-rec state-rec)
+    )
   (14-hold-bowl)
   (15-transfer-egg)
   (16-place-bowl)
-  ;; (17-cook-egg)
-  ;; (18-turn-off-stove)
+  (when use-stove
+    (17-cook-egg :state-rec state-rec)
+    (18-turn-off-stove)
+    )
   )
 
 (defun tmp-test (&key (egg-rec t))

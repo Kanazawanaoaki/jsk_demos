@@ -7,6 +7,7 @@
 
 (defvar *use-voicetext* t)
 (defvar *use-english* nil)
+(defvar *use-cable* t)
 
 ;; (if (and (boundp '*use-voicetext*) *use-voicetext*)
 ;;     (cond
@@ -272,9 +273,11 @@
              (setq move-suc-flag (send *ri* :move-to (make-coords :pos #f(2010 8800 30000) :rpy (float-vector 0 0 0)) :frame-id "/map"))
              (when move-suc-flag
                (setq adjust-suc-flag nil)
-               (reset-move-pose :head-p 50.0 :torso 200.0 :tm 1000);; (reset-move-pose :head-p 50.0 :torso 150.0 :tm 1000)
+               ;; (reset-move-pose :head-p 50.0 :torso 200.0 :tm 1000);; (reset-move-pose :head-p 50.0 :torso 150.0 :tm 1000)
+               (reset-move-pose :head-p 50.0 :torso 325.0 :tm 1000)
                (until adjust-suc-flag
-                      (reset-move-pose :head-p 50.0 :torso 200.0 :tm 1000)
+                      ;; (reset-move-pose :head-p 50.0 :torso 200.0 :tm 1000)
+                      (reset-move-pose :head-p 50.0 :torso 325.0 :tm 1000)
                       (format t "pr2 reset-pose ~%")
                       ;; (setq adjust-suc-flag (move-with-adjust :move-spot :counter :use-k4a use-k4a :rec-num 3))
                       (setq adjust-suc-flag (move-with-adjust :move-spot :counter :use-k4a use-k4a :rec-num 1))
@@ -284,7 +287,7 @@
            (format t "move-to result ~A ~%" move-suc-flag)
            (if move-suc-flag
                (progn
-                 (if after-cable-check
+                 (if (and after-cable-check *use-cable*)
                      (speech-after-move-with-rec)
                    )
                  )
@@ -324,7 +327,7 @@
         diffcds
         spot-name
         speak-name
-        detecion-topic
+        detection-topic
         trans-flag
         cam-cds
         cds
@@ -336,7 +339,7 @@
           (:stove
            (setq spot-name "stove")
            (setq speak-name "IHコンロ")
-           (setq detecion-topic "/point_pose_stove/ObjectDetection")
+           (setq detection-topic "/point_pose_stove/ObjectDetection")
            (if use-k4a
                (progn
                  ;; (setq idealcds ;; for k4a
@@ -363,7 +366,7 @@
           (:kitchen
            (setq spot-name "kitchen")
            (setq speak-name "キッチン")
-           (setq detecion-topic "/point_pose_kitchen/ObjectDetection")
+           (setq detection-topic "/point_pose_kitchen/ObjectDetection")
            (if use-k4a
                (progn
                  ;; (setq idealcds ;; for k4a
@@ -381,7 +384,7 @@
           (:sink
            (setq spot-name "sink")
            (setq speak-name "水道")
-           (setq detecion-topic "/point_pose_sink/ObjectDetection")
+           (setq detection-topic "/point_pose_sink/ObjectDetection")
            (if use-k4a
                (setq idealcds ;; for k4a
                      (make-coords :pos (float-vector 1099.015 102.449 1329.082)
@@ -394,11 +397,16 @@
           (:counter
            (setq spot-name "counter")
            (setq speak-name "カウンター")
-           (setq detecion-topic "/point_pose_counter/ObjectDetection")
+           (setq detection-topic "/point_pose_counter/ObjectDetection")
            (if use-k4a
-               (setq idealcds ;; for k4a
-                     (make-coords :pos (float-vector 985.366 496.913 872.82);; 1005.771 485.175 864.579
-                                  :rpy (float-vector -3.101 0.022 0.003)));; -3.128 0.017 -0.005
+               (progn
+                 ;; (setq idealcds ;; for k4a torso 200
+                 ;;       (make-coords :pos (float-vector 985.366 496.913 872.82);; 1005.771 485.175 864.579
+                 ;;                    :rpy (float-vector -3.101 0.022 0.003)));; -3.128 0.017 -0.005
+                 (setq idealcds ;; for k4a torso 325
+                       (make-coords :pos (float-vector 1008.441 489.445 869.754)
+                                    :rpy (float-vector -3.103 0.019 0.001)))
+                 )
              (setq idealcds ;; for kinect ;; todo
                    (make-coords :pos (float-vector 1031.396 137.734 1282.394)
                                 :rpy (float-vector 0.258 1.499 -2.909)))
@@ -413,17 +421,17 @@
             ;;   (setq *tfl* (instance ros::transform-listener :init)))
             ;; (setq trans nil)
             ;; (until trans
-            ;;        (setq pp_msg (one-shot-subscribe detecion-topic posedetection_msgs::ObjectDetection))
+            ;;        (setq pp_msg (one-shot-subscribe detection-topic posedetection_msgs::ObjectDetection))
             ;;        (setq trans (send *tfl* :lookup-transform *base-frame-id* (send pp_msg :header :frame_id) (send pp_msg :header :stamp)))
             ;;        )
             ;; (setq cds (make-coords))
             ;; (send cds :move-to trans :local)
             ;; (send cds :move-to (ros::tf-pose->coords (send (car (send pp_msg :objects)) :pose)) :local)
-            ;; (setq cds (k4a-check-detection detecion-topic :rec-num rec-num :use-out-filter t :filter-thre 50))
-            (setq cds (k4a-check-detection detecion-topic :rec-num rec-num :use-out-filter nil))
+            ;; (setq cds (k4a-check-detection detection-topic :rec-num rec-num :use-out-filter t :filter-thre 50))
+            (setq cds (k4a-check-detection detection-topic :rec-num rec-num :use-out-filter nil))
             )
         (setq cds (check-detection :type spot-name :speak-name speak-name
-                                   :detection-topic detecion-topic
+                                   :detection-topic detection-topic
                                    )))
       )
      (t ;; simulation mode
