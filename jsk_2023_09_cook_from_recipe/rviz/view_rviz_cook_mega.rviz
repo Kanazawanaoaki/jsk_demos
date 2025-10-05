@@ -1,6 +1,6 @@
 Panels:
   - Class: rviz/Displays
-    Help Height: 78
+    Help Height: 0
     Name: Displays
     Property Tree Widget:
       Expanded:
@@ -8,7 +8,7 @@ Panels:
         - /Status1
         - /TF1/Frames1
       Splitter Ratio: 0.5
-    Tree Height: 114
+    Tree Height: 192
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -331,6 +331,8 @@ Visualization Manager:
           Value: false
         narrow_stereo_r_stereo_camera_optical_frame:
           Value: false
+        object_center:
+          Value: true
         odom_combined:
           Value: false
         projector_wg6802418_child_frame:
@@ -465,7 +467,8 @@ Visualization Manager:
                                         {}
                                     femto_mega_color_frame:
                                       femto_mega_color_optical_frame:
-                                        {}
+                                        object_center:
+                                          {}
                                     femto_mega_depth_optical_frame:
                                       {}
                                     femto_mega_gyro_frame:
@@ -1248,26 +1251,13 @@ Visualization Manager:
       Value: false
     - Class: jsk_rviz_plugin/OverlayImage
       Enabled: true
-      Name: OverlayIHDetection
-      Topic: /point_pose_ih_rd405/ih_detector/debug_image
-      Value: true
-      alpha: 0.800000011920929
-      height: 128
-      keep aspect ratio: false
-      left: 10
-      overwrite alpha value: false
-      top: 10
-      transport hint: compressed
-      width: 128
-    - Class: jsk_rviz_plugin/OverlayImage
-      Enabled: true
       Name: OverlayStoveDetection
       Topic: /point_pose_stove/stove_detector/debug_image
       Value: true
       alpha: 0.800000011920929
       height: 128
       keep aspect ratio: false
-      left: 148
+      left: 10
       overwrite alpha value: false
       top: 10
       transport hint: compressed
@@ -1293,7 +1283,7 @@ Visualization Manager:
       alpha: 0.800000011920929
       height: 128
       keep aspect ratio: false
-      left: 148
+      left: 286
       overwrite alpha value: false
       top: 10
       transport hint: compressed
@@ -1307,6 +1297,19 @@ Visualization Manager:
       height: 128
       keep aspect ratio: false
       left: 148
+      overwrite alpha value: false
+      top: 424
+      transport hint: compressed
+      width: 128
+    - Class: jsk_rviz_plugin/OverlayImage
+      Enabled: true
+      Name: OverlayIHDetection
+      Topic: /point_pose_ih_rd405/ih_detector/debug_image
+      Value: true
+      alpha: 0.800000011920929
+      height: 128
+      keep aspect ratio: false
+      left: 562
       overwrite alpha value: false
       top: 10
       transport hint: compressed

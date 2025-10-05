@@ -1256,7 +1256,8 @@
         )
        )
 
-      (setq pre-set-avs (list #f(-49.7343 -1.72576 -48.4495 -101.568 287.125 -114.592 54.2763))) ;; for grary bowl, counter
+      ;; (setq pre-set-avs (list #f(-49.7343 -1.72576 -48.4495 -101.568 287.125 -114.592 54.2763))) ;; for grary bowl, counter
+      (setq pre-set-avs (list #f(-33.7879 17.502 -48.6333 -121.542 282.501 -114.592 96.2281))) ;; for grary bowl, counter 20251005
 
       (setq pre-set-val #f(-147 -23 7)) ;; for upper #f(0 0 150) :world
       (setq fix-rot t)
@@ -1353,8 +1354,8 @@
       (cond
        ((equal use-model "fp");; if use FoundationPose
         ;; (setq object-offset (make-coords :pos #f(-30.618 -11.147 26.985) :rpy #f(-0.025 0.057 3.124))) ;; for kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed 20251004までのキャリブ
-        ;; (setq object-offset (make-coords :pos #f(-41.7 -3.292 -16.581) :rpy #f(-0.026 0.151 -3.14))) ;; for kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed 20251004のキャリブで修正
-        (setq object-offset (make-coords :pos #f(-31.7 6.708 24.419) :rpy #f(-0.026 0.151 -3.14))) ;; for kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed 20251004のキャリブで修正
+        ;; (setq object-offset (make-coords :pos #f(-31.7 6.708 24.419) :rpy #f(-0.026 0.151 -3.14))) ;; for kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed 20251004のキャリブで修正
+        (setq object-offset (make-coords :pos #f(-31.7 11.708 24.419) :rpy #f(-0.026 0.151 -3.14))) ;; for kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed 20251005に少し修正
         )
        ((equal use-model "deva");; if use deva
         (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
