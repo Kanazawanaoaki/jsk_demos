@@ -1313,12 +1313,13 @@
        ((equal use-model "fp");; if use FoundationPose
         ;; (setq object-offset (make-coords :pos #f(14.524 -1.933 29.937) :rpy #f(0.013 0.805 -0.08))) ;; 20250611
         ;; (setq object-offset (make-coords :pos #f(10.779 -5.43 30.86) :rpy #f(-0.004 0.796 -0.035))) ;; 20250621 calib
-        (setq object-offset (make-coords :pos #f(13.381 -5.678 27.812) :rpy #f(-0.016 0.823 -0.126))) ;; 20250717 calib
+        ;; (setq object-offset (make-coords :pos #f(13.381 -5.678 27.812) :rpy #f(-0.016 0.823 -0.126))) ;; 20250717 calib
 
         ;; (setq object-offset (make-coords :pos #f(20.181 -5.786 20.48) :rpy #f(-0.016 0.823 -0.126))) ;; 20250922 adjusted
         ;; (setq object-offset (make-coords :pos #f(16.781 -5.732 24.146) :rpy #f(-0.016 0.823 -0.091))) ;; 20250922 adjusted
         ;; (setq object-offset (make-coords :pos #f(10.903 -3.066 31.056) :rpy #f(0.024 0.792 -0.02))) ;; 20250922 adjusted try
 
+        (setq object-offset (make-coords :pos #f(17.35 -5.497 22.148) :rpy #f(0.009 0.878 -0.012))) ;; 20251008 new gripper
         )
        ((equal use-model "deva");; if use deva
         (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
@@ -1389,7 +1390,7 @@
       ;; (setq object-offset (make-coords :pos #f(-16.863 2.244 2.165) :rpy #f(1.244 1.515 -1.962))) ;; for only deva ;; original 20250922
       (setq object-offset (make-coords :pos #f(-10.728 -7.413 16.869) :rpy #f(1.606 1.502 -1.499))) ;; for only deva ;; adjusted 20250922
       (setq pre-set-avs (list #f(71.3839 55.86 90.509 -121.542 -221.823 -31.8871 370.37)
-                              #f(69.5177 10.1531 65.7727 -121.259 -337.106 -52.2361 325.722)
+                              #f(57.8132 37.3056 47.7281 -112.674 -308.373 -69.4047 309.426) ;; #f(69.5177 10.1531 65.7727 -121.259 -337.106 -52.2361 325.722)
                               #f(51.785 18.9729 44.1366 -106.419 -315.656 -64.3521 392.927)
                               ))
       (setq pre-set-val #f(-80 0 0))

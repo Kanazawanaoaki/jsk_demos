@@ -48,7 +48,8 @@
       (pr2-arm-up :num 100 :arm :larm)
 
       ;; 待機姿勢 その1
-      (send *pr2* :larm :angle-vector #f(69.5177 10.1531 65.7727 -121.259 -337.106 -52.2361 325.722))
+      ;; (send *pr2* :larm :angle-vector #f(69.5177 10.1531 65.7727 -121.259 -337.106 -52.2361 325.722))
+      (send *pr2* :larm :angle-vector #f(57.8132 37.3056 47.7281 -112.674 -308.373 -69.4047 309.426)) ;; 20251008 update
       (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
       (send *ri* :wait-interpolation)
 
