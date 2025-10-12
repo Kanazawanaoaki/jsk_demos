@@ -619,18 +619,34 @@
 (defun get-fp-tracking-coords (&optional (frame-id "object_center") &key (timeout 20))
   (get-tf-coords frame-id :timeout timeout))
 
+(defun fp-marker-cb (msg)
+  (when msg
+    (setq *marker_msg* msg)
+    (setq *marker-msg-flag* t)
+    (format t "fp marker came!~%")
+    )
+  )
+
 (defun wait-fp-topic-update (&optional (marker-topic "/bbox_marker_object"))
-  (let (marker_msg
+  (let ((marker_msg)
         (start_time (ros::time-now))
         (update-flag nil)
         )
     (setq update-flag nil)
     (format t "Waiting for a fp new topic~%")
     (until update-flag
-           (setq marker_msg (one-shot-subscribe marker-topic visualization_msgs::Marker :timeout 3000))
-           (when marker_msg
-             (format t "msg ~A, start ~A~%" (send marker_msg :header :stamp) start_time)
-             (if (ros::time>= (send marker_msg :header :stamp) start_time)
+           (ros::unsubscribe marker-topic)
+           (setq *marker-msg-flag* nil)
+           (setq *marker_msg* nil)
+           (ros::subscribe marker-topic visualization_msgs::Marker #'fp-marker-cb)
+           (until *marker-msg-flag*
+                  (ros::spin-once)
+                  (ros::sleep)
+                  )
+           ;; (setq marker_msg (one-shot-subscribe marker-topic visualization_msgs::Marker :timeout 3000))
+           (when *marker_msg*
+             (format t "msg ~A, start ~A~%" (send *marker_msg* :header :stamp) start_time)
+             (if (ros::time>= (send *marker_msg* :header :stamp) start_time)
                  (progn
                    (setq update-flag t)
                    (format t "A new fp topic is comming!~%")
@@ -1319,7 +1335,9 @@
         ;; (setq object-offset (make-coords :pos #f(16.781 -5.732 24.146) :rpy #f(-0.016 0.823 -0.091))) ;; 20250922 adjusted
         ;; (setq object-offset (make-coords :pos #f(10.903 -3.066 31.056) :rpy #f(0.024 0.792 -0.02))) ;; 20250922 adjusted try
 
-        (setq object-offset (make-coords :pos #f(17.35 -5.497 22.148) :rpy #f(0.009 0.878 -0.012))) ;; 20251008 new gripper
+        ;; (setq object-offset (make-coords :pos #f(17.35 -5.497 22.148) :rpy #f(0.009 0.878 -0.012))) ;; 20251008 new gripper
+        (setq object-offset (make-coords :pos #f(7.566 -13.537 18.956) :rpy #f(-0.133 0.874 -0.075))) ;; 20251012 new calib
+        (format t "object-offset ~A ~%" object-offset)
         )
        ((equal use-model "deva");; if use deva
         (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
