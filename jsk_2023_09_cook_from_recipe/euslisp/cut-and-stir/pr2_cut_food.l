@@ -747,7 +747,7 @@
     (return-from change-fp-mesh)
     )
    )
-  (format t "start ~A tracking by FoundatioinPose~%" object-name)
+  (format t "start ~A tracking by FoundationPose~%" object-name)
   t)
 
 
@@ -787,20 +787,22 @@
 
     ;; before pose
     (cond
-     ((equal action-mode :place)
+     ((equal action-mode :place);; 物体把持姿勢に
       ;; ((or (equal action-mode :place) (equal action-mode :set))
       (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
-      (send *ri* :angle-vector (send *pr2* :angle-vector))
+      ;; (send *ri* :angle-vector (send *pr2* :angle-vector))
+      (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5 :min-time 0.0)
       (send *viewer* :draw-objects)
       (send *ri* :wait-interpolation)
       )
      ((equal action-mode :release)
       (format t "action-mode is ~A, so don't move ~%" action-mode)
       )
-     (t
+     (t ;; 待機姿勢に
       (dolist (pre-set-av pre-set-avs)
         (send *pr2* arm :angle-vector pre-set-av)
-        (send *ri* :angle-vector (send *pr2* :angle-vector))
+        ;; (send *ri* :angle-vector (send *pr2* :angle-vector))
+        (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5 :min-time 0.0)
         (send *viewer* :draw-objects)
         (send *ri* :wait-interpolation)
         ))
@@ -845,7 +847,8 @@
       (when (equal ik-result nil)
         (ik-fail-report :wait t)
         )
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+      ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 6)
       (send *ri* :wait-interpolation)
 
       ;; reaching
@@ -859,7 +862,8 @@
       (when (equal ik-result nil)
         (ik-fail-report :wait t)
         )
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+      ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
       (send *ri* :wait-interpolation)
       )
      )
@@ -908,20 +912,23 @@
     (when (equal ik-result nil)
       (ik-fail-report :wait t)
       )
-    (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+    ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
     (send *ri* :wait-interpolation)
 
     (cond
      ((equal action-mode :pick-up)
       (send *pr2* arm :angle-vector (elt (reverse pre-set-avs) 0))
-      (send *ri* :angle-vector (send *pr2* :angle-vector))
+      ;; (send *ri* :angle-vector (send *pr2* :angle-vector))
+      (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
       (send *viewer* :draw-objects)
       (send *ri* :wait-interpolation)
       )
      (t
       (dolist (pre-set-av (reverse pre-set-avs))
         (send *pr2* arm :angle-vector pre-set-av)
-        (send *ri* :angle-vector (send *pr2* :angle-vector))
+        ;; (send *ri* :angle-vector (send *pr2* :angle-vector))
+        (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
         (send *viewer* :draw-objects)
         (send *ri* :wait-interpolation))
       )

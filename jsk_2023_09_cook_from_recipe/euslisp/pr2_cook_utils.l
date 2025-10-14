@@ -485,7 +485,8 @@
   (send *robot* :head-neck-p :joint-angle head-p)
   (send *robot* :head-neck-y :joint-angle head-y)
   (send *viewer* :draw-objects)
-  (send *ri* :angle-vector (send *robot* :angle-vector) time)
+  ;; (send *ri* :angle-vector (send *robot* :angle-vector) time)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
   (send *ri* :wait-interpolation)
   )
 
@@ -511,7 +512,8 @@
     (send *robot* :head-neck-p :joint-angle head-p)
     (send *robot* :head-neck-y :joint-angle head-y)
     (send *viewer* :draw-objects)
-    (send *ri* :angle-vector (send *robot* :angle-vector) time)
+    ;; (send *ri* :angle-vector (send *robot* :angle-vector) time)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
     (send *ri* :wait-interpolation)
     ))
 
@@ -583,7 +585,8 @@
       (send *robot* :larm :angle-vector *cook-from-now-initial-arm-av*)
     (send *robot* :rarm :angle-vector *cook-from-now-initial-arm-av*)
     )
-  (send *ri* :angle-vector (send *robot* :angle-vector) time)
+  ;; (send *ri* :angle-vector (send *robot* :angle-vector) time)
+  (send *ri* :angle-vector (send *robot* :angle-vector) :fast nil 0 :scale 5)
   (send *ri* :wait-interpolation)
   )
 
@@ -640,7 +643,8 @@
   (if larm
       (send *robot* :larm :angle-vector (elt rav-list 0))
     (send *robot* :rarm :angle-vector (elt rav-list 0)))
-  (send *ri* :angle-vector (send *robot* :angle-vector) 2000)
+  ;; (send *ri* :angle-vector (send *robot* :angle-vector) 2000)
+  (send *ri* :angle-vector (send *robot* :angle-vector) :fast nil 0 :scale 5)
   (send *ri* :wait-interpolation)
 
   (replay-rav-list rav-list :time time :larm larm :each-step each-step)
@@ -659,6 +663,7 @@
   (setq avs (list))
   (setq tms (list))
   (setq cnt 0)
+  (bench
   (dolist (rec rec-list)
     ;; (send *robot* :head-neck-y :joint-angle now-head-y)
     ;; (send *robot* :head-neck-p :joint-angle now-head-p)
@@ -670,11 +675,12 @@
     (send *robot* :head-neck-p :joint-angle *initial-head-neck-p*)
     (if larm
         (setq ik-res (send *robot* :larm :inverse-kinematics
-                           rec
+                           rec :stop 150
                            ))
       (setq ik-res (send *robot* :rarm :inverse-kinematics
-                         rec
-                         )))
+                         rec :stop 150
+                         ))
+      )
     (if (equal ik-res nil)
         (progn
           (setq *ik-fail-flag* t)
@@ -697,6 +703,7 @@
       )
     (setq cnt (+ cnt 1))
     )
+  )
   (send *ri* :angle-vector-sequence avs tms)
   (send *ri* :wait-interpolation)
   )
@@ -714,6 +721,7 @@
 (defun replay-short-rec-list (rec-list &key (time 150) (larm nil) (trans-coords (make-coords)) (each-step nil) (show-list nil)) ;; old (trans-vec #f(0 0 0))
   (let ((assoced-rec-list)
         )
+    (bench
     ;; (send *robot* :head-neck-y :joint-angle 0.0)
     ;; (send *robot* :head-neck-p :joint-angle 60.0)
     (send *robot* :head-neck-y :joint-angle *initial-head-neck-y*)
@@ -733,15 +741,19 @@
           (return-from replay-short-rec-list)
           )
       )
-    (send *ri* :angle-vector (send *robot* :angle-vector) 2000)
+    ;; (send *ri* :angle-vector (send *robot* :angle-vector) 2000)
+    (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
     (send *ri* :wait-interpolation)
     ;; (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
     ;; (send *ri* :wait-interpolation)
 
+    (bench
     (if show-list
         (view-rec-list assoced-rec-list)
       (replay-rec-list assoced-rec-list :time time :larm larm :each-step each-step)
       )
+    )
+    )
     ))
 
 (defun record-rav-key ()

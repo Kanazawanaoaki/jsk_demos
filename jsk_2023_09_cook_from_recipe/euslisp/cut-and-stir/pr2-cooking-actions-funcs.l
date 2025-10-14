@@ -829,7 +829,8 @@
 
         ;; (setq ih-to-target-rel-hand (make-coords :pos #f(71.434 187.91 49.899) :rpy #f(2.89 1.107 2.799))) ;; hand-cam
         ;; (setq ih-to-target-rel-hand (make-coords :pos #f(71.499 197.845 49.749) :rpy #f(2.889 1.108 2.798))) ;; hand-cam with adj
-        (setq ih-to-target-rel-hand (make-coords :pos #f(65.491 179.629 22.6) :rpy #f(1.563 1.472 1.473))) ;; hand-cam with v4 hand_cam_mout v2
+        ;; (setq ih-to-target-rel-hand (make-coords :pos #f(65.491 179.629 22.6) :rpy #f(1.563 1.472 1.473))) ;; hand-cam with v4 hand_cam_mout v2
+        (setq ih-to-target-rel-hand (make-coords :pos #f(50.556 180.035 24.103) :rpy #f(1.562 1.472 1.472))) ;; hand-cam with v4 hand_cam_mout v2 20251014 calib
         ))
     (if use-cds-offset
         (setq adj-target-cds (adjust-cds-with-spot set-target-coords "stove"))
@@ -845,7 +846,8 @@
       )
     (when with-hand-rec
       (send *pr2* :rarm :angle-vector #f(-53.5193 60.8717 -119.603 -100.522 103.836 -68.5348 98.4082))
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+      ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
       (send *ri* :wait-interpolation)
       (setq rec-ih-cds (setq res-coords (k4a-check-detection "/point_pose_ih_rd405/ObjectDetection")))
       (format t "rec cds is ~A~%" rec-ih-cds)
