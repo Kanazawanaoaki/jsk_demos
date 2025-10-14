@@ -1374,7 +1374,8 @@
        ((equal use-model "fp");; if use FoundationPose
         ;; (setq object-offset (make-coords :pos #f(-30.618 -11.147 26.985) :rpy #f(-0.025 0.057 3.124))) ;; for kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed 20251004までのキャリブ
         ;; (setq object-offset (make-coords :pos #f(-31.7 6.708 24.419) :rpy #f(-0.026 0.151 -3.14))) ;; for kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed 20251004のキャリブで修正
-        (setq object-offset (make-coords :pos #f(-31.7 11.708 24.419) :rpy #f(-0.026 0.151 -3.14))) ;; for kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed 20251005に少し修正
+        ;; (setq object-offset (make-coords :pos #f(-31.7 11.708 24.419) :rpy #f(-0.026 0.151 -3.14))) ;; for kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed 20251005に少し修正
+        (setq object-offset (make-coords :pos #f(-58.699 -18.305 23.669) :rpy #f(-0.025 0.057 3.124))) ;; for kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed 20251012のキャリブ
         )
        ((equal use-model "deva");; if use deva
         (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
@@ -1405,8 +1406,10 @@
       (setq grasp-gain 0.007) ;;tmp
       )
      ((and (string= object-name "egg") (equal arm :larm) (string= spot "counter"))
-      ;; (setq object-offset (make-coords :pos #f(-16.863 2.244 2.165) :rpy #f(1.244 1.515 -1.962))) ;; for only deva ;; original 20250922
-      (setq object-offset (make-coords :pos #f(-10.728 -7.413 16.869) :rpy #f(1.606 1.502 -1.499))) ;; for only deva ;; adjusted 20250922
+      ;; (setq object-offset (make-coords :pos #f(-16.863 2.244 2.165) :rpy #f(1.244 1.515 -1.962))) ;; for only deva ;; original until 20250922
+      ;; (setq object-offset (make-coords :pos #f(-10.728 -7.413 16.869) :rpy #f(1.606 1.502 -1.499))) ;; for only deva ;; adjusted 20250922
+      (setq object-offset (make-coords :pos #f(-13.475 -7.778 17.96) :rpy #f(1.606 1.503 -1.499))) ;; for only deva ;; adjusted 20251012
+
       (setq pre-set-avs (list #f(71.3839 55.86 90.509 -121.542 -221.823 -31.8871 370.37)
                               #f(57.8132 37.3056 47.7281 -112.674 -308.373 -69.4047 309.426) ;; #f(69.5177 10.1531 65.7727 -121.259 -337.106 -52.2361 325.722)
                               #f(51.785 18.9729 44.1366 -106.419 -315.656 -64.3521 392.927)
