@@ -663,7 +663,7 @@
   (setq avs (list))
   (setq tms (list))
   (setq cnt 0)
-  (bench
+
   (dolist (rec rec-list)
     ;; (send *robot* :head-neck-y :joint-angle now-head-y)
     ;; (send *robot* :head-neck-p :joint-angle now-head-p)
@@ -703,7 +703,6 @@
       )
     (setq cnt (+ cnt 1))
     )
-  )
   (send *ri* :angle-vector-sequence avs tms)
   (send *ri* :wait-interpolation)
   )
@@ -721,7 +720,7 @@
 (defun replay-short-rec-list (rec-list &key (time 150) (larm nil) (trans-coords (make-coords)) (each-step nil) (show-list nil)) ;; old (trans-vec #f(0 0 0))
   (let ((assoced-rec-list)
         )
-    (bench
+
     ;; (send *robot* :head-neck-y :joint-angle 0.0)
     ;; (send *robot* :head-neck-p :joint-angle 60.0)
     (send *robot* :head-neck-y :joint-angle *initial-head-neck-y*)
@@ -747,13 +746,10 @@
     ;; (send *ri* :angle-vector (send *robot* :angle-vector) 4000)
     ;; (send *ri* :wait-interpolation)
 
-    (bench
     (if show-list
         (view-rec-list assoced-rec-list)
       (replay-rec-list assoced-rec-list :time time :larm larm :each-step each-step)
       )
-    )
-    )
     ))
 
 (defun record-rav-key ()
