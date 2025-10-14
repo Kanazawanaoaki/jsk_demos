@@ -616,7 +616,7 @@
     ))
 
 ;; ;; object-rec, FoundationPose tracking
-(defun get-fp-tracking-coords (&optional (frame-id "object_center") &key (timeout 20))
+(defun get-fp-tracking-coords (&key (frame-id "object_center") (timeout 20))
   (get-tf-coords frame-id :timeout timeout))
 
 (defun fp-marker-cb (msg)
@@ -742,6 +742,12 @@
    ((string= object-name "spatula")
     (fp-reset-mesh :label "grill spatula" :mesh_name "kn_turner_20250130_orig_edit") ;;turner-tool
     )
+   ((string= object-name "pan lid")
+    (fp-reset-mesh :label "brown pan lid" :mesh_name "kn_pan_lid_20251012_edit_orig_fixed") ;; frying pan lid
+    )
+   ((string= object-name "green cup")
+    (fp-reset-mesh :label "green cup" :mesh_name "kn_green_cup_20250925_edit_orig_fixed")
+    )
    (t
     (format t "~A is not implemented for change-fp-mesh! ~%" object-name)
     (return-from change-fp-mesh)
@@ -759,9 +765,8 @@
       (change-fp-mesh :object-name object-name)
       )
     (wait-fp-topic-update)
-    (setq rec-coords (get-fp-tracking-coords))
-    (if (equal rec-coords nil)
-        (setq rec-coords (get-fp-tracking-coords))
+    (while (equal rec-coords nil)
+      (setq rec-coords (get-fp-tracking-coords :timeout 1))
       )
     (when (and fix-rot (not (equal rec-coords nil)))
       (send rec-coords :newcoords (make-coords :pos (send (send rec-coords :copy-worldcoords) :worldpos)))

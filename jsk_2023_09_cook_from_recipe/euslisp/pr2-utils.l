@@ -36,6 +36,7 @@
          )
   ;; (send *ri* :speak-jp "ありがとうございます")
   ;; (unix:sleep 1)
+  (ros::unsubscribe "/speech_to_text")
   )
 
 (defun ok-wait ()
