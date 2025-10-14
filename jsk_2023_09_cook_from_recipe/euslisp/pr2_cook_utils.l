@@ -485,8 +485,8 @@
   (send *robot* :head-neck-p :joint-angle head-p)
   (send *robot* :head-neck-y :joint-angle head-y)
   (send *viewer* :draw-objects)
-  ;; (send *ri* :angle-vector (send *robot* :angle-vector) time)
-  (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
+  (send *ri* :angle-vector (send *robot* :angle-vector) time)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
   (send *ri* :wait-interpolation)
   )
 
@@ -496,29 +496,31 @@
     (setq rarm-av #f(-75.0 50.0 -110.0 -110.0 200.0 -10.0 -10.0))
     (setq larm-av #f(75.0 50.0 110.0 -110.0 -200.0 -10.0 350.0))
     ;; (setq larm-av #f(75.0 50.0 110.0 -110.0 -200.0 -10.0 -10.0));; これだとめっちゃ回転するfrom reset-pose
+    (send *robot* :head-neck-p :joint-angle head-p)
+    (send *robot* :head-neck-y :joint-angle head-y)
     (case arm
           (:arms
            (send *robot* :rarm :angle-vector rarm-av)
            (send *robot* :larm :angle-vector larm-av)
            (send *robot* :torso_lift_joint :joint-angle torso-lift)
+           (send *ri* :angle-vector (send *robot* :angle-vector) time)
+           ;; (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5) ;;torsoがあると返って遅くなる
            )
           (:rarm
            (send *robot* :rarm :angle-vector rarm-av)
+           (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
            )
           (:larm
            (send *robot* :larm :angle-vector larm-av)
+           (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
            )
           )
-    (send *robot* :head-neck-p :joint-angle head-p)
-    (send *robot* :head-neck-y :joint-angle head-y)
     (send *viewer* :draw-objects)
-    ;; (send *ri* :angle-vector (send *robot* :angle-vector) time)
-    (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
     (send *ri* :wait-interpolation)
     ))
 
-(defun reset-cook-manip-counter-pose (&key (time 5000) (arm :arms) (head-p 55.0) (head-y 0.0) (torso-lift 300));; TODO update 
-  (reset-cook-manip-pose :head-p head-p) ;; todo rest args 
+(defun reset-cook-manip-counter-pose (&key (time 5000) (arm :arms) (head-p 55.0) (head-y 0.0) (torso-lift 300));; TODO update
+  (reset-cook-manip-pose :head-p head-p) ;; todo rest args
   )
 
 (defun potentio-vector (&key (head-p 50.0) (head-y 0.0))

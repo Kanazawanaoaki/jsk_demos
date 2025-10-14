@@ -696,10 +696,6 @@
    ((string= object-name "knife")
     (fp-reset-mesh :label "black knife" :mesh_name "kn_knife_20241017_v2_edit_orig_fixed") ;; TODO check
     )
-   ((string= object-name "cutting board")
-    ;; (ros::set-dynamic-reconfigure-param "/deva_node" "classes" :string "white cutting board;")
-    ;; TODO
-    )
    ((string= object-name "peeler")
     (fp-reset-mesh :label "blue peeler" :mesh_name "kn_peeler_20241017_wu_scan")
     )
@@ -747,6 +743,9 @@
     )
    ((string= object-name "green cup")
     (fp-reset-mesh :label "green cup" :mesh_name "kn_green_cup_20250925_edit_orig_fixed")
+    )
+   ((string= object-name "cutting board")
+    (fp-reset-mesh :label "white cutting board" :mesh_name "kn_cutting_board_20250925_edit_orig_fixed")
     )
    (t
     (format t "~A is not implemented for change-fp-mesh! ~%" object-name)
