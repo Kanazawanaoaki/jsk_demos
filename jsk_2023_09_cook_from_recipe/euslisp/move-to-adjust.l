@@ -8,6 +8,8 @@
 (defvar *use-voicetext* t)
 (defvar *use-english* nil)
 (defvar *use-cable* t)
+(defvar *rarm-hold-object-flag* nil)
+(defvar *larm-hold-object-flag* nil)
 
 ;; (if (and (boundp '*use-voicetext*) *use-voicetext*)
 ;;     (cond
@@ -220,6 +222,12 @@
         (adjust-suc-flag nil))
     ;; move-to start
     (send *ri* :clear-costmap)
+    (if (equal *larm-hold-object-flag* nil)
+        (progn
+          (send *pr2* :larm :angle-vector (get-tuckarm :rarm :inside :larm))
+          (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+          (send *ri* :wait-interpolation)
+          ))
     (reset-move-pose :head-p 0.0 :torso 50.0 :tm 3000)
     ;; cable wait
     (speech-before-move-with-rec)
