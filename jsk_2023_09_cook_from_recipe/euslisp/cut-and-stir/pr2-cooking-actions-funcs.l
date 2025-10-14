@@ -511,7 +511,7 @@
       ;; (load-cook-file :file_name "av-files/cook_larm-data_transfer-broccoli_20231119_01.l" :larm t)
       (send *ri* :start-grasp :larm :wait t :gain 100)
 
-      (load-cook-file :file_name "../av-files/cook_larm-data_transfer-broccoli_20231119_01.l" :larm t)
+      (load-cook-file :file_name "../av-files/cook_larm-data_transfer-broccoli_20231119_01.l" :larm t) ;; (cook-from-now-teach) で教示
       ;; (cook-replay-once :larm t)
       (cook-from-now-replay-once :larm t :initial-av nil)
       (return-from pour-object-to-pan nil)

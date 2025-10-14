@@ -653,6 +653,7 @@
                    )
                )
              ))
+    (ros::unsubscribe marker-topic)
     ))
 
 (defun fp-pause-tracking (&optional (service-name "/pause_tracking_object"))
@@ -1337,6 +1338,7 @@
 
         ;; (setq object-offset (make-coords :pos #f(17.35 -5.497 22.148) :rpy #f(0.009 0.878 -0.012))) ;; 20251008 new gripper
         (setq object-offset (make-coords :pos #f(7.566 -13.537 18.956) :rpy #f(-0.133 0.874 -0.075))) ;; 20251012 new calib
+        ;; (setq object-offset (make-coords :pos #f(7.342 -8.094 32.922) :rpy #f(-0.012 0.645 -0.003))) ;; 20251014 adjust
         (format t "object-offset ~A ~%" object-offset)
         )
        ((equal use-model "deva");; if use deva
@@ -1375,7 +1377,7 @@
         ;; (setq object-offset (make-coords :pos #f(-30.618 -11.147 26.985) :rpy #f(-0.025 0.057 3.124))) ;; for kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed 20251004までのキャリブ
         ;; (setq object-offset (make-coords :pos #f(-31.7 6.708 24.419) :rpy #f(-0.026 0.151 -3.14))) ;; for kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed 20251004のキャリブで修正
         ;; (setq object-offset (make-coords :pos #f(-31.7 11.708 24.419) :rpy #f(-0.026 0.151 -3.14))) ;; for kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed 20251005に少し修正
-        (setq object-offset (make-coords :pos #f(-58.699 -18.305 23.669) :rpy #f(-0.025 0.057 3.124))) ;; for kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed 20251012のキャリブ
+        (setq object-offset (make-coords :pos #f(-32.07 -12.321 24.389) :rpy #f(-0.025 0.057 3.124))) ;; for kn_oil_dipenser_20250131_bundlesdf_edit_orig_fixed 20251012のキャリブ
         )
        ((equal use-model "deva");; if use deva
         (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
