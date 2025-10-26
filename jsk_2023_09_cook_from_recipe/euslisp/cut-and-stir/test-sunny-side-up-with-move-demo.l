@@ -182,13 +182,14 @@
 ;; TODO add 盛りつけ
 
 (defun after-serving ()
-  (now-finish-sunny-all :use-rec t :receive-from-human t)
+  ;; (now-finish-sunny-all :use-rec t :receive-from-human t)
+  (now-finish-sunny-all :use-rec t :receive-from-human nil)
   )
 
 (defun do-all-sunny (&key (egg-rec t) (use-stove t) (state-rec t))
-  (sunny-side-up-init :spot "counter")
 
-  (01-move-to-counter)
+  ;; (01-move-to-counter)
+  (sunny-side-up-init :spot "counter")
 
   (02-hold-egg-opener)
   (03-set-egg-opener :egg-rec egg-rec)

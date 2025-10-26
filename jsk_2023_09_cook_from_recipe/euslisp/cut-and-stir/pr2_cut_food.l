@@ -867,7 +867,7 @@
         (ik-fail-report :wait t)
         )
       ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-      (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 6)
       (send *ri* :wait-interpolation)
       )
      )
@@ -1376,8 +1376,8 @@
         )
        )
 
-      (setq pre-set-avs (list #f(-41.0354 31.325 -34.2869 -99.4442 -158.179 -54.5975 103.313)
-                              ))
+      ;; (setq pre-set-avs (list #f(-41.0354 31.325 -34.2869 -99.4442 -158.179 -54.5975 103.313)))
+      (setq pre-set-avs (list #f(-56.5734 1.57093 -80.4669 -96.4171 189.91 -41.5902 161.763))) ;; reset-cook-manip-pose
 
       (setq pre-set-val #f(-100 0 -100))
       (setq fix-rot nil)

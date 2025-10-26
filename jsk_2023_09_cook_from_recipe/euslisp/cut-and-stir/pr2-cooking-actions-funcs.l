@@ -149,7 +149,8 @@
       (send set-target-coords :newcoords (send *arrow* :copy-worldcoords))
       )
      ((and (string= object-name "spatula") (string= spot-name "stove") (equal arm :rarm))
-      (setq pre-set-avs (list #f(-41.0354 31.325 -34.2869 -99.4442 -158.179 -54.5975 103.313)))
+      ;; (setq pre-set-avs (list #f(-41.0354 31.325 -34.2869 -99.4442 -158.179 -54.5975 103.313)))
+      (setq pre-set-avs (list #f(-56.5734 1.57093 -80.4669 -96.4171 189.91 -41.5902 161.763))) ;; reset-cook-manip-pose
       ;; (setq pre-set-val #f(-50 0 -100))
       (setq pre-set-val #f(-100 0 -100)) ;; for upper
 
@@ -369,7 +370,8 @@
       ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl1-to-pan-20240310-data.l")
       ;; (setq cook-from-now-file-name "../av-files/cook-from-now-pour-bowl1-to-pan-20240310-data_edit.l")
       ;; (setq cook-from-now-file-name "../av-files/cook-from-now-pour-gray-bowl-to-pan-20240922-data-01.l");; old calib
-      (setq cook-from-now-file-name "../av-files/cook-from-now-pour-gray-bowl-from-pan-20250217-data-01.l")
+      ;; (setq cook-from-now-file-name "../av-files/cook-from-now-pour-gray-bowl-from-pan-20250217-data-01.l")
+      (setq cook-from-now-file-name "../av-files/cook-from-now-pour-gray-bowl-to-pan-20251014-data-01-edit.l") ;; shared larm
       (send *ri* :start-grasp :rarm :gain 1.0 :wait t)
 
       (when use-rec

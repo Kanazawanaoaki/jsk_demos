@@ -35,7 +35,8 @@
   ;; 卵セットの位置 右腕
   ;; (send *pr2* :rarm :angle-vector #f(-27.2041 20.6283 -48.1463 -89.9882 277.543 -88.0405 -29.2401));; 20250611
   (send *pr2* :rarm :angle-vector #f(-27.0663 21.5492 -47.7329 -93.6462 274.136 -93.0092 -27.5173));; 20250621 calib
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 6)
   (send *ri* :wait-interpolation)
   )
 
@@ -50,12 +51,14 @@
       ;; 待機姿勢 その1
       ;; (send *pr2* :larm :angle-vector #f(69.5177 10.1531 65.7727 -121.259 -337.106 -52.2361 325.722))
       (send *pr2* :larm :angle-vector #f(57.8132 37.3056 47.7281 -112.674 -308.373 -69.4047 309.426)) ;; 20251008 update
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+      ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
       (send *ri* :wait-interpolation)
 
       ;; 待機姿勢 その2
       (send *pr2* :larm :angle-vector #f(51.785 18.9729 44.1366 -106.419 -315.656 -64.3521 392.927))
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+      ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
       (send *ri* :wait-interpolation)
 
       (send *ri* :stop-grasp :larm :wait t)
@@ -64,11 +67,13 @@
       ;; (send *pr2* :larm :angle-vector #f(25.736 4.73558 81.1203 -27.9526 103.117 -89.0249 -5.55466)) ;; #<cascaded-coords #X55ebe5530d60 :larm-end-coords  723.23 403.655 877.67 / 1.244 1.515 -1.962>
       (send *pr2* :larm :angle-vector #f(33.6442 -3.71883 98.6645 -76.4595 -272.873 -85.2094 319.612)) ;; #<cascaded-coords #X56254e5ebed8 :larm-end-coords  601.016 263.23 919.799 / 1.606 1.502 -1.499>
       (send *pr2* :larm :move-end-pos (float-vector 0 0 80) :world)
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+      ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
       (send *ri* :wait-interpolation)
 
       (send *pr2* :larm :move-end-pos (float-vector 0 0 -80) :world)
-      (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+      ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
       (send *ri* :wait-interpolation)
 
       ;; 掴んでみる
@@ -83,12 +88,14 @@
 (defun egg-crack-set-larm-carry ()
   ;; 卵をセットする左腕の位置のセット
   (send *pr2* :larm :angle-vector #f(15.3939 -19.6022 69.071 -77.1977 -280.164 -114.3 385.567)) ;; #<cascaded-coords #X56254e5ebed8 :larm-end-coords  530.592 48.542 1199.673 / 0.496 1.477 -1.04>
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 6)
   (send *ri* :wait-interpolation)
 
 
   (send *pr2* :larm :angle-vector #f(9.36656 -14.3426 69.7038 -77.0606 -279.207 -114.016 386.287)) ;; #<cascaded-coords #X56254e5ebed8 :larm-end-coords  522.706 -9.709 1157.612 / 1.266 1.539 -0.163>
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 6)
   (send *ri* :wait-interpolation)
 
   ;; 卵をセットする
@@ -106,12 +113,15 @@
   ;; (send *arrow* :translate #f(20 0 -30) :world);; adjusted 20250922
   ;; (send *arrow* :rotate (deg2rad 20) :z);; adjusted 20250922
 
-  (send *arrow* :translate #f(20 0 -60) :world);; adjusted 20251027
-  (send *arrow* :rotate (deg2rad 35) :z);; adjusted 20251027
+  ;; (send *arrow* :translate #f(20 0 -60) :world);; adjusted 20251027
+  ;; (send *arrow* :rotate (deg2rad 35) :z);; adjusted 20251027
+  (send *arrow* :translate #f(20 0 -50) :world);; adjusted 20251027
+  (send *arrow* :rotate (deg2rad 30) :z);; adjusted 20251027
 
   (send *pr2* :larm :inverse-kinematics *arrow*)
 
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
   (send *ri* :wait-interpolation)
 
   ;; 卵を離す
@@ -121,11 +131,13 @@
 
   ;; (pr2-arm-up :num 100 :time 2000 :arm :larm)
   (send *pr2* :larm :angle-vector #f(15.3939 -19.6022 69.071 -77.1977 -280.164 -114.3 385.567)) ;; #<cascaded-coords #X56254e5ebed8 :larm-end-coords  530.592 48.542 1199.673 / 0.496 1.477 -1.04>
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
   (send *ri* :wait-interpolation)
 
   (send *pr2* :larm :angle-vector #f(50.7163 28.9461 50.58 -99.7113 -311.614 -69.6231 406.581))
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
   (send *ri* :wait-interpolation)
 
   ;; (reset-cook-pose :arm :larm)
@@ -150,7 +162,8 @@
         ))
 
   ;; 卵を割る右手の位置
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 6)
   (send *ri* :wait-interpolation)
 
   ;; 卵を割る
@@ -165,7 +178,7 @@
 ;; sunny-transfer
 (defun receive-spatula-for-sunny ()
   ;; (send *pr2* :rarm :angle-vector #f(-41.0354 31.325 -34.2869 -99.4442 -158.179 -54.5975 103.313))
-  (send *pr2* :rarm :angle-vector #f(-56.5734 1.57093 -80.4669 -96.4171 189.91 -41.5902 161.763))
+  (send *pr2* :rarm :angle-vector #f(-56.5734 1.57093 -80.4669 -96.4171 189.91 -41.5902 161.763)) ;; for reset-cook-manip-pose
   (send *ri* :angle-vector (send *pr2* :angle-vector) 3000)
   (send *ri* :wait-interpolation)
 
@@ -197,7 +210,7 @@
   (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20250213-data-01-01.l")
   (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
   ;; (cook-from-now-replay-once :larm nil :initial-av nil :time 100) ;; default time is 150
-  (cook-from-now-replay-rec-once :larm nil :initial-av nil :time 100) ;; default time is 150 ;; reset-cook-manip-pose
+  (cook-from-now-replay-rec-once :larm nil :initial-av nil :time 100) ;; default time is 150 ;; for reset-cook-manip-pose
 
   ;; 運ぶ動作
   ;; (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20250213-data-01-02.l")
@@ -206,12 +219,14 @@
 
   ;; (send *pr2* :rarm :angle-vector #f(-29.4794 32.8183 -41.1178 -57.6387 -54.1418 -80.9058 15.6591)) ;;すくい終わりの関節角度
   (send *pr2* :rarm :angle-vector #f(-36.1141 20.8842 -74.221 -56.2957 337.26 -69.8264 1.45092)) ;;すくい終わりの関節角度 ;; reset-cook-manip-pose
-  (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 1000)
+  (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 5)
   (send *ri* :wait-interpolation)
 
   ;; (send *pr2* :rarm :angle-vector #f(-51.7294 30.3803 -36.5974 -50.0075 -62.2124 -56.8969 7.41022)) ;;盛り付けはじめの関節角度
   (send *pr2* :rarm :angle-vector #f(-58.5146 19.2027 -73.3976 -48.6711 340.151 -45.5897 -8.97471)) ;;盛り付けはじめの関節角度 ;; reset-cook-manip-pose
   (send *ri* :angle-vector (send *pr2* :angle-vector) 5000)
+  ;; (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 6)
   (send *ri* :wait-interpolation)
 
   ;; 盛り付け動作
@@ -220,11 +235,19 @@
   ;; (send *ri* :angle-vector (send *pr2* :angle-vector))
   ;; (send *ri* :wait-interpolation)
 
-  (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20250213-data-01-03.l")
-  (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
-  (setq *initial-head-neck-y* -25)
-  ;; (cook-from-now-replay-once :larm nil :initial-av nil :time 100) ;; default time is 150
-  (cook-from-now-replay-rec-once :larm nil :initial-av nil :time 100) ;; default time is 150 ;; reset-cook-manip-pose
+  ;; 白いお皿の認識
+  (let ((rec-coords)
+        (trans-coords))
+    (setq rec-coords (fp-rec-object :object-name "white dish" :fix-rot t))
+    (setq trans-coords (send (make-coords :pos #f(803.849 -572.513 852.346)) :transformation (send rec-coords :copy-worldcoords) :world))
+
+    (setq cook-from-now-file-name "../av-files/cook-from-now-transfer-sunny-from-pan-20250213-data-01-03.l")
+    (load-cook-from-now-file :file_name cook-from-now-file-name :larm nil)
+    (setq *initial-head-neck-y* -25)
+    ;; (cook-from-now-replay-once :larm nil :initial-av nil :time 100) ;; default time is 150
+    ;; (cook-from-now-replay-rec-once :larm nil :initial-av nil :time 100) ;; default time is 150 ;; for reset-cook-manip-pose
+    (cook-from-now-replay-rec-once :larm nil :initial-av nil :time 100 :trans-coords trans-coords)
+    )
 
   (setq *initial-head-neck-y* 0)
   (pr2-move-head :head-p 50 :head-y 0)
@@ -264,6 +287,11 @@
   (if *use-english*
       (speak-with-log "I start cooking sunny-side-up" :lang "en") ;;TODO
     (speak-with-log "目玉焼きの盛り付けに挑戦します"))
+
+  (butter-sunny-init)
+
+  (speak-with-log "準備をしてOKと言ってください")
+  (ok-wait)
 
   ;; フライパンを掴む
   (if use-rec
