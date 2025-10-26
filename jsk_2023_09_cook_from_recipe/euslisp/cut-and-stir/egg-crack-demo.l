@@ -230,7 +230,7 @@
   (send *ri* :wait-interpolation)
 
   ;; 盛り付け動作
-  (pr2-move-head :head-p 50 :head-y -25) ;; not test yet
+  (pr2-move-head :head-p 50 :head-y -25)
   ;; (send *pr2* :head-neck-y :joint-angle -25)
   ;; (send *ri* :angle-vector (send *pr2* :angle-vector))
   ;; (send *ri* :wait-interpolation)

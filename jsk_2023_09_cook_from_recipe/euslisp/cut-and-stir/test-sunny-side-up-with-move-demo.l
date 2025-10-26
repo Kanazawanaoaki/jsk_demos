@@ -186,7 +186,7 @@
   (now-finish-sunny-all :use-rec t :receive-from-human nil)
   )
 
-(defun do-all-sunny (&key (egg-rec t) (use-stove t) (state-rec t))
+(defun do-all-sunny (&key (egg-rec t) (use-stove t) (state-rec t) (after-serv t))
 
   ;; (01-move-to-counter)
   (sunny-side-up-init :spot "counter")
@@ -216,6 +216,10 @@
     (17-cook-egg :state-rec state-rec)
     (18-turn-off-stove)
     )
+
+  (when after-serv
+    (after-serving)
+    )
   )
 
 (defun counter-sunny (&key (egg-rec nil))
@@ -226,7 +230,7 @@
   (06-hold-bowl)
   )
 
-(defun stove-test (&key (use-stove t) (state-rec t))
+(defun stove-test (&key (use-stove t) (state-rec t) (after-serv t))
   (09-hold-oil)
   (10-pour-oil)
   (11-place-oil)
@@ -241,6 +245,9 @@
     (17-cook-egg :state-rec state-rec)
     (18-turn-off-stove)
     )
+  (when after-serv
+    (after-serving)
+    )
   )
 
 (defun tmp-test (&key (egg-rec t))
@@ -248,3 +255,46 @@
   (03-set-egg-opener :egg-rec egg-rec)
   )
 
+
+;; based egg
+(defun tmp-grasp-cup ()
+  (grasp-rec-object :object-name "green cup" :arm :rarm :use-model "fp" :use-calib-offset nil)
+  )
+
+(defun tmp-place-cup ()
+  (grasp-object-primitive :pre-set-avs (list #f(-67.4806 22.6647 -67.2305 -103.326 320.791 -69.2717 32.752)
+                                             #f(-43.0503 5.86039 -40.3291 -96.6655 234.657 -109.14 34.4596))
+                          :grasp-coords (make-coords :pos #f(720.31 -394.36 898.012) :rpy #f(-0.023 0.751 -3.114))
+                          :pre-set-val #f(-100 0 0)
+                          :arm :rarm
+                          :action-mode :place
+                          :object-name "green cup")
+  )
+
+(defun tmp-pour-cup ()
+  (pour-object-to-pan :from-object "green cup" :to-object "frying pan" :arm :rarm :spot-name "stove" :use-rec t)
+  )
+
+(defun tmp-grasp-lid ()
+  (grasp-rec-object :object-name "pan lid" :arm :rarm :use-model "fp" :use-calib-offset nil :grasp-gain 1.0)
+  )
+
+(defun tmp-place-lid ()
+  (grasp-object-primitive :pre-set-avs (list #f(-67.4806 22.6647 -67.2305 -103.326 320.791 -69.2717 32.752)
+                                             #f(-47.5298 11.2017 -41.6889 -86.7864 238.525 -94.9484 22.8652))
+                          :grasp-coords (make-coords :pos #f(837.558 111.919 890.809) :rpy #f(0.055 0.639 -3.112))
+                          :pre-set-val #f(-150 0 0)
+                          :arm :rarm
+                          :action-mode :place
+                          :object-name "pan lid")
+  )
+
+;; TODO
+
+
+;; (defun tmp-close-lid ()
+;;   )
+
+;; (defun based-egg ()
+
+;;   )

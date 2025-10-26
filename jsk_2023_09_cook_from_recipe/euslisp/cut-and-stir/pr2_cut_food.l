@@ -867,7 +867,8 @@
         (ik-fail-report :wait t)
         )
       ;; (send *ri* :angle-vector (send *pr2* :angle-vector) 2000)
-      (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 6)
+      ;; (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 6)
+      (send *ri* :angle-vector (send *pr2* :angle-vector) :fast nil 0 :scale 10)
       (send *ri* :wait-interpolation)
       )
      )
@@ -1403,6 +1404,7 @@
       (cond
        ((equal use-model "fp");; if use FoundationPose
         (setq object-offset (make-coords :pos #f(-18.118 -25.6 -67.339) :rpy #f(1.648 -1.12 -3.081))) ;; for kn_green_cup_20250925_edit_orig_fixed 20251026
+        ;; (setq object-offset (make-coords :pos #f(-25.455 -34.573 -62.409) :rpy #f(1.718 -1.175 -3.137))) ;; for 20251027
         )
        ((equal use-model "deva");; if use deva
         (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO

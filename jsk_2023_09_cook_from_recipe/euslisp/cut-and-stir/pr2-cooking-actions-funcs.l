@@ -370,13 +370,25 @@
       ;; (setq cook-from-now-file-name "../../av-files/cook-from-now-pour-bowl1-to-pan-20240310-data.l")
       ;; (setq cook-from-now-file-name "../av-files/cook-from-now-pour-bowl1-to-pan-20240310-data_edit.l")
       ;; (setq cook-from-now-file-name "../av-files/cook-from-now-pour-gray-bowl-to-pan-20240922-data-01.l");; old calib
-      ;; (setq cook-from-now-file-name "../av-files/cook-from-now-pour-gray-bowl-from-pan-20250217-data-01.l")
-      (setq cook-from-now-file-name "../av-files/cook-from-now-pour-gray-bowl-to-pan-20251014-data-01-edit.l") ;; shared larm
+      (setq cook-from-now-file-name "../av-files/cook-from-now-pour-gray-bowl-from-pan-20250217-data-01.l")
+      ;; (setq cook-from-now-file-name "../av-files/cook-from-now-pour-gray-bowl-to-pan-20251014-data-01-edit.l") ;; shared larm ;;上のやつのほうが良い説もある
       (send *ri* :start-grasp :rarm :gain 1.0 :wait t)
 
       (when use-rec
         (setq rec-coords (fp-rec-object :object-name "frying pan"))
         (setq trans-coords (send (make-coords :pos #f(821.649 -88.934 868.308) :rpy #f(0.28 -1.52 2.858)) :transformation (send rec-coords :copy-worldcoords) :world))
+        )
+      )
+     ((and (string= from-object "green cup") (string= to-object "frying pan") (string= spot-name "stove") (equal arm :rarm)) ;; water
+      (setq pre-set-avs (list #f(-43.0503 5.86039 -40.3291 -96.6655 234.657 -109.14 34.4596)
+                              ))
+
+      (setq cook-from-now-file-name "../av-files/cook-from-now-pour-green-cup-to-pan-20251014-data-01-edit.l")
+      ;; (send *ri* :start-grasp :rarm :gain 1.0 :wait t)
+
+      (when use-rec
+        (setq rec-coords (fp-rec-object :object-name "frying pan"))
+        (setq trans-coords (send (make-coords :pos #f(824.124 -87.041 871.399) :rpy #f(0.118 -1.558 2.974)) :transformation (send rec-coords :copy-worldcoords) :world))
         )
       )
      ((and (string= from-object "green bowl") (string= to-object "frying pan") (string= spot-name "stove") (equal arm :rarm)) ;; butter
