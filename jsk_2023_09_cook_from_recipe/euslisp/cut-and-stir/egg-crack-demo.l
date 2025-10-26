@@ -102,8 +102,12 @@
 
   ;; (send *arrow* :translate #f(0 0 -30) :world);; original 20250922
   ;; (send *arrow* :rotate (deg2rad 30) :z);; original 20250922
-  (send *arrow* :translate #f(20 0 -30) :world);; adjusted 20250922
-  (send *arrow* :rotate (deg2rad 20) :z);; adjusted 20250922
+
+  ;; (send *arrow* :translate #f(20 0 -30) :world);; adjusted 20250922
+  ;; (send *arrow* :rotate (deg2rad 20) :z);; adjusted 20250922
+
+  (send *arrow* :translate #f(20 0 -60) :world);; adjusted 20251027
+  (send *arrow* :rotate (deg2rad 35) :z);; adjusted 20251027
 
   (send *pr2* :larm :inverse-kinematics *arrow*)
 
