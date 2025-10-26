@@ -1382,6 +1382,41 @@
       (setq pre-set-val #f(-100 0 -100))
       (setq fix-rot nil)
       )
+     ((and (string= object-name "pan lid") (equal arm :rarm)) ;; pan lid
+      (cond
+       ((equal use-model "fp");; if use FoundationPose
+        (setq object-offset (make-coords :pos #f(-14.716 15.677 9.886) :rpy #f(0.055 0.639 -3.112))) ;; for kn_pan_lid_20251012_edit_orig_fixed 20251026
+        )
+       ((equal use-model "deva");; if use deva
+        (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
+        )
+       )
+
+      (setq pre-set-avs (list #f(-67.4806 22.6647 -67.2305 -103.326 320.791 -69.2717 32.752)
+                              #f(-47.5298 11.2017 -41.6889 -86.7864 238.525 -94.9484 22.8652)
+                              ))
+
+      (setq pre-set-val #f(-150 0 0))
+      (setq fix-rot t)
+      )
+     ((and (string= object-name "green cup") (equal arm :rarm)) ;; green cup
+      (cond
+       ((equal use-model "fp");; if use FoundationPose
+        (setq object-offset (make-coords :pos #f(-18.118 -25.6 -67.339) :rpy #f(1.648 -1.12 -3.081))) ;; for kn_green_cup_20250925_edit_orig_fixed 20251026
+        )
+       ((equal use-model "deva");; if use deva
+        (setq object-offset (make-coords :pos #f(-93.773 1.137 -3.002) :rpy #f(-0.033 0.036 -0.057))) ;; for TODO
+        )
+       )
+
+      (setq pre-set-avs (list #f(-67.4806 22.6647 -67.2305 -103.326 320.791 -69.2717 32.752)
+                              #f(-43.0503 5.86039 -40.3291 -96.6655 234.657 -109.14 34.4596)
+                              ))
+
+      (setq pre-set-val #f(-100 0 0))
+      (setq fix-rot nil)
+      )
+
      ((and (string= object-name "oil dispenser") (equal arm :larm)) ;; oil dispenser
       (cond
        ((equal use-model "fp");; if use FoundationPose
