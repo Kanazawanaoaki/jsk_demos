@@ -45,7 +45,7 @@ def main():
             },
             {
                 "role": "user",
-                "content": "I am going to Paris, what should I see?",
+                "content": "私はパリにいく予定です．何を見るべきでしょうか？",
             }
         ],
         max_completion_tokens=16384,
