@@ -93,12 +93,12 @@ def main():
             },
             {
                 "role": "user",
-                # "content": "I am going to Paris, what should I see?",
                 "content": input_text,
             }
         ],
         max_completion_tokens=16384,
         model=args.deployment,
+        temperature=0,
     )
 
     output_text = response.choices[0].message.content
