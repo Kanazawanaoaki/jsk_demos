@@ -1,0 +1,5 @@
+mix(egg, milk, seasoned-egg-mixture, bowl, whisk)
+pour(oil, frying-pan)
+heat(oil, medium-heat)
+pour(seasoned-egg-mixture, frying-pan)
+stir-fry(seasoned-egg-mixture, cooked-egg, spatula)

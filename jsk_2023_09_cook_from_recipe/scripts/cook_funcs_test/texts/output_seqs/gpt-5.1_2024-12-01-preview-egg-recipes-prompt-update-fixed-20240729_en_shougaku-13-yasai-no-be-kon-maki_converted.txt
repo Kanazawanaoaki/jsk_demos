@@ -1,0 +1,17 @@
+pour(asparagus, pot)  
+pour(carrots, pot)  
+pour(king-oyster-mushrooms, pot)  
+boil(asparagus, boiled)  
+boil(carrots, boiled)  
+boil(king-oyster-mushrooms, boiled)  
+
+mix(asparagus, carrots, asparagus-carrot-mixture, tray, hands)  
+mix(asparagus-carrot-mixture, king-oyster-mushrooms, vegetables, tray, hands)  
+mix(vegetables, bacon, bacon-rolls, tray, hands)  
+
+pour(oil, frying-pan)  
+heat(oil, heated)  
+pour(bacon-rolls, frying-pan)  
+stir-fry(bacon-rolls, browned, spatula)  
+mix(bacon-rolls, salt, seasoned-bacon-rolls, frying-pan, spatula)  
+mix(seasoned-bacon-rolls, pepper, finished-bacon-rolls, frying-pan, spatula)

@@ -1,0 +1,4 @@
+boil(cabbage, boiled-cabbage)
+cook(boiled-cabbage, cut-3cm-squares-and-thin-core)
+stir(boiled-cabbage, excess-water-removed, hands)
+mix(boiled-cabbage, salted-kombu, seasoned-cabbage, bowl, hands)

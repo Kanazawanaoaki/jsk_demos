@@ -1,0 +1,22 @@
+pour(rice, bowl)  
+stir(rice, washing, hand)  
+stir(rice, washing, hand)  
+stir(rice, washing, hand)  
+stir(rice, washing, hand)  
+pour(rice, colander)  
+
+pour(rice, pot)  
+pour(water, pot)  
+heat(rice, water-absorption-thirty-minutes)  
+
+turn-on-stove(pot)  
+set-stove(high, pot)  
+boil(rice, boiling)  
+set-stove(medium, pot)  
+heat(rice, water-evaporated)  
+set-stove(low, pot)  
+cook(rice, cooked-rice)  
+
+turn-off-stove(pot)  
+heat(rice, steaming-ten-minutes)  
+stir(rice, fluffed, rice-paddle)

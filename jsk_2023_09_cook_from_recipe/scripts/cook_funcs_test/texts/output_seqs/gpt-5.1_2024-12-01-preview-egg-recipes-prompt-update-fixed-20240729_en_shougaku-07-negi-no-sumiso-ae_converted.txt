@@ -1,0 +1,4 @@
+boil(green-onion, boiled-green-onion)  
+mix(miso, vinegar, miso-vinegar-mixture, bowl, whisk)  
+mix(miso-vinegar-mixture, sugar, dressing, bowl, whisk)  
+mix(boiled-green-onion, dressing, dressed-green-onion, bowl, tongs)

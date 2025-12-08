@@ -1,0 +1,13 @@
+pour(greens, water-bowl)
+stir(greens, rinsed-greens, hand)
+
+boil(water, vigorously-boiling-water)
+pour(greens, pot)
+boil(greens, reboiled-water)
+
+turn-off-stove(pot)
+pour(greens, cold-water-bowl)
+stir(greens, cooled-greens, hand)
+
+stir(greens, squeezed-greens, hand)
+cook(greens, cut-into-4-5cm)
