@@ -1,17 +1,18 @@
-pour(carrot, cutting-board)
-cut(carrot, round-slices-5mm)          // not in given list; represents slicing step
+pour(carrot, cutting-board)  
+stir-fry(carrot, sliced-into-5mm-rounds, knife)
 
-pour(broccoli, cutting-board)
-cut(broccoli, bite-sized-pieces)       // not in given list; represents cutting step
-boil(broccoli, boiled-broccoli)
-drain(boiled-broccoli, colander)       // not in given list; represents draining step
+pour(broccoli, cutting-board)  
+stir-fry(broccoli, bite-sized-pieces, knife)  
+boil(broccoli, boiled-broccoli)  
+pour(boiled-broccoli, colander)
 
-boil(cabbage, boiled-cabbage)
-cut(boiled-cabbage, remove-core)       // not in given list; represents core removal
-cut(boiled-cabbage, strips-1-2cm)      // not in given list; represents slicing step
-cut(cabbage-core, thin-slices)         // not in given list; represents thinly slicing core
+pour(cabbage, pot)  
+boil(cabbage, boiled-cabbage)  
+stir-fry(boiled-cabbage, core-removed, knife)  
+stir-fry(boiled-cabbage, cut-into-1-2cm-strips, knife)  
+stir-fry(cabbage-core, thinly-sliced, knife)
 
-pour(boiled-carrot, plate)
-pour(boiled-broccoli, plate)
-pour(boiled-cabbage, plate)
+pour(boiled-carrot, plate)  
+pour(boiled-broccoli, plate)  
+pour(boiled-cabbage, plate)  
 pour(sauce, plate)

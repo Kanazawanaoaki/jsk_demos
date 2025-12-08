@@ -1,4 +1,3 @@
-[Function Sequence]
 pour(egg, bowl)
 pour(oil, frying-pan)
 turn-on-stove(frying-pan)

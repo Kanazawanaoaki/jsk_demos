@@ -1,4 +1,4 @@
-boil(komatsuna, boiled-komatsuna)
-mix(ground-sesame-seeds, soy-sauce, sesame-soy-mixture, bowl, whisk)
-mix(sesame-soy-mixture, sugar, dressing, bowl, whisk)
-mix(boiled-komatsuna, dressing, dressed-komatsuna, bowl, tongs)
+boil(komatsuna, boiled-komatsuna)  
+mix(ground-sesame-seeds, soy-sauce, dressing, bowl, whisk)  
+mix(dressing, sugar, sweet-dressing, bowl, whisk)  
+mix(boiled-komatsuna, sweet-dressing, dressed-komatsuna, bowl, tongs)

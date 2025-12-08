@@ -99,6 +99,7 @@ def main():
         max_completion_tokens=16384,
         model=args.deployment,
         temperature=0,
+        seed=42,
     )
 
     output_text = response.choices[0].message.content
