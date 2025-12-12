@@ -1,0 +1,4 @@
+boil(cabbage, boiled-cabbage)
+cut(boiled-cabbage, three-cm-squares-and-thin-core, knife)
+do(boiled-cabbage, squeezed, None, None)
+mix(boiled-cabbage, salted-kombu, cabbage-salted-kombu-salad, bowl, tongs)

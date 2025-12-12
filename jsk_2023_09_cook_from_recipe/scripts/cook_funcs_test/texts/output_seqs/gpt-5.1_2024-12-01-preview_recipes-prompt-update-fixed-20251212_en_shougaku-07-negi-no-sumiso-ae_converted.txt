@@ -1,0 +1,5 @@
+cut(green-onion, four-to-five-cm, knife)
+boil(green-onion, boiled-green-onion)
+mix(miso, vinegar, dressing, bowl, whisk)
+mix(dressing, sugar, miso-vinegar-sugar-dressing, bowl, whisk)
+do(boiled-green-onion, tossed-with-dressing, bowl, None)

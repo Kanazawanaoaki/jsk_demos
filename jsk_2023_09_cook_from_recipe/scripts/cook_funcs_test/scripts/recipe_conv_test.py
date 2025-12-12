@@ -109,7 +109,7 @@ def main():
     prompt_name = extract_file_name(prompt_text_path)
     recipe_name = extract_file_name(recipe_text_path)
 
-    output_file_path = os.path.join(output_dir_path, f"{args.deployment}_{args.api_version}-{prompt_name}_{recipe_name}_converted.txt")
+    output_file_path = os.path.join(output_dir_path, f"{args.deployment}_{args.api_version}_{prompt_name}_{recipe_name}_converted.txt")
     with open(output_file_path, 'w', encoding='utf-8') as file:
         file.write(output_text)
     print("\nOutput is saved in {}".format(output_file_path))

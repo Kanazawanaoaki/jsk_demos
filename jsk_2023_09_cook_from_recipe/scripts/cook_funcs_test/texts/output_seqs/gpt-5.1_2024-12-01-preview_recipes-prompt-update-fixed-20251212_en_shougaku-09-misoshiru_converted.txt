@@ -1,0 +1,24 @@
+pour(water, pot)
+pour(dried-sardines-heads-guts-removed, pot)
+
+wash(daikon)
+wash(green-onion)
+wash(aburaage)
+cut(daikon, half-moon-5mm-slices, knife)
+cut(green-onion, thin-slices, knife)
+cut(aburaage, thin-strips, knife)
+
+boil(water-and-dried-sardines, boiling)
+set-stove(medium, pot)
+cook(water-and-dried-sardines, four-to-five-minutes)
+do(dried-sardines, removed-or-left-in, pot, None)
+
+pour(daikon-half-moon-5mm-slices, pot)
+cook(daikon-half-moon-5mm-slices, translucent)
+pour(aburaage-thin-strips, pot)
+pour(green-onion-thin-slices, pot)
+
+pour(miso, pot)
+boil(miso-soup, comes-back-to-boil)
+turn-off-stove(pot)
+do(miso-soup, adjust-miso-to-taste, pot, None)

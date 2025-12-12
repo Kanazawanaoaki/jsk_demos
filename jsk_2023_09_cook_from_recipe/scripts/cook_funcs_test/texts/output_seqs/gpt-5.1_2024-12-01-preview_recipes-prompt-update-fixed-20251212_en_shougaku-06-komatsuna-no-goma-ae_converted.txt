@@ -1,0 +1,5 @@
+boil(komatsuna, boiled-komatsuna)  
+cut(boiled-komatsuna, three-to-four-cm-lengths, knife)  
+mix(ground-sesame-seeds, soy-sauce, dressing, bowl, whisk)  
+mix(dressing, sugar, sesame-dressing, bowl, whisk)  
+mix(boiled-komatsuna, sesame-dressing, dressed-komatsuna, bowl, chopsticks)
