@@ -1,0 +1,54 @@
+Express a cooking recipe as a sequence of functions that can be defined as below using the variables ingredient, tool, and string.
+create_ing(ingredient i, string description)
+create_tool(tool t, string description)
+combine(ingredient set ins, ingredient out, string outdesc, string manner)
+separate(ingredient in, ingredient out1, string out1desc, ingredient out2, string out2name, string manner)
+put(ingredient i, tool t)
+remove(ingredient i, tool t)
+cut(ingredient in, tool t, ingredient out, string outdesc, string manner)
+mix(ingredient in, tool t, ingredient out, string outdesc, string manner)
+cook(ingredient in, tool t, ingredient out, string outdesc, string manner)
+do(ingredient in, tool t, ingredient out, string outdesc, string manner)
+serve(ingredient ing, string manner)
+set(tool t, string setting)
+leave(ingredient ing, string manner)
+chefcheck(ingredient ing, string condition)
+
+If none of the above actions apply, you may use `do`. If `do`'s vessel or tool is not required, `None` is acceptable.
+do(ingredient, state, vessel, tool)
+
+For example,
+
+[Recipe]
+Mix the eggs and milk well to make the egg mixture.
+Melt the butter in a frying pan.
+Pour the egg mixture into the frying pan and leave it there without touching it until the surrounding mixture hardens. When the egg mixture hardens, fry the eggs quickly with a wooden spoon until they are tender.
+[Function Sequence]
+mix(egg, milk, egg-mixture, bowl, whisk)
+pour(butter, frying-pan)
+heat(butter, melt)
+pour(egg-mixture, frying-pan)
+heat(egg-mixture, surroundings-hardened)
+stir-fry(egg-mixture, whole-mixture-tender, wooden-spatula)
+
+[Recipe]
+Pour the salad oil into the frying pan and heat it for 30 seconds.
+After 30 seconds, add an egg and cook until the egg is cooked.
+[Function Sequence]
+pour(salad-oil, frying-pan)
+heat(salad-oil, thirty-seconds)
+pour(egg, frying-pan)
+cook(egg, cooked-egg)
+
+[Recipe]
+Boil water in a pot and turn the heat down to low.
+Stir with a spoon to form a whirlpool.
+Gently drop the eggs into the pot and boil for 3 minutes.
+[Function Sequence]
+boil(water, boiled-water)
+set-stove(low, pot)
+stir(water, vortexed-water, spoon)
+pour(egg, pot)
+boil(egg, three-minutes)
+
+Then, convert the following recipe.
