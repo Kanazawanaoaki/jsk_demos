@@ -14,41 +14,183 @@ set(tool t, string setting)
 leave(ingredient ing, string manner)
 chefcheck(ingredient ing, string condition)
 
-If none of the above actions apply, you may use `do`. If `do`'s vessel or tool is not required, `None` is acceptable.
-do(ingredient, state, vessel, tool)
+The above `do` is a function that handles other cases not covered by the other functions.
 
 For example,
 
 [Recipe]
-Mix the eggs and milk well to make the egg mixture.
-Melt the butter in a frying pan.
-Pour the egg mixture into the frying pan and leave it there without touching it until the surrounding mixture hardens. When the egg mixture hardens, fry the eggs quickly with a wooden spoon until they are tender.
+1/2 cup all-purpose flour
+1 tablespoon light brown sugar
+1/4 teaspoon ground cinnamon
+1/8 teaspoon salt
+2 tablespoons unsalted butter
+1 1/2 tablespoons ice water
+1 cup skim milk
+3 egg whites
+2 tablespoons white sugar
+1/4 teaspoon vanilla extract
+1 bananas, peeled and sliced
+1 kiwi, peeled and sliced
+1 cup sliced fresh strawberries
+In a bowl, sift together the flour, light brown sugar, cinnamon, and salt.
+Cut in the butter until the mixture resembles coarse crumbs.
+Sprinkle with the ice water, and toss the mixture with a fork until evenly moistened.
+Pat into a round, and wrap in plastic.
+Refrigerate for 30 minutes.
+In the top half of a double boiler, heat the milk until it begins to bubble.
+In a bowl, beat together the egg whites, sugar, and 1 tablespoon of the hot milk.
+Whisk the egg white mixture into the remaining hot milk.
+Cook and stir without boiling about 10 minutes, until the mixture is thick enough to coat the back of a metal spoon.
+Remove from heat, and stir in the vanilla.
+Cool to room temperature.
+Preheat oven to 375  degrees F (190 degrees C).
+Lightly grease an 8 inch tart pan with a removable bottom.
+On a floured surface, roll the tart dough out to 1/4 inch thickness.
+Press the chilled dough into the prepared tart pan.
+Trim the edges, and pierce the bottom with a fork.
+Bake 15 to 18 minutes in the preheated oven, until golden brown.
+Remove to a wire rack, and cool completely.
+Spoon the filling mixture into the crust.
+Bake 18 to 20 minutes in the preheated oven.
+Cool to room temperature on a wire rack.
+Refrigerate 8 hours.
 [Function Sequence]
-mix(egg, milk, egg-mixture, bowl, whisk)
-pour(butter, frying-pan)
-heat(butter, melt)
-pour(egg-mixture, frying-pan)
-heat(egg-mixture, surroundings-hardened)
-stir-fry(egg-mixture, whole-mixture-tender, wooden-spatula)
+create_ing(ing76, "1/2 cup all-purpose flour")
+create_ing(ing77, "1 tablespoon light brown sugar")
+create_ing(ing78, "1/4 teaspoon ground cinnamon")
+create_ing(ing79, "1/8 teaspoon salt")
+create_ing(ing80, "2 tablespoons unsalted butter")
+create_ing(ing81, "1 1/2 tablespoons ice water")
+create_ing(ing82, "1 cup skim milk")
+create_ing(ing83, "3 egg whites")
+create_ing(ing84, "2 tablespoons white sugar")
+create_ing(ing85, "1/4 teaspoon vanilla extract")
+create_ing(ing86, "1 bananas, peeled and sliced")
+create_ing(ing87, "1 kiwi, peeled and sliced")
+create_ing(ing88, "1 cup sliced fresh strawberries")
+create_tool(t11, "bowl")
+combine({ing76, ing77, ing78, ing79}, ing89, "dry stuff", "")
+mix(ing89, t11, ing90, "sifted dry stuff", "sift together")
+combine({ing80, ing90}, ing91, "buttery dry stuff", "cut in the butter until the mixture resembles coarse crumbs")
+chefcheck(ing91,"resembles coarse crumbs")
+combine({ing81, ing91}, ing92, "wet buttery stuff", "sprinkle with ice water")
+create_tool(t12, "fork")
+mix(ing92, t12, ing93, "dough", "toss with a fork until evenly moistened")
+create_tool(t13, "round")
+put(ing93, t13)
+set(t13,"wrap in plastic")
+leave(ing93,"refrigerate for 30 minutes")
+create_tool(t14, "double boiler")
+cook(ing82, t14, ing94, "bubbling milk", "in top half of double boiler, heat until it begins to bubble")
+create_tool(t15, "second bowl")
+separate(ing94, ing95, "1 tablespoon of milk", ing96, "rest of milk", "")
+combine({ing83, ing84, ing95}, ing97, "sweet milk", "")
+mix(ing97, t15, ing98, "egg mixture", "beat together")
+combine({ing96, ing98}, ing99, "milky egg mix", "whisk egg white mixture into milk")
+cook(ing99, t14, ing100, "hot milky egg mixture", "cook and stir without boiling for 10 minutes, until the mixture is thick enough to coat the back of a metal spoon")
+chefcheck(ing100,"thick enough to coat the back of a metal spoon")
+remove(ing100,t14)
+combine({ing100, ing85}, ing101, "filling", "stir in vanilla")
+leave(ing101,"cool to room temperature")
+create_tool(t16, "oven")
+set(t16,"preheat to 375 degrees F (190 degrees C)")
+create_tool(t17, "8 inch tart pan with a removable bottom")
+set(t17,"lightly grease")
+do(ing93, , ing108, "rolled dough", "on floured surface, roll out to 1/4 inch thickness")
+put(ing108, t17)
+cut(ing108, , ing102, "trimmed dough", "trim the edges")
+create_tool(t18, "fork")
+do(ing102, t18, ing107, "trimmed dough pierced with fork", "pierce bottom with a fork")
+cook(ing107, t16, ing103, "crust", "bake 15 to 18 minutes, until golden brown")
+chefcheck(ing103,"golden brown")
+remove(ing103,t16)
+leave(ing103,"cool completely on wire rack")
+combine({ing101, ing103}, ing104, "crust with filling", "spoon filling into crust")
+cook(ing104, t16, ing105, "baked crust and filling", "bake 18 to 20 minutes")
+leave(ing105,"cool to room temperature on a wire rack")
+leave(ing105,"refrigerate 8 hours")
+combine({ing105, ing86, ing87, ing88}, ing106, "fruit tart", "arrange fruit over the filling just before serving")
 
 [Recipe]
-Pour the salad oil into the frying pan and heat it for 30 seconds.
-After 30 seconds, add an egg and cook until the egg is cooked.
+1 (7.5 ounce) jar marinated artichoke hearts
+1 small onion, finely chopped
+1 garlic clove, minced
+4 eggs, beaten
+1/4 cup dry bread crumbs
+1/4 teaspoon ground mustard
+1/8 teaspoon dried oregano
+1/8 teaspoon pepper
+1/8 teaspoon hot pepper sauce
+2 (8 ounce) packages shredded Cheddar cheese
+2 tablespoons minced fresh parsley
+Drain artichokes, reserving half of the marinade.
+Chop artichokes; set aside.
+In a skillet, saute onion and garlic in reserved marinade until tender; set aside.
+In a large bowl, combine the egg, bread crumbs, mustard, oregano, pepper and hot pepper sauce.
+Stir in the cheese, parsley, reserved artichokes and onion mixture.
+Fill miniature muffin cups three-fourths full.
+Bake at 325 degrees F for 15-17 minutes or until set.
+Cool for 5 minutes before removing from pan to wire racks.
+Serve warm.
 [Function Sequence]
-pour(salad-oil, frying-pan)
-heat(salad-oil, thirty-seconds)
-pour(egg, frying-pan)
-cook(egg, cooked-egg)
+create_ing(ing0, "1 (7.5 ounce) jar marinated artichoke hearts")
+create_ing(ing1, "1 small onion, finely chopped")
+create_ing(ing2, "1 garlic clove, minced")
+create_ing(ing3, "4 eggs, beaten")
+create_ing(ing4, "1/4 cup dry bread crumbs")
+create_ing(ing5, "1/4 teaspoon ground mustard")
+create_ing(ing6, "1/8 teaspoon dried oregano")
+create_ing(ing7, "1/8 teaspoon pepper")
+create_ing(ing8, "1/8 teaspoon hot pepper sauce")
+create_ing(ing9, "2 (8 ounce) packages shredded Cheddar cheese")
+create_ing(ing10, "2 tablespoons minced fresh parsley")
+separate(ing0, ing11, "half of the marinade", ing12, "artichokes", "drain")
+create_tool(t0, "knife")
+cut(ing12, t0, ing13, "chopped artichokes", "chop")
+create_tool(t1, "skillet")
+combine({ing1, ing11, ing2}, ing14, "onion mix", "")
+cook(ing14, t1, ing15, "sauteed onions", "saute until tender")
+create_tool(t2, "large bowl")
+combine({ing3, ing4, ing5, ing6, ing7, ing8}, ing16, "spicy crumbs", "")
+put(ing16, t2)
+combine({ing10, ing13, ing15, ing16, ing9}, ing17, "quiche mix", "stir in")
+create_tool(t3, "miniature muffin cups")
+put(ing17, t3)
+create_tool(t4, "oven")
+cook(ing17, t4, ing18, "quiches", "bake at 325 degrees F for 15-17 minutes")
+chefcheck(ing18,"set")
+leave(ing18,"cool for 5 minutes")
+create_tool(t5, "wire rack")
+put(ing18, t5)
+serve(ing18,"warm")
 
 [Recipe]
-Boil water in a pot and turn the heat down to low.
-Stir with a spoon to form a whirlpool.
-Gently drop the eggs into the pot and boil for 3 minutes.
+3 cups cooked, mashed winter squash
+1 1/2 tablespoons curry powder
+2 tablespoons butter or trans fat-free margarine
+2 tablespoons maple syrup
+1/2 teaspoon Salt, to taste
+1/4 teaspoon cayenne pepper to taste
+3 tablespoons sweetened coconut flakes, toasted (optional)
+In a medium bowl, combine first six ingredients.
+Microwave on high until heated through, about 5 minutes.
+Sprinkle on coconut, if desired.
+Serve.
 [Function Sequence]
-boil(water, boiled-water)
-set-stove(low, pot)
-stir(water, vortexed-water, spoon)
-pour(egg, pot)
-boil(egg, three-minutes)
+create_ing(ing0, "3 cups cooked, mashed winter squash")
+create_ing(ing1, "1 1/2 tablespoons curry powder")
+create_ing(ing2, "2 tablespoons butter or trans fat-free margarine")
+create_ing(ing3, "2 tablespoons maple syrup")
+create_ing(ing4, "1/2 teaspoon Salt, to taste")
+create_ing(ing5, "1/4 teaspoon cayenne pepper to taste")
+create_ing(ing6, "3 tablespoons sweetened coconut flakes, toasted (optional)")
+create_tool(t17, "medium bowl")
+combine({ing0, ing1, ing2, ing3, ing4, ing5}, ing7, "mixture", "in medium bowl")
+mix(ing7, t17, ing8, "mixture", "mix")
+create_tool(t18, "microwave")
+cook(ing8, t18, ing9, "hot squash", "on high for 5 minutes")
+chefcheck(ing9,"heated through")
+combine({ing6, ing9}, ing10, "winter squash", "sprinkle (if desired)")
+serve(ing10,"")
 
 Then, convert the following recipe.
