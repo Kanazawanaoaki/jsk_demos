@@ -1,0 +1,16 @@
+create_ing(ing0, "broccoli")
+create_ing(ing1, "water")
+create_ing(ing2, "butter")
+create_tool(t0, "pot")
+create_tool(t1, "frying pan")
+
+combine({ing0, ing1}, ing3, "broccoli in water", "")
+cook(ing3, t0, ing4, "boiled broccoli", "bring to a boil and boil for 3 minutes")
+chefcheck(ing4, "boiled for 3 minutes")
+set(t0, "heat off")
+
+cook(ing2, t1, ing5, "melted butter", "heat in frying pan to melt")
+chefcheck(ing5, "butter melted")
+
+combine({ing4, ing5}, ing6, "broccoli and butter in pan", "add broccoli to pan")
+cook(ing6, t1, ing7, "sauteed broccoli", "saute for 20 seconds")

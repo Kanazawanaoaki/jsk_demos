@@ -1,0 +1,30 @@
+create_ing(ing0, "carrots")
+create_ing(ing1, "broccoli")
+create_ing(ing2, "cabbage")
+create_ing(ing3, "preferred sauce")
+
+create_tool(t0, "knife")
+create_tool(t1, "pot")
+create_tool(t2, "colander")
+create_tool(t3, "plate")
+
+cut(ing0, t0, ing4, "carrot rounds about 5mm thick", "slice into rounds about 5mm thick")
+
+cut(ing1, t0, ing5, "broccoli bite-sized pieces", "cut into bite-sized pieces")
+cook(ing5, t1, ing6, "boiled broccoli", "boil")
+remove(ing6, t1)
+put(ing6, t2)
+remove(ing6, t2)
+
+cook(ing2, t1, ing7, "boiled cabbage", "boil")
+separate(ing7, ing8, "cabbage without core", ing9, "cabbage core", "remove the core")
+cut(ing8, t0, ing10, "cabbage strips 1-2cm wide", "cut into 1-2cm wide strips")
+cut(ing9, t0, ing11, "thinly sliced cabbage core", "thinly slice the core")
+
+put(ing4, t3)
+put(ing6, t3)
+put(ing10, t3)
+combine({ing4, ing6, ing10}, ing12, "arranged boiled carrots, broccoli, and cabbage on plate", "arrange on a plate")
+
+combine({ing12, ing3}, ing13, "vegetables with sauce", "top with preferred sauce")
+serve(ing13,"")

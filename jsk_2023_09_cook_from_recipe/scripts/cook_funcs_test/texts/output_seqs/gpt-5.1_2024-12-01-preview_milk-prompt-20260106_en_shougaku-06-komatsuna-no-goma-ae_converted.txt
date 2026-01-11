@@ -1,0 +1,15 @@
+create_ing(ing0, "komatsuna")
+create_ing(ing1, "ground sesame seeds")
+create_ing(ing2, "soy sauce")
+create_ing(ing3, "sugar")
+
+create_tool(t0, "pot")
+create_tool(t1, "bowl")
+
+cook(ing0, t0, ing4, "boiled komatsuna", "boil")
+cut(ing4, t0, ing5, "komatsuna cut into 3-4 cm lengths", "cut into 3-4 cm lengths")
+
+combine({ing1, ing2, ing3}, ing6, "dressing", "mix ground sesame seeds, soy sauce, and sugar")
+mix(ing5, t1, ing7, "komatsuna with dressing", "toss boiled komatsuna in dressing")
+
+serve(ing7, "")

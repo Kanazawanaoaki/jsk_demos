@@ -1,0 +1,40 @@
+create_ing(ing0, "measured rice")
+create_ing(ing1, "measured water")
+
+create_tool(t0, "bowl")
+create_tool(t1, "colander")
+create_tool(t2, "pot with lid")
+create_tool(t3, "burner")
+create_tool(t4, "dry cloth")
+create_tool(t5, "serving bowl")
+create_tool(t6, "sink")
+
+put(ing0, t0)
+do(ing0, t0, ing2, "washed rice", "wash quickly by stirring and changing the water 3-4 times")
+put(ing2, t1)
+leave(ing2, "drain the water in a colander")
+
+combine({ing2, ing1}, ing3, "rice and water", "place drained rice and measured water in a pot")
+put(ing3, t2)
+leave(ing3, "let rice absorb water for at least 30 minutes")
+
+set(t3, "high heat")
+cook(ing3, t2, ing4, "boiling rice", "cook over high heat until lid rattles and steam rises")
+set(t3, "medium heat")
+cook(ing4, t2, ing5, "simmering rice", "cook over medium heat until water has evaporated and lid stops moving")
+set(t3, "low heat")
+cook(ing5, t2, ing6, "cooked rice", "cook over low heat briefly to finish")
+
+set(t3, "off")
+leave(ing6, "steam with lid on for about 10 minutes without opening")
+do(ing6, t2, ing7, "fluffed rice", "gently fluff the rice")
+put(ing7, t4)
+set(t4, "cover rice and replace lid")
+
+put(ing7, t5)
+serve(ing7, "serve and taste")
+
+put(ing2, t6)
+put(ing3, t6)
+put(ing7, t6)
+leave(ing7, "soak dishes and pot in water to make them easier to wash")

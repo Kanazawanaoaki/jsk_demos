@@ -1,0 +1,20 @@
+create_ing(ing0, "eggs")
+create_ing(ing1, "milk")
+create_ing(ing2, "salt")
+create_ing(ing3, "pepper")
+create_ing(ing4, "oil")
+
+create_tool(t0, "bowl")
+create_tool(t1, "frying pan")
+create_tool(t2, "plate")
+
+combine({ing0, ing1, ing2, ing3}, ing5, "seasoned eggs", "crack eggs into bowl, beat lightly, add milk, season with salt and pepper")
+
+set(t1, "medium heat")
+put(ing4, t1)
+do(ing4, t1, ing6, "oiled pan", "heat oil until hot, swirl to coat pan")
+
+cook(ing5, t1, ing7, "cooked eggs", "quickly pour into hot oiled pan, cook over medium heat, stirring constantly to prevent burning")
+
+put(ing7, t2)
+serve(ing7, "plate immediately after cooking")

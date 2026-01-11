@@ -1,0 +1,17 @@
+create_ing(ing0, "green onions")  
+create_ing(ing1, "miso")  
+create_ing(ing2, "vinegar")  
+create_ing(ing3, "sugar")  
+
+create_tool(t0, "knife")  
+create_tool(t1, "pot")  
+create_tool(t2, "bowl")  
+
+cut(ing0, t0, ing4, "green onions cut into 4-5 cm lengths", "cut into 4-5 cm lengths")  
+cook(ing4, t1, ing5, "boiled green onions", "boil")  
+
+combine({ing1, ing2, ing3}, ing6, "dressing", "")  
+mix(ing6, t2, ing7, "miso-vinegar-sugar dressing", "mix")  
+
+combine({ing5, ing7}, ing8, "seasoned green onions", "toss boiled green onions in dressing")  
+serve(ing8, "")

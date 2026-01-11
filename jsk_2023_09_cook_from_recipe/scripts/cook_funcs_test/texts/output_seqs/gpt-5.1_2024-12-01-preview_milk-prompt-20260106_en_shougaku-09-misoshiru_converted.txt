@@ -1,0 +1,50 @@
+create_ing(ing0, "water for broth")
+create_ing(ing1, "dried sardines, heads and guts removed")
+create_ing(ing2, "daikon radish")
+create_ing(ing3, "green onions")
+create_ing(ing4, "fried tofu (aburaage)")
+create_ing(ing5, "miso")
+
+create_tool(t0, "pot")
+create_tool(t1, "knife")
+create_tool(t2, "cutting board")
+create_tool(t3, "ladle")
+create_tool(t4, "strainer (optional)")
+
+/* ① Prepare the broth base */
+combine({ing0, ing1}, ing6, "water with dried sardines", "fill pot with water and add dried sardines")
+put(ing6, t0)
+
+/* ② Prepare the ingredients */
+do(ing2, t2, ing7, "washed daikon radish", "wash")
+do(ing3, t2, ing8, "washed green onions", "wash")
+do(ing4, t2, ing9, "washed fried tofu", "wash (if needed)")
+
+cut(ing7, t1, ing10, "daikon, 5mm-thick half-moon slices", "slice into 5mm-thick half-moon pieces")
+cut(ing8, t1, ing11, "thinly sliced green onions", "thinly slice")
+cut(ing9, t1, ing12, "fried tofu, thin strips", "cut into thin strips")
+
+/* ③ Make the broth */
+cook(ing6, t0, ing13, "sardine broth at boil", "bring to a boil over high heat")
+set(t0, "reduce to medium heat")
+cook(ing13, t0, ing14, "sardine broth after simmering", "simmer for 4-5 minutes")
+chefcheck(ing14, "broth extracted")
+
+/* remove sardines (default behavior) */
+separate(ing14, ing15, "clear sardine broth", ing16, "sardines", "remove sardines after broth is extracted")
+
+/* ④ Simmer the ingredients */
+combine({ing15, ing10}, ing17, "broth with daikon", "add daikon radish to broth")
+cook(ing17, t0, ing18, "simmered daikon in broth", "simmer until daikon is translucent")
+chefcheck(ing18, "daikon is translucent")
+
+combine({ing18, ing12, ing11}, ing19, "broth with daikon, aburaage, and green onions", "add aburaage and green onions")
+cook(ing19, t0, ing20, "simmered ingredients in broth", "simmer briefly until heated through")
+
+/* ⑤ Add the miso and finish */
+combine({ing20, ing5}, ing21, "miso soup before final heating", "add miso gradually, tasting as you go")
+cook(ing21, t0, ing22, "miso soup just returned to a boil", "heat until it just comes back to a boil")
+chefcheck(ing22, "just boiling; do not overheat")
+set(t0, "turn off heat immediately")
+
+serve(ing22, "serve hot")

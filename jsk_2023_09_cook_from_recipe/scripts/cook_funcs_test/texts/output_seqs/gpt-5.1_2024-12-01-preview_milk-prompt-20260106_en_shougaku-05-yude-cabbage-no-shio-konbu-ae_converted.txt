@@ -1,0 +1,8 @@
+create_ing(ing0, "cabbage")
+create_ing(ing1, "salted kombu")
+create_tool(t0, "pot")
+cook(ing0, t0, ing2, "boiled cabbage", "boil")
+create_tool(t1, "knife")
+cut(ing2, t1, ing3, "cabbage cut into 3cm squares, core thinly sliced", "cut into 3cm squares and thinly slice core")
+do(ing3, , ing4, "cabbage with excess water removed", "thoroughly squeeze out excess water")
+combine({ing4, ing1}, ing5, "cabbage and salted kombu", "toss with salted kombu")

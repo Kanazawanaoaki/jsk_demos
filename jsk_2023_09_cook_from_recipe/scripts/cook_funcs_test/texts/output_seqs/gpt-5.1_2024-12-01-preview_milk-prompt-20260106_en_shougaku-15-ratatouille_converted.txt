@@ -1,0 +1,37 @@
+create_ing(ing0, "eggplant")
+create_ing(ing1, "onion")
+create_ing(ing2, "bell pepper")
+create_ing(ing3, "bacon")
+create_ing(ing4, "water")
+create_ing(ing5, "oil")
+create_ing(ing6, "garlic paste")
+create_ing(ing7, "whole tomatoes")
+create_ing(ing8, "salt")
+create_ing(ing9, "pepper")
+
+create_tool(t0, "knife")
+create_tool(t1, "bowl")
+create_tool(t2, "pot")
+create_tool(t3, "stove")
+
+cut(ing0, t0, ing10, "eggplant rounds", "slice into rounds")
+combine({ing10, ing4}, ing11, "eggplant soaking in water", "")
+put(ing11, t1)
+
+cut(ing1, t0, ing12, "onion wedges", "cut into wedges")
+cut(ing2, t0, ing13, "bell pepper pieces", "cut into bite-sized pieces")
+cut(ing3, t0, ing14, "bacon strips", "cut into thin strips")
+
+combine({ing5, ing6}, ing15, "oil and garlic paste", "")
+put(ing15, t2)
+cook(ing15, t3, ing16, "heated oil and garlic paste", "heat")
+
+combine({ing14, ing12, ing13}, ing17, "bacon and vegetables", "")
+put(ing17, t2)
+cook(ing17, t3, ing18, "sautéed bacon and vegetables", "sauté")
+chefcheck(ing18,"vegetables softened")
+
+combine({ing18, ing7}, ing19, "vegetables with whole tomatoes", "add whole tomatoes")
+combine({ing19, ing8, ing9}, ing20, "seasoned stew", "season with salt and pepper")
+cook(ing20, t3, ing21, "simmered stew", "cover and simmer over low heat for 10 minutes")
+serve(ing21,"")

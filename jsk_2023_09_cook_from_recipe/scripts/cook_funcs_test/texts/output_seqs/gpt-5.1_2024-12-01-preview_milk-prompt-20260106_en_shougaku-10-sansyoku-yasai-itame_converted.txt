@@ -1,0 +1,40 @@
+create_ing(ing0, "carrots")
+create_ing(ing1, "bell peppers")
+create_ing(ing2, "cabbage")
+create_ing(ing3, "oil")
+create_ing(ing4, "salt")
+create_ing(ing5, "pepper")
+
+create_tool(t0, "water")
+create_tool(t1, "colander")
+create_tool(t2, "knife")
+create_tool(t3, "cutting board")
+create_tool(t4, "frying pan")
+create_tool(t5, "plate")
+
+do(ing0, t0, ing6, "washed carrots", "wash and lightly scrub")
+do(ing1, t0, ing7, "washed bell peppers", "wash and lightly scrub")
+put(ing6, t1)
+put(ing7, t1)
+leave(ing6, "drain in colander")
+leave(ing7, "drain in colander")
+
+put(ing2, t0)
+do(ing2, t0, ing8, "washed cabbage", "wash and drain")
+
+put(ing6, t3)
+cut(ing6, t2, ing9, "carrots cut into 4cm rounds, then 5mm thick pieces, then 5mm julienne strips", "slice into 4cm rounds, cut vertically into 5mm pieces, then julienne into 5mm strips")
+put(ing7, t3)
+cut(ing7, t2, ing10, "bell peppers halved, seeded, then 5mm julienne strips", "halve, remove seeds, then julienne into 5mm strips")
+put(ing8, t3)
+cut(ing8, t2, ing11, "cabbage core removed, cut into 4cm pieces, then 1cm strips", "remove core, cut into 4cm pieces, then 1cm strips")
+
+put(ing3, t4)
+set(t4, "medium heat until oil is hot, swirl to coat pan")
+combine({ing9, ing10, ing11}, ing12, "prepared vegetables", "carrot, bell pepper, cabbage")
+
+cook(ing12, t4, ing13, "stir-fried vegetables", "add in order (carrot, bell pepper, cabbage) and stir-fry quickly")
+combine({ing13, ing4, ing5}, ing14, "seasoned stir-fried vegetables", "season with salt and pepper, then remove from heat")
+
+put(ing14, t5)
+serve(ing14, "plate immediately after cooking")
