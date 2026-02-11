@@ -1,0 +1,8 @@
+crack(egg)
+pour(egg, bowl)
+boil(water, boiled-water)
+set-stove(low, pot)
+pour(vinegar, pot)
+stir(water, vortexed-water, spoon)
+pour(egg, pot)
+boil(egg, three-minutes)

@@ -1,0 +1,7 @@
+crack(egg, bowl)
+pour(salad-oil, frying-pan)
+heat(salad-oil, thirty-seconds)
+stir(salad-oil, coated-pan, frying-pan)
+pour(egg, frying-pan)
+cook(egg, whites-and-yolks-begin-to-set)
+cook(egg, lightly-twenty-seconds)

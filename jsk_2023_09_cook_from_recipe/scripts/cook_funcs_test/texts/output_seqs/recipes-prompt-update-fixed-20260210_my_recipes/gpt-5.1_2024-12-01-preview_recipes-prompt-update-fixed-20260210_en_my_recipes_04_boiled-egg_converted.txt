@@ -1,0 +1,5 @@
+boil(water, boiled-water)
+pour(egg, pot)
+boil(egg, eight-minutes)
+pour(egg, bowl)
+cool(egg, cooled-thoroughly, bowl)

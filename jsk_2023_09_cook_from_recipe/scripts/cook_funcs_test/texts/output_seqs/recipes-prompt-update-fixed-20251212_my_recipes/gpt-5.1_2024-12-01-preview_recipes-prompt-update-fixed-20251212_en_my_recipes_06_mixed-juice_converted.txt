@@ -1,0 +1,4 @@
+peel(banana)
+cut(banana, pieces-2-3cm, knife)
+do(banana+milk+kinako+yogurt+white-sesame-paste, in-blender, blender, None)
+do(banana+milk+kinako+yogurt+white-sesame-paste, smooth, blender, blender)

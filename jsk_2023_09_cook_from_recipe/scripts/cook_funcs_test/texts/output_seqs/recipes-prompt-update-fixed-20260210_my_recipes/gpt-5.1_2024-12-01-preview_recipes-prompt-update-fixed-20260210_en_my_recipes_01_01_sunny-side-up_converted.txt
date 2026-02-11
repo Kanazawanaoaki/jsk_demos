@@ -1,0 +1,5 @@
+crack(egg, bowl)
+pour(salad-oil, frying-pan)
+heat(salad-oil, thirty-seconds)
+pour(egg, frying-pan)
+cook(egg, cooked-through)

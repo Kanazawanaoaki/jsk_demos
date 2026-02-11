@@ -1,0 +1,16 @@
+cut(carrot, sliced-5mm-rounds, cutting-board, knife)
+cut(broccoli, bite-sized-pieces, cutting-board, knife)
+boil(carrot, boiled-carrot)
+boil(broccoli, boiled-broccoli)
+do(carrot, drained, colander, None)
+do(broccoli, drained, colander, None)
+
+boil(cabbage, boiled-cabbage)
+cut(cabbage, core-removed, cutting-board, knife)
+cut(cabbage, strips-1-2cm-wide, cutting-board, knife)
+cut(cabbage-core, thinly-sliced, cutting-board, knife)
+
+do(boiled-carrot, arranged-on-plate, plate, None)
+do(boiled-broccoli, arranged-on-plate, plate, None)
+do(boiled-cabbage, arranged-on-plate, plate, None)
+pour(sauce, plate)

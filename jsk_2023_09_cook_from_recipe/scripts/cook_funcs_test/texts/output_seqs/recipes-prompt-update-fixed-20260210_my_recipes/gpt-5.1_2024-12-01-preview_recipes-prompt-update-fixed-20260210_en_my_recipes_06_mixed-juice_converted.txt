@@ -1,0 +1,8 @@
+peel(banana)
+cut(banana, pieces-2-3cm, cutting-board, knife)
+pour(banana, blender)
+pour(milk, blender)
+pour(kinako, blender)
+pour(yogurt, blender)
+pour(white-sesame-paste, blender)
+do(all-ingredients, smooth, blender, blender)
